@@ -6,13 +6,13 @@ on:
   workflow_dispatch:
 jobs:
   release:
+    if: contains(github.event.head_commit.message, 'release')
     strategy:
       fail-fast: false
       matrix:
         platform: [macos-latest, ubuntu-20.04, windows-latest]
     runs-on: ${{ matrix.platform }}
     steps:
-      - if: contains(github.event.head_commit.message, 'release')
       - uses: actions/checkout@v3
       - name: Install Tauri dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-20.04'
