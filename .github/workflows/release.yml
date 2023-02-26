@@ -25,15 +25,18 @@ jobs:
         uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
+      - uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7
       - name: Use Node.js 18
         uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'pnpm'
       - name: Install frontend dependencies
-        run: 'pnpm install'
+        run: pnpm install
       - name: Build frontend
-        run: 'pnpm build'
+        run: pnpm build
       - name: Build app
         uses: tauri-apps/tauri-action@v0
         env:
