@@ -37,10 +37,10 @@ jobs:
         run: pnpm install
       - name: Typecheck
         run: pnpm check
-        with:
-          AUTH_GITHUB_ID: { { secrets: AUTH_GITHUB_ID } }
-          AUTH_GITHUB_SECRET: { { secrets: AUTH_GITHUB_SECRET } }
-          AUTH_SECRET: { { secrets: AUTH_SECRET } }
+        env:
+          AUTH_GITHUB_ID: ${{ secrets: AUTH_GITHUB_ID }}
+          AUTH_GITHUB_SECRET: ${{ secrets: AUTH_GITHUB_SECRET }}
+          AUTH_SECRET: ${{ secrets: AUTH_SECRET }}
   build-front:
     runs-on: ubuntu-latest
     steps:
