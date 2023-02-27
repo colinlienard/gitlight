@@ -35,8 +35,6 @@ jobs:
           cache: 'pnpm'
       - name: Install frontend dependencies
         run: pnpm install
-      - name: Build frontend
-        run: pnpm build
       - name: Build app
         uses: tauri-apps/tauri-action@v0
         env:

@@ -4,6 +4,10 @@ on:
     branches:
       - main
   pull_request:
+env:
+  AUTH_GITHUB_ID: ${{ secrets.AUTH_GITHUB_ID }}
+  AUTH_GITHUB_SECRET: ${{ secrets.AUTH_GITHUB_SECRET }}
+  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
 jobs:
   lint:
     runs-on: ubuntu-latest

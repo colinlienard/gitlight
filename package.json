@@ -11,9 +11,12 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test:unit": "vitest",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write ."
+		"format": "prettier --plugin-search-dir . --write .",
+		"prepare": "svelte-kit sync"
 	},
 	"dependencies": {
+		"@auth/core": "^0.5.0",
+		"@auth/sveltekit": "^0.2.2",
 		"@tauri-apps/api": "^1.2.0"
 	},
 	"devDependencies": {
