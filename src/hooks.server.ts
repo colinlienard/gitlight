@@ -1,13 +1,13 @@
 import { SvelteKitAuth } from '@auth/sveltekit';
 import GitHub from '@auth/core/providers/github';
-import { GITHUB_ID, GITHUB_SECRET } from '$env/static/private';
+import { AUTH_GITHUB_ID, AUTH_GITHUB_SECRET } from '$env/static/private';
 import type { Session } from '@auth/core/types';
 
 export const handle = SvelteKitAuth({
 	providers: [
 		GitHub({
-			clientId: GITHUB_ID,
-			clientSecret: GITHUB_SECRET,
+			clientId: AUTH_GITHUB_ID,
+			clientSecret: AUTH_GITHUB_SECRET,
 			authorization: { params: { scope: 'notifications' } }
 		}) as never
 	],
