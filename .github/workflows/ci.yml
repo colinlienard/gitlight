@@ -38,9 +38,9 @@ jobs:
       - name: Typecheck
         run: pnpm check
         env:
-          AUTH_GITHUB_ID: ${{ secrets: AUTH_GITHUB_ID }}
-          AUTH_GITHUB_SECRET: ${{ secrets: AUTH_GITHUB_SECRET }}
-          AUTH_SECRET: ${{ secrets: AUTH_SECRET }}
+          AUTH_GITHUB_ID: ${{ secrets.AUTH_GITHUB_ID }}
+          AUTH_GITHUB_SECRET: ${{ secrets.AUTH_GITHUB_SECRET }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
   build-front:
     runs-on: ubuntu-latest
     steps:
