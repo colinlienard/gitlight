@@ -1,5 +1,35 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import type { Session } from '@auth/core/types';
+	import { onMount } from 'svelte';
+
+	type Notification = {
+		repository: {
+			full_name: string;
+		};
+		subject: {
+			title: string;
+			type: string;
+		};
+		unread: boolean;
+	};
+
+	let notifications: Notification[] = [];
+
+	onMount(async () => {
+		const session = $page.data.session as (Session & { accessToken: string }) | null;
+		if (!session) {
+			return;
+		}
+		const response = await fetch('https://api.github.com/notifications?all=true', {
+			headers: {
+				Accept: 'application/vnd.github+json',
+				Authorization: `Bearer ${session.accessToken}`
+			}
+		});
+		const data = await response.json();
+		notifications = data;
+	});
 </script>
 
 <div>
@@ -29,6 +59,20 @@
 		</nav>
 	</header>
 	<slot />
+	<ul>
+		{#each notifications as notification}
+			<li>
+				<h2>
+					{#if notification.unread}
+						<span>🚨</span>
+					{/if}
+					{notification.subject.title}
+				</h2>
+				<p>{notification.subject.type}</p>
+				<small>{notification.repository.full_name}</small>
+			</li>
+		{/each}
+	</ul>
 </div>
 
 <style>
