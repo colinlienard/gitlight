@@ -1,0 +1,77 @@
+* {
+	margin: 0;
+	padding: 0;
+	user-select: none;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	min-height: 100vh;
+	font-size: 100%;
+	line-height: 1;
+	text-rendering: optimizespeed;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-weight: normal;
+	font-size: initial;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+	background-color: transparent;
+	border: none;
+	border-radius: 0;
+	color: inherit;
+	font-family: inherit;
+	font-size: inherit;
+	outline: none;
+}
+
+textarea {
+	resize: vertical;
+}
+
+button,
+input[type='button'],
+input[type='reset'],
+input[type='submit'] {
+	cursor: pointer;
+}
+
+img,
+video,
+svg {
+	display: block;
+	max-width: 100%;
+	-webkit-user-drag: none;
+}
+
+ul {
+	list-style: none;
+}
+
+strong {
+	font-weight: inherit;
+}
