@@ -22,5 +22,6 @@ export const handle = SvelteKitAuth({
 			(session as Session & { accessToken: string }).accessToken = token.accessToken as string;
 			return session;
 		}
-	}
+	},
+	trustHost: true
 });
