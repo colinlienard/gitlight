@@ -2,32 +2,20 @@
 	import { page } from '$app/stores';
 	import type { Session } from '@auth/core/types';
 	import { onMount } from 'svelte';
+	import Notification from '~/lib/components/Notification.svelte';
+	import { fetchGithub } from '~/lib/helpers';
+	import { accessToken } from '~/lib/stores/accessToken';
+	import type { TNotification } from '~/lib/types';
 
-	type Notification = {
-		repository: {
-			full_name: string;
-		};
-		subject: {
-			title: string;
-			type: string;
-		};
-		unread: boolean;
-	};
-
-	let notifications: Notification[] = [];
+	let notifications: TNotification[] = [];
 
 	onMount(async () => {
 		const session = $page.data.session as (Session & { accessToken: string }) | null;
 		if (!session) {
 			return;
 		}
-		const response = await fetch('https://api.github.com/notifications?all=true', {
-			headers: {
-				Accept: 'application/vnd.github+json',
-				Authorization: `Bearer ${session.accessToken}`
-			}
-		});
-		const data = await response.json();
+		accessToken.set(session.accessToken);
+		const data = await fetchGithub('https://api.github.com/notifications?all=true');
 		notifications = data;
 	});
 </script>
@@ -59,18 +47,23 @@
 		</nav>
 	</header>
 	<slot />
-	<ul>
+
+	<ul class="notification-container">
 		{#each notifications as notification}
 			<li>
-				<h2>
-					{#if notification.unread}
-						<span>🚨</span>
-					{/if}
-					{notification.subject.title}
-				</h2>
-				<p>{notification.subject.type}</p>
-				<small>{notification.repository.full_name}</small>
+				<Notification {notification} />
 			</li>
 		{/each}
 	</ul>
 </div>
+
+<style lang="scss">
+	.notification-container {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: 3rem;
+		gap: 1rem;
+	}
+</style>
