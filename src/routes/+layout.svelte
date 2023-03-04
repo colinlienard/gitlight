@@ -2,9 +2,9 @@
 	import { page } from '$app/stores';
 	import type { Session } from '@auth/core/types';
 	import { onMount } from 'svelte';
-	import Notification from '~/lib/components/Notification.svelte';
+	import { Notification } from '~/lib/components';
 	import { fetchGithub } from '~/lib/helpers';
-	import { accessToken } from '~/lib/stores/accessToken';
+	import { accessToken } from '~/lib/stores';
 	import type { TNotification } from '~/lib/types';
 
 	let notifications: TNotification[] = [];

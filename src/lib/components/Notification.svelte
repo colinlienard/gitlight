@@ -1,48 +1,115 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { fetchGithub } from '../helpers';
-	import Check from '../icons/Check.svelte';
-	import ExternalLink from '../icons/ExternalLink.svelte';
-	import Pin from '../icons/Pin.svelte';
-	import PrOpen from '../icons/PROpen.svelte';
-	import type { TNotification, TNotificationData } from '../types';
+	import { fetchGithub, formatRelativeDate } from '../helpers';
+	import {
+		Check,
+		ExternalLink,
+		Pin,
+		PullRequestOpen,
+		PullRequestClosed,
+		PullRequestMerged,
+		Commit
+	} from '../icons';
+	import type {
+		TNotification,
+		TNotificationCommit,
+		TNotificationPullRequest,
+		TPullRequestLabel
+	} from '../types';
 
 	export let notification: TNotification;
 
-	let data: TNotificationData | null = null;
+	let loaded = false;
+	let imageUrl: string;
+	let title: string;
+	let time: string;
+	let icon: ConstructorOfATypedSvelteComponent;
+	let repo: string;
+	let message: string;
+	let id: string | null = null;
+	let labels: TPullRequestLabel[] | null = null;
 
 	onMount(async () => {
-		data = await fetchGithub(notification.subject.url);
-		console.log(data);
+		const data = await fetchGithub(notification.subject.url);
+		if (!data) {
+			return;
+		}
+
+		loaded = true;
+		time = formatRelativeDate(notification.updated_at);
+		repo = notification.repository.full_name;
+		message = notification.subject.title;
+
+		console.log(notification, data);
+
+		switch (notification.subject.type) {
+			case 'Commit':
+				const { author } = data as TNotificationCommit;
+				imageUrl = author.avatar_url;
+				title = `${author.login} made a commit`;
+				icon = Commit;
+				break;
+
+			case 'Issue':
+				break;
+
+			case 'PullRequest':
+				const {
+					user,
+					merged,
+					number,
+					labels: labelsData,
+					state
+				} = data as TNotificationPullRequest;
+				imageUrl = user.avatar_url;
+				title = `${user.login} ${merged ? 'merged' : '?'} this PR`;
+				icon = merged ? PullRequestMerged : PullRequestClosed;
+				id = `#${number}`;
+				labels = labelsData;
+				break;
+
+			case 'Release':
+				break;
+
+			default:
+				break;
+		}
 	});
 </script>
 
-<div class="notification">
-	<span class="time">2d</span>
-	<div class="main">
-		<img class="image" src={data?.author.avatar_url} alt="" />
-		<h3 class="message">{data?.author.login} merged this PR</h3>
-	</div>
-	<div class="thread">
-		<PrOpen />
-		<div class="thread-content">
-			<small class="branch">mobsuccess-devops/platform-lcm</small>
-			<div class="name-container">
-				<h4 class="thread-name">Add v1 for RTB adgroup settings</h4>
-				<p class="thread-id">#589</p>
+{#if loaded}
+	<div class="notification">
+		<span class="time">{time}</span>
+		<div class="main">
+			<img class="image" src={imageUrl} alt="" />
+			<h3 class="message">{title}</h3>
+		</div>
+		<div class="thread">
+			<svelte:component this={icon} />
+			<div class="thread-content">
+				<small class="repo">{repo}</small>
+				<div class="name-container">
+					<h4 class="thread-name">{message}</h4>
+					{#if id}
+						<p class="thread-id">{id}</p>
+					{/if}
+				</div>
 			</div>
 		</div>
+		{#if labels && labels.length > 0}
+			<ul class="labels">
+				{#each labels as label}
+					<li class="label" style:color={`#${label.color}`}>{label.name}</li>
+				{/each}
+			</ul>
+		{/if}
+		<div class="over">
+			<button class="button"><ExternalLink /></button>
+			<button class="button"><Check /></button>
+			<button class="button"><Pin /></button>
+		</div>
 	</div>
-	<ul class="labels">
-		<li class="label" style:color="#d73a4a">bug</li>
-		<li class="label" style:color="#4AF574">feature</li>
-	</ul>
-	<div class="over">
-		<button class="button"><ExternalLink /></button>
-		<button class="button"><Check /></button>
-		<button class="button"><Pin /></button>
-	</div>
-</div>
+{/if}
 
 <style lang="scss">
 	.notification {
@@ -55,7 +122,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
-		width: 300px;
+		width: 350px;
 
 		&::before {
 			content: '';
@@ -83,6 +150,7 @@
 	.main {
 		display: flex;
 		gap: 0.5rem;
+		padding-left: 0.5rem;
 
 		.image {
 			width: 1.5rem;
@@ -115,7 +183,7 @@
 			flex: 0 1 auto;
 			overflow: hidden;
 
-			.branch {
+			.repo {
 				@include typography.small;
 				color: variables.$grey-4;
 			}
