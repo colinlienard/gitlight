@@ -8,15 +8,19 @@
 		PullRequestOpen,
 		PullRequestClosed,
 		PullRequestMerged,
-		Commit
+		Commit,
+		IssueClosed
 	} from '../icons';
+	import Discussion from '../icons/Discussion.svelte';
+	import IssueOpen from '../icons/IssueOpen.svelte';
 	import Release from '../icons/Release.svelte';
 	import type {
 		TNotification,
 		TNotificationCommit,
+		TNotificationIssue,
 		TNotificationPullRequest,
 		TNotificationRelease,
-		TPullRequestLabel
+		TPullRequestLabels
 	} from '../types';
 
 	export let notification: TNotification;
@@ -32,7 +36,7 @@
 	let repo: string;
 	let message: string;
 	let id: string | null = null;
-	let labels: TPullRequestLabel[] | null = null;
+	let labels: TPullRequestLabels | null = null;
 	let link: string;
 
 	onMount(() => {
@@ -46,15 +50,15 @@
 
 			if (!notification.subject.url) {
 				loaded = true;
+				if (notification.subject.type === 'Discussion') {
+					title = 'New activity on discussion';
+					icon = Discussion;
+				}
 				return;
 			}
 
 			// Fetch additional data
 			const data = await fetchGithub(notification.subject.url);
-			if (!data) {
-				return;
-			}
-
 			loaded = true;
 			link = data.html_url;
 
@@ -69,6 +73,11 @@
 				}
 
 				case 'Issue':
+					const { labels: labelsData, number, state } = data as TNotificationIssue;
+					title = 'New activity on issue';
+					icon = state === 'open' ? IssueOpen : IssueClosed;
+					id = `#${number}`;
+					labels = labelsData;
 					break;
 
 				case 'PullRequest': {
@@ -113,10 +122,14 @@
 {#if loaded}
 	<div class="notification" class:read>
 		<span class="time">{time}</span>
-		<div class="main">
-			<img class="image" src={imageUrl} alt="" />
-			<h3 class="message">{title}</h3>
-		</div>
+		{#if title}
+			<div class="main">
+				{#if imageUrl}
+					<img class="image" src={imageUrl} alt="" />
+				{/if}
+				<h3 class="message">{title}</h3>
+			</div>
+		{/if}
 		<div class="target">
 			<svelte:component this={icon} />
 			<div class="target-content">
@@ -205,12 +218,12 @@
 		.main {
 			display: flex;
 			gap: 0.5rem;
-			padding-left: 0.5rem;
 
 			.image {
 				width: 1.5rem;
 				height: 1.5rem;
 				border-radius: 50%;
+				margin-left: 0.5rem;
 			}
 
 			.message {

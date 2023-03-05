@@ -1,6 +1,10 @@
 export { default as Check } from './Check.svelte';
 export { default as Commit } from './Commit.svelte';
+export { default as Discussion } from './Discussion.svelte';
 export { default as ExternalLink } from './ExternalLink.svelte';
+export { default as IssueClosed } from './IssueClosed.svelte';
+export { default as IssueDraft } from './IssueDraft.svelte';
+export { default as IssueOpen } from './IssueOpen.svelte';
 export { default as Pin } from './Pin.svelte';
 export { default as PullRequestOpen } from './PullRequestOpen.svelte';
 export { default as PullRequestClosed } from './PullRequestClosed.svelte';

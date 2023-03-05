@@ -2,7 +2,7 @@ import type { Session } from '@auth/core/types';
 
 export type TSession = Session & { accessToken: string };
 
-export type TNotificationType = 'PullRequest' | 'Issue' | 'Commit' | 'Release';
+export type TNotificationType = 'PullRequest' | 'Issue' | 'Commit' | 'Release' | 'Discussion';
 
 export type TNotification = {
 	repository: {
@@ -22,10 +22,10 @@ export type TUser = {
 	login: string;
 };
 
-export type TPullRequestLabel = {
+export type TPullRequestLabels = {
 	color: string;
 	name: string;
-};
+}[];
 
 export type TNotificationCommit = {
 	author: TUser;
@@ -34,10 +34,16 @@ export type TNotificationCommit = {
 	};
 };
 
-export type TNotificationIssue = unknown;
+export type TNotificationIssue = {
+	labels: TPullRequestLabels;
+	number: number;
+	state: 'open' | 'closed';
+	state_reason: 'completed' | null;
+	user: TUser;
+};
 
 export type TNotificationPullRequest = {
-	labels: TPullRequestLabel[];
+	labels: TPullRequestLabels;
 	merged: boolean;
 	number: number;
 	state: 'open' | 'closed';
