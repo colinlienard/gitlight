@@ -2,15 +2,8 @@
 	import { Notification } from '~/lib/components';
 	import type { TNotification } from '~/lib/types';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
-	import { fetchGithub } from '~/lib/helpers';
 
 	let notifications: TNotification[] = $page.data.notifications;
-
-	onMount(async () => {
-		const data = await fetchGithub('https://api.github.com/users/ColinLienard/events');
-		console.log(data);
-	});
 </script>
 
 <ul class="notification-container">

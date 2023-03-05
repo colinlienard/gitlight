@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, type ComponentType } from 'svelte';
 	import { fetchGithub, formatRelativeDate, onScrollVisible } from '../helpers';
 	import {
 		Check,
@@ -31,7 +31,7 @@
 	let imageUrl: string;
 	let title: string;
 	let time: string;
-	let icon: ConstructorOfATypedSvelteComponent;
+	let icon: ComponentType;
 	let owner: string;
 	let repo: string;
 	let message: string;
@@ -72,13 +72,14 @@
 					break;
 				}
 
-				case 'Issue':
+				case 'Issue': {
 					const { labels: labelsData, number, state } = data as TNotificationIssue;
 					title = 'New activity on issue';
 					icon = state === 'open' ? IssueOpen : IssueClosed;
 					id = `#${number}`;
 					labels = labelsData;
 					break;
+				}
 
 				case 'PullRequest': {
 					const {
