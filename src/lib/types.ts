@@ -1,3 +1,7 @@
+import type { Session } from '@auth/core/types';
+
+export type TSession = Session & { accessToken: string };
+
 export type TNotificationType = 'PullRequest' | 'Issue' | 'Commit' | 'Release';
 
 export type TNotification = {
@@ -7,7 +11,7 @@ export type TNotification = {
 	subject: {
 		title: string;
 		type: TNotificationType;
-		url: string;
+		url: string | null;
 	};
 	unread: boolean;
 	updated_at: string;

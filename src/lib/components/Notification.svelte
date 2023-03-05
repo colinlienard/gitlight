@@ -37,19 +37,28 @@
 
 	onMount(() => {
 		onScrollVisible(element, async () => {
+			// Set common data
+			read = !notification.unread;
+			time = formatRelativeDate(notification.updated_at);
+			owner = notification.repository.full_name.split('/')[0];
+			repo = notification.repository.full_name.split('/')[1];
+			message = notification.subject.title;
+
+			if (!notification.subject.url) {
+				loaded = true;
+				return;
+			}
+
+			// Fetch additional data
 			const data = await fetchGithub(notification.subject.url);
 			if (!data) {
 				return;
 			}
 
 			loaded = true;
-			read = !notification.unread;
-			time = formatRelativeDate(notification.updated_at);
-			owner = notification.repository.full_name.split('/')[0];
-			repo = notification.repository.full_name.split('/')[1];
-			message = notification.subject.title;
 			link = data.html_url;
 
+			// Set data based on type
 			switch (notification.subject.type) {
 				case 'Commit': {
 					const { author } = data as TNotificationCommit;
@@ -325,9 +334,9 @@
 		}
 
 		.target {
-			height: 2.5rem;
 			display: flex;
 			gap: 1rem;
+			height: 2.5rem;
 
 			.icon {
 				@include mixins.skeleton(2.5rem, 2.5rem);
