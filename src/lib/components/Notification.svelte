@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { fetchGithub, formatRelativeDate } from '../helpers';
+	import { fetchGithub, formatRelativeDate, onScrollVisible } from '../helpers';
 	import {
 		Check,
 		ExternalLink,
@@ -21,6 +21,7 @@
 
 	export let notification: TNotification;
 
+	let element: HTMLElement;
 	let loaded = false;
 	let read: boolean;
 	let imageUrl: string;
@@ -34,63 +35,69 @@
 	let labels: TPullRequestLabel[] | null = null;
 	let link: string;
 
-	onMount(async () => {
-		const data = await fetchGithub(notification.subject.url);
-		if (!data) {
-			return;
-		}
-
-		loaded = true;
-		read = !notification.unread;
-		time = formatRelativeDate(notification.updated_at);
-		owner = notification.repository.full_name.split('/')[0];
-		repo = notification.repository.full_name.split('/')[1];
-		message = notification.subject.title;
-		link = data.html_url;
-
-		switch (notification.subject.type) {
-			case 'Commit': {
-				const { author } = data as TNotificationCommit;
-				imageUrl = author.avatar_url;
-				title = `${author.login} committed`;
-				icon = Commit;
-				break;
+	onMount(() => {
+		onScrollVisible(element, async () => {
+			const data = await fetchGithub(notification.subject.url);
+			if (!data) {
+				return;
 			}
 
-			case 'Issue':
-				break;
+			loaded = true;
+			read = !notification.unread;
+			time = formatRelativeDate(notification.updated_at);
+			owner = notification.repository.full_name.split('/')[0];
+			repo = notification.repository.full_name.split('/')[1];
+			message = notification.subject.title;
+			link = data.html_url;
 
-			case 'PullRequest': {
-				const {
-					user,
-					merged,
-					number,
-					labels: labelsData,
-					state
-				} = data as TNotificationPullRequest;
-				imageUrl = user.avatar_url;
-				title = `${user.login} ${merged ? 'merged' : state === 'open' ? 'opened' : 'closed'}`;
-				icon = merged ? PullRequestMerged : state === 'open' ? PullRequestOpen : PullRequestClosed;
-				id = `#${number}`;
-				labels = labelsData;
-				break;
+			switch (notification.subject.type) {
+				case 'Commit': {
+					const { author } = data as TNotificationCommit;
+					imageUrl = author.avatar_url;
+					title = `${author.login} committed`;
+					icon = Commit;
+					break;
+				}
+
+				case 'Issue':
+					break;
+
+				case 'PullRequest': {
+					const {
+						user,
+						merged,
+						number,
+						labels: labelsData,
+						state
+					} = data as TNotificationPullRequest;
+					imageUrl = user.avatar_url;
+					title = `${user.login} ${merged ? 'merged' : state === 'open' ? 'opened' : 'closed'}`;
+					icon = merged
+						? PullRequestMerged
+						: state === 'open'
+						? PullRequestOpen
+						: PullRequestClosed;
+					id = `#${number}`;
+					labels = labelsData;
+					break;
+				}
+
+				case 'Release': {
+					const { author, tag_name, prerelease } = data as TNotificationRelease;
+					imageUrl = author.avatar_url;
+					title = `${author.login} released`;
+					icon = Release;
+					labels = [
+						{ name: tag_name, color: 'white' },
+						...(prerelease ? [{ name: 'pre-release', color: 'FFA723' }] : [])
+					];
+					break;
+				}
+
+				default:
+					break;
 			}
-
-			case 'Release': {
-				const { author, tag_name, prerelease } = data as TNotificationRelease;
-				imageUrl = author.avatar_url;
-				title = `${author.login} released`;
-				icon = Release;
-				labels = [
-					{ name: tag_name, color: 'white' },
-					...(prerelease ? [{ name: 'pre-release', color: 'FFA723' }] : [])
-				];
-				break;
-			}
-
-			default:
-				break;
-		}
+		});
 	});
 </script>
 
@@ -127,7 +134,7 @@
 		</div>
 	</div>
 {:else}
-	<div class="skeleton">
+	<div class="skeleton" bind:this={element}>
 		<div class="main">
 			<div class="image" />
 			<div class="message" />
