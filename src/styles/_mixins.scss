@@ -1,0 +1,34 @@
+@use './variables';
+
+@mixin shadow {
+	box-shadow: 0 0.25rem 0.5rem rgba(black, 0.1);
+}
+
+@keyframes skeleton {
+	from {
+		right: 100%;
+	}
+
+	to {
+		right: min(-50%, -2rem);
+	}
+}
+
+@mixin skeleton($width: 100%, $height: 100%) {
+	width: $width;
+	height: $height;
+	flex: 0 0 auto;
+	border-radius: variables.$radius;
+	background-color: variables.$grey-3;
+	position: relative;
+	overflow: hidden;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0 auto;
+		width: max(50%, 2rem);
+		background-image: linear-gradient(to right, transparent, rgba(white, 0.1), transparent);
+		animation: skeleton 0.8s ease-in-out infinite;
+	}
+}

@@ -1,0 +1,12 @@
+@mixin heading-1 {
+	font-size: 1.5rem;
+	font-weight: 600;
+}
+
+@mixin bold {
+	font-weight: 600;
+}
+
+@mixin small {
+	font-size: 0.75rem;
+}
