@@ -1,14 +1,14 @@
 import { SvelteKitAuth } from '@auth/sveltekit';
 import GitHub from '@auth/core/providers/github';
 import { AUTH_GITHUB_ID, AUTH_GITHUB_SECRET } from '$env/static/private';
-import type { Session } from '@auth/core/types';
+import type { TSession } from './lib/types';
 
 export const handle = SvelteKitAuth({
 	providers: [
 		GitHub({
 			clientId: AUTH_GITHUB_ID,
 			clientSecret: AUTH_GITHUB_SECRET,
-			authorization: { params: { scope: 'notifications' } }
+			authorization: { params: { scope: 'repo' } }
 		}) as never
 	],
 	callbacks: {
@@ -19,7 +19,7 @@ export const handle = SvelteKitAuth({
 			return token;
 		},
 		async session({ session, token }) {
-			(session as Session & { accessToken: string }).accessToken = token.accessToken as string;
+			(session as TSession).accessToken = token.accessToken as string;
 			return session;
 		}
 	},
