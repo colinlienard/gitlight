@@ -32,7 +32,10 @@ export type TGithubCommit = {
 	sha: string;
 	url: string;
 	message: string;
-	author: TGithubUser;
+	author: {
+		email: string;
+		name: string;
+	};
 	distinct: boolean;
 };
 
