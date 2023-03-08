@@ -51,6 +51,7 @@ export type TGithubRelease = {
 	body: string;
 	draft: boolean;
 	prerelease: boolean;
+	html_url: string;
 };
 
 type TGithubEventCommon = {

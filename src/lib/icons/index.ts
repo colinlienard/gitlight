@@ -9,3 +9,4 @@ export { default as Pin } from './Pin.svelte';
 export { default as PullRequestOpen } from './PullRequestOpen.svelte';
 export { default as PullRequestClosed } from './PullRequestClosed.svelte';
 export { default as PullRequestMerged } from './PullRequestMerged.svelte';
+export { default as Release } from './Release.svelte';

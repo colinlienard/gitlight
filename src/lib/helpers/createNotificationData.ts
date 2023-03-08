@@ -1,5 +1,7 @@
-import { Discussion, IssueOpen } from '../icons';
+import { Commit, Discussion, Release } from '../icons';
 import type { TGithubEvent, TNotification } from '../types';
+import { formatRelativeDate } from './formatRelativeDate';
+import { getIssueIcon, getPullRequestIcon } from './getIcon';
 
 export function createNotificationData({
 	actor,
@@ -9,8 +11,7 @@ export function createNotificationData({
 	type
 }: TGithubEvent): TNotification {
 	const common = {
-		imageUrl: actor.avatar_url,
-		time: created_at,
+		time: formatRelativeDate(created_at),
 		repo: repo.name
 	};
 
@@ -18,65 +19,179 @@ export function createNotificationData({
 		case 'CommitCommentEvent':
 			return {
 				...common,
-				title: `${actor.display_login} commented on a commit`,
+				description: [
+					{ text: actor.display_login, image: actor.avatar_url },
+					' commented on a commit'
+				],
 				icon: Discussion,
-				subject: payload.comment.body,
+				title: payload.comment.body,
 				url: payload.comment.html_url
 			};
 
 		case 'CreateEvent':
-			throw new Error('Not implemented');
+			return {
+				...common,
+				description: [],
+				icon: Commit,
+				title: 'CreateEvent not implemented',
+				url: ''
+			};
 
 		case 'DeleteEvent':
-			throw new Error('Not implemented');
+			return {
+				...common,
+				description: [],
+				icon: Commit,
+				title: 'DeleteEvent not implemented',
+				url: ''
+			};
 
 		case 'ForkEvent':
-			throw new Error('Not implemented');
+			return {
+				...common,
+				description: [],
+				icon: Commit,
+				title: 'ForkEvent not implemented',
+				url: ''
+			};
 
 		case 'GollumEvent':
-			throw new Error('Not implemented');
+			return {
+				...common,
+				description: [],
+				icon: Commit,
+				title: 'GollumEvent not implemented',
+				url: ''
+			};
 
 		case 'IssueCommentEvent':
 			return {
 				...common,
-				title: `${actor.display_login} commented on an issue`,
-				icon: IssueOpen,
-				subject: payload.comment.body,
+				description: [
+					{ text: actor.display_login, image: actor.avatar_url },
+					' commented on ',
+					{ text: payload.issue.title, icon: getIssueIcon(payload.issue.state) }
+				],
+				icon: Discussion,
+				title: payload.comment.body,
 				url: payload.comment.html_url
 			};
 
 		case 'IssuesEvent':
-			throw new Error('Not implemented');
+			return {
+				...common,
+				description: [
+					{ text: actor.display_login, image: actor.avatar_url },
+					` ${payload.action} this issue`
+				],
+				icon: getIssueIcon(payload.issue.state),
+				title: payload.issue.title,
+				number: payload.issue.number,
+				url: payload.issue.html_url,
+				labels: payload.issue.labels
+			};
 
 		case 'MemberEvent':
-			throw new Error('Not implemented');
+			return {
+				...common,
+				description: [],
+				icon: Commit,
+				title: 'MemberEvent not implemented',
+				url: ''
+			};
 
 		case 'PublicEvent':
-			throw new Error('Not implemented');
+			return {
+				...common,
+				description: [],
+				icon: Commit,
+				title: 'PublicEvent not implemented',
+				url: ''
+			};
 
 		case 'PullRequestEvent':
-			throw new Error('Not implemented');
+			return {
+				...common,
+				description: [
+					{ text: actor.display_login, image: actor.avatar_url },
+					` ${payload.action} this pull request`
+				],
+				icon: getPullRequestIcon(payload.pull_request.state),
+				title: payload.pull_request.title,
+				number: payload.pull_request.number,
+				url: payload.pull_request.html_url,
+				labels: payload.pull_request.labels
+			};
 
 		case 'PullRequestReviewEvent':
-			throw new Error('Not implemented');
+			return {
+				...common,
+				description: [],
+				icon: Commit,
+				title: 'PullRequestReviewEvent not implemented',
+				url: ''
+			};
 
 		case 'PullRequestReviewCommentEvent':
-			throw new Error('Not implemented');
+			return {
+				...common,
+				description: [],
+				icon: Commit,
+				title: 'PullRequestReviewCommentEvent not implemented',
+				url: ''
+			};
 
 		case 'PullRequestReviewThreadEvent':
-			throw new Error('Not implemented');
+			return {
+				...common,
+				description: [],
+				icon: Commit,
+				title: 'PullRequestReviewThreadEvent not implemented',
+				url: ''
+			};
 
 		case 'PushEvent':
-			throw new Error('Not implemented');
+			return {
+				...common,
+				description: [],
+				icon: Commit,
+				title: 'PushEvent not implemented',
+				url: ''
+			};
 
 		case 'ReleaseEvent':
-			throw new Error('Not implemented');
+			return {
+				...common,
+				description: [
+					{ text: actor.display_login, image: actor.avatar_url },
+					' published a release'
+				],
+				icon: Release,
+				title: payload.release.name,
+				url: payload.release.html_url,
+				labels: [
+					{ name: payload.release.tag_name, color: 'white' },
+					...(payload.release.prerelease ? [{ name: 'pre-release', color: 'FFA723' }] : [])
+				]
+			};
 
 		case 'SponsorshipEvent':
-			throw new Error('Not implemented');
+			return {
+				...common,
+				description: [],
+				icon: Commit,
+				title: 'SponsorshipEvent not implemented',
+				url: ''
+			};
 
 		case 'WatchEvent':
-			throw new Error('Not implemented');
+			return {
+				...common,
+				description: [],
+				icon: Commit,
+				title: 'WatchEvent not implemented',
+				url: ''
+			};
 
 		default:
 			throw new Error('Unknown event type');
