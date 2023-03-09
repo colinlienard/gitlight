@@ -1,17 +1,17 @@
 <script lang="ts">
+	import { getHex } from '../helpers';
 	import { Check, ExternalLink, Pin } from '../icons';
 	import type { TNotification } from '../types';
 
 	export let data: TNotification;
 
-	let { description, icon, repo: fullRepo, time, title, url, labels, number } = data;
-	$: owner = fullRepo.split('/')[0];
-	$: repo = fullRepo.split('/')[1];
+	let { description, icon, iconColor, repo: fullRepo, time, title, url, labels, number } = data;
+	let [owner, repo] = fullRepo.split('/');
 </script>
 
 <div class="notification">
 	<div class="top">
-		<p class="repo">{owner}<span class="bold">{repo}</span></p>
+		<p class="repo">{owner}/<span class="bold">{repo}</span></p>
 		<p class="time">{time}</p>
 	</div>
 	<p class="description">
@@ -22,7 +22,9 @@
 				{item.text}
 				<span class="image-container">
 					{#if item.icon}
-						<svelte:component this={item.icon} />
+						<span style:color={getHex(item.iconColor)}>
+							<svelte:component this={item.icon} />
+						</span>
 					{/if}
 					{#if item.image}
 						<img class="image" src={item.image} alt="" />
@@ -32,7 +34,9 @@
 		{/each}
 	</p>
 	<div class="main">
-		<svelte:component this={icon} />
+		<span class="icon-container" style:color={getHex(iconColor)}>
+			<svelte:component this={icon} />
+		</span>
 		<h3 class="title">{title}</h3>
 		{#if number}
 			<span class="number">#{number}</span>
@@ -46,7 +50,9 @@
 		</ul>
 	{/if}
 	<div class="over">
-		<a class="button" href={url} target="_blank" rel="noreferrer"><ExternalLink /></a>
+		{#if url}
+			<a class="button" href={url} target="_blank" rel="noreferrer"><ExternalLink /></a>
+		{/if}
 		<button class="button"><Check /></button>
 		<button class="button"><Pin /></button>
 	</div>
@@ -62,7 +68,7 @@
 		position: relative;
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
+		gap: 0.75rem;
 		width: 350px;
 
 		&:not(&:hover) {
@@ -107,9 +113,13 @@
 		gap: 0.5rem;
 		width: 100%;
 
-		:global(svg) {
+		.icon-container {
 			flex: 0 0 2rem;
-			height: 2rem;
+
+			:global(svg) {
+				width: 2rem;
+				height: 2rem;
+			}
 		}
 
 		.title {

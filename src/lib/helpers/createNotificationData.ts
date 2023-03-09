@@ -1,4 +1,4 @@
-import { Commit, Discussion, Release } from '../icons';
+import { Branch, Commit, Discussion, Release, Tag } from '../icons';
 import type { TGithubEvent, TNotification } from '../types';
 import { formatRelativeDate } from './formatRelativeDate';
 import { getIssueIcon, getPullRequestIcon } from './getIcon';
@@ -24,6 +24,7 @@ export function createNotificationData({
 					' commented on a commit'
 				],
 				icon: Discussion,
+				iconColor: 'blue',
 				title: payload.comment.body,
 				url: payload.comment.html_url
 			};
@@ -31,19 +32,26 @@ export function createNotificationData({
 		case 'CreateEvent':
 			return {
 				...common,
-				description: [],
-				icon: Commit,
-				title: 'CreateEvent not implemented',
-				url: ''
+				description: [
+					{ text: actor.display_login, image: actor.avatar_url },
+					` created this ${payload.ref_type} `
+				],
+				icon: payload.ref_type === 'branch' ? Branch : Tag,
+				iconColor: 'green',
+				title: payload.ref,
+				url: `https://github.com/${repo.name}/tree/${payload.ref}`
 			};
 
 		case 'DeleteEvent':
 			return {
 				...common,
-				description: [],
-				icon: Commit,
-				title: 'DeleteEvent not implemented',
-				url: ''
+				description: [
+					{ text: actor.display_login, image: actor.avatar_url },
+					` deleted this ${payload.ref_type} `
+				],
+				icon: payload.ref_type === 'branch' ? Branch : Tag,
+				iconColor: 'red',
+				title: payload.ref
 			};
 
 		case 'ForkEvent':
@@ -70,9 +78,14 @@ export function createNotificationData({
 				description: [
 					{ text: actor.display_login, image: actor.avatar_url },
 					' commented on ',
-					{ text: payload.issue.title, icon: getIssueIcon(payload.issue.state) }
+					{
+						text: payload.issue.title,
+						icon: getIssueIcon(payload.issue.state),
+						iconColor: payload.issue.state === 'open' ? 'green' : 'red'
+					}
 				],
 				icon: Discussion,
+				iconColor: 'blue',
 				title: payload.comment.body,
 				url: payload.comment.html_url
 			};
@@ -85,6 +98,7 @@ export function createNotificationData({
 					` ${payload.action} this issue`
 				],
 				icon: getIssueIcon(payload.issue.state),
+				iconColor: payload.issue.state === 'open' ? 'green' : 'red',
 				title: payload.issue.title,
 				number: payload.issue.number,
 				url: payload.issue.html_url,
@@ -117,6 +131,7 @@ export function createNotificationData({
 					` ${payload.action} this pull request`
 				],
 				icon: getPullRequestIcon(payload.pull_request.state),
+				iconColor: payload.pull_request.state === 'open' ? 'green' : 'red',
 				title: payload.pull_request.title,
 				number: payload.pull_request.number,
 				url: payload.pull_request.html_url,
@@ -153,10 +168,15 @@ export function createNotificationData({
 		case 'PushEvent':
 			return {
 				...common,
-				description: [],
+				description: [
+					{ text: actor.display_login, image: actor.avatar_url },
+					' commited to ',
+					{ text: payload.ref.replace('refs/heads/', ''), icon: Branch, iconColor: 'blue' }
+				],
 				icon: Commit,
-				title: 'PushEvent not implemented',
-				url: ''
+				iconColor: 'blue',
+				title: payload.commits[0].message,
+				url: `https://github.com/${repo.name}/commit/${payload.head}`
 			};
 
 		case 'ReleaseEvent':
@@ -167,6 +187,7 @@ export function createNotificationData({
 					' published a release'
 				],
 				icon: Release,
+				iconColor: 'blue',
 				title: payload.release.name,
 				url: payload.release.html_url,
 				labels: [

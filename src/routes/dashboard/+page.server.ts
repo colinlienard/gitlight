@@ -13,7 +13,7 @@ export const load: LayoutServerLoad = async (event) => {
 		const { accessToken } = session as TSession;
 		const { login } = await fetchGithub(`https://api.github.com/user`, accessToken);
 		const githubEvents = await fetchGithub(
-			`https://api.github.com/users/${login}/received_events?per_page=50`,
+			`https://api.github.com/users/${login}/events?per_page=100`,
 			accessToken
 		);
 		return { githubEvents };

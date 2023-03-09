@@ -4,13 +4,24 @@ import type { TGithubLabel } from './github-types';
 
 export type TSession = Session & { accessToken: string };
 
+export type TColors = 'blue' | 'purple' | 'green' | 'red' | 'grey';
+
 export type TNotification = {
 	title: string;
-	description: ({ text: string; image?: string; icon?: ComponentType } | string)[];
+	description: (
+		| {
+				text: string;
+				image?: string;
+				icon?: ComponentType;
+				iconColor?: TColors;
+		  }
+		| string
+	)[];
 	time: string;
 	icon: ComponentType;
+	iconColor?: TColors;
 	repo: string;
 	number?: number;
 	labels?: TGithubLabel[];
-	url: string;
+	url?: string;
 };
