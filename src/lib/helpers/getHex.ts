@@ -3,15 +3,15 @@ import type { TColors } from '../types';
 export function getHex(color?: TColors) {
 	switch (color) {
 		case 'blue':
-			return '#7A7DFF';
+			return '#8585ff';
 		case 'purple':
-			return '#9868FF';
+			return '#a557ff';
 		case 'green':
-			return '#22C965';
+			return '#22c965';
 		case 'red':
-			return '#E34763';
+			return '#e34763';
 		case 'grey':
-			return '#727272';
+			return '#888888';
 		default:
 			return '#FFF';
 	}

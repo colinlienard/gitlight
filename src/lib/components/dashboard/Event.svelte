@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { getHex } from '../helpers';
-	import { Check, ExternalLink, Pin } from '../icons';
-	import type { TNotification } from '../types';
+	import { getHex } from '~/lib/helpers';
+	import { Check, ExternalLink, Pin } from '~/lib/icons';
+	import type { TEvent } from '~/lib/types';
 
-	export let data: TNotification;
+	export let data: TEvent;
 
 	let { description, icon, iconColor, repo: fullRepo, time, title, url, labels, number } = data;
 	let [owner, repo] = fullRepo.split('/');
 </script>
 
-<div class="notification">
+<div class="event">
 	<div class="top">
 		<p class="repo">{owner}/<span class="bold">{repo}</span></p>
 		<p class="time">{time}</p>
@@ -59,8 +59,7 @@
 </div>
 
 <style lang="scss">
-	.notification {
-		@include mixins.shadow;
+	.event {
 		background-color: variables.$grey-2;
 		border: 1px solid variables.$grey-3;
 		border-radius: variables.$radius;

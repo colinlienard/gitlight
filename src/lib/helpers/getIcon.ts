@@ -1,5 +1,11 @@
 import type { ComponentType } from 'svelte';
-import { IssueClosed, IssueOpen, PullRequestClosed, PullRequestOpen } from '../icons';
+import {
+	IssueClosed,
+	IssueOpen,
+	PullRequestClosed,
+	PullRequestMerged,
+	PullRequestOpen
+} from '../icons';
 
 export function getIssueIcon(state: 'open' | 'closed'): ComponentType {
 	switch (state) {
@@ -12,12 +18,12 @@ export function getIssueIcon(state: 'open' | 'closed'): ComponentType {
 	}
 }
 
-export function getPullRequestIcon(state: 'open' | 'closed'): ComponentType {
+export function getPullRequestIcon(state: 'open' | 'closed', merged: boolean): ComponentType {
 	switch (state) {
 		case 'open':
 			return PullRequestOpen;
 		case 'closed':
-			return PullRequestClosed;
+			return merged ? PullRequestMerged : PullRequestClosed;
 		default:
 			throw new Error('Invalid state');
 	}

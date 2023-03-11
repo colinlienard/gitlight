@@ -6,7 +6,7 @@ export type TSession = Session & { accessToken: string };
 
 export type TColors = 'blue' | 'purple' | 'green' | 'red' | 'grey';
 
-export type TNotification = {
+export type TEvent = {
 	title: string;
 	description: (
 		| {

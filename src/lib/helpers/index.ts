@@ -1,4 +1,4 @@
-export * from './createNotificationData';
+export * from './createEventData';
 export * from './fetchGithub';
 export * from './formatRelativeDate';
 export * from './getHex';

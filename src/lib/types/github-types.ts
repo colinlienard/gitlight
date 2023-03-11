@@ -25,6 +25,7 @@ export type TGithubIssue = {
 };
 
 export type TGithubPullRequest = TGithubIssue & {
+	merged: boolean;
 	merged_at: string | null;
 };
 
@@ -76,7 +77,7 @@ export type TGithubEvent = (
 			type: 'CreateEvent';
 			payload: {
 				ref: string;
-				ref_type: 'branch' | 'tag';
+				ref_type: 'branch' | 'tag' | 'repository';
 				master_branch: string;
 				description: string;
 			};
@@ -193,7 +194,7 @@ export type TGithubEvent = (
 			payload: {
 				action: 'created';
 				pull_request: TGithubPullRequest;
-				review: any;
+				review: unknown;
 			};
 	  }
 	| {
@@ -214,7 +215,7 @@ export type TGithubEvent = (
 			payload: {
 				action: 'resolved' | 'unresolved';
 				pull_request: TGithubPullRequest;
-				thread: any;
+				thread: unknown;
 			};
 	  }
 	| {

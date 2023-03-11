@@ -1,15 +1,9 @@
-import { Branch, Commit, Discussion, Release, Tag } from '../icons';
-import type { TGithubEvent, TNotification } from '../types';
+import { Branch, Commit, Discussion, Release, Repository, Tag } from '../icons';
+import type { TGithubEvent, TEvent } from '../types';
 import { formatRelativeDate } from './formatRelativeDate';
 import { getIssueIcon, getPullRequestIcon } from './getIcon';
 
-export function createNotificationData({
-	actor,
-	created_at,
-	payload,
-	repo,
-	type
-}: TGithubEvent): TNotification {
+export function createEventData({ actor, created_at, payload, repo, type }: TGithubEvent): TEvent {
 	const common = {
 		time: formatRelativeDate(created_at),
 		repo: repo.name
@@ -36,9 +30,10 @@ export function createNotificationData({
 					{ text: actor.display_login, image: actor.avatar_url },
 					` created this ${payload.ref_type} `
 				],
-				icon: payload.ref_type === 'branch' ? Branch : Tag,
+				icon:
+					payload.ref_type === 'branch' ? Branch : payload.ref_type === 'tag' ? Tag : Repository,
 				iconColor: 'green',
-				title: payload.ref,
+				title: payload.ref || repo.name,
 				url: `https://github.com/${repo.name}/tree/${payload.ref}`
 			};
 
@@ -128,10 +123,15 @@ export function createNotificationData({
 				...common,
 				description: [
 					{ text: actor.display_login, image: actor.avatar_url },
-					` ${payload.action} this pull request`
+					` ${payload.pull_request.merged ? 'merged' : payload.action} this pull request`
 				],
-				icon: getPullRequestIcon(payload.pull_request.state),
-				iconColor: payload.pull_request.state === 'open' ? 'green' : 'red',
+				icon: getPullRequestIcon(payload.pull_request.state, payload.pull_request.merged),
+				iconColor:
+					payload.pull_request.state === 'open'
+						? 'green'
+						: payload.pull_request.merged
+						? 'purple'
+						: 'red',
 				title: payload.pull_request.title,
 				number: payload.pull_request.number,
 				url: payload.pull_request.html_url,
@@ -175,7 +175,7 @@ export function createNotificationData({
 				],
 				icon: Commit,
 				iconColor: 'blue',
-				title: payload.commits[0].message,
+				title: payload.commits[payload.commits.length - 1].message,
 				url: `https://github.com/${repo.name}/commit/${payload.head}`
 			};
 
@@ -208,9 +208,13 @@ export function createNotificationData({
 		case 'WatchEvent':
 			return {
 				...common,
-				description: [],
-				icon: Commit,
-				title: 'WatchEvent not implemented',
+				description: [
+					{ text: actor.display_login, image: actor.avatar_url },
+					' started watching this repository'
+				],
+				icon: Repository,
+				iconColor: 'blue',
+				title: repo.name,
 				url: ''
 			};
 
