@@ -7,7 +7,6 @@
 	let githubEvents = ($page.data.githubEvents as TGithubEvent[]).map((event) =>
 		createEventData(event)
 	);
-	console.log($page.data.githubEvents, githubEvents);
 </script>
 
 <ul class="event-container">

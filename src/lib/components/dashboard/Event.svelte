@@ -2,6 +2,7 @@
 	import { getHex } from '~/lib/helpers';
 	import { Check, ExternalLink, Pin } from '~/lib/icons';
 	import type { TEvent } from '~/lib/types';
+	import { Button, Tooltip } from '~/lib/components';
 
 	export let data: TEvent;
 
@@ -50,11 +51,17 @@
 		</ul>
 	{/if}
 	<div class="over">
+		<Tooltip content="Mark as read" position="left">
+			<Button small><Check /></Button>
+		</Tooltip>
 		{#if url}
-			<a class="button" href={url} target="_blank" rel="noreferrer"><ExternalLink /></a>
+			<Tooltip content="Open in GitHub" position="left">
+				<Button type="secondary" small href={url} external><ExternalLink /></Button>
+			</Tooltip>
 		{/if}
-		<button class="button"><Check /></button>
-		<button class="button"><Pin /></button>
+		<Tooltip content="Pin" position="left">
+			<Button type="secondary" small><Pin /></Button>
+		</Tooltip>
 	</div>
 </div>
 
@@ -68,7 +75,9 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.75rem;
-		width: 350px;
+
+		// Remove width
+		width: 24rem;
 
 		&:not(&:hover) {
 			.over {
@@ -160,27 +169,16 @@
 
 	.over {
 		position: absolute;
-		inset: 0;
-		background-image: radial-gradient(variables.$grey-1, rgba(variables.$grey-1, 0.25));
+		inset: 0 0 0 auto;
+		width: 12rem;
+		background-image: linear-gradient(to right, transparent, variables.$grey-1);
+		border-radius: 0 calc(variables.$radius - 1px) calc(variables.$radius - 1px) 0;
 		display: flex;
-		align-items: center;
-		justify-content: center;
+		flex-direction: column;
+		padding: 0.5rem;
+		align-items: end;
+		justify-content: start;
 		gap: 0.5rem;
-		transition: inherit;
-
-		.button {
-			padding: 0.5rem;
-			background-color: variables.$grey-3;
-			border-radius: variables.$radius;
-
-			:global(svg) {
-				width: 1.25rem;
-				height: 1.25rem;
-			}
-
-			&:hover {
-				background-color: variables.$blue-2;
-			}
-		}
+		transition: opacity variables.$transition;
 	}
 </style>

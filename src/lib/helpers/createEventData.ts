@@ -214,8 +214,7 @@ export function createEventData({ actor, created_at, payload, repo, type }: TGit
 				],
 				icon: Repository,
 				iconColor: 'blue',
-				title: repo.name,
-				url: ''
+				title: repo.name
 			};
 
 		default:

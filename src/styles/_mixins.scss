@@ -1,7 +1,35 @@
+@use 'sass:color';
 @use './variables';
 
+@mixin shiny($color, $rounded: true) {
+	background-image: linear-gradient(lighten($color, 10%), $color 50%);
+	isolation: isolate;
+	position: relative;
+	transition: filter variables.$transition;
+
+	&::before {
+		content: '';
+		z-index: -1;
+		position: absolute;
+		inset: 1px;
+		background-color: $color;
+	}
+
+	&:hover {
+		filter: brightness(130%);
+	}
+
+	@if $rounded {
+		border-radius: variables.$radius;
+
+		&::before {
+			border-radius: calc(variables.$radius - 1px);
+		}
+	}
+}
+
 @mixin shadow {
-	box-shadow: 0 0.25rem 0.5rem rgba(black, 0.1);
+	box-shadow: 0 0.25rem 0.5rem rgba(black, 0.2);
 }
 
 @keyframes skeleton {
