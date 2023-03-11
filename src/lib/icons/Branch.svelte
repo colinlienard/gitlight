@@ -6,12 +6,12 @@
 		stroke-width="1.5"
 	/>
 	<path
-		d="M17 10C17 11.1046 16.1046 12 15 12C13.8954 12 13 11.1046 13 10C13 8.89543 13.8954 8 15 8C16.1046 8 17 8.89543 17 10Z"
+		d="M17 5C17 6.10457 16.1046 7 15 7C13.8954 7 13 6.10457 13 5C13 3.89543 13.8954 3 15 3C16.1046 3 17 3.89543 17 5Z"
 		stroke="currentColor"
 		stroke-width="1.5"
 	/>
 	<path
-		d="M13 10C10 10 8 10 5 7"
+		d="M5 10C10 11 15 10 15 7"
 		stroke="currentColor"
 		stroke-width="1.5"
 		stroke-linejoin="round"

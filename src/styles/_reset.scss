@@ -18,7 +18,8 @@ body {
 	min-height: 100vh;
 	font-size: 100%;
 	line-height: 1;
-	text-rendering: optimizespeed;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
 }
 
 h1,

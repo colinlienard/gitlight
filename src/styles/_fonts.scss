@@ -1,13 +1,12 @@
 @font-face {
-	font-family: Inter;
-	src: url('fonts/Inter-Regular.ttf');
+	font-family: local('Inter');
+	src: url('/fonts/Inter-Regular.ttf');
 	font-weight: 400;
 	font-display: swap;
 }
 
 @font-face {
-	font-family: Inter;
-	src: url('fonts/Inter-SemiBold.ttf');
+	font-family: local('Inter');
+	src: url('/fonts/Inter-SemiBolf.ttf');
 	font-weight: 600;
-	font-display: swap;
 }

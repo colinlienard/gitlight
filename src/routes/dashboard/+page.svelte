@@ -1,25 +1,29 @@
 <script lang="ts">
-	import { Notification } from '~/lib/components';
-	import type { TNotification } from '~/lib/types';
 	import { page } from '$app/stores';
+	import { Event } from '~/lib/components';
+	import { createEventData } from '~/lib/helpers';
+	import type { TGithubEvent } from '~/lib/types';
 
-	let notifications: TNotification[] = $page.data.notifications;
+	let githubEvents = ($page.data.githubEvents as TGithubEvent[]).map((event) =>
+		createEventData(event)
+	);
 </script>
 
-<ul class="notification-container">
-	{#each notifications as notification}
+<ul class="event-container">
+	{#each githubEvents as githubEvent}
 		<li>
-			<Notification {notification} />
+			<Event data={githubEvent} />
 		</li>
 	{/each}
 </ul>
 
 <style lang="scss">
-	.notification-container {
+	.event-container {
 		width: 100%;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
+		align-items: center;
 		padding: 3rem;
 		gap: 1rem;
 	}
