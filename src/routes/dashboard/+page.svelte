@@ -6,14 +6,12 @@
 	import { createEventData, fetchGithub } from '~/lib/helpers';
 	import { Check, Github, Gitlab, Mail, Pin } from '~/lib/icons';
 	import type { TGithubEvent } from '~/lib/types';
-	import { onMount } from 'svelte';
 
-	onMount(async () => {
-		const data = (await fetchGithub(
-			'https://api.github.com/repos/ColinLienard/gitlight/events?per_page=100'
-		)) as TGithubEvent[];
-		githubEvents.set(data.map((event) => createEventData(event)));
-	});
+	const request = fetchGithub('repos/ColinLienard/gitlight/events?per_page=100');
+
+	$: if ($request.data) {
+		githubEvents.set(($request.data as TGithubEvent[]).map((event) => createEventData(event)));
+	}
 
 	$: pinned = $githubEvents.filter((event) => event.pinned);
 	$: unread = $githubEvents.filter((event) => !event.pinned && !event.read);
@@ -39,11 +37,23 @@
 		</button>
 	</nav>
 	<section class="columns-container">
-		<EventColumn icon={Pin} title="Pinned" events={pinned} {transitions} />
+		<EventColumn
+			icon={Pin}
+			title="Pinned"
+			events={pinned}
+			loading={$request.loading}
+			{transitions}
+		/>
 		<Separator />
-		<EventColumn icon={Mail} title="Unread" events={unread} {transitions} />
+		<EventColumn
+			icon={Mail}
+			title="Unread"
+			events={unread}
+			loading={$request.loading}
+			{transitions}
+		/>
 		<Separator />
-		<EventColumn icon={Check} title="Read" events={read} {transitions} />
+		<EventColumn icon={Check} title="Read" events={read} loading={$request.loading} {transitions} />
 	</section>
 </main>
 

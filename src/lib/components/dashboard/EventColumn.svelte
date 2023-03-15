@@ -1,14 +1,13 @@
 <script lang="ts">
-	import { onDestroy, type ComponentType } from 'svelte';
-	import { fade } from 'svelte/transition';
+	import { onDestroy, onMount, type ComponentType } from 'svelte';
+	import { fade, type CrossfadeParams, type TransitionConfig } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
-	import type { CrossfadeParams, TransitionConfig } from 'svelte/transition';
-	import { onMount } from 'svelte';
 	import type { TEvent } from '~/lib/types';
-	import Event from './Event.svelte';
 	import { debounce } from '~/lib/helpers';
-	import { Button } from '../common';
 	import { ArrowUp } from '~/lib/icons';
+	import { Button } from '../common';
+	import Event from './Event.svelte';
+	import SkeletonEvent from './SkeletonEvent.svelte';
 
 	type TSvelteAnimation = (
 		node: Element,
@@ -20,6 +19,7 @@
 	export let icon: ComponentType;
 	export let title: string;
 	export let events: TEvent[];
+	export let loading: boolean;
 	export let transitions: {
 		receive: TSvelteAnimation;
 		send: TSvelteAnimation;
@@ -62,16 +62,22 @@
 		</div>
 	{/if}
 	<ul class="list" bind:this={list}>
-		{#each events as event (event.id)}
-			<li
-				class="item"
-				in:receive={{ key: event.id }}
-				out:send={{ key: event.id }}
-				animate:flip={settings}
-			>
-				<Event data={event} />
-			</li>
-		{/each}
+		{#if loading}
+			{#each Array(Math.floor(Math.random() * 3) + 1) as _}
+				<li><SkeletonEvent /></li>
+			{/each}
+		{:else}
+			{#each events as event (event.id)}
+				<li
+					class="item"
+					in:receive={{ key: event.id }}
+					out:send={{ key: event.id }}
+					animate:flip={settings}
+				>
+					<Event data={event} />
+				</li>
+			{/each}
+		{/if}
 	</ul>
 </div>
 
