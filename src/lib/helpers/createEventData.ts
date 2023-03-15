@@ -23,10 +23,7 @@ export function createEventData({
 		case 'CommitCommentEvent':
 			return {
 				...common,
-				description: [
-					{ text: actor.display_login, image: actor.avatar_url },
-					' commented on a commit'
-				],
+				description: [{ text: actor.login, image: actor.avatar_url }, ' commented on a commit'],
 				icon: Discussion,
 				iconColor: 'blue',
 				title: payload.comment.body,
@@ -37,7 +34,7 @@ export function createEventData({
 			return {
 				...common,
 				description: [
-					{ text: actor.display_login, image: actor.avatar_url },
+					{ text: actor.login, image: actor.avatar_url },
 					` created this ${payload.ref_type} `
 				],
 				icon:
@@ -51,7 +48,7 @@ export function createEventData({
 			return {
 				...common,
 				description: [
-					{ text: actor.display_login, image: actor.avatar_url },
+					{ text: actor.login, image: actor.avatar_url },
 					` deleted this ${payload.ref_type} `
 				],
 				icon: payload.ref_type === 'branch' ? Branch : Tag,
@@ -81,7 +78,7 @@ export function createEventData({
 			return {
 				...common,
 				description: [
-					{ text: actor.display_login, image: actor.avatar_url },
+					{ text: payload.comment.user.login, image: payload.comment.user.avatar_url },
 					' commented on ',
 					{
 						text: payload.issue.title,
@@ -99,7 +96,7 @@ export function createEventData({
 			return {
 				...common,
 				description: [
-					{ text: actor.display_login, image: actor.avatar_url },
+					{ text: actor.login, image: actor.avatar_url },
 					` ${payload.action} this issue`
 				],
 				icon: getIssueIcon(payload.issue.state),
@@ -132,7 +129,7 @@ export function createEventData({
 			return {
 				...common,
 				description: [
-					{ text: actor.display_login, image: actor.avatar_url },
+					{ text: actor.login, image: actor.avatar_url },
 					` ${payload.pull_request.merged ? 'merged' : payload.action} this pull request`
 				],
 				icon: getPullRequestIcon(payload.pull_request.state, payload.pull_request.merged),
@@ -179,7 +176,7 @@ export function createEventData({
 			return {
 				...common,
 				description: [
-					{ text: actor.display_login, image: actor.avatar_url },
+					{ text: actor.login, image: actor.avatar_url },
 					' commited to ',
 					{ text: payload.ref.replace('refs/heads/', ''), icon: Branch, iconColor: 'blue' }
 				],
@@ -192,10 +189,7 @@ export function createEventData({
 		case 'ReleaseEvent':
 			return {
 				...common,
-				description: [
-					{ text: actor.display_login, image: actor.avatar_url },
-					' published a release'
-				],
+				description: [{ text: actor.login, image: actor.avatar_url }, ' published a release'],
 				icon: Release,
 				iconColor: 'blue',
 				title: payload.release.name,
@@ -219,7 +213,7 @@ export function createEventData({
 			return {
 				...common,
 				description: [
-					{ text: actor.display_login, image: actor.avatar_url },
+					{ text: actor.login, image: actor.avatar_url },
 					' started watching this repository'
 				],
 				icon: Repository,

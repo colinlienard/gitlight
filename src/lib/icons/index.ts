@@ -1,3 +1,4 @@
+export { default as ArrowUp } from './ArrowUp.svelte';
 export { default as Branch } from './Branch.svelte';
 export { default as Check } from './Check.svelte';
 export { default as Commit } from './Commit.svelte';

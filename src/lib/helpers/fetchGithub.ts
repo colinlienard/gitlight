@@ -2,7 +2,7 @@ import { page } from '$app/stores';
 import type { TSession } from '../types';
 
 // Pass `accessToken` only if on the server
-export const fetchGithub = async (url: string, accessToken?: string) => {
+export const fetchGithub = async (url: string, accessToken?: string): Promise<unknown | null> => {
 	if (!accessToken) {
 		page.subscribe(({ data }) => {
 			if (data && data.session) {
@@ -17,6 +17,10 @@ export const fetchGithub = async (url: string, accessToken?: string) => {
 			Authorization: `Bearer ${accessToken}`
 		}
 	});
-	const data = await response.json();
-	return data;
+	if (response.ok) {
+		const data = await response.json();
+		return data;
+	}
+
+	return null;
 };

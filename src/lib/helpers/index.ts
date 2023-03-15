@@ -1,4 +1,5 @@
 export * from './createEventData';
+export * from './debounce';
 export * from './fetchGithub';
 export * from './formatRelativeDate';
 export * from './getHex';

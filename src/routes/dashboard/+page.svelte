@@ -1,18 +1,27 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { crossfade } from 'svelte/transition';
+	import { cubicInOut } from 'svelte/easing';
 	import { EventColumn, Separator } from '~/lib/components';
 	import { githubEvents } from '~/lib/stores';
-	import { createEventData } from '~/lib/helpers';
+	import { createEventData, fetchGithub } from '~/lib/helpers';
 	import { Check, Github, Gitlab, Mail, Pin } from '~/lib/icons';
 	import type { TGithubEvent } from '~/lib/types';
+	import { onMount } from 'svelte';
 
-	githubEvents.set(
-		($page.data.githubEvents as TGithubEvent[]).map((event) => createEventData(event))
-	);
+	onMount(async () => {
+		const data = (await fetchGithub(
+			'https://api.github.com/repos/ColinLienard/gitlight/events?per_page=100'
+		)) as TGithubEvent[];
+		githubEvents.set(data.map((event) => createEventData(event)));
+	});
 
 	$: pinned = $githubEvents.filter((event) => event.pinned);
 	$: unread = $githubEvents.filter((event) => !event.pinned && !event.read);
 	$: read = $githubEvents.filter((event) => !event.pinned && event.read);
+
+	const settings = { duration: 400, easing: cubicInOut };
+	const [send, receive] = crossfade(settings);
+	const transitions = { send, receive, settings };
 </script>
 
 <main class="main">
@@ -30,11 +39,11 @@
 		</button>
 	</nav>
 	<section class="columns-container">
-		<EventColumn icon={Pin} title="Pinned" events={pinned} />
+		<EventColumn icon={Pin} title="Pinned" events={pinned} {transitions} />
 		<Separator />
-		<EventColumn icon={Mail} title="Unread" events={unread} />
+		<EventColumn icon={Mail} title="Unread" events={unread} {transitions} />
 		<Separator />
-		<EventColumn icon={Check} title="Read" events={read} />
+		<EventColumn icon={Check} title="Read" events={read} {transitions} />
 	</section>
 </main>
 
