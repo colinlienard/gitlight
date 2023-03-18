@@ -7,7 +7,12 @@ export const handle = SvelteKitAuth({
 	providers: [
 		GitHub({
 			clientId: AUTH_GITHUB_ID,
-			clientSecret: AUTH_GITHUB_SECRET
+			clientSecret: AUTH_GITHUB_SECRET,
+			authorization: {
+				params: {
+					scope: 'repo'
+				}
+			}
 		}) as never
 	],
 	secret: AUTH_SECRET,

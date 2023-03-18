@@ -56,7 +56,7 @@
 		position: absolute;
 		inset: 0 auto;
 		width: max(50%, 2rem);
-		background-image: linear-gradient(to right, transparent, rgba(white, 0.1), transparent);
+		background-image: linear-gradient(to right, transparent, rgba(white, 0.05), transparent);
 		animation: skeleton 0.8s ease-in-out infinite;
 	}
 }
