@@ -3,18 +3,15 @@ import type { TGithubEvent, TEvent } from '../types';
 import { formatRelativeDate } from './formatRelativeDate';
 import { getIssueIcon, getPullRequestIcon } from './getIcon';
 
-export function createEventData({
-	id,
-	actor,
-	created_at,
-	payload,
-	repo,
-	type
-}: TGithubEvent): TEvent {
+export function createEventData(
+	{ id, actor, created_at, payload, repo, type }: TGithubEvent,
+	pinned: boolean,
+	read: boolean
+): TEvent {
 	const common = {
 		id,
-		read: false,
-		pinned: false,
+		read,
+		pinned,
 		time: formatRelativeDate(created_at),
 		repo: repo.name
 	};
