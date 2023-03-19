@@ -21,4 +21,5 @@ export { default as Repository } from './Repository.svelte';
 export { default as Search } from './Search.svelte';
 export { default as SmallArrow } from './SmallArrow.svelte';
 export { default as Tag } from './Tag.svelte';
+export { default as Trash } from './Trash.svelte';
 export { default as Unpin } from './Unpin.svelte';

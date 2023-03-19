@@ -63,7 +63,7 @@
 	{/if}
 	<ul class="list" bind:this={list}>
 		{#if loading}
-			{#each Array(Math.floor(Math.random() * 3) + 1) as _}
+			{#each Array(2) as _}
 				<li><SkeletonEvent /></li>
 			{/each}
 		{:else}

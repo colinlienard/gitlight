@@ -2,52 +2,15 @@
 	import { crossfade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 	import { EventColumn, Separator } from '~/lib/components';
-	import { githubEvents } from '~/lib/stores';
-	import { createEventData, fetchGithub } from '~/lib/helpers';
+	import { filteredEvents, githubEvents } from '~/lib/stores';
 	import { Check, Github, Gitlab, Mail, Pin } from '~/lib/icons';
-	import type { TGithubEvent } from '~/lib/types';
-	import { onMount } from 'svelte';
-	import { browser } from '$app/environment';
 
-	type TSavedEvents = {
-		pinned: string[];
-		read: string[];
-	};
-
-	const request = fetchGithub('repos/ColinLienard/gitlight/events?per_page=100');
-	let ids: TSavedEvents | null = null;
-
-	// Get events ids from localStorage
-	onMount(() => {
-		ids = JSON.parse(localStorage.getItem('githubEvents') || '{ pinned: [], read: [] }');
-	});
-
-	// Set events
-	$: if ($request.data && ids) {
-		githubEvents.set(
-			($request.data as TGithubEvent[]).map((event) => {
-				const isPinned = (ids as TSavedEvents).pinned.includes(event.id);
-				const isRead = (ids as TSavedEvents).read.includes(event.id);
-				return createEventData(event, isPinned, isRead);
-			})
-		);
-	}
+	$: loading = !$githubEvents.length;
 
 	// Filter events
-	$: pinned = $githubEvents.filter((event) => event.pinned);
-	$: unread = $githubEvents.filter((event) => !event.pinned && !event.read);
-	$: read = $githubEvents.filter((event) => !event.pinned && event.read);
-
-	// Save pinned and read events to localStorage
-	$: if (browser && ids) {
-		localStorage.setItem(
-			'githubEvents',
-			JSON.stringify({
-				pinned: pinned.map((event) => event.id),
-				read: read.map((event) => event.id)
-			})
-		);
-	}
+	$: pinned = $filteredEvents.filter((event) => event.pinned);
+	$: unread = $filteredEvents.filter((event) => !event.pinned && !event.read);
+	$: read = $filteredEvents.filter((event) => !event.pinned && event.read);
 
 	// Animations settings
 	const settings = { duration: 400, easing: cubicInOut };
@@ -63,18 +26,14 @@
 		<button class="tab selected">
 			<Github />
 			<p class="text">GitHub</p>
-			{#if pinned.length}
-				<span class="tag">
-					<Pin />
-					{pinned.length}
-				</span>
-			{/if}
-			{#if unread.length}
-				<span class="tag">
-					<Mail />
-					{unread.length}
-				</span>
-			{/if}
+			<span class="tag">
+				<Pin />
+				{pinned.length}
+			</span>
+			<span class="tag">
+				<Mail />
+				{unread.length}
+			</span>
 		</button>
 		<button class="tab">
 			<Gitlab />
@@ -82,23 +41,11 @@
 		</button>
 	</nav>
 	<section class="columns-container">
-		<EventColumn
-			icon={Pin}
-			title="Pinned"
-			events={pinned}
-			loading={$request.loading}
-			{transitions}
-		/>
+		<EventColumn icon={Pin} title="Pinned" events={pinned} {loading} {transitions} />
 		<Separator vertical />
-		<EventColumn
-			icon={Mail}
-			title="Unread"
-			events={unread}
-			loading={$request.loading}
-			{transitions}
-		/>
+		<EventColumn icon={Mail} title="Unread" events={unread} {loading} {transitions} />
 		<Separator vertical />
-		<EventColumn icon={Check} title="Read" events={read} loading={$request.loading} {transitions} />
+		<EventColumn icon={Check} title="Read" events={read} {loading} {transitions} />
 	</section>
 </main>
 
