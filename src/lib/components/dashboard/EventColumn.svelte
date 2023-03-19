@@ -137,6 +137,7 @@
 		gap: 1rem;
 		overflow: auto;
 		padding: 1rem 0;
+		height: 100%;
 
 		&::-webkit-scrollbar {
 			display: none;

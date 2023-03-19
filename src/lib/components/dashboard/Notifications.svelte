@@ -89,7 +89,7 @@
 			loading={$request.loading}
 			{transitions}
 		/>
-		<Separator />
+		<Separator vertical />
 		<EventColumn
 			icon={Mail}
 			title="Unread"
@@ -97,13 +97,14 @@
 			loading={$request.loading}
 			{transitions}
 		/>
-		<Separator />
+		<Separator vertical />
 		<EventColumn icon={Check} title="Read" events={read} loading={$request.loading} {transitions} />
 	</section>
 </main>
 
 <style lang="scss">
 	.main {
+		flex: 1 1 100%;
 		height: 100vh;
 		display: flex;
 		flex-direction: column;
@@ -147,7 +148,7 @@
 				}
 			}
 
-			&:not(&.selected):not(&:hover) {
+			&:not(.selected):not(:hover) {
 				color: variables.$grey-4;
 			}
 

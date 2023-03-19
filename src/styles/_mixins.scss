@@ -1,10 +1,11 @@
 @use 'sass:color';
 @use './variables';
 
-@mixin shiny($color, $rounded: true) {
+@mixin shiny($color, $radius: variables.$radius) {
 	background-image: linear-gradient(lighten($color, 10%), $color 50%);
 	isolation: isolate;
 	position: relative;
+	border-radius: $radius;
 	transition: filter variables.$transition;
 
 	&::before {
@@ -13,23 +14,17 @@
 		position: absolute;
 		inset: 1px;
 		background-color: $color;
+		border-radius: calc($radius - 1px);
 	}
 
-	&:hover {
+	&:hover,
+	&:focus-within {
 		filter: brightness(130%);
-	}
-
-	@if $rounded {
-		border-radius: variables.$radius;
-
-		&::before {
-			border-radius: calc(variables.$radius - 1px);
-		}
 	}
 }
 
 @mixin shadow {
-	box-shadow: 0 0.25rem 0.5rem rgba(black, 0.2);
+	box-shadow: 0 2px 0.25rem rgba(black, 0.1);
 }
 
 @keyframes skeleton {

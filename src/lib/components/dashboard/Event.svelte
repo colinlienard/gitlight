@@ -113,7 +113,7 @@
 		flex-direction: column;
 		gap: 0.75rem;
 
-		&:not(&:hover) {
+		&:not(:hover) {
 			.over {
 				opacity: 0;
 			}

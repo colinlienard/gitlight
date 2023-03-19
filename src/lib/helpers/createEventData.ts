@@ -20,7 +20,10 @@ export function createEventData(
 		case 'CommitCommentEvent':
 			return {
 				...common,
-				description: [{ text: actor.login, image: actor.avatar_url }, ' commented on a commit'],
+				description: [
+					{ text: actor.login, image: payload.comment.user.avatar_url },
+					' commented on a commit'
+				],
 				icon: Discussion,
 				iconColor: 'blue',
 				title: payload.comment.body,
@@ -79,7 +82,9 @@ export function createEventData(
 					' commented on ',
 					{
 						text: payload.issue.title,
-						icon: getIssueIcon(payload.issue.state),
+						icon: payload.issue.html_url.includes('pull')
+							? getPullRequestIcon(payload.issue.state, false)
+							: getIssueIcon(payload.issue.state),
 						iconColor: payload.issue.state === 'open' ? 'green' : 'red'
 					}
 				],

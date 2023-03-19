@@ -42,7 +42,7 @@
 			@include mixins.shiny(variables.$grey-3);
 		}
 
-		&:not(&.small) {
+		&:not(.small) {
 			@include typography.bold;
 			padding: 0.75em 1em;
 		}
@@ -65,7 +65,7 @@
 		}
 
 		&:active .content {
-			scale: 90%;
+			scale: 95%;
 		}
 	}
 </style>
