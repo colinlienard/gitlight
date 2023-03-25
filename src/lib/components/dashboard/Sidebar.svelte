@@ -1,21 +1,39 @@
 <script lang="ts">
 	import { Plus, Search, Trash } from '~/lib/icons';
 	import { Button, Input, Separator, ShrinkableWrapper, Switch, Tooltip } from '~/lib/components';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount, SvelteComponent } from 'svelte';
 	import { createEventData, fetchGithub } from '~/lib/helpers';
-	import type { TGithubEvent } from '~/lib/types';
+	import type { TEventType, TGithubEvent } from '~/lib/types';
 	import { filteredEvents, githubEvents, savedEventIds } from '~/lib/stores';
 	import { browser } from '$app/environment';
+
+	type TTypeFilters = {
+		name: string;
+		type: TEventType;
+		active: boolean;
+	}[];
 
 	type TEventSources = {
 		name: string;
 		active: boolean;
 	}[];
 
+	let search = '';
+	let typeFilters: TTypeFilters = [
+		{ name: 'Pull requests', type: 'pr', active: true },
+		{ name: 'Issues', type: 'issue', active: true },
+		{ name: 'Commits', type: 'commit', active: true },
+		{ name: 'Reviews', type: 'review', active: true },
+		{ name: 'Branches & tags', type: 'branch/tag', active: true },
+		{ name: 'Repository events', type: 'repo', active: true }
+	];
 	let eventSources: TEventSources = [
 		{ name: 'ColinLienard/gitlight', active: true },
 		{ name: 'lagonapp/lagon', active: true }
 	];
+	let searchInput: SvelteComponent;
+
+	$: mostAreSelected = typeFilters.filter((filter) => filter.active).length > 3;
 
 	onMount(() => {
 		// Get events ids from localStorage
@@ -37,7 +55,9 @@
 	$: filteredEvents.set(
 		$githubEvents.filter((event) => {
 			const source = eventSources.find((source) => source.name === event.repo);
-			return source?.active || false;
+			const searched = event.title.toLowerCase().includes(search.toLowerCase());
+			const isOfType = typeFilters.some((filter) => filter.active && filter.type === event.type);
+			return source?.active && searched && isOfType;
 		})
 	);
 
@@ -70,8 +90,28 @@
 		};
 	}
 
-	let active = true;
-	let value = '';
+	function handleSearchFocus(event: KeyboardEvent) {
+		if (event.key === '/') {
+			event.preventDefault();
+			searchInput.focus();
+		}
+	}
+
+	function changeSelectAll(active: boolean) {
+		return () => {
+			typeFilters = typeFilters.map((filter) => ({ ...filter, active }));
+		};
+	}
+
+	onMount(() => {
+		document.addEventListener('keydown', handleSearchFocus);
+	});
+
+	onDestroy(() => {
+		if (browser) {
+			document.removeEventListener('keydown', handleSearchFocus);
+		}
+	});
 </script>
 
 <article class="sidebar">
@@ -80,10 +120,20 @@
 		<h1 class="title">GitLight</h1>
 	</header>
 	<ShrinkableWrapper title="Filters">
-		<Input icon={Search} bind:value placeholder="Placeholder" />
+		<Input icon={Search} bind:value={search} placeholder="Search" clearable bind:this={searchInput}>
+			{#if !search}
+				<span class="key">/</span>
+			{/if}
+		</Input>
 		<Separator />
-		<Switch bind:active label="Pull requests" />
-		<Switch bind:active label="Issues" />
+		{#if mostAreSelected}
+			<button class="button" on:click={changeSelectAll(false)}>Deselect all</button>
+		{:else}
+			<button class="button" on:click={changeSelectAll(true)}>Select all</button>
+		{/if}
+		{#each typeFilters as filter (filter.name)}
+			<Switch bind:active={filter.active} label={filter.name} />
+		{/each}
 	</ShrinkableWrapper>
 	<ShrinkableWrapper title="Watching">
 		{#each eventSources as source (source.name)}
@@ -110,10 +160,11 @@
 		flex-direction: column;
 		gap: 3rem;
 		position: relative;
+		overflow: auto;
 	}
 
 	.gradient {
-		position: absolute;
+		position: fixed;
 		inset: 0;
 		z-index: -1;
 	}
@@ -122,6 +173,26 @@
 		.title {
 			@include typography.heading-1;
 		}
+	}
+
+	.button {
+		color: variables.$blue-3;
+		width: fit-content;
+
+		&:hover {
+			filter: brightness(130%);
+		}
+	}
+
+	.key {
+		@include typography.small;
+		position: absolute;
+		right: 0.75rem;
+		padding: 0.25rem 0.5rem;
+		border-radius: 0.25rem;
+		border: 1px solid variables.$grey-3;
+		color: variables.$grey-4;
+		white-space: nowrap;
 	}
 
 	.repository {

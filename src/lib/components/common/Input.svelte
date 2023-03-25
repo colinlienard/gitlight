@@ -1,10 +1,18 @@
 <script lang="ts">
 	import type { ComponentType } from 'svelte';
+	import { Cross } from '~/lib/icons';
 
 	export let label: string | undefined = undefined;
 	export let icon: ComponentType | undefined = undefined;
 	export let value: string;
 	export let placeholder: string;
+	export let clearable = false;
+
+	let input: HTMLInputElement;
+
+	export function focus() {
+		input.focus();
+	}
 </script>
 
 <label class="container">
@@ -15,7 +23,13 @@
 		{#if icon}
 			<svelte:component this={icon} />
 		{/if}
-		<input class="input" type="text" bind:value {placeholder} />
+		<input class="input" type="text" bind:value {placeholder} bind:this={input} />
+		<slot />
+		{#if clearable && value}
+			<button class="clear" on:click={() => (value = '')}>
+				<Cross />
+			</button>
+		{/if}
 	</div>
 </label>
 
@@ -41,13 +55,26 @@
 		}
 
 		:global(svg) {
+			flex: 0 0 1.25rem;
 			height: 1.25rem;
 		}
 
 		.input {
-			flex: 1;
+			width: 100%;
 
 			&::placeholder {
+				color: variables.$grey-4;
+			}
+		}
+
+		.clear {
+			flex: 0 0 0.75rem;
+
+			:global(svg) {
+				height: 0.75rem;
+			}
+
+			&:not(:hover) {
 				color: variables.$grey-4;
 			}
 		}

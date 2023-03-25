@@ -6,8 +6,11 @@ export type TSession = Session & { accessToken: string };
 
 export type TColors = 'blue' | 'purple' | 'green' | 'red' | 'grey';
 
+export type TEventType = 'pr' | 'issue' | 'commit' | 'review' | 'branch/tag' | 'repo';
+
 export type TEvent = {
 	id: string;
+	type: TEventType;
 	read: boolean;
 	pinned: boolean;
 	title: string;

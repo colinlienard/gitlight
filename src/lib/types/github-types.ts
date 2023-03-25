@@ -194,7 +194,12 @@ export type TGithubEvent = (
 			payload: {
 				action: 'created';
 				pull_request: TGithubPullRequest;
-				review: unknown;
+				review: {
+					state: 'approved' | 'changes_requested' | 'commented';
+					body: string;
+					html_url: string;
+					user: TGithubUser;
+				};
 			};
 	  }
 	| {
