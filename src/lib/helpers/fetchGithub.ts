@@ -15,7 +15,10 @@ export async function fetchGithub(url: string): Promise<unknown> {
 			Authorization: `Bearer ${accessToken}`
 		}
 	});
-	const data = await response.json();
+	if (response.ok) {
+		const data = await response.json();
+		return data;
+	}
 
-	return data;
+	throw new Error('Failed to fetch');
 }

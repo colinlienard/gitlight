@@ -1,22 +1,13 @@
 <script lang="ts">
-	import { Plus, Search, Trash } from '~/lib/icons';
-	import { Button, Input, Separator, ShrinkableWrapper, Switch, Tooltip } from '~/lib/components';
-	import { onDestroy, onMount, SvelteComponent } from 'svelte';
+	import { Trash } from '~/lib/icons';
+	import { Separator, ShrinkableWrapper, Switch, Tooltip } from '~/lib/components';
+	import { onMount } from 'svelte';
 	import { createEventData, fetchGithub } from '~/lib/helpers';
-	import type { TEventType, TGithubEvent } from '~/lib/types';
+	import type { TEventSources, TGithubEvent, TTypeFilters } from '~/lib/types';
 	import { filteredEvents, githubEvents, savedEventIds } from '~/lib/stores';
 	import { browser } from '$app/environment';
-
-	type TTypeFilters = {
-		name: string;
-		type: TEventType;
-		active: boolean;
-	}[];
-
-	type TEventSources = {
-		name: string;
-		active: boolean;
-	}[];
+	import SidebarModal from './SidebarModal.svelte';
+	import SidebarSearch from './SidebarSearch.svelte';
 
 	let search = '';
 	let typeFilters: TTypeFilters = [
@@ -31,18 +22,8 @@
 		{ name: 'ColinLienard/gitlight', active: true },
 		{ name: 'lagonapp/lagon', active: true }
 	];
-	let searchInput: SvelteComponent;
 
 	$: mostAreSelected = typeFilters.filter((filter) => filter.active).length > 3;
-
-	onMount(() => {
-		// Get events ids from localStorage
-		savedEventIds.set(
-			JSON.parse(localStorage.getItem('githubEvents') || '{ pinned: [], read: [] }')
-		);
-
-		setEvents();
-	});
 
 	// Save pinned and read events to localStorage
 	$: if (browser && $githubEvents.length && $savedEventIds) {
@@ -78,8 +59,9 @@
 		);
 	}
 
-	function handleAddSource() {
-		eventSources = [...eventSources, { name: 'sveltejs/kit', active: true }];
+	function handleAddSource({ detail }: { detail: { name: string } }) {
+		const { name } = detail;
+		eventSources = [...eventSources, { name, active: true }];
 		setEvents();
 	}
 
@@ -90,13 +72,6 @@
 		};
 	}
 
-	function handleSearchFocus(event: KeyboardEvent) {
-		if (event.key === '/') {
-			event.preventDefault();
-			searchInput.focus();
-		}
-	}
-
 	function changeSelectAll(active: boolean) {
 		return () => {
 			typeFilters = typeFilters.map((filter) => ({ ...filter, active }));
@@ -104,13 +79,12 @@
 	}
 
 	onMount(() => {
-		document.addEventListener('keydown', handleSearchFocus);
-	});
+		// Get events ids from localStorage
+		savedEventIds.set(
+			JSON.parse(localStorage.getItem('githubEvents') || '{ pinned: [], read: [] }')
+		);
 
-	onDestroy(() => {
-		if (browser) {
-			document.removeEventListener('keydown', handleSearchFocus);
-		}
+		setEvents();
 	});
 </script>
 
@@ -120,11 +94,7 @@
 		<h1 class="title">GitLight</h1>
 	</header>
 	<ShrinkableWrapper title="Filters">
-		<Input icon={Search} bind:value={search} placeholder="Search" clearable bind:this={searchInput}>
-			{#if !search}
-				<span class="key">/</span>
-			{/if}
-		</Input>
+		<SidebarSearch bind:search />
 		<Separator />
 		{#if mostAreSelected}
 			<button class="button" on:click={changeSelectAll(false)}>Deselect all</button>
@@ -146,7 +116,7 @@
 				</Tooltip>
 			</div>
 		{/each}
-		<Button type="secondary" small on:click={handleAddSource}><Plus />Add a repository</Button>
+		<SidebarModal {eventSources} on:add={handleAddSource} />
 	</ShrinkableWrapper>
 </article>
 
@@ -182,17 +152,6 @@
 		&:hover {
 			filter: brightness(130%);
 		}
-	}
-
-	.key {
-		@include typography.small;
-		position: absolute;
-		right: 0.75rem;
-		padding: 0.25rem 0.5rem;
-		border-radius: 0.25rem;
-		border: 1px solid variables.$grey-3;
-		color: variables.$grey-4;
-		white-space: nowrap;
 	}
 
 	.repository {

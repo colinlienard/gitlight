@@ -27,16 +27,6 @@
 	box-shadow: 0 2px 0.25rem rgba(black, 0.1);
 }
 
-@keyframes skeleton {
-	from {
-		right: 100%;
-	}
-
-	to {
-		right: min(-50%, -2rem);
-	}
-}
-
 @mixin skeleton($width: 100%, $height: 100%) {
 	width: $width;
 	height: $height;
@@ -53,5 +43,15 @@
 		width: max(50%, 2rem);
 		background-image: linear-gradient(to right, transparent, rgba(white, 0.05), transparent);
 		animation: skeleton 0.8s ease-in-out infinite;
+
+		@keyframes skeleton {
+			from {
+				right: 100%;
+			}
+
+			to {
+				right: min(-50%, -2rem);
+			}
+		}
 	}
 }

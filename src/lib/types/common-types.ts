@@ -31,3 +31,14 @@ export type TEvent = {
 	labels?: TGithubLabel[];
 	url?: string;
 };
+
+export type TTypeFilters = {
+	name: string;
+	type: TEventType;
+	active: boolean;
+}[];
+
+export type TEventSources = {
+	name: string;
+	active: boolean;
+}[];
