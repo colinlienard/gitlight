@@ -8,6 +8,7 @@
 	import { Button } from '../common';
 	import Event from './Event.svelte';
 	import SkeletonEvent from './SkeletonEvent.svelte';
+	import { loading } from '~/lib/stores';
 
 	type TSvelteAnimation = (
 		node: Element,
@@ -19,7 +20,6 @@
 	export let icon: ComponentType;
 	export let title: string;
 	export let events: TEvent[];
-	export let loading: boolean;
 	export let transitions: {
 		receive: TSvelteAnimation;
 		send: TSvelteAnimation;
@@ -62,7 +62,7 @@
 		</div>
 	{/if}
 	<ul class="list" bind:this={list}>
-		{#if loading}
+		{#if $loading}
 			{#each Array(2) as _}
 				<li><SkeletonEvent /></li>
 			{/each}

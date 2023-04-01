@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import { createEventData, fetchGithub } from '~/lib/helpers';
 	import type { TEventSources, TGithubEvent, TTypeFilters } from '~/lib/types';
-	import { filteredEvents, githubEvents, savedEventIds } from '~/lib/stores';
+	import { filteredEvents, githubEvents, loading, savedEventIds } from '~/lib/stores';
 	import { browser } from '$app/environment';
 	import SidebarModal from './SidebarModal.svelte';
 	import SidebarSearch from './SidebarSearch.svelte';
@@ -18,10 +18,7 @@
 		{ name: 'Branches & tags', type: 'branch/tag', active: true },
 		{ name: 'Repository events', type: 'repo', active: true }
 	];
-	let eventSources: TEventSources = [
-		{ name: 'ColinLienard/gitlight', active: true },
-		{ name: 'lagonapp/lagon', active: true }
-	];
+	let eventSources: TEventSources = [];
 
 	$: mostAreSelected = typeFilters.filter((filter) => filter.active).length > 3;
 
@@ -30,6 +27,16 @@
 		const pinned = $githubEvents.filter((event) => event.pinned).map((event) => event.id);
 		const read = $githubEvents.filter((event) => event.read).map((event) => event.id);
 		localStorage.setItem('githubEvents', JSON.stringify({ pinned, read }));
+	}
+
+	// Save event sources to localStorage
+	$: if (browser && eventSources?.length) {
+		localStorage.setItem('eventSources', JSON.stringify(eventSources));
+	}
+
+	// Save type filters to localStorage
+	$: if (browser && !$loading) {
+		localStorage.setItem('typeFilters', JSON.stringify(typeFilters.map((filter) => filter.active)));
 	}
 
 	// Apply filters and search
@@ -57,6 +64,7 @@
 				return createEventData(event, isPinned, isRead);
 			})
 		);
+		loading.set(false);
 	}
 
 	function handleAddSource({ detail }: { detail: { name: string } }) {
@@ -81,9 +89,22 @@
 	onMount(() => {
 		// Get events ids from localStorage
 		savedEventIds.set(
-			JSON.parse(localStorage.getItem('githubEvents') || '{ pinned: [], read: [] }')
+			JSON.parse(localStorage.getItem('githubEvents') || '{ "pinned": [], "read": [] }')
 		);
 
+		// Get event sources from localStorage
+		eventSources = JSON.parse(localStorage.getItem('eventSources') || '[]');
+
+		// Get type filters from localStorage
+		const savedTypeFilters = JSON.parse(
+			localStorage.getItem('typeFilters') || '[true, true, true, true, true, true, true]'
+		);
+		typeFilters = typeFilters.map((filter, index) => ({
+			...filter,
+			active: savedTypeFilters[index]
+		}));
+
+		// Fetch events
 		setEvents();
 	});
 </script>
@@ -93,31 +114,48 @@
 	<header class="header">
 		<h1 class="title">GitLight</h1>
 	</header>
-	<ShrinkableWrapper title="Filters">
-		<SidebarSearch bind:search />
-		<Separator />
-		{#if mostAreSelected}
-			<button class="button" on:click={changeSelectAll(false)}>Deselect all</button>
-		{:else}
-			<button class="button" on:click={changeSelectAll(true)}>Select all</button>
-		{/if}
-		{#each typeFilters as filter (filter.name)}
-			<Switch bind:active={filter.active} label={filter.name} />
-		{/each}
-	</ShrinkableWrapper>
-	<ShrinkableWrapper title="Watching">
-		{#each eventSources as source (source.name)}
-			<div class="repository">
-				<Switch bind:active={source.active} label={source.name} />
-				<Tooltip content="Delete" position="top">
-					<button class="delete" on:click={handleRemoveSource(source.name)}>
-						<Trash />
-					</button>
-				</Tooltip>
-			</div>
-		{/each}
-		<SidebarModal {eventSources} on:add={handleAddSource} />
-	</ShrinkableWrapper>
+	{#if $loading}
+		<div class="skeletons-container">
+			<span class="skeleton" />
+			<span class="skeleton" />
+			<span class="skeleton" />
+			<span class="skeleton" />
+			<span class="skeleton" />
+		</div>
+		<div class="skeletons-container">
+			<span class="skeleton" />
+			<span class="skeleton" />
+			<span class="skeleton" />
+			<span class="skeleton" />
+			<span class="skeleton" />
+		</div>
+	{:else}
+		<ShrinkableWrapper title="Filters">
+			<SidebarSearch bind:search />
+			<Separator />
+			{#if mostAreSelected}
+				<button class="button" on:click={changeSelectAll(false)}>Deselect all</button>
+			{:else}
+				<button class="button" on:click={changeSelectAll(true)}>Select all</button>
+			{/if}
+			{#each typeFilters as filter (filter.name)}
+				<Switch bind:active={filter.active} label={filter.name} />
+			{/each}
+		</ShrinkableWrapper>
+		<ShrinkableWrapper title="Watching">
+			{#each eventSources as source (source.name)}
+				<div class="repository">
+					<Switch bind:active={source.active} label={source.name} />
+					<Tooltip content="Delete" position="top">
+						<button class="delete" on:click={handleRemoveSource(source.name)}>
+							<Trash />
+						</button>
+					</Tooltip>
+				</div>
+			{/each}
+			<SidebarModal {eventSources} on:add={handleAddSource} />
+		</ShrinkableWrapper>
+	{/if}
 </article>
 
 <style lang="scss">
@@ -134,7 +172,7 @@
 	}
 
 	.gradient {
-		position: fixed;
+		position: absolute;
 		inset: 0;
 		z-index: -1;
 	}
@@ -142,6 +180,16 @@
 	.header {
 		.title {
 			@include typography.heading-1;
+		}
+	}
+
+	.skeletons-container {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+
+		.skeleton {
+			@include mixins.skeleton(100%, 2rem);
 		}
 	}
 

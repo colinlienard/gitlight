@@ -158,8 +158,6 @@ export function createEventData(
 			};
 
 		case 'PullRequestReviewEvent':
-			console.log(payload);
-
 			return {
 				...common,
 				type: 'review',

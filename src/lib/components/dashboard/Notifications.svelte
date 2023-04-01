@@ -5,8 +5,6 @@
 	import { filteredEvents, githubEvents } from '~/lib/stores';
 	import { Check, Github, Gitlab, Mail, Pin } from '~/lib/icons';
 
-	$: loading = !$githubEvents.length;
-
 	// Filter events
 	$: pinned = $filteredEvents.filter((event) => event.pinned);
 	$: unread = $filteredEvents.filter((event) => !event.pinned && !event.read);
@@ -41,11 +39,11 @@
 		</button>
 	</nav>
 	<section class="columns-container">
-		<EventColumn icon={Pin} title="Pinned" events={pinned} {loading} {transitions} />
+		<EventColumn icon={Pin} title="Pinned" events={pinned} {transitions} />
 		<Separator vertical />
-		<EventColumn icon={Mail} title="Unread" events={unread} {loading} {transitions} />
+		<EventColumn icon={Mail} title="Unread" events={unread} {transitions} />
 		<Separator vertical />
-		<EventColumn icon={Check} title="Read" events={read} {loading} {transitions} />
+		<EventColumn icon={Check} title="Read" events={read} {transitions} />
 	</section>
 </main>
 
