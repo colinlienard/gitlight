@@ -4,7 +4,7 @@
 	import { flip } from 'svelte/animate';
 	import type { TEvent } from '~/lib/types';
 	import { debounce } from '~/lib/helpers';
-	import { ArrowUp } from '~/lib/icons';
+	import { ArrowUp, Folder } from '~/lib/icons';
 	import { Button } from '../common';
 	import Event from './Event.svelte';
 	import SkeletonEvent from './SkeletonEvent.svelte';
@@ -20,6 +20,7 @@
 	export let icon: ComponentType;
 	export let title: string;
 	export let events: TEvent[];
+	export let placeholder: string;
 	export let transitions: {
 		receive: TSvelteAnimation;
 		send: TSvelteAnimation;
@@ -66,7 +67,7 @@
 			{#each Array(2) as _}
 				<li><SkeletonEvent /></li>
 			{/each}
-		{:else}
+		{:else if events.length}
 			{#each events as event (event.id)}
 				<li
 					class="item"
@@ -77,6 +78,12 @@
 					<Event data={event} />
 				</li>
 			{/each}
+		{:else}
+			<li class="placeholder">
+				<Folder />
+				<h4 class="title">No events to display</h4>
+				<p>{placeholder}</p>
+			</li>
 		{/if}
 	</ul>
 </div>
@@ -145,6 +152,24 @@
 
 		.item {
 			opacity: 1 !important;
+		}
+	}
+
+	.placeholder {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		align-items: center;
+		justify-content: center;
+		color: variables.$grey-4;
+
+		:global(svg) {
+			height: 3rem;
+		}
+
+		.title {
+			@include typography.heading-2;
 		}
 	}
 </style>

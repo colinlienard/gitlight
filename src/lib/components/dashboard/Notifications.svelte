@@ -39,11 +39,29 @@
 		</button>
 	</nav>
 	<section class="columns-container">
-		<EventColumn icon={Pin} title="Pinned" events={pinned} {transitions} />
+		<EventColumn
+			icon={Pin}
+			title="Pinned"
+			events={pinned}
+			placeholder="Click on the pin icon to mark an event as pinned."
+			{transitions}
+		/>
 		<Separator vertical />
-		<EventColumn icon={Mail} title="Unread" events={unread} {transitions} />
+		<EventColumn
+			icon={Mail}
+			title="Unread"
+			events={unread}
+			placeholder="Well done! You have no unread notifications."
+			{transitions}
+		/>
 		<Separator vertical />
-		<EventColumn icon={Check} title="Read" events={read} {transitions} />
+		<EventColumn
+			icon={Check}
+			title="Read"
+			events={read}
+			placeholder="Click on the check icon to mark an event as read."
+			{transitions}
+		/>
 	</section>
 </main>
 
