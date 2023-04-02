@@ -2,50 +2,19 @@
 	import { crossfade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 	import { EventColumn, Separator } from '~/lib/components';
-	import { githubEvents } from '~/lib/stores';
-	import { createEventData, fetchGithub } from '~/lib/helpers';
+	import { filteredEvents, githubEvents } from '~/lib/stores';
 	import { Check, Github, Gitlab, Mail, Pin } from '~/lib/icons';
-	import type { TGithubEvent } from '~/lib/types';
-	import { onMount } from 'svelte';
-	import { browser } from '$app/environment';
-
-	type TSavedEvents = {
-		pinned: string[];
-		read: string[];
-	};
-
-	const request = fetchGithub('repos/ColinLienard/gitlight/events?per_page=100');
-	let ids: TSavedEvents | null = null;
-
-	// Get events ids from localStorage
-	onMount(() => {
-		ids = JSON.parse(localStorage.getItem('githubEvents') || '{ pinned: [], read: [] }');
-	});
-
-	// Set events
-	$: if ($request.data && ids) {
-		githubEvents.set(
-			($request.data as TGithubEvent[]).map((event) => {
-				const isPinned = (ids as TSavedEvents).pinned.includes(event.id);
-				const isRead = (ids as TSavedEvents).read.includes(event.id);
-				return createEventData(event, isPinned, isRead);
-			})
-		);
-	}
 
 	// Filter events
-	$: pinned = $githubEvents.filter((event) => event.pinned);
-	$: unread = $githubEvents.filter((event) => !event.pinned && !event.read);
-	$: read = $githubEvents.filter((event) => !event.pinned && event.read);
+	$: pinned = $filteredEvents.filter((event) => event.pinned);
+	$: unread = $filteredEvents.filter((event) => !event.pinned && !event.read);
+	$: read = $filteredEvents.filter((event) => !event.pinned && event.read);
 
-	// Save pinned and read events to localStorage
-	$: if (browser && ids) {
-		localStorage.setItem(
-			'githubEvents',
-			JSON.stringify({
-				pinned: pinned.map((event) => event.id),
-				read: read.map((event) => event.id)
-			})
+	$: showReadAll = unread.length > 0;
+
+	function markAllAsRead() {
+		githubEvents.update((previous) =>
+			previous.map((event) => (unread.includes(event) ? { ...event, read: true } : event))
 		);
 	}
 
@@ -63,18 +32,14 @@
 		<button class="tab selected">
 			<Github />
 			<p class="text">GitHub</p>
-			{#if pinned.length}
-				<span class="tag">
-					<Pin />
-					{pinned.length}
-				</span>
-			{/if}
-			{#if unread.length}
-				<span class="tag">
-					<Mail />
-					{unread.length}
-				</span>
-			{/if}
+			<span class="tag">
+				<Pin />
+				{pinned.length}
+			</span>
+			<span class="tag">
+				<Mail />
+				{unread.length}
+			</span>
 		</button>
 		<button class="tab">
 			<Gitlab />
@@ -86,24 +51,37 @@
 			icon={Pin}
 			title="Pinned"
 			events={pinned}
-			loading={$request.loading}
+			placeholder="Click on 📌 to mark an event as pinned."
 			{transitions}
 		/>
-		<Separator />
+		<Separator vertical />
 		<EventColumn
 			icon={Mail}
 			title="Unread"
 			events={unread}
-			loading={$request.loading}
+			placeholder="New notifications 🔔 will appear here."
 			{transitions}
 		/>
-		<Separator />
-		<EventColumn icon={Check} title="Read" events={read} loading={$request.loading} {transitions} />
+		<Separator vertical />
+		<EventColumn
+			icon={Check}
+			title="Read"
+			events={read}
+			placeholder="Click on ✅ to mark an event as read."
+			{transitions}
+		/>
+		{#if showReadAll}
+			<button class="read-all" on:click={markAllAsRead}>
+				<Check />
+				All
+			</button>
+		{/if}
 	</section>
 </main>
 
 <style lang="scss">
 	.main {
+		flex: 1 1 100%;
 		height: 100vh;
 		display: flex;
 		flex-direction: column;
@@ -147,7 +125,7 @@
 				}
 			}
 
-			&:not(&.selected):not(&:hover) {
+			&:not(.selected):not(:hover) {
 				color: variables.$grey-4;
 			}
 
@@ -180,5 +158,29 @@
 		gap: 1.5rem;
 		padding: 2rem;
 		overflow: hidden;
+		position: relative;
+
+		.read-all {
+			@include typography.small;
+			@include typography.bold;
+
+			position: absolute;
+			top: 2rem;
+			right: calc(33% + 2rem);
+			height: 1.25rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.25rem;
+			color: variables.$blue-3;
+
+			&:hover {
+				filter: brightness(130%);
+			}
+
+			:global(svg) {
+				height: 1rem;
+			}
+		}
 	}
 </style>

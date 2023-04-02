@@ -5,3 +5,4 @@ export * from './formatRelativeDate';
 export * from './getHex';
 export * from './getIcon';
 export * from './onScrollVisible';
+export * from './reactiveFetch';

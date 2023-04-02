@@ -4,10 +4,11 @@
 	import { flip } from 'svelte/animate';
 	import type { TEvent } from '~/lib/types';
 	import { debounce } from '~/lib/helpers';
-	import { ArrowUp } from '~/lib/icons';
+	import { ArrowUp, Folder } from '~/lib/icons';
 	import { Button } from '../common';
 	import Event from './Event.svelte';
 	import SkeletonEvent from './SkeletonEvent.svelte';
+	import { loading } from '~/lib/stores';
 
 	type TSvelteAnimation = (
 		node: Element,
@@ -19,7 +20,7 @@
 	export let icon: ComponentType;
 	export let title: string;
 	export let events: TEvent[];
-	export let loading: boolean;
+	export let placeholder: string;
 	export let transitions: {
 		receive: TSvelteAnimation;
 		send: TSvelteAnimation;
@@ -62,11 +63,11 @@
 		</div>
 	{/if}
 	<ul class="list" bind:this={list}>
-		{#if loading}
-			{#each Array(Math.floor(Math.random() * 3) + 1) as _}
+		{#if $loading}
+			{#each Array(2) as _}
 				<li><SkeletonEvent /></li>
 			{/each}
-		{:else}
+		{:else if events.length}
 			{#each events as event (event.id)}
 				<li
 					class="item"
@@ -77,6 +78,12 @@
 					<Event data={event} />
 				</li>
 			{/each}
+		{:else}
+			<li class="placeholder">
+				<Folder />
+				<h4 class="title">No events to display</h4>
+				<p>{placeholder}</p>
+			</li>
 		{/if}
 	</ul>
 </div>
@@ -137,6 +144,7 @@
 		gap: 1rem;
 		overflow: auto;
 		padding: 1rem 0;
+		height: 100%;
 
 		&::-webkit-scrollbar {
 			display: none;
@@ -144,6 +152,24 @@
 
 		.item {
 			opacity: 1 !important;
+		}
+	}
+
+	.placeholder {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		align-items: center;
+		justify-content: center;
+		color: variables.$grey-4;
+
+		:global(svg) {
+			height: 3rem;
+		}
+
+		.title {
+			@include typography.heading-2;
 		}
 	}
 </style>

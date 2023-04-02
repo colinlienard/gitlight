@@ -20,7 +20,11 @@ export function createEventData(
 		case 'CommitCommentEvent':
 			return {
 				...common,
-				description: [{ text: actor.login, image: actor.avatar_url }, ' commented on a commit'],
+				type: 'commit',
+				description: [
+					{ text: actor.login, image: payload.comment.user.avatar_url },
+					' commented on a commit'
+				],
 				icon: Discussion,
 				iconColor: 'blue',
 				title: payload.comment.body,
@@ -30,6 +34,7 @@ export function createEventData(
 		case 'CreateEvent':
 			return {
 				...common,
+				type: 'branch/tag',
 				description: [
 					{ text: actor.login, image: actor.avatar_url },
 					` created this ${payload.ref_type} `
@@ -44,6 +49,7 @@ export function createEventData(
 		case 'DeleteEvent':
 			return {
 				...common,
+				type: 'branch/tag',
 				description: [
 					{ text: actor.login, image: actor.avatar_url },
 					` deleted this ${payload.ref_type} `
@@ -56,6 +62,7 @@ export function createEventData(
 		case 'ForkEvent':
 			return {
 				...common,
+				type: 'repo',
 				description: [],
 				icon: Commit,
 				title: 'ForkEvent not implemented',
@@ -65,6 +72,7 @@ export function createEventData(
 		case 'GollumEvent':
 			return {
 				...common,
+				type: 'repo',
 				description: [],
 				icon: Commit,
 				title: 'GollumEvent not implemented',
@@ -74,12 +82,15 @@ export function createEventData(
 		case 'IssueCommentEvent':
 			return {
 				...common,
+				type: 'issue',
 				description: [
 					{ text: payload.comment.user.login, image: payload.comment.user.avatar_url },
 					' commented on ',
 					{
 						text: payload.issue.title,
-						icon: getIssueIcon(payload.issue.state),
+						icon: payload.issue.html_url.includes('pull')
+							? getPullRequestIcon(payload.issue.state, false)
+							: getIssueIcon(payload.issue.state),
 						iconColor: payload.issue.state === 'open' ? 'green' : 'red'
 					}
 				],
@@ -92,6 +103,7 @@ export function createEventData(
 		case 'IssuesEvent':
 			return {
 				...common,
+				type: 'issue',
 				description: [
 					{ text: actor.login, image: actor.avatar_url },
 					` ${payload.action} this issue`
@@ -107,6 +119,7 @@ export function createEventData(
 		case 'MemberEvent':
 			return {
 				...common,
+				type: 'repo',
 				description: [],
 				icon: Commit,
 				title: 'MemberEvent not implemented',
@@ -116,6 +129,7 @@ export function createEventData(
 		case 'PublicEvent':
 			return {
 				...common,
+				type: 'repo',
 				description: [],
 				icon: Commit,
 				title: 'PublicEvent not implemented',
@@ -125,6 +139,7 @@ export function createEventData(
 		case 'PullRequestEvent':
 			return {
 				...common,
+				type: 'pr',
 				description: [
 					{ text: actor.login, image: actor.avatar_url },
 					` ${payload.pull_request.merged ? 'merged' : payload.action} this pull request`
@@ -145,15 +160,32 @@ export function createEventData(
 		case 'PullRequestReviewEvent':
 			return {
 				...common,
-				description: [],
-				icon: Commit,
-				title: 'PullRequestReviewEvent not implemented',
-				url: ''
+				type: 'review',
+				description: [
+					{ text: actor.login, image: actor.avatar_url },
+					` ${
+						payload.review.state === 'changes_requested'
+							? 'requested changes'
+							: payload.review.state
+					}${payload.review.state !== 'approved' ? ' on' : ''} this pull request`
+				],
+				icon: getPullRequestIcon(payload.pull_request.state, payload.pull_request.merged),
+				iconColor:
+					payload.pull_request.state === 'open'
+						? 'green'
+						: payload.pull_request.merged
+						? 'purple'
+						: 'red',
+				title: payload.pull_request.title,
+				number: payload.pull_request.number,
+				url: payload.review.html_url,
+				labels: payload.pull_request.labels
 			};
 
 		case 'PullRequestReviewCommentEvent':
 			return {
 				...common,
+				type: 'review',
 				description: [],
 				icon: Commit,
 				title: 'PullRequestReviewCommentEvent not implemented',
@@ -163,6 +195,7 @@ export function createEventData(
 		case 'PullRequestReviewThreadEvent':
 			return {
 				...common,
+				type: 'review',
 				description: [],
 				icon: Commit,
 				title: 'PullRequestReviewThreadEvent not implemented',
@@ -172,6 +205,7 @@ export function createEventData(
 		case 'PushEvent':
 			return {
 				...common,
+				type: 'commit',
 				description: [
 					{ text: actor.login, image: actor.avatar_url },
 					' commited to ',
@@ -186,6 +220,7 @@ export function createEventData(
 		case 'ReleaseEvent':
 			return {
 				...common,
+				type: 'repo',
 				description: [{ text: actor.login, image: actor.avatar_url }, ' published a release'],
 				icon: Release,
 				iconColor: 'blue',
@@ -200,6 +235,7 @@ export function createEventData(
 		case 'SponsorshipEvent':
 			return {
 				...common,
+				type: 'repo',
 				description: [],
 				icon: Commit,
 				title: 'SponsorshipEvent not implemented',
@@ -209,6 +245,7 @@ export function createEventData(
 		case 'WatchEvent':
 			return {
 				...common,
+				type: 'repo',
 				description: [
 					{ text: actor.login, image: actor.avatar_url },
 					' started watching this repository'

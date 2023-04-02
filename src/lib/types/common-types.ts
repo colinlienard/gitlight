@@ -6,8 +6,11 @@ export type TSession = Session & { accessToken: string };
 
 export type TColors = 'blue' | 'purple' | 'green' | 'red' | 'grey';
 
+export type TEventType = 'pr' | 'issue' | 'commit' | 'review' | 'branch/tag' | 'repo';
+
 export type TEvent = {
 	id: string;
+	type: TEventType;
 	read: boolean;
 	pinned: boolean;
 	title: string;
@@ -28,3 +31,14 @@ export type TEvent = {
 	labels?: TGithubLabel[];
 	url?: string;
 };
+
+export type TTypeFilters = {
+	name: string;
+	type: TEventType;
+	active: boolean;
+}[];
+
+export type TEventSources = {
+	name: string;
+	active: boolean;
+}[];
