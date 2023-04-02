@@ -3,7 +3,7 @@
 	import { Button, Input, Modal } from '~/lib/components';
 	import { fetchGithub } from '~/lib/helpers';
 	import { ExclamationMark, Plus } from '~/lib/icons';
-	import type { TEventSources } from '~/lib/types';
+	import type { TEventSources, TGithubRepository } from '~/lib/types';
 
 	export let eventSources: TEventSources;
 
@@ -22,7 +22,7 @@
 			return;
 		}
 
-		const name = `${owner}/${repo}`;
+		let name = `${owner}/${repo}`;
 		if (eventSources.find((source) => source.name.toLowerCase() === name.toLowerCase())) {
 			error = `"${name}" is already being watched.`;
 			return;
@@ -30,7 +30,8 @@
 
 		try {
 			loading = true;
-			await fetchGithub(`repos/${name}`);
+			const repo = (await fetchGithub(`repos/${name}`)) as TGithubRepository;
+			name = repo.full_name;
 		} catch {
 			error = `"${name}" is not a valid repository.`;
 			return;

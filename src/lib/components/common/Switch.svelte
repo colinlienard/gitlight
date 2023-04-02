@@ -25,7 +25,9 @@
 		align-items: center;
 		gap: 0.75em;
 		width: fit-content;
+		max-width: 100%;
 		cursor: pointer;
+		overflow: hidden;
 	}
 
 	.input {
@@ -36,6 +38,7 @@
 		@include mixins.shadow;
 		width: 2.25rem;
 		padding: 2px;
+		flex: 0 0 2.25rem;
 
 		.icon-container {
 			@include mixins.shadow;
@@ -77,5 +80,11 @@
 				}
 			}
 		}
+	}
+
+	.label {
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
 	}
 </style>

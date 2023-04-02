@@ -10,6 +10,14 @@
 	$: unread = $filteredEvents.filter((event) => !event.pinned && !event.read);
 	$: read = $filteredEvents.filter((event) => !event.pinned && event.read);
 
+	$: showReadAll = unread.length > 0;
+
+	function markAllAsRead() {
+		githubEvents.update((previous) =>
+			previous.map((event) => (unread.includes(event) ? { ...event, read: true } : event))
+		);
+	}
+
 	// Animations settings
 	const settings = { duration: 400, easing: cubicInOut };
 	const [send, receive] = crossfade(settings);
@@ -43,7 +51,7 @@
 			icon={Pin}
 			title="Pinned"
 			events={pinned}
-			placeholder="Click on the pin icon to mark an event as pinned."
+			placeholder="Click on 📌 to mark an event as pinned."
 			{transitions}
 		/>
 		<Separator vertical />
@@ -51,7 +59,7 @@
 			icon={Mail}
 			title="Unread"
 			events={unread}
-			placeholder="Well done! You have no unread notifications."
+			placeholder="New notifications 🔔 will appear here."
 			{transitions}
 		/>
 		<Separator vertical />
@@ -59,9 +67,15 @@
 			icon={Check}
 			title="Read"
 			events={read}
-			placeholder="Click on the check icon to mark an event as read."
+			placeholder="Click on ✅ to mark an event as read."
 			{transitions}
 		/>
+		{#if showReadAll}
+			<button class="read-all" on:click={markAllAsRead}>
+				<Check />
+				All
+			</button>
+		{/if}
 	</section>
 </main>
 
@@ -144,5 +158,29 @@
 		gap: 1.5rem;
 		padding: 2rem;
 		overflow: hidden;
+		position: relative;
+
+		.read-all {
+			@include typography.small;
+			@include typography.bold;
+
+			position: absolute;
+			top: 2rem;
+			right: calc(33% + 2rem);
+			height: 1.25rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.25rem;
+			color: variables.$blue-3;
+
+			&:hover {
+				filter: brightness(130%);
+			}
+
+			:global(svg) {
+				height: 1rem;
+			}
+		}
 	}
 </style>

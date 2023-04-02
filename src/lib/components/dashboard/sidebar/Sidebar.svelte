@@ -114,22 +114,7 @@
 	<header class="header">
 		<h1 class="title">GitLight</h1>
 	</header>
-	{#if $loading}
-		<div class="skeletons-container">
-			<span class="skeleton" />
-			<span class="skeleton" />
-			<span class="skeleton" />
-			<span class="skeleton" />
-			<span class="skeleton" />
-		</div>
-		<div class="skeletons-container">
-			<span class="skeleton" />
-			<span class="skeleton" />
-			<span class="skeleton" />
-			<span class="skeleton" />
-			<span class="skeleton" />
-		</div>
-	{:else}
+	{#if !$loading}
 		<ShrinkableWrapper title="Filters">
 			<SidebarSearch bind:search />
 			<Separator />
@@ -155,6 +140,24 @@
 			{/each}
 			<SidebarModal {eventSources} on:add={handleAddSource} />
 		</ShrinkableWrapper>
+	{:else}
+		<div class="skeletons-container">
+			<span class="skeleton" />
+			<span class="skeleton" />
+			<span class="skeleton" />
+			<span class="skeleton" />
+			<span class="skeleton" />
+			<span class="skeleton" />
+			<span class="skeleton" />
+		</div>
+		<div class="skeletons-container">
+			<span class="skeleton" />
+			<span class="skeleton" />
+			<span class="skeleton" />
+			<span class="skeleton" />
+			<span class="skeleton" />
+			<span class="skeleton" />
+		</div>
 	{/if}
 </article>
 
@@ -190,10 +193,17 @@
 
 		.skeleton {
 			@include mixins.skeleton(100%, 2rem);
+
+			&:nth-child(1) {
+				height: 1.5rem;
+				width: 70%;
+			}
 		}
 	}
 
 	.button {
+		@include typography.small;
+		@include typography.bold;
 		color: variables.$blue-3;
 		width: fit-content;
 
@@ -209,6 +219,7 @@
 		gap: 1rem;
 
 		.delete {
+			flex: 0 0 1.25rem;
 			transition: opacity variables.$transition;
 
 			:global(svg) {
