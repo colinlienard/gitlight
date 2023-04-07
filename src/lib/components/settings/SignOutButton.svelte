@@ -2,7 +2,7 @@
 	import { signOut } from '@auth/sveltekit/client';
 	import { Button } from '~/lib/components';
 
-	let timeout: NodeJS.Timeout | null = null;
+	let timeout: ReturnType<typeof setTimeout> | null = null;
 	let active = false;
 
 	function handleMouseDown() {
@@ -11,7 +11,7 @@
 	}
 
 	function handleMouseUp() {
-		clearTimeout(timeout as NodeJS.Timeout);
+		clearTimeout(timeout as ReturnType<typeof setTimeout>);
 		timeout = null;
 		active = false;
 	}
