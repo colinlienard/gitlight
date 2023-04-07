@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
 	import { Button } from '~/lib/components';
 	import { Modal, Separator, Switch } from '~/lib/components';
 	import { Github, Gitlab } from '~/lib/icons';
+	import SignOutButton from './SignOutButton.svelte';
 
 	const user = $page.data.session?.user;
 </script>
@@ -33,9 +33,7 @@
 							<p class="name">{user?.name}</p>
 						</figcaption>
 					</figure>
-					<div class="sign-out">
-						<Button type="secondary" small on:click={signOut}>Sign out</Button>
-					</div>
+					<SignOutButton />
 				</div>
 			</li>
 			<li class="account">
@@ -45,7 +43,7 @@
 				</div>
 				<div class="content">
 					<p class="sub">Not signed in.</p>
-					<Button small>Sign in</Button>
+					<Button small disabled>Sign in</Button>
 				</div>
 			</li>
 		</ul>
@@ -122,12 +120,6 @@
 
 			.sub {
 				color: variables.$grey-4;
-			}
-
-			.sign-out {
-				display: flex;
-				flex-direction: column;
-				color: variables.$red;
 			}
 		}
 	}
