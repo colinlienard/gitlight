@@ -26,6 +26,7 @@
 		{href}
 		target={external && '_blank'}
 		rel={external && 'noreferrer'}
+		on:click={handleClick}
 	>
 		<span class="content">
 			<slot />

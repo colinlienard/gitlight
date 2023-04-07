@@ -4,8 +4,23 @@
 	import { Modal, Separator, Switch } from '~/lib/components';
 	import { Github, Gitlab } from '~/lib/icons';
 	import SignOutButton from './SignOutButton.svelte';
+	import { onMount } from 'svelte';
+	import { settings } from '~/lib/stores';
 
-	const user = $page.data.session?.user;
+	let user = $page.data.session?.user;
+	let mounted = false;
+
+	onMount(() => {
+		const saved = localStorage.getItem('settings');
+		if (saved) {
+			settings.set(JSON.parse(saved));
+		}
+		mounted = true;
+	});
+
+	$: if (mounted) {
+		localStorage.setItem('settings', JSON.stringify($settings));
+	}
 </script>
 
 <Modal title="Settings">
@@ -14,9 +29,15 @@
 	</button>
 	<div class="content" slot="content">
 		<h3 class="title">Preferences</h3>
-		<Switch label="Activate desktop notifications" active />
-		<Switch label="Mark an event as read when opening in the browser" active />
-		<Switch label="Mark an event as read when pinned" active />
+		<Switch
+			label="Activate push notifications (only on desktop app)"
+			bind:active={$settings.activateNotifcations}
+		/>
+		<Switch
+			label="Mark an event as read when opening in the browser"
+			bind:active={$settings.readWhenOpenInBrowser}
+		/>
+		<Switch label="Mark an event as read when pinned" bind:active={$settings.readWhenPin} />
 		<Separator margin={1} />
 		<h3 class="title">Accounts</h3>
 		<ul class="accounts-wrapper">

@@ -3,7 +3,7 @@
 	import { Check, ExternalLink, Mail, Pin, Unpin } from '~/lib/icons';
 	import type { TEvent } from '~/lib/types';
 	import { Button, Tooltip } from '~/lib/components';
-	import { githubEvents } from '~/lib/stores';
+	import { githubEvents, settings } from '~/lib/stores';
 
 	export let data: TEvent;
 
@@ -26,12 +26,28 @@
 	function handleToggle(key: 'read' | 'pinned') {
 		return () => {
 			githubEvents.update((previous) =>
-				previous.map((event) => (event.id === id ? { ...event, [key]: !event[key] } : event))
+				previous.map((event) => {
+					if (event.id !== id) {
+						return event;
+					}
+					if (key === 'pinned' && $settings.readWhenPin) {
+						return { ...event, [key]: !event[key], read: true };
+					}
+					return { ...event, [key]: !event[key] };
+				})
 			);
 			if (pinned) {
 				read = !read;
 			}
 		};
+	}
+
+	function handleOpenInBrowser() {
+		if ($settings.readWhenOpenInBrowser) {
+			githubEvents.update((previous) =>
+				previous.map((event) => (event.id === id ? { ...event, read: true } : event))
+			);
+		}
 	}
 </script>
 
@@ -87,7 +103,9 @@
 		</Tooltip>
 		{#if url}
 			<Tooltip content="Open in GitHub" position="left">
-				<Button type="secondary" small href={url} external><ExternalLink /></Button>
+				<Button type="secondary" small href={url} external on:click={handleOpenInBrowser}
+					><ExternalLink /></Button
+				>
 			</Tooltip>
 		{/if}
 		<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left">
