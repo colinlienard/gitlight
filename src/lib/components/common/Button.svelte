@@ -6,11 +6,14 @@
 	export let href: string | undefined = undefined;
 	export let external: true | undefined = undefined;
 	export let loading = false;
+	export let disabled = false;
 
 	const dispatch = createEventDispatcher();
 
 	function handleClick(event: MouseEvent) {
-		dispatch('click', { event });
+		if (!disabled && !loading) {
+			dispatch('click', { event });
+		}
 	}
 </script>
 
@@ -19,16 +22,18 @@
 		class="button {type}"
 		class:small
 		class:loading
+		class:disabled
 		{href}
 		target={external && '_blank'}
 		rel={external && 'noreferrer'}
+		on:click={handleClick}
 	>
 		<span class="content">
 			<slot />
 		</span>
 	</a>
 {:else}
-	<button class="button {type}" class:small class:loading on:click={handleClick}>
+	<button class="button {type}" class:small class:loading class:disabled on:click={handleClick}>
 		<span class="content">
 			<slot />
 		</span>
@@ -56,13 +61,14 @@
 			padding: 0.5rem;
 		}
 
-		&.loading {
+		&.loading,
+		&.disabled {
 			opacity: 0.5;
-			pointer-events: none;
+			cursor: not-allowed;
+		}
 
-			.content {
-				opacity: 0;
-			}
+		&.loading .content {
+			opacity: 0;
 		}
 
 		&:active .content {

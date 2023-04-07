@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { crossfade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
-	import { EventColumn, Separator } from '~/lib/components';
+	import { EventColumn, Settings, Separator } from '~/lib/components';
 	import { filteredEvents, githubEvents } from '~/lib/stores';
 	import { Check, Github, Gitlab, Mail, Pin } from '~/lib/icons';
 
@@ -27,6 +27,7 @@
 <main class="main">
 	<header class="header">
 		<h1 class="title">Notifications</h1>
+		<Settings />
 	</header>
 	<nav class="nav">
 		<button class="tab selected">
@@ -89,9 +90,12 @@
 
 	.header {
 		padding: 3rem 2rem 2rem;
+		display: flex;
+		align-items: center;
 
 		.title {
 			@include typography.heading-1;
+			margin-right: auto;
 		}
 	}
 

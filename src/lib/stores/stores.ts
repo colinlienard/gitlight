@@ -11,3 +11,9 @@ export const savedEventIds = writable<{
 } | null>(null);
 
 export const loading = writable<boolean>(true);
+
+export const settings = writable({
+	activateNotifcations: true,
+	readWhenOpenInBrowser: true,
+	readWhenPin: true
+});

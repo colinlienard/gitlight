@@ -1,7 +1,7 @@
 @use 'sass:color';
 @use './variables';
 
-@mixin shiny($color, $radius: variables.$radius) {
+@mixin shiny($color, $hover: true, $radius: variables.$radius) {
 	background-image: linear-gradient(lighten($color, 10%), $color 50%);
 	isolation: isolate;
 	position: relative;
@@ -17,9 +17,11 @@
 		border-radius: calc($radius - 1px);
 	}
 
-	&:hover,
-	&:focus-within {
-		filter: brightness(130%);
+	@if $hover {
+		&:hover,
+		&:focus-within {
+			filter: brightness(130%);
+		}
 	}
 }
 

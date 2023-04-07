@@ -54,7 +54,7 @@
 	}
 </script>
 
-<Modal title="Add a repository to watch" bind:this={modal} on:close={onClose}>
+<Modal title="Add a repository to watch" bind:this={modal} on:close={onClose} small>
 	<Button type="secondary" small slot="trigger"><Plus />Add a repository</Button>
 	<div class="content" slot="content">
 		<form class="inputs-wrapper" on:submit={handleSubmit}>

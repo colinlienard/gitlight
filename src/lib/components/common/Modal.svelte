@@ -5,6 +5,7 @@
 	import { Cross } from '~/lib/icons';
 
 	export let title: string;
+	export let small = false;
 
 	let open = false;
 
@@ -57,7 +58,7 @@
 			on:click={handleToggle}
 			transition:fade={{ duration: 150, easing: cubicInOut }}
 		/>
-		<section class="modal" transition:modalAnimation>
+		<section class="modal" class:small transition:modalAnimation>
 			<header class="header">
 				<h2 class="title">{title}</h2>
 				<button class="close" on:click={handleToggle}>
@@ -93,9 +94,13 @@
 		background-color: variables.$grey-1;
 		border: 1px solid variables.$grey-2;
 		border-radius: variables.$radius;
-		width: 32rem;
+		width: 40rem;
 		box-shadow: 0 1rem 2rem rgba(black, 0.25);
 		z-index: 999;
+
+		&.small {
+			width: 32rem;
+		}
 
 		.header {
 			padding: 2rem;

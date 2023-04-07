@@ -1,8 +1,13 @@
 <script lang="ts">
 	export let vertical = false;
+	export let margin = 0;
 </script>
 
-<div class="separator" class:vertical />
+<div
+	class="separator"
+	class:vertical
+	style:margin={vertical ? `0 ${margin}rem` : `${margin}rem 0`}
+/>
 
 <style lang="scss">
 	.separator {
