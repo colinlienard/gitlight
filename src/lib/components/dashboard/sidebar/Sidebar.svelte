@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Trash } from '~/lib/icons';
+	import { Github, Logo, Trash } from '~/lib/icons';
 	import { Separator, ShrinkableWrapper, Switch, Tooltip } from '~/lib/components';
 	import { onMount } from 'svelte';
-	import { createEventData, fetchGithub } from '~/lib/helpers';
+	import { createEventData, fetchGithub, getAppVersion } from '~/lib/helpers';
 	import type { TEventSources, TGithubEvent, TTypeFilters } from '~/lib/types';
 	import { filteredEvents, githubEvents, loading, savedEventIds } from '~/lib/stores';
 	import { browser } from '$app/environment';
@@ -110,55 +110,70 @@
 </script>
 
 <article class="sidebar">
-	<img src="/images/sidebar-gradient.png" alt="" class="gradient" />
-	<header class="header">
-		<h1 class="title">GitLight</h1>
-	</header>
-	{#if !$loading}
-		<ShrinkableWrapper title="Filters">
-			<SidebarSearch bind:search />
-			<Separator />
-			{#if mostAreSelected}
-				<button class="button" on:click={changeSelectAll(false)}>Deselect all</button>
-			{:else}
-				<button class="button" on:click={changeSelectAll(true)}>Select all</button>
-			{/if}
-			{#each typeFilters as filter (filter.name)}
-				<Switch bind:active={filter.active} label={filter.name} />
-			{/each}
-		</ShrinkableWrapper>
-		<ShrinkableWrapper title="Watching">
-			{#each eventSources as source (source.name)}
-				<div class="repository">
-					<Switch bind:active={source.active} label={source.name} />
-					<Tooltip content="Delete" position="top">
-						<button class="delete" on:click={handleRemoveSource(source.name)}>
-							<Trash />
-						</button>
-					</Tooltip>
-				</div>
-			{/each}
-			<SidebarModal {eventSources} on:add={handleAddSource} />
-		</ShrinkableWrapper>
-	{:else}
-		<div class="skeletons-container">
-			<span class="skeleton" />
-			<span class="skeleton" />
-			<span class="skeleton" />
-			<span class="skeleton" />
-			<span class="skeleton" />
-			<span class="skeleton" />
-			<span class="skeleton" />
-		</div>
-		<div class="skeletons-container">
-			<span class="skeleton" />
-			<span class="skeleton" />
-			<span class="skeleton" />
-			<span class="skeleton" />
-			<span class="skeleton" />
-			<span class="skeleton" />
-		</div>
-	{/if}
+	<div class="scrollable">
+		<img src="/images/sidebar-gradient.png" alt="" class="gradient" />
+		<header class="header">
+			<Logo />
+			<h1 class="title">GitLight</h1>
+		</header>
+		{#if !$loading}
+			<ShrinkableWrapper title="Filters">
+				<SidebarSearch bind:search />
+				<Separator />
+				{#if mostAreSelected}
+					<button class="button" on:click={changeSelectAll(false)}>Deselect all</button>
+				{:else}
+					<button class="button" on:click={changeSelectAll(true)}>Select all</button>
+				{/if}
+				{#each typeFilters as filter (filter.name)}
+					<Switch bind:active={filter.active} label={filter.name} />
+				{/each}
+			</ShrinkableWrapper>
+			<ShrinkableWrapper title="Watching">
+				{#each eventSources as source (source.name)}
+					<div class="repository">
+						<Switch bind:active={source.active} label={source.name} />
+						<Tooltip content="Delete" position="top">
+							<button class="delete" on:click={handleRemoveSource(source.name)}>
+								<Trash />
+							</button>
+						</Tooltip>
+					</div>
+				{/each}
+				<SidebarModal {eventSources} on:add={handleAddSource} />
+			</ShrinkableWrapper>
+		{:else}
+			<div class="skeletons-container">
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+			</div>
+			<div class="skeletons-container">
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+			</div>
+		{/if}
+	</div>
+	<footer class="footer">
+		<p>v{getAppVersion()}</p>
+		<a
+			href="https://github.com/ColinLienard/gitlight"
+			class="link"
+			target="_blank"
+			rel="noreferrer"
+		>
+			<Github />
+			GitHub repository
+		</a>
+	</footer>
 </article>
 
 <style lang="scss">
@@ -166,12 +181,18 @@
 		flex: 0 0 20rem;
 		height: 100vh;
 		border-right: 1px solid variables.$grey-3;
-		padding: 3rem 2rem;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.scrollable {
+		padding: 3rem 2rem 2rem;
 		display: flex;
 		flex-direction: column;
 		gap: 3rem;
-		position: relative;
+		height: 100%;
 		overflow: auto;
+		position: relative;
 	}
 
 	.gradient {
@@ -181,6 +202,14 @@
 	}
 
 	.header {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+
+		:global(svg) {
+			height: 2rem;
+		}
+
 		.title {
 			@include typography.heading-1;
 		}
@@ -233,6 +262,33 @@
 
 		&:not(:hover) .delete {
 			opacity: 0;
+		}
+	}
+
+	.footer {
+		position: sticky;
+		bottom: 0;
+		left: 0;
+		padding: 2rem;
+		border-top: 1px solid variables.$grey-3;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		color: variables.$grey-4;
+
+		.link {
+			display: flex;
+			align-items: center;
+			gap: 0.25rem;
+			transition: color variables.$transition;
+
+			&:hover {
+				color: variables.$white;
+			}
+
+			:global(svg) {
+				height: 1.25rem;
+			}
 		}
 	}
 </style>

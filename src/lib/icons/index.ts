@@ -12,6 +12,7 @@ export { default as Gitlab } from './Gitlab.svelte';
 export { default as IssueClosed } from './IssueClosed.svelte';
 export { default as IssueDraft } from './IssueDraft.svelte';
 export { default as IssueOpen } from './IssueOpen.svelte';
+export { default as Logo } from './Logo.svelte';
 export { default as Mail } from './Mail.svelte';
 export { default as Pin } from './Pin.svelte';
 export { default as Plus } from './Plus.svelte';
