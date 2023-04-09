@@ -20,6 +20,7 @@ export { default as PullRequestClosed } from './PullRequestClosed.svelte';
 export { default as PullRequestDraft } from './PullRequestDraft.svelte';
 export { default as PullRequestMerged } from './PullRequestMerged.svelte';
 export { default as PullRequestOpen } from './PullRequestOpen.svelte';
+export { default as Refresh } from './Refresh.svelte';
 export { default as Release } from './Release.svelte';
 export { default as Repository } from './Repository.svelte';
 export { default as Search } from './Search.svelte';

@@ -2,12 +2,14 @@
 	import { Github, Logo, Trash } from '~/lib/icons';
 	import { Separator, ShrinkableWrapper, Switch, Tooltip } from '~/lib/components';
 	import { onMount } from 'svelte';
-	import { createEventData, fetchGithub, getAppVersion } from '~/lib/helpers';
-	import type { TEventSources, TGithubEvent, TTypeFilters } from '~/lib/types';
+	import { getAppVersion } from '~/lib/helpers';
+	import type { TEventSources, TTypeFilters } from '~/lib/types';
 	import { filteredEvents, githubEvents, loading, savedEventIds } from '~/lib/stores';
 	import { browser } from '$app/environment';
 	import SidebarModal from './SidebarModal.svelte';
 	import SidebarSearch from './SidebarSearch.svelte';
+
+	export let eventSources: TEventSources;
 
 	let search = '';
 	let typeFilters: TTypeFilters = [
@@ -18,7 +20,6 @@
 		{ name: 'Branches & tags', type: 'branch/tag', active: true },
 		{ name: 'Repository events', type: 'repo', active: true }
 	];
-	let eventSources: TEventSources = [];
 
 	$: mostAreSelected = typeFilters.filter((filter) => filter.active).length > 3;
 
@@ -49,34 +50,14 @@
 		})
 	);
 
-	async function setEvents() {
-		const promises = eventSources.map(({ name }) =>
-			fetchGithub(`repos/${name}/events?per_page=50`)
-		);
-		const response = (await Promise.all(promises)).flat() as TGithubEvent[];
-		const sorted = response.sort(
-			(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-		);
-		githubEvents.set(
-			sorted.map((event) => {
-				const isPinned = $savedEventIds?.pinned.includes(event.id) || false;
-				const isRead = $savedEventIds?.read.includes(event.id) || false;
-				return createEventData(event, isPinned, isRead);
-			})
-		);
-		loading.set(false);
-	}
-
 	function handleAddSource({ detail }: { detail: { name: string } }) {
 		const { name } = detail;
 		eventSources = [...eventSources, { name, active: true }];
-		setEvents();
 	}
 
 	function handleRemoveSource(name: string) {
 		return () => {
 			eventSources = eventSources.filter((source) => source.name !== name);
-			setEvents();
 		};
 	}
 
@@ -92,9 +73,6 @@
 			JSON.parse(localStorage.getItem('githubEvents') || '{ "pinned": [], "read": [] }')
 		);
 
-		// Get event sources from localStorage
-		eventSources = JSON.parse(localStorage.getItem('eventSources') || '[]');
-
 		// Get type filters from localStorage
 		const savedTypeFilters = JSON.parse(
 			localStorage.getItem('typeFilters') || '[true, true, true, true, true, true, true]'
@@ -103,9 +81,6 @@
 			...filter,
 			active: savedTypeFilters[index]
 		}));
-
-		// Fetch events
-		setEvents();
 	});
 </script>
 

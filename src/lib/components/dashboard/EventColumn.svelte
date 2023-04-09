@@ -64,9 +64,8 @@
 	{/if}
 	<ul class="list" bind:this={list}>
 		{#if $loading}
-			{#each Array(2) as _}
-				<li><SkeletonEvent /></li>
-			{/each}
+			<li><SkeletonEvent /></li>
+			<li><SkeletonEvent /></li>
 		{:else if events.length}
 			{#each events as event (event.id)}
 				<li
