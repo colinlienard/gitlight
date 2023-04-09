@@ -19,6 +19,7 @@ export type TGithubIssue = {
 	title: string;
 	url: string;
 	state: 'open' | 'closed';
+	state_reason: 'completed' | 'not_planned' | 'reopened' | null;
 	user: TGithubUser;
 	labels: TGithubLabel[];
 	html_url: string;
@@ -27,6 +28,7 @@ export type TGithubIssue = {
 export type TGithubPullRequest = TGithubIssue & {
 	merged: boolean;
 	merged_at: string | null;
+	draft: boolean;
 };
 
 export type TGithubCommit = {
