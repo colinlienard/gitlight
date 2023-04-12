@@ -67,6 +67,7 @@
 		<button class="tab">
 			<Gitlab />
 			<p class="text">GitLab</p>
+			<div class="tag soon">Coming soon</div>
 		</button>
 	</nav>
 	<section class="columns-container">
@@ -167,6 +168,7 @@
 			display: flex;
 			align-items: center;
 			gap: 0.5rem;
+			transition: opacity variables.$transition;
 
 			:global(svg) {
 				height: 1.25rem;
@@ -187,7 +189,7 @@
 			}
 
 			&:not(.selected):not(:hover) {
-				color: variables.$grey-4;
+				opacity: 0.5;
 			}
 
 			.text {
@@ -199,10 +201,15 @@
 				padding: 0.25rem 0.5rem;
 				border-radius: variables.$radius;
 				background-color: variables.$grey-3;
-				color: white;
+				color: variables.$white;
 				display: flex;
 				align-items: center;
 				gap: 0.25rem;
+
+				&.soon {
+					color: variables.$blue-3;
+					background-color: variables.$blue-1;
+				}
 
 				:global(svg) {
 					width: 1rem;

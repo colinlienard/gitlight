@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import { getAppVersion } from '~/lib/helpers';
 	import type { TEventSources, TTypeFilters } from '~/lib/types';
-	import { filteredEvents, githubEvents, loading, savedEventIds } from '~/lib/stores';
+	import { filteredEvents, githubEvents, loading } from '~/lib/stores';
 	import { browser } from '$app/environment';
 	import SidebarModal from './SidebarModal.svelte';
 	import SidebarSearch from './SidebarSearch.svelte';
@@ -22,18 +22,6 @@
 	];
 
 	$: mostAreSelected = typeFilters.filter((filter) => filter.active).length > 3;
-
-	// Save pinned and read events to localStorage
-	$: if (browser && $githubEvents.length && $savedEventIds) {
-		const pinned = $githubEvents.filter((event) => event.pinned).map((event) => event.id);
-		const read = $githubEvents.filter((event) => event.read).map((event) => event.id);
-		localStorage.setItem('githubEvents', JSON.stringify({ pinned, read }));
-	}
-
-	// Save event sources to localStorage
-	$: if (browser && eventSources?.length) {
-		localStorage.setItem('eventSources', JSON.stringify(eventSources));
-	}
 
 	// Save type filters to localStorage
 	$: if (browser && !$loading) {
@@ -68,11 +56,6 @@
 	}
 
 	onMount(() => {
-		// Get events ids from localStorage
-		savedEventIds.set(
-			JSON.parse(localStorage.getItem('githubEvents') || '{ "pinned": [], "read": [] }')
-		);
-
 		// Get type filters from localStorage
 		const savedTypeFilters = JSON.parse(
 			localStorage.getItem('typeFilters') || '[true, true, true, true, true, true, true]'

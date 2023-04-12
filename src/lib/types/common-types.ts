@@ -13,6 +13,7 @@ export type TEvent = {
 	type: TEventType;
 	read: boolean;
 	pinned: boolean;
+	isNew: boolean;
 	title: string;
 	description: (
 		| {

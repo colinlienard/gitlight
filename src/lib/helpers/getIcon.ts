@@ -1,6 +1,7 @@
 import type { ComponentType } from 'svelte';
 import {
 	IssueClosed,
+	IssueNotPlanned,
 	IssueOpen,
 	PullRequestClosed,
 	PullRequestDraft,
@@ -9,12 +10,12 @@ import {
 } from '../icons';
 import type { TColors, TGithubIssue, TGithubPullRequest } from '../types';
 
-export function getIssueIcon({ state }: TGithubIssue): ComponentType {
+export function getIssueIcon({ state, state_reason }: TGithubIssue): ComponentType {
 	switch (state) {
 		case 'open':
 			return IssueOpen;
 		case 'closed':
-			return IssueClosed;
+			return state_reason === 'completed' ? IssueClosed : IssueNotPlanned;
 		default:
 			throw new Error('Invalid state');
 	}
@@ -44,5 +45,5 @@ export function getIconColor(item: TGithubPullRequest | TGithubIssue): TColors {
 	if (item.state === 'open') {
 		return 'green';
 	}
-	return item.state_reason === 'completed' ? 'purple' : 'red';
+	return item.state_reason === 'completed' ? 'purple' : 'grey';
 }

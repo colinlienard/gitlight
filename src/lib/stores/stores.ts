@@ -7,6 +7,7 @@ export const githubEvents = writable<TEvent[]>([]);
 
 export const savedEventIds = writable<{
 	pinned: string[];
+	unread: string[];
 	read: string[];
 } | null>(null);
 

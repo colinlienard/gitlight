@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { getHex } from '~/lib/helpers';
+	import { onDestroy } from 'svelte';
+	import { formatRelativeDate, getHex } from '~/lib/helpers';
 	import { Check, ExternalLink, Mail, Pin, Unpin } from '~/lib/icons';
 	import type { TEvent } from '~/lib/types';
 	import { Button, Tooltip } from '~/lib/components';
@@ -11,6 +12,7 @@
 		id,
 		read,
 		pinned,
+		isNew,
 		description,
 		icon,
 		iconColor,
@@ -22,6 +24,11 @@
 		number
 	} = data;
 	let [owner, repo] = fullRepo.split('/');
+	let displayTime = formatRelativeDate(time);
+
+	const interval = setInterval(() => {
+		displayTime = formatRelativeDate(time);
+	}, 60000);
 
 	function handleToggle(key: 'read' | 'pinned') {
 		return () => {
@@ -49,12 +56,19 @@
 			);
 		}
 	}
+
+	onDestroy(() => {
+		clearInterval(interval);
+	});
 </script>
 
-<div class="event">
+<div class="event" on:mouseenter={isNew ? () => (isNew = false) : undefined}>
+	{#if isNew}
+		<div class="new" />
+	{/if}
 	<div class="top">
 		<p class="repo">{owner}/<span class="bold">{repo}</span></p>
-		<p class="time">{time}</p>
+		<p class="time">{displayTime}</p>
 	</div>
 	<p class="description">
 		{#each description as item}
@@ -136,6 +150,16 @@
 				opacity: 0;
 			}
 		}
+	}
+
+	.new {
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 50%;
+		background-color: variables.$blue-2;
+		position: absolute;
+		inset: 0.25rem 0 0 0.25rem;
+		box-shadow: 0 0 0.5rem variables.$grey-2;
 	}
 
 	.top {

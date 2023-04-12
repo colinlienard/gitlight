@@ -1,18 +1,19 @@
 import { Branch, Commit, Discussion, Release, Repository, Tag } from '../icons';
 import type { TGithubEvent, TEvent, TGithubPullRequest } from '../types';
-import { formatRelativeDate } from './formatRelativeDate';
 import { getIconColor, getIssueIcon, getPullRequestIcon } from './getIcon';
 
 export function createEventData(
 	{ id, actor, created_at, payload, repo, type }: TGithubEvent,
 	pinned: boolean,
-	read: boolean
+	read: boolean,
+	isNew: boolean
 ): TEvent {
 	const common = {
 		id,
 		read,
 		pinned,
-		time: formatRelativeDate(created_at),
+		isNew,
+		time: created_at,
 		repo: repo.name
 	};
 
