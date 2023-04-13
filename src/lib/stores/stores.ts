@@ -1,12 +1,13 @@
 import { writable } from 'svelte/store';
-import type { TEvent } from '~/lib/types';
+import type { EventData } from '~/lib/types';
 
-export const filteredEvents = writable<TEvent[]>([]);
+export const filteredEvents = writable<EventData[]>([]);
 
-export const githubEvents = writable<TEvent[]>([]);
+export const githubEvents = writable<EventData[]>([]);
 
 export const savedEventIds = writable<{
 	pinned: string[];
+	unread: string[];
 	read: string[];
 } | null>(null);
 

@@ -1,6 +1,6 @@
-import type { TColors } from '../types';
+import type { Colors } from '../types';
 
-export function getHex(color?: TColors) {
+export function getHex(color?: Colors) {
 	switch (color) {
 		case 'blue':
 			return '#8585ff';

@@ -1,44 +1,45 @@
-import type { Session } from '@auth/core/types';
+import type { Session as BaseSession } from '@auth/core/types';
 import type { ComponentType } from 'svelte';
-import type { TGithubLabel } from './github-types';
+import type { GithubLabel } from './github-types';
 
-export type TSession = Session & { accessToken: string };
+export type Session = BaseSession & { accessToken: string };
 
-export type TColors = 'blue' | 'purple' | 'green' | 'red' | 'grey';
+export type Colors = 'blue' | 'purple' | 'green' | 'red' | 'grey';
 
-export type TEventType = 'pr' | 'issue' | 'commit' | 'review' | 'branch/tag' | 'repo';
+export type EventType = 'pr' | 'issue' | 'commit' | 'review' | 'branch/tag' | 'repo';
 
-export type TEvent = {
+export type EventData = {
 	id: string;
-	type: TEventType;
+	type: EventType;
 	read: boolean;
 	pinned: boolean;
+	isNew: boolean;
 	title: string;
 	description: (
 		| {
 				text: string;
 				image?: string;
 				icon?: ComponentType;
-				iconColor?: TColors;
+				iconColor?: Colors;
 		  }
 		| string
 	)[];
 	time: string;
 	icon: ComponentType;
-	iconColor?: TColors;
+	iconColor?: Colors;
 	repo: string;
 	number?: number;
-	labels?: TGithubLabel[];
+	labels?: GithubLabel[];
 	url?: string;
 };
 
-export type TTypeFilters = {
+export type TypeFilters = {
 	name: string;
-	type: TEventType;
+	type: EventType;
 	active: boolean;
 }[];
 
-export type TEventSources = {
+export type EventSources = {
 	name: string;
 	active: boolean;
 }[];

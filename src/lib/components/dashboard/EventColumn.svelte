@@ -2,7 +2,7 @@
 	import { onDestroy, onMount, type ComponentType } from 'svelte';
 	import { fade, type CrossfadeParams, type TransitionConfig } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
-	import type { TEvent } from '~/lib/types';
+	import type { EventData } from '~/lib/types';
 	import { debounce } from '~/lib/helpers';
 	import { ArrowUp, Folder } from '~/lib/icons';
 	import { Button } from '../common';
@@ -10,7 +10,7 @@
 	import SkeletonEvent from './SkeletonEvent.svelte';
 	import { loading } from '~/lib/stores';
 
-	type TSvelteAnimation = (
+	type SvelteAnimation = (
 		node: Element,
 		params: CrossfadeParams & {
 			key: unknown;
@@ -19,11 +19,11 @@
 
 	export let icon: ComponentType;
 	export let title: string;
-	export let events: TEvent[];
+	export let events: EventData[];
 	export let placeholder: string;
 	export let transitions: {
-		receive: TSvelteAnimation;
-		send: TSvelteAnimation;
+		receive: SvelteAnimation;
+		send: SvelteAnimation;
 		settings: CrossfadeParams;
 	};
 	const { receive, send, settings } = transitions;
@@ -64,9 +64,8 @@
 	{/if}
 	<ul class="list" bind:this={list}>
 		{#if $loading}
-			{#each Array(2) as _}
-				<li><SkeletonEvent /></li>
-			{/each}
+			<li><SkeletonEvent /></li>
+			<li><SkeletonEvent /></li>
 		{:else if events.length}
 			{#each events as event (event.id)}
 				<li

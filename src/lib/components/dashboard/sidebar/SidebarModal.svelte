@@ -3,9 +3,9 @@
 	import { Button, Input, Modal } from '~/lib/components';
 	import { fetchGithub } from '~/lib/helpers';
 	import { ExclamationMark, Plus } from '~/lib/icons';
-	import type { TEventSources, TGithubRepository } from '~/lib/types';
+	import type { EventSources, GithubRepository } from '~/lib/types';
 
-	export let eventSources: TEventSources;
+	export let eventSources: EventSources;
 
 	let owner = '';
 	let repo = '';
@@ -30,7 +30,7 @@
 
 		try {
 			loading = true;
-			const repo = (await fetchGithub(`repos/${name}`)) as TGithubRepository;
+			const repo = (await fetchGithub(`repos/${name}`)) as GithubRepository;
 			name = repo.full_name;
 		} catch {
 			error = `"${name}" is not a valid repository.`;

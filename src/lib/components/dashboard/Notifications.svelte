@@ -3,7 +3,12 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { EventColumn, Settings, Separator } from '~/lib/components';
 	import { filteredEvents, githubEvents } from '~/lib/stores';
-	import { Check, Github, Gitlab, Mail, Pin } from '~/lib/icons';
+	import { Check, Github, Gitlab, Mail, Pin, Refresh } from '~/lib/icons';
+
+	export let synced: boolean;
+
+	let syncTime = 0;
+	let interval: ReturnType<typeof setInterval>;
 
 	// Filter events
 	$: pinned = $filteredEvents.filter((event) => event.pinned);
@@ -11,6 +16,15 @@
 	$: read = $filteredEvents.filter((event) => !event.pinned && event.read);
 
 	$: showReadAll = unread.length > 0;
+
+	$: if (synced && !syncTime) {
+		interval = setInterval(() => {
+			syncTime += 1;
+		}, 1000);
+	} else if (!synced) {
+		syncTime = 0;
+		clearInterval(interval);
+	}
 
 	function markAllAsRead() {
 		githubEvents.update((previous) =>
@@ -27,6 +41,14 @@
 <main class="main">
 	<header class="header">
 		<h1 class="title">Notifications</h1>
+		<div class="sync-pill" class:loading={!synced}>
+			<Refresh />
+			{#if synced}
+				Synced {syncTime}s ago
+			{:else}
+				Syncing...
+			{/if}
+		</div>
 		<Settings />
 	</header>
 	<nav class="nav">
@@ -45,6 +67,7 @@
 		<button class="tab">
 			<Gitlab />
 			<p class="text">GitLab</p>
+			<div class="tag soon">Coming soon</div>
 		</button>
 	</nav>
 	<section class="columns-container">
@@ -92,10 +115,45 @@
 		padding: 3rem 2rem 2rem;
 		display: flex;
 		align-items: center;
+		gap: 1rem;
 
 		.title {
 			@include typography.heading-1;
+		}
+
+		.sync-pill {
+			background-color: variables.$grey-3;
+			border-radius: variables.$radius;
+			padding: 0.25rem 0.5rem;
+			color: variables.$grey-4;
+			display: flex;
+			align-items: center;
+			gap: 0.25rem;
 			margin-right: auto;
+
+			:global(svg) {
+				height: 1.25rem;
+				color: variables.$green;
+			}
+
+			&.loading {
+				color: variables.$yellow;
+
+				:global(svg) {
+					color: variables.$yellow;
+					animation: loading 1s linear infinite;
+
+					@keyframes loading {
+						0% {
+							rotate: 0deg;
+						}
+
+						100% {
+							rotate: 360deg;
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -110,6 +168,7 @@
 			display: flex;
 			align-items: center;
 			gap: 0.5rem;
+			transition: opacity variables.$transition;
 
 			:global(svg) {
 				height: 1.25rem;
@@ -130,7 +189,7 @@
 			}
 
 			&:not(.selected):not(:hover) {
-				color: variables.$grey-4;
+				opacity: 0.5;
 			}
 
 			.text {
@@ -142,10 +201,15 @@
 				padding: 0.25rem 0.5rem;
 				border-radius: variables.$radius;
 				background-color: variables.$grey-3;
-				color: white;
+				color: variables.$white;
 				display: flex;
 				align-items: center;
 				gap: 0.25rem;
+
+				&.soon {
+					color: variables.$blue-3;
+					background-color: variables.$blue-1;
+				}
 
 				:global(svg) {
 					width: 1rem;

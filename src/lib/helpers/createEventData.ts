@@ -1,18 +1,19 @@
 import { Branch, Commit, Discussion, Release, Repository, Tag } from '../icons';
-import type { TGithubEvent, TEvent } from '../types';
-import { formatRelativeDate } from './formatRelativeDate';
-import { getIssueIcon, getPullRequestIcon } from './getIcon';
+import type { GithubEvent, EventData, GithubPullRequest } from '../types';
+import { getIconColor, getIssueIcon, getPullRequestIcon } from './getIcon';
 
 export function createEventData(
-	{ id, actor, created_at, payload, repo, type }: TGithubEvent,
+	{ id, actor, created_at, payload, repo, type }: GithubEvent,
 	pinned: boolean,
-	read: boolean
-): TEvent {
+	read: boolean,
+	isNew: boolean
+): EventData {
 	const common = {
 		id,
 		read,
 		pinned,
-		time: formatRelativeDate(created_at),
+		isNew,
+		time: created_at,
 		repo: repo.name
 	};
 
@@ -89,9 +90,9 @@ export function createEventData(
 					{
 						text: payload.issue.title,
 						icon: payload.issue.html_url.includes('pull')
-							? getPullRequestIcon(payload.issue.state, false)
-							: getIssueIcon(payload.issue.state),
-						iconColor: payload.issue.state === 'open' ? 'green' : 'red'
+							? getPullRequestIcon(payload.issue as GithubPullRequest)
+							: getIssueIcon(payload.issue),
+						iconColor: getIconColor(payload.issue)
 					}
 				],
 				icon: Discussion,
@@ -108,8 +109,8 @@ export function createEventData(
 					{ text: actor.login, image: actor.avatar_url },
 					` ${payload.action} this issue`
 				],
-				icon: getIssueIcon(payload.issue.state),
-				iconColor: payload.issue.state === 'open' ? 'green' : 'red',
+				icon: getIssueIcon(payload.issue),
+				iconColor: getIconColor(payload.issue),
 				title: payload.issue.title,
 				number: payload.issue.number,
 				url: payload.issue.html_url,
@@ -144,13 +145,8 @@ export function createEventData(
 					{ text: actor.login, image: actor.avatar_url },
 					` ${payload.pull_request.merged ? 'merged' : payload.action} this pull request`
 				],
-				icon: getPullRequestIcon(payload.pull_request.state, payload.pull_request.merged),
-				iconColor:
-					payload.pull_request.state === 'open'
-						? 'green'
-						: payload.pull_request.merged
-						? 'purple'
-						: 'red',
+				icon: getPullRequestIcon(payload.pull_request),
+				iconColor: getIconColor(payload.pull_request),
 				title: payload.pull_request.title,
 				number: payload.pull_request.number,
 				url: payload.pull_request.html_url,
@@ -169,13 +165,8 @@ export function createEventData(
 							: payload.review.state
 					}${payload.review.state !== 'approved' ? ' on' : ''} this pull request`
 				],
-				icon: getPullRequestIcon(payload.pull_request.state, payload.pull_request.merged),
-				iconColor:
-					payload.pull_request.state === 'open'
-						? 'green'
-						: payload.pull_request.merged
-						? 'purple'
-						: 'red',
+				icon: getPullRequestIcon(payload.pull_request),
+				iconColor: getIconColor(payload.pull_request),
 				title: payload.pull_request.title,
 				number: payload.pull_request.number,
 				url: payload.review.html_url,
