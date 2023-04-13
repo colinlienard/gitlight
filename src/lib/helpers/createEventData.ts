@@ -1,13 +1,13 @@
 import { Branch, Commit, Discussion, Release, Repository, Tag } from '../icons';
-import type { TGithubEvent, TEvent, TGithubPullRequest } from '../types';
+import type { GithubEvent, EventData, GithubPullRequest } from '../types';
 import { getIconColor, getIssueIcon, getPullRequestIcon } from './getIcon';
 
 export function createEventData(
-	{ id, actor, created_at, payload, repo, type }: TGithubEvent,
+	{ id, actor, created_at, payload, repo, type }: GithubEvent,
 	pinned: boolean,
 	read: boolean,
 	isNew: boolean
-): TEvent {
+): EventData {
 	const common = {
 		id,
 		read,
@@ -90,7 +90,7 @@ export function createEventData(
 					{
 						text: payload.issue.title,
 						icon: payload.issue.html_url.includes('pull')
-							? getPullRequestIcon(payload.issue as TGithubPullRequest)
+							? getPullRequestIcon(payload.issue as GithubPullRequest)
 							: getIssueIcon(payload.issue),
 						iconColor: getIconColor(payload.issue)
 					}

@@ -3,16 +3,16 @@
 	import { Separator, ShrinkableWrapper, Switch, Tooltip } from '~/lib/components';
 	import { onMount } from 'svelte';
 	import { getAppVersion } from '~/lib/helpers';
-	import type { TEventSources, TTypeFilters } from '~/lib/types';
+	import type { EventSources, TypeFilters } from '~/lib/types';
 	import { filteredEvents, githubEvents, loading } from '~/lib/stores';
 	import { browser } from '$app/environment';
 	import SidebarModal from './SidebarModal.svelte';
 	import SidebarSearch from './SidebarSearch.svelte';
 
-	export let eventSources: TEventSources;
+	export let eventSources: EventSources;
 
 	let search = '';
-	let typeFilters: TTypeFilters = [
+	let typeFilters: TypeFilters = [
 		{ name: 'Pull requests', type: 'pr', active: true },
 		{ name: 'Issues', type: 'issue', active: true },
 		{ name: 'Commits', type: 'commit', active: true },

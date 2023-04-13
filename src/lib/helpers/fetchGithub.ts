@@ -1,11 +1,11 @@
 import { page } from '$app/stores';
-import type { TSession } from '../types';
+import type { Session } from '../types';
 
 export async function fetchGithub(url: string): Promise<unknown> {
 	let accessToken;
 	page.subscribe(({ data }) => {
 		if (data && data.session) {
-			accessToken = (data.session as TSession).accessToken;
+			accessToken = (data.session as Session).accessToken;
 		}
 	});
 

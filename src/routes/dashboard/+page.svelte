@@ -3,9 +3,9 @@
 	import { Notifications, Sidebar } from '~/lib/components';
 	import { createEventData, fetchGithub } from '~/lib/helpers';
 	import { githubEvents, loading, savedEventIds } from '~/lib/stores';
-	import type { TEventSources, TGithubEvent } from '~/lib/types';
+	import type { EventSources, GithubEvent } from '~/lib/types';
 
-	let eventSources: TEventSources = [];
+	let eventSources: EventSources = [];
 	let synced = false;
 	let mounted = false;
 
@@ -18,7 +18,7 @@
 		const promises = eventSources
 			.filter(({ active }) => active)
 			.map(({ name }) => fetchGithub(`repos/${name}/events?per_page=25`));
-		const response = (await Promise.all(promises)).flat() as TGithubEvent[];
+		const response = (await Promise.all(promises)).flat() as GithubEvent[];
 		const sorted = response.sort(
 			(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
 		);

@@ -8,9 +8,9 @@ import {
 	PullRequestMerged,
 	PullRequestOpen
 } from '../icons';
-import type { TColors, TGithubIssue, TGithubPullRequest } from '../types';
+import type { Colors, GithubIssue, GithubPullRequest } from '../types';
 
-export function getIssueIcon({ state, state_reason }: TGithubIssue): ComponentType {
+export function getIssueIcon({ state, state_reason }: GithubIssue): ComponentType {
 	switch (state) {
 		case 'open':
 			return IssueOpen;
@@ -21,7 +21,7 @@ export function getIssueIcon({ state, state_reason }: TGithubIssue): ComponentTy
 	}
 }
 
-export function getPullRequestIcon({ state, merged, draft }: TGithubPullRequest): ComponentType {
+export function getPullRequestIcon({ state, merged, draft }: GithubPullRequest): ComponentType {
 	switch (state) {
 		case 'open':
 			return draft ? PullRequestDraft : PullRequestOpen;
@@ -32,7 +32,7 @@ export function getPullRequestIcon({ state, merged, draft }: TGithubPullRequest)
 	}
 }
 
-export function getIconColor(item: TGithubPullRequest | TGithubIssue): TColors {
+export function getIconColor(item: GithubPullRequest | GithubIssue): Colors {
 	// Pull request
 	if ('draft' in item) {
 		if (item.state === 'open') {

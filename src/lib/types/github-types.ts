@@ -1,37 +1,37 @@
-export type TGithubLabel = {
+export type GithubLabel = {
 	color: string;
 	name: string;
 };
 
-export type TGithubUser = {
+export type GithubUser = {
 	avatar_url: string;
 	display_login: string;
 	login: string;
 	url: string;
 };
 
-export type TGithubRepository = {
+export type GithubRepository = {
 	full_name: string;
 };
 
-export type TGithubIssue = {
+export type GithubIssue = {
 	number: number;
 	title: string;
 	url: string;
 	state: 'open' | 'closed';
 	state_reason: 'completed' | 'not_planned' | 'reopened' | null;
-	user: TGithubUser;
-	labels: TGithubLabel[];
+	user: GithubUser;
+	labels: GithubLabel[];
 	html_url: string;
 };
 
-export type TGithubPullRequest = TGithubIssue & {
+export type GithubPullRequest = GithubIssue & {
 	merged: boolean;
 	merged_at: string | null;
 	draft: boolean;
 };
 
-export type TGithubCommit = {
+export type GithubCommit = {
 	sha: string;
 	url: string;
 	message: string;
@@ -42,13 +42,13 @@ export type TGithubCommit = {
 	distinct: boolean;
 };
 
-export type TGithubComment = {
+export type GithubComment = {
 	body: string;
 	html_url: string;
-	user: TGithubUser;
+	user: GithubUser;
 };
 
-export type TGithubRelease = {
+export type GithubRelease = {
 	tag_name: string;
 	name: string;
 	body: string;
@@ -57,8 +57,8 @@ export type TGithubRelease = {
 	html_url: string;
 };
 
-type TGithubEventCommon = {
-	actor: TGithubUser;
+type GithubEventCommon = {
+	actor: GithubUser;
 	created_at: string;
 	id: string;
 	repo: {
@@ -67,12 +67,12 @@ type TGithubEventCommon = {
 	};
 };
 
-export type TGithubEvent = (
+export type GithubEvent = (
 	| {
 			type: 'CommitCommentEvent';
 			payload: {
 				action: 'created';
-				comment: TGithubComment;
+				comment: GithubComment;
 			};
 	  }
 	| {
@@ -94,7 +94,7 @@ export type TGithubEvent = (
 	| {
 			type: 'ForkEvent';
 			payload: {
-				forkee: TGithubRepository;
+				forkee: GithubRepository;
 			};
 	  }
 	| {
@@ -118,8 +118,8 @@ export type TGithubEvent = (
 						from: string;
 					};
 				};
-				issue: TGithubIssue;
-				comment: TGithubComment;
+				issue: GithubIssue;
+				comment: GithubComment;
 			};
 	  }
 	| {
@@ -134,7 +134,7 @@ export type TGithubEvent = (
 					| 'unassigned'
 					| 'labeled'
 					| 'unlabeled';
-				issue: TGithubIssue;
+				issue: GithubIssue;
 				changes: {
 					title: {
 						from: string;
@@ -143,15 +143,15 @@ export type TGithubEvent = (
 						from: string;
 					};
 				};
-				assignee?: TGithubUser;
-				label?: TGithubLabel;
+				assignee?: GithubUser;
+				label?: GithubLabel;
 			};
 	  }
 	| {
 			type: 'MemberEvent';
 			payload: {
 				action: 'added' | 'deleted';
-				member: TGithubUser;
+				member: GithubUser;
 				changes: {
 					old_permission: {
 						from: string;
@@ -187,7 +187,7 @@ export type TGithubEvent = (
 						from: string;
 					};
 				};
-				pull_request: TGithubPullRequest;
+				pull_request: GithubPullRequest;
 				reason: string;
 			};
 	  }
@@ -195,12 +195,12 @@ export type TGithubEvent = (
 			type: 'PullRequestReviewEvent';
 			payload: {
 				action: 'created';
-				pull_request: TGithubPullRequest;
+				pull_request: GithubPullRequest;
 				review: {
 					state: 'approved' | 'changes_requested' | 'commented';
 					body: string;
 					html_url: string;
-					user: TGithubUser;
+					user: GithubUser;
 				};
 			};
 	  }
@@ -213,15 +213,15 @@ export type TGithubEvent = (
 						from: string;
 					};
 				};
-				pull_request: TGithubPullRequest;
-				comment: TGithubComment;
+				pull_request: GithubPullRequest;
+				comment: GithubComment;
 			};
 	  }
 	| {
 			type: 'PullRequestReviewThreadEvent';
 			payload: {
 				action: 'resolved' | 'unresolved';
-				pull_request: TGithubPullRequest;
+				pull_request: GithubPullRequest;
 				thread: unknown;
 			};
 	  }
@@ -234,7 +234,7 @@ export type TGithubEvent = (
 				ref: string;
 				head: string;
 				before: string;
-				commits: TGithubCommit[];
+				commits: GithubCommit[];
 			};
 	  }
 	| {
@@ -249,7 +249,7 @@ export type TGithubEvent = (
 						from: string;
 					};
 				};
-				release: TGithubRelease;
+				release: GithubRelease;
 			};
 	  }
 	| {
@@ -274,4 +274,4 @@ export type TGithubEvent = (
 			};
 	  }
 ) &
-	TGithubEventCommon;
+	GithubEventCommon;

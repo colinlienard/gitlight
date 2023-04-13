@@ -2,11 +2,11 @@
 	import { onDestroy } from 'svelte';
 	import { formatRelativeDate, getHex } from '~/lib/helpers';
 	import { Check, ExternalLink, Mail, Pin, Unpin } from '~/lib/icons';
-	import type { TEvent } from '~/lib/types';
+	import type { EventData } from '~/lib/types';
 	import { Button, Tooltip } from '~/lib/components';
 	import { githubEvents, settings } from '~/lib/stores';
 
-	export let data: TEvent;
+	export let data: EventData;
 
 	let {
 		id,
