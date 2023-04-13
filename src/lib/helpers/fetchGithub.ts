@@ -13,7 +13,8 @@ export async function fetchGithub(url: string): Promise<unknown> {
 		headers: {
 			Accept: 'application/vnd.github+json',
 			Authorization: `Bearer ${accessToken}`
-		}
+		},
+		cache: 'no-cache'
 	});
 	if (response.ok) {
 		const data = await response.json();

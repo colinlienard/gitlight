@@ -63,7 +63,7 @@
 </script>
 
 <div class="event" on:mouseenter={isNew ? () => (isNew = false) : undefined}>
-	{#if isNew}
+	{#if isNew && !read}
 		<div class="new" />
 	{/if}
 	<div class="top">
