@@ -6,8 +6,9 @@
 	import SignOutButton from './SignOutButton.svelte';
 	import { onMount } from 'svelte';
 	import { settings } from '~/lib/stores';
+	import type { User } from '~/lib/types';
 
-	let user = $page.data.session?.user;
+	let user: User | null = $page.data.session?.user;
 	let mounted = false;
 
 	onMount(() => {
@@ -25,7 +26,7 @@
 
 <Modal title="Settings">
 	<button slot="trigger">
-		<img class="trigger" src={user?.image} alt="" />
+		<img class="trigger" src={user?.avatar} alt="" />
 	</button>
 	<div class="content" slot="content">
 		<h3 class="title">Preferences</h3>
@@ -48,7 +49,7 @@
 				</div>
 				<div class="content">
 					<figure class="user">
-						<img class="image" src={user?.image} alt="" />
+						<img class="image" src={user?.avatar} alt="" />
 						<figcaption class="user-info">
 							<p class="sub">Signed in as</p>
 							<p class="name">{user?.name}</p>

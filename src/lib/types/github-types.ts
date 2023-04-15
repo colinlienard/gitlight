@@ -7,6 +7,7 @@ export type GithubUser = {
 	avatar_url: string;
 	display_login: string;
 	login: string;
+	name: string;
 	url: string;
 };
 

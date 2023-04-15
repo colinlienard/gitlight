@@ -15,8 +15,6 @@
 		"prepare": "svelte-kit sync"
 	},
 	"dependencies": {
-		"@auth/core": "^0.5.1",
-		"@auth/sveltekit": "^0.3.0",
 		"@tauri-apps/api": "^1.2.0"
 	},
 	"devDependencies": {

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { signOut } from '@auth/sveltekit/client';
 	import { Button } from '~/lib/components';
 
 	let timeout: ReturnType<typeof setTimeout> | null = null;
@@ -7,7 +6,9 @@
 
 	function handleMouseDown() {
 		active = true;
-		timeout = setTimeout(signOut, 1500);
+		timeout = setTimeout(() => {
+			window.location.href = '/auth/logout';
+		}, 1500);
 	}
 
 	function handleMouseUp() {
