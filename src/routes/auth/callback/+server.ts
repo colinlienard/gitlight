@@ -1,8 +1,8 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { AUTH_SECRET, GITHUB_ID, GITHUB_SECRET } from '$env/static/private';
+import { AUTH_SECRET, AUTH_GITHUB_ID, AUTH_GITHUB_SECRET } from '$env/static/private';
 
-export const GET: RequestHandler = async ({ url, cookies }) => {
+export const GET = (async ({ url, cookies }) => {
 	const { searchParams, origin } = url;
 
 	if (
@@ -18,8 +18,8 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				client_id: GITHUB_ID,
-				client_secret: GITHUB_SECRET,
+				client_id: AUTH_GITHUB_ID,
+				client_secret: AUTH_GITHUB_SECRET,
 				redirect_uri: `${origin}/auth/callback`,
 				code
 			})
@@ -38,4 +38,4 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	}
 
 	throw redirect(303, '/');
-};
+}) satisfies RequestHandler;

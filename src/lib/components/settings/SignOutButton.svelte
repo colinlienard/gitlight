@@ -8,7 +8,7 @@
 		active = true;
 		timeout = setTimeout(() => {
 			window.location.href = '/auth/logout';
-		}, 1500);
+		}, 1000);
 	}
 
 	function handleMouseUp() {
@@ -39,7 +39,7 @@
 			border-radius: variables.$radius;
 			z-index: 1;
 			pointer-events: none;
-			transition: clip-path 1.5s linear;
+			transition: clip-path 1s linear;
 
 			&.active {
 				clip-path: inset(0 0 0 0);
