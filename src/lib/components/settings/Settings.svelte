@@ -6,9 +6,8 @@
 	import SignOutButton from './SignOutButton.svelte';
 	import { onMount } from 'svelte';
 	import { settings } from '~/lib/stores';
-	import type { User } from '~/lib/types';
 
-	let user: User | null = $page.data.session?.user;
+	let user = $page.data.session?.user;
 	let mounted = false;
 
 	onMount(() => {

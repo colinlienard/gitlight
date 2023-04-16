@@ -3,7 +3,10 @@ import type { Session } from './lib/types';
 declare global {
 	namespace App {
 		interface Locals {
-			session: Session | null;
+			session?: Session;
+		}
+		interface PageData {
+			session?: Session;
 		}
 	}
 
