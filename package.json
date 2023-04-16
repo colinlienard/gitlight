@@ -6,6 +6,8 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
+		"build:tauri": "APP_ENV=tauri tauri build",
+		"build:vercel": "APP_ENV=vercel vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -19,6 +21,7 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-static": "^2.0.1",
+		"@sveltejs/adapter-vercel": "^2.4.1",
 		"@sveltejs/kit": "^1.11.0",
 		"@tauri-apps/cli": "^1.2.3",
 		"@typescript-eslint/eslint-plugin": "^5.54.1",
