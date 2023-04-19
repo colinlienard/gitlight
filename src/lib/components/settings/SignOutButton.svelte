@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { Button } from '~/lib/components';
 
 	let timeout: ReturnType<typeof setTimeout> | null = null;
@@ -7,7 +8,9 @@
 	function handleMouseDown() {
 		active = true;
 		timeout = setTimeout(() => {
-			window.location.href = '/auth/logout';
+			localStorage.removeItem('user');
+			localStorage.removeItem('access_token');
+			goto('/');
 		}, 1000);
 	}
 

@@ -1,8 +1,7 @@
 import { redirect } from '@sveltejs/kit';
-import type { RequestHandler } from './$types';
 import { AUTH_SECRET, AUTH_GITHUB_ID, AUTH_GITHUB_SECRET } from '$env/static/private';
 
-export const GET = (async ({ url, cookies }) => {
+export async function GET({ url, cookies }) {
 	const { searchParams, origin } = url;
 
 	if (
@@ -31,11 +30,11 @@ export const GET = (async ({ url, cookies }) => {
 				path: '/',
 				expires: new Date('Tue, 19 Jan 2038 04:14:07 GMT')
 			});
-			throw redirect(303, '/dashboard');
+			throw redirect(302, `/dashboard?access_token=${data.access_token}`);
 		}
 
-		throw redirect(303, '/');
+		throw redirect(302, '/');
 	}
 
-	throw redirect(303, '/');
-}) satisfies RequestHandler;
+	throw redirect(302, '/');
+}
