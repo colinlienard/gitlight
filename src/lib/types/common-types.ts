@@ -1,8 +1,16 @@
-import type { Session as BaseSession } from '@auth/core/types';
 import type { ComponentType } from 'svelte';
 import type { GithubLabel } from './github-types';
 
-export type Session = BaseSession & { accessToken: string };
+export type User = {
+	name: string;
+	login: string;
+	avatar: string;
+};
+
+export type Session = {
+	user: User;
+	accessToken: string;
+};
 
 export type Colors = 'blue' | 'purple' | 'green' | 'red' | 'grey';
 

@@ -1,11 +1,13 @@
-// See https://kit.svelte.dev/docs/types#app
-// for information about these interfaces
+import type { Session } from './lib/types';
+
 declare global {
 	namespace App {
-		// interface Error {}
-		// interface Locals {}
-		// interface PageData {}
-		// interface Platform {}
+		interface Locals {
+			session?: Session;
+		}
+		interface PageData {
+			session?: Session;
+		}
 	}
 
 	const __APP_VERSION__: string;

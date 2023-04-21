@@ -6,6 +6,8 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
+		"build:tauri": "APP_ENV=tauri tauri build",
+		"build:vercel": "APP_ENV=vercel vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -15,13 +17,12 @@
 		"prepare": "svelte-kit sync"
 	},
 	"dependencies": {
-		"@auth/core": "^0.5.1",
-		"@auth/sveltekit": "^0.3.0",
 		"@tauri-apps/api": "^1.2.0"
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-static": "^2.0.1",
-		"@sveltejs/kit": "^1.11.0",
+		"@sveltejs/adapter-static": "^2.0.2",
+		"@sveltejs/adapter-vercel": "^2.4.1",
+		"@sveltejs/kit": "^1.15.5",
 		"@tauri-apps/cli": "^1.2.3",
 		"@typescript-eslint/eslint-plugin": "^5.54.1",
 		"@typescript-eslint/parser": "^5.54.1",
@@ -31,11 +32,11 @@
 		"prettier": "^2.8.4",
 		"prettier-plugin-svelte": "^2.9.0",
 		"sass": "^1.59.2",
-		"svelte": "^3.56.0",
-		"svelte-check": "^3.1.2",
+		"svelte": "^3.58.0",
+		"svelte-check": "^3.2.0",
 		"tslib": "^2.5.0",
 		"typescript": "^4.9.5",
-		"vite": "^4.1.4",
+		"vite": "^4.2.1",
 		"vitest": "^0.29.2"
 	}
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { signOut } from '@auth/sveltekit/client';
+	import { goto } from '$app/navigation';
 	import { Button } from '~/lib/components';
 
 	let timeout: ReturnType<typeof setTimeout> | null = null;
@@ -7,7 +7,11 @@
 
 	function handleMouseDown() {
 		active = true;
-		timeout = setTimeout(signOut, 1500);
+		timeout = setTimeout(() => {
+			localStorage.removeItem('user');
+			localStorage.removeItem('access_token');
+			goto('/');
+		}, 1000);
 	}
 
 	function handleMouseUp() {
@@ -38,7 +42,7 @@
 			border-radius: variables.$radius;
 			z-index: 1;
 			pointer-events: none;
-			transition: clip-path 1.5s linear;
+			transition: clip-path 1s linear;
 
 			&.active {
 				clip-path: inset(0 0 0 0);

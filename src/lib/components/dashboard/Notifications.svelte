@@ -115,7 +115,6 @@
 		padding: 3rem 2rem 2rem;
 		display: flex;
 		align-items: center;
-		gap: 1rem;
 
 		.title {
 			@include typography.heading-1;
@@ -129,7 +128,7 @@
 			display: flex;
 			align-items: center;
 			gap: 0.25rem;
-			margin-right: auto;
+			margin: 0 auto 0 1rem;
 
 			:global(svg) {
 				height: 1.25rem;
