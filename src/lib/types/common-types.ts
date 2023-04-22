@@ -1,5 +1,5 @@
 import type { ComponentType } from 'svelte';
-import type { GithubLabel } from './github-types';
+import type { GithubLabel, GithubNotification } from './github-types';
 
 export type User = {
 	name: string;
@@ -39,6 +39,11 @@ export type EventData = {
 	number?: number;
 	labels?: GithubLabel[];
 	url?: string;
+};
+
+export type NotificationData = GithubNotification & {
+	isNew: boolean;
+	pinned: boolean;
 };
 
 export type TypeFilters = {

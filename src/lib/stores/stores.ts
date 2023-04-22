@@ -1,9 +1,9 @@
 import { writable } from 'svelte/store';
-import type { EventData } from '~/lib/types';
+import type { NotificationData } from '~/lib/types';
 
-export const filteredEvents = writable<EventData[]>([]);
+export const filteredNotifications = writable<NotificationData[]>([]);
 
-export const githubEvents = writable<EventData[]>([]);
+export const githubNotifications = writable<NotificationData[]>([]);
 
 export const savedEventIds = writable<{
 	pinned: string[];

@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { Button } from '~/lib/components';
 
-	let timeout: ReturnType<typeof setTimeout> | null = null;
+	let timeout: ReturnType<typeof setTimeout> | undefined;
 	let active = false;
 
 	function handleMouseDown() {
@@ -16,7 +16,7 @@
 
 	function handleMouseUp() {
 		clearTimeout(timeout as ReturnType<typeof setTimeout>);
-		timeout = null;
+		timeout = undefined;
 		active = false;
 	}
 </script>

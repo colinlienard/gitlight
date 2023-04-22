@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import { getAppVersion } from '~/lib/helpers';
 	import type { EventSources, TypeFilters } from '~/lib/types';
-	import { filteredEvents, githubEvents, loading } from '~/lib/stores';
+	import { filteredNotifications, githubNotifications, loading } from '~/lib/stores';
 	import { browser } from '$app/environment';
 	import SidebarModal from './SidebarModal.svelte';
 	import SidebarSearch from './SidebarSearch.svelte';
@@ -29,14 +29,14 @@
 	}
 
 	// Apply filters and search
-	$: filteredEvents.set(
-		$githubEvents.filter((event) => {
-			const source = eventSources.find((source) => source.name === event.repo);
-			const searched = event.title.toLowerCase().includes(search.toLowerCase());
-			const isOfType = typeFilters.some((filter) => filter.active && filter.type === event.type);
-			return source?.active && searched && isOfType;
-		})
-	);
+	// $: filteredNotifications.set(
+	// 	$githubNotifications.filter((event) => {
+	// 		const source = eventSources.find((source) => source.name === event.repo);
+	// 		const searched = event.title.toLowerCase().includes(search.toLowerCase());
+	// 		const isOfType = typeFilters.some((filter) => filter.active && filter.type === event.type);
+	// 		return source?.active && searched && isOfType;
+	// 	})
+	// );
 
 	function handleAddSource({ detail }: { detail: { name: string } }) {
 		const { name } = detail;

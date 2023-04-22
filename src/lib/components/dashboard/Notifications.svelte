@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { crossfade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
-	import { EventColumn, Settings, Separator } from '~/lib/components';
-	import { filteredEvents, githubEvents } from '~/lib/stores';
+	import { NotificationColumn, Settings, Separator } from '~/lib/components';
+	import { filteredNotifications, githubNotifications } from '~/lib/stores';
 	import { Check, Github, Gitlab, Mail, Pin, Refresh } from '~/lib/icons';
 
 	export let synced: boolean;
@@ -11,9 +11,12 @@
 	let interval: ReturnType<typeof setInterval>;
 
 	// Filter events
-	$: pinned = $filteredEvents.filter((event) => event.pinned);
-	$: unread = $filteredEvents.filter((event) => !event.pinned && !event.read);
-	$: read = $filteredEvents.filter((event) => !event.pinned && event.read);
+	// $: pinned = $filteredNotifications.filter((event) => event.pinned);
+	// $: unread = $filteredNotifications.filter((event) => !event.pinned && !event.read);
+	// $: read = $filteredNotifications.filter((event) => !event.pinned && event.read);
+	let pinned: unknown[] = [];
+	$: unread = $githubNotifications.filter((event) => event.unread);
+	$: read = $githubNotifications.filter((event) => !event.unread);
 
 	$: showReadAll = unread.length > 0;
 
@@ -27,9 +30,9 @@
 	}
 
 	function markAllAsRead() {
-		githubEvents.update((previous) =>
-			previous.map((event) => (unread.includes(event) ? { ...event, read: true } : event))
-		);
+		// githubNotifications.update((previous) =>
+		// 	previous.map((event) => (unread.includes(event) ? { ...event, read: true } : event))
+		// );
 	}
 
 	// Animations settings
@@ -71,15 +74,15 @@
 		</button>
 	</nav>
 	<section class="columns-container">
-		<EventColumn
+		<NotificationColumn
 			icon={Pin}
 			title="Pinned"
-			events={pinned}
+			events={[]}
 			placeholder="Click on 📌 to mark an event as pinned."
 			{transitions}
 		/>
 		<Separator vertical />
-		<EventColumn
+		<NotificationColumn
 			icon={Mail}
 			title="Unread"
 			events={unread}
@@ -87,7 +90,7 @@
 			{transitions}
 		/>
 		<Separator vertical />
-		<EventColumn
+		<NotificationColumn
 			icon={Check}
 			title="Read"
 			events={read}

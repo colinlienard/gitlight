@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { Notifications, Sidebar } from '~/lib/components';
-	import { createEventData, fetchGithub } from '~/lib/helpers';
-	import { githubEvents, loading, savedEventIds } from '~/lib/stores';
-	import type { EventSources, GithubEvent } from '~/lib/types';
+	import { fetchGithub } from '~/lib/helpers';
+	import { githubNotifications, loading, savedEventIds } from '~/lib/stores';
+	import type { EventSources, GithubNotification } from '~/lib/types';
 
 	let eventSources: EventSources = [];
 	let synced = false;
@@ -15,33 +15,27 @@
 
 	async function setEvents() {
 		synced = false;
-		const promises = eventSources
-			.filter(({ active }) => active)
-			.map(({ name }) => fetchGithub(`repos/${name}/events?per_page=25`));
-		const response = (await Promise.all(promises)).flat() as GithubEvent[];
-		const sorted = response.sort(
-			(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-		);
-		githubEvents.set(
-			sorted.map((event) => {
-				const pinned = $savedEventIds?.pinned.includes(event.id) || false;
-				const read = $savedEventIds?.read.includes(event.id) || false;
-				const isNew = (!read && !$savedEventIds?.unread.includes(event.id)) || false;
-				return createEventData(event, pinned, read, isNew);
+		const response = (await fetchGithub('notifications?all=true', true)) as GithubNotification[];
+		githubNotifications.set(
+			response.map((notification) => {
+				const pinned = $savedEventIds?.pinned.includes(notification.id) || false;
+				const isNew =
+					(notification.unread && !$savedEventIds?.unread.includes(notification.id)) || false;
+				return { ...notification, pinned, isNew };
 			})
 		);
 		synced = true;
 	}
 
 	// Save events ids to localStorage
-	$: if (mounted && $githubEvents.length) {
-		const pinned = $githubEvents.filter((event) => event.pinned).map((event) => event.id);
-		const unread = $githubEvents.filter((event) => !event.read).map((event) => event.id);
-		const read = $githubEvents.filter((event) => event.read).map((event) => event.id);
-		const toSave = { pinned, unread, read };
-		savedEventIds.set(toSave);
-		localStorage.setItem('githubEvents', JSON.stringify(toSave));
-	}
+	// $: if (mounted && $githubNotifications.length) {
+	// 	const pinned = $githubNotifications.filter((event) => event.pinned).map((event) => event.id);
+	// 	const unread = $githubNotifications.filter((event) => !event.read).map((event) => event.id);
+	// 	const read = $githubNotifications.filter((event) => event.read).map((event) => event.id);
+	// 	const toSave = { pinned, unread, read };
+	// 	savedEventIds.set(toSave);
+	// 	localStorage.setItem('githubNotifications', JSON.stringify(toSave));
+	// }
 
 	$: if (mounted) {
 		// Save event sources to localStorage
@@ -58,7 +52,7 @@
 		// Get events ids from localStorage
 		savedEventIds.set(
 			JSON.parse(
-				localStorage.getItem('githubEvents') || '{ "pinned": [], "unread": [], "read": [] }'
+				localStorage.getItem('githubNotifications') || '{ "pinned": [], "unread": [], "read": [] }'
 			)
 		);
 

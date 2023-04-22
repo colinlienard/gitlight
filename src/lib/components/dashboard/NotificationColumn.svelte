@@ -2,13 +2,13 @@
 	import { onDestroy, onMount, type ComponentType } from 'svelte';
 	import { fade, type CrossfadeParams, type TransitionConfig } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
-	import type { EventData } from '~/lib/types';
+	import type { GithubNotification } from '~/lib/types';
 	import { debounce } from '~/lib/helpers';
 	import { ArrowUp, Folder } from '~/lib/icons';
 	import { Button } from '../common';
-	import Event from './Event.svelte';
 	import SkeletonEvent from './SkeletonEvent.svelte';
 	import { loading } from '~/lib/stores';
+	import Notification from './Notification.svelte';
 
 	type SvelteAnimation = (
 		node: Element,
@@ -19,7 +19,7 @@
 
 	export let icon: ComponentType;
 	export let title: string;
-	export let events: EventData[];
+	export let events: GithubNotification[];
 	export let placeholder: string;
 	export let transitions: {
 		receive: SvelteAnimation;
@@ -32,7 +32,7 @@
 	let scrolled = false;
 
 	const handleScroll = debounce((e: Event) => {
-		scrolled = e.target.scrollTop > 100;
+		scrolled = (e.target as HTMLElement).scrollTop > 100;
 	}, 100);
 
 	function handleScrollToTop() {
@@ -74,7 +74,8 @@
 					out:send={{ key: event.id }}
 					animate:flip={settings}
 				>
-					<Event data={event} />
+					<Notification data={event} />
+					<!-- <Event data={event} /> -->
 				</li>
 			{/each}
 		{:else}
