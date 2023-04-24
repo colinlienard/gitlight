@@ -4,6 +4,7 @@
 	import { NotificationColumn, Settings, Separator } from '~/lib/components';
 	import { filteredNotifications, githubNotifications } from '~/lib/stores';
 	import { Check, Github, Gitlab, Mail, Pin, Refresh } from '~/lib/icons';
+	import { fetchGithub } from '~/lib/helpers';
 
 	export let synced: boolean;
 
@@ -11,11 +12,9 @@
 	let interval: ReturnType<typeof setInterval>;
 
 	// Filter events
-	// $: unread = $filteredNotifications.filter((event) => !event.pinned && !event.read);
-	// $: read = $filteredNotifications.filter((event) => !event.pinned && event.read);
-	$: pinned = $githubNotifications.filter((item) => item.pinned);
-	$: unread = $githubNotifications.filter((item) => !item.pinned && item.unread);
-	$: read = $githubNotifications.filter((item) => !item.pinned && !item.unread);
+	$: pinned = $filteredNotifications.filter((item) => item.pinned);
+	$: unread = $filteredNotifications.filter((item) => !item.pinned && item.unread);
+	$: read = $filteredNotifications.filter((item) => !item.pinned && !item.unread);
 
 	$: showReadAll = unread.length > 0;
 
@@ -29,10 +28,15 @@
 	}
 
 	function markAllAsRead() {
-		// https://docs.github.com/en/rest/activity/notifications?apiVersion=2022-11-28#mark-notifications-as-read
-		// githubNotifications.update((previous) =>
-		// 	previous.map((event) => (unread.includes(event) ? { ...event, read: true } : event))
-		// );
+		githubNotifications.update((previous) =>
+			previous.map((notifications) =>
+				unread.includes(notifications) ? { ...notifications, read: true } : notifications
+			)
+		);
+		fetchGithub('notifications', {
+			method: 'PUT',
+			body: { read: true }
+		});
 	}
 
 	// Animations settings

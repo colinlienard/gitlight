@@ -40,7 +40,7 @@ export type NotificationData = {
 
 export type TypeFilters = {
 	name: string;
-	type: string;
+	type: GithubNotificationType;
 	active: boolean;
 }[];
 

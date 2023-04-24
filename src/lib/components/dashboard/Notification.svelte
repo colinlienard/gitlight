@@ -42,8 +42,8 @@
 					if (notification.id !== id) {
 						return notification;
 					}
-					if (key === 'pinned' && $settings.readWhenPin) {
-						return { ...notification, [key]: !notification[key], unread: false };
+					if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
+						return { ...notification, pinned: !notification.pinned, unread: false };
 					}
 					return { ...notification, [key]: !notification[key] };
 				})
@@ -55,7 +55,7 @@
 
 			// Mark as read in GitHub
 			if (unread) {
-				fetchGithub(`notifications/threads/${id}`);
+				fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
 			}
 		};
 	}

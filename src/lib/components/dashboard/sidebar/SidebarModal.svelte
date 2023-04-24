@@ -3,9 +3,9 @@
 	import { Button, Input, Modal } from '~/lib/components';
 	import { fetchGithub } from '~/lib/helpers';
 	import { ExclamationMark, Plus } from '~/lib/icons';
-	import type { EventSources, GithubRepository } from '~/lib/types';
+	import type { GithubRepository, Subscription } from '~/lib/types';
 
-	export let eventSources: EventSources;
+	export let subscriptions: Subscription[];
 
 	let owner = '';
 	let repo = '';
@@ -22,8 +22,12 @@
 			return;
 		}
 
-		let name = `${owner}/${repo}`;
-		if (eventSources.find((source) => source.name.toLowerCase() === name.toLowerCase())) {
+		const name = `${owner}/${repo}`;
+		if (
+			subscriptions.find(
+				(subscription) => subscription.repo.full_name.toLowerCase() === name.toLowerCase()
+			)
+		) {
 			error = `"${name}" is already being watched.`;
 			return;
 		}
@@ -31,16 +35,14 @@
 		try {
 			loading = true;
 			const repo = (await fetchGithub(`repos/${name}`)) as GithubRepository;
-			name = repo.full_name;
+			dispatch('add', { repo });
+			modal.close();
 		} catch {
 			error = `"${name}" is not a valid repository.`;
 			return;
 		} finally {
 			loading = false;
 		}
-
-		dispatch('add', { name });
-		modal.close();
 	}
 
 	function onClose() {

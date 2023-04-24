@@ -3,7 +3,8 @@ import { page } from '$app/stores';
 type Options = {
 	noCache?: boolean;
 	accessToken?: string;
-	method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+	body?: Record<string, unknown>;
 };
 
 export async function fetchGithub(url: string, options?: Options): Promise<unknown> {
@@ -20,9 +21,13 @@ export async function fetchGithub(url: string, options?: Options): Promise<unkno
 			Authorization: `Bearer ${accessToken}`
 		},
 		method: options?.method || 'GET',
-		cache: 'no-store'
+		body: options?.body ? JSON.stringify(options.body) : undefined,
+		cache: options?.noCache ? 'no-store' : undefined
 	});
-	if (response.ok && options?.method !== 'DELETE') {
+
+	if (options?.method) return;
+
+	if (response.ok) {
 		const data = await response.json();
 		return data;
 	}
