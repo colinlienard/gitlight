@@ -1,15 +1,11 @@
 import { writable } from 'svelte/store';
-import type { NotificationData } from '~/lib/types';
+import type { NotificationData, SavedNotifications } from '~/lib/types';
 
 export const filteredNotifications = writable<NotificationData[]>([]);
 
 export const githubNotifications = writable<NotificationData[]>([]);
 
-export const savedEventIds = writable<{
-	pinned: string[];
-	unread: string[];
-	read: string[];
-} | null>(null);
+export const savedEventIds = writable<SavedNotifications | null>(null);
 
 export const loading = writable<boolean>(true);
 

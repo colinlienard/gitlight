@@ -11,12 +11,11 @@
 	let interval: ReturnType<typeof setInterval>;
 
 	// Filter events
-	// $: pinned = $filteredNotifications.filter((event) => event.pinned);
 	// $: unread = $filteredNotifications.filter((event) => !event.pinned && !event.read);
 	// $: read = $filteredNotifications.filter((event) => !event.pinned && event.read);
-	let pinned: unknown[] = [];
-	$: unread = $githubNotifications.filter((event) => event.unread);
-	$: read = $githubNotifications.filter((event) => !event.unread);
+	$: pinned = $githubNotifications.filter((item) => item.pinned);
+	$: unread = $githubNotifications.filter((item) => !item.pinned && item.unread);
+	$: read = $githubNotifications.filter((item) => !item.pinned && !item.unread);
 
 	$: showReadAll = unread.length > 0;
 
@@ -30,6 +29,7 @@
 	}
 
 	function markAllAsRead() {
+		// https://docs.github.com/en/rest/activity/notifications?apiVersion=2022-11-28#mark-notifications-as-read
 		// githubNotifications.update((previous) =>
 		// 	previous.map((event) => (unread.includes(event) ? { ...event, read: true } : event))
 		// );
@@ -77,7 +77,7 @@
 		<NotificationColumn
 			icon={Pin}
 			title="Pinned"
-			events={[]}
+			notifications={pinned}
 			placeholder="Click on 📌 to mark an event as pinned."
 			{transitions}
 		/>
@@ -85,7 +85,7 @@
 		<NotificationColumn
 			icon={Mail}
 			title="Unread"
-			events={unread}
+			notifications={unread}
 			placeholder="New notifications 🔔 will appear here."
 			{transitions}
 		/>
@@ -93,7 +93,7 @@
 		<NotificationColumn
 			icon={Check}
 			title="Read"
-			events={read}
+			notifications={read}
 			placeholder="Click on ✅ to mark an event as read."
 			{transitions}
 		/>

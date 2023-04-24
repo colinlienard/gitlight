@@ -2,15 +2,14 @@
 	import { Github, Logo, Trash } from '~/lib/icons';
 	import { Separator, ShrinkableWrapper, Switch, Tooltip } from '~/lib/components';
 	import { onMount } from 'svelte';
-	import { getAppVersion } from '~/lib/helpers';
-	import type { EventSources, TypeFilters } from '~/lib/types';
+	import { fetchGithub, getAppVersion } from '~/lib/helpers';
 	import { filteredNotifications, githubNotifications, loading } from '~/lib/stores';
 	import { browser } from '$app/environment';
 	import SidebarModal from './SidebarModal.svelte';
 	import SidebarSearch from './SidebarSearch.svelte';
+	import type { GithubRepository, Subscription, TypeFilters } from '~/lib/types';
 
-	export let eventSources: EventSources;
-
+	let subscriptions: Subscription[] = [];
 	let search = '';
 	let typeFilters: TypeFilters = [
 		{ name: 'Pull requests', type: 'pr', active: true },
@@ -29,23 +28,28 @@
 	}
 
 	// Apply filters and search
-	// $: filteredNotifications.set(
-	// 	$githubNotifications.filter((event) => {
-	// 		const source = eventSources.find((source) => source.name === event.repo);
-	// 		const searched = event.title.toLowerCase().includes(search.toLowerCase());
-	// 		const isOfType = typeFilters.some((filter) => filter.active && filter.type === event.type);
-	// 		return source?.active && searched && isOfType;
-	// 	})
-	// );
+	$: filteredNotifications.set(
+		$githubNotifications.filter((notification) => {
+			const subscription = subscriptions.find(
+				(subscription) => subscription.repo.id === notification.repoId
+			);
+			const searched = notification.title.toLowerCase().includes(search.toLowerCase());
+			// const isOfType = typeFilters.some((filter) => filter.active && filter.type === event.type);
+			return subscription?.active && searched;
+		})
+	);
 
 	function handleAddSource({ detail }: { detail: { name: string } }) {
 		const { name } = detail;
-		eventSources = [...eventSources, { name, active: true }];
+		subscriptions = [...subscriptions, { name, active: true }];
 	}
 
-	function handleRemoveSource(name: string) {
+	function handleRemoveSource(repo: GithubRepository) {
 		return () => {
-			eventSources = eventSources.filter((source) => source.name !== name);
+			subscriptions = subscriptions.filter((subscription) => subscription.repo.id !== repo.id);
+			fetchGithub(`repos/${repo.full_name}/subscription`, {
+				method: 'DELETE'
+			});
 		};
 	}
 
@@ -55,7 +59,7 @@
 		};
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		// Get type filters from localStorage
 		const savedTypeFilters = JSON.parse(
 			localStorage.getItem('typeFilters') || '[true, true, true, true, true, true, true]'
@@ -64,6 +68,17 @@
 			...filter,
 			active: savedTypeFilters[index]
 		}));
+
+		// Set subscriptions
+		const savedSubs = JSON.parse(localStorage.getItem('githubSubscriptions') || '[]') as {
+			id: number;
+			active: boolean;
+		}[];
+		const repos = (await fetchGithub('user/subscriptions')) as GithubRepository[];
+		subscriptions = repos.map((repo) => {
+			const active = savedSubs.find((sub) => sub.id === repo.id)?.active ?? true;
+			return { repo, active };
+		});
 	});
 </script>
 
@@ -88,17 +103,17 @@
 				{/each}
 			</ShrinkableWrapper>
 			<ShrinkableWrapper title="Watching">
-				{#each eventSources as source (source.name)}
+				{#each subscriptions as subscription (subscription.repo.id)}
 					<div class="repository">
-						<Switch bind:active={source.active} label={source.name} />
+						<Switch bind:active={subscription.active} label={subscription.repo.full_name} />
 						<Tooltip content="Delete" position="top">
-							<button class="delete" on:click={handleRemoveSource(source.name)}>
+							<button class="delete" on:click={handleRemoveSource(subscription.repo)}>
 								<Trash />
 							</button>
 						</Tooltip>
 					</div>
 				{/each}
-				<SidebarModal {eventSources} on:add={handleAddSource} />
+				<!-- <SidebarModal {subscriptions} on:add={handleAddSource} /> -->
 			</ShrinkableWrapper>
 		{:else}
 			<div class="skeletons-container">
@@ -144,6 +159,7 @@
 	}
 
 	.scrollable {
+		width: 20rem;
 		padding: 3rem 2rem 2rem;
 		display: flex;
 		flex-direction: column;

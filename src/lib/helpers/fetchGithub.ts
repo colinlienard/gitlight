@@ -1,10 +1,13 @@
 import { page } from '$app/stores';
 
-export async function fetchGithub(
-	url: string,
-	noCache = false,
-	accessToken = ''
-): Promise<unknown> {
+type Options = {
+	noCache?: boolean;
+	accessToken?: string;
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+};
+
+export async function fetchGithub(url: string, options?: Options): Promise<unknown> {
+	let { accessToken } = options || {};
 	if (!accessToken) {
 		page.subscribe(({ data }) => {
 			accessToken = data.session?.accessToken || '';
@@ -16,9 +19,10 @@ export async function fetchGithub(
 			Accept: 'application/vnd.github+json',
 			Authorization: `Bearer ${accessToken}`
 		},
-		cache: noCache ? 'no-cache' : undefined
+		method: options?.method || 'GET',
+		cache: 'no-store'
 	});
-	if (response.ok) {
+	if (response.ok && options?.method !== 'DELETE') {
 		const data = await response.json();
 		return data;
 	}

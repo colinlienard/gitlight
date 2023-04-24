@@ -1,4 +1,4 @@
-export * from './createEventData';
+export * from './createNotificationData';
 export * from './debounce';
 export * from './fetchGithub';
 export * from './formatRelativeDate';

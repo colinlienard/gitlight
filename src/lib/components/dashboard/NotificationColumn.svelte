@@ -2,7 +2,7 @@
 	import { onDestroy, onMount, type ComponentType } from 'svelte';
 	import { fade, type CrossfadeParams, type TransitionConfig } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
-	import type { GithubNotification } from '~/lib/types';
+	import type { NotificationData } from '~/lib/types';
 	import { debounce } from '~/lib/helpers';
 	import { ArrowUp, Folder } from '~/lib/icons';
 	import { Button } from '../common';
@@ -19,7 +19,7 @@
 
 	export let icon: ComponentType;
 	export let title: string;
-	export let events: GithubNotification[];
+	export let notifications: NotificationData[];
 	export let placeholder: string;
 	export let transitions: {
 		receive: SvelteAnimation;
@@ -53,7 +53,7 @@
 	<div class="column-header">
 		<svelte:component this={icon} />
 		<h3 class="title">{title}</h3>
-		<p class="number">{events.length}</p>
+		<p class="number">{notifications.length}</p>
 	</div>
 	{#if scrolled}
 		<div class="scroll-button" transition:fade={{ duration: 150 }}>
@@ -66,16 +66,15 @@
 		{#if $loading}
 			<li><SkeletonEvent /></li>
 			<li><SkeletonEvent /></li>
-		{:else if events.length}
-			{#each events as event (event.id)}
+		{:else if notifications.length}
+			{#each notifications as notification (notification.id)}
 				<li
 					class="item"
-					in:receive={{ key: event.id }}
-					out:send={{ key: event.id }}
+					in:receive={{ key: notification.id }}
+					out:send={{ key: notification.id }}
 					animate:flip={settings}
 				>
-					<Notification data={event} />
-					<!-- <Event data={event} /> -->
+					<Notification data={notification} />
 				</li>
 			{/each}
 		{:else}

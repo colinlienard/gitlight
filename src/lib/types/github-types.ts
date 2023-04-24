@@ -12,6 +12,7 @@ export type GithubUser = {
 };
 
 export type GithubRepository = {
+	id: number;
 	full_name: string;
 };
 
@@ -57,14 +58,14 @@ export type GithubRelease = {
 	html_url: string;
 };
 
+export type GithubItem = GithubIssue | GithubRepository | GithubCommit | GithubRelease;
+
 export type GithubNotificationType = 'PullRequest' | 'Issue' | 'Commit' | 'Release' | 'Discussion';
 
 export type GithubNotification = {
 	id: string;
 	reason: string; // TODO
-	repository: {
-		full_name: string;
-	};
+	repository: GithubRepository;
 	subject: {
 		latest_comment_url: string | null;
 		title: string;
