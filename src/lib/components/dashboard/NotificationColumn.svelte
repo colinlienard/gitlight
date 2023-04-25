@@ -62,7 +62,7 @@
 			</Button>
 		</div>
 	{/if}
-	<ul class="list" bind:this={list}>
+	<ul class="list" class:empty={!notifications.length} bind:this={list}>
 		{#if $loading}
 			<li><SkeletonEvent /></li>
 			<li><SkeletonEvent /></li>
@@ -94,6 +94,7 @@
 		position: relative;
 		min-width: 0;
 		min-height: 0;
+		z-index: 1;
 
 		&::before {
 			content: '';
@@ -144,6 +145,10 @@
 		overflow: auto;
 		padding: 1rem 0;
 		height: 100%;
+
+		&.empty {
+			overflow: visible;
+		}
 
 		&::-webkit-scrollbar {
 			display: none;

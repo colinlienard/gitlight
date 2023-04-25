@@ -30,7 +30,7 @@
 	function markAllAsRead() {
 		githubNotifications.update((previous) =>
 			previous.map((notifications) =>
-				unread.includes(notifications) ? { ...notifications, read: true } : notifications
+				unread.includes(notifications) ? { ...notifications, unread: false } : notifications
 			)
 		);
 		fetchGithub('notifications', {
@@ -247,6 +247,7 @@
 			justify-content: center;
 			gap: 0.25rem;
 			color: variables.$blue-3;
+			z-index: 1;
 
 			&:hover {
 				filter: brightness(130%);

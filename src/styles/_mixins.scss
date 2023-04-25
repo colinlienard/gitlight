@@ -2,7 +2,7 @@
 @use './variables';
 
 @mixin shiny($color, $hover: true, $radius: variables.$radius) {
-	background-image: linear-gradient(lighten($color, 10%), $color 50%);
+	background-image: linear-gradient(lighten($color, 10%), $color);
 	isolation: isolate;
 	position: relative;
 	border-radius: $radius;

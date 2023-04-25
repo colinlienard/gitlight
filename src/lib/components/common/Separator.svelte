@@ -11,32 +11,19 @@
 
 <style lang="scss">
 	.separator {
-		background-color: variables.$grey-3;
 		position: relative;
 		flex: 0 0 1px;
 
-		&::before {
-			content: '';
-			position: absolute;
-			border: none;
-		}
-
 		&.vertical {
+			background-image: linear-gradient(variables.$grey-3 50%, rgba(255, 255, 255, 0) 0%);
+			background-size: 1px 1.5rem;
 			height: 100%;
-
-			&::before {
-				height: 100%;
-				border-right: 0.5rem dashed variables.$grey-1;
-			}
 		}
 
 		&:not(.vertical) {
+			background-image: linear-gradient(to right, variables.$grey-3 50%, rgba(255, 255, 255, 0) 0%);
+			background-size: 1.5rem 1px;
 			width: 100%;
-
-			&::before {
-				width: 100%;
-				border-bottom: 0.5rem dashed variables.$grey-1;
-			}
 		}
 	}
 </style>

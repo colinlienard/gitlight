@@ -23,6 +23,17 @@
 
 	$: mostAreSelected = typeFilters.filter((filter) => filter.active).length > 3;
 
+	// Save subscriptions to localStorage
+	$: if (browser && !loading) {
+		localStorage.setItem(
+			'githubSubscriptions',
+			JSON.stringify([
+				...subscriptions.map(({ repo, active }) => ({ id: repo.id, active })),
+				{ id: 0, active: others }
+			])
+		);
+	}
+
 	// Save type filters to localStorage
 	$: if (browser && !loading) {
 		localStorage.setItem('typeFilters', JSON.stringify(typeFilters.map((filter) => filter.active)));
@@ -38,7 +49,7 @@
 			const isOfType = typeFilters.some(
 				(filter) => filter.active && filter.type === notification.type
 			);
-			return (others || subscription?.active) && searched && isOfType;
+			return (subscription ? subscription.active : others) && searched && isOfType;
 		})
 	);
 
@@ -86,6 +97,7 @@
 			const active = savedSubs.find((sub) => sub.id === repo.id)?.active ?? true;
 			return { repo, active };
 		});
+		others = savedSubs.find((sub) => sub.id === 0)?.active ?? true;
 
 		loading = false;
 	});

@@ -120,6 +120,12 @@
 					<ExternalLink />
 				</Button>
 			</Tooltip>
+		{:else}
+			<Tooltip content="Cannot open in GitHub" position="left">
+				<Button type="secondary" small disabled>
+					<ExternalLink />
+				</Button>
+			</Tooltip>
 		{/if}
 		<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left">
 			<Button type="secondary" small on:click={handleToggle('pinned')}>

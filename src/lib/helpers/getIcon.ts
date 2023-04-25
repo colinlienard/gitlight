@@ -8,7 +8,7 @@ import {
 	PullRequestMerged,
 	PullRequestOpen
 } from '../icons';
-import type { Colors, GithubIssue, GithubPullRequest } from '../types';
+import type { Color, GithubIssue, GithubPullRequest } from '../types';
 
 export function getIssueIcon({ state, state_reason }: GithubIssue): ComponentType {
 	switch (state) {
@@ -32,7 +32,7 @@ export function getPullRequestIcon({ state, merged, draft }: GithubPullRequest):
 	}
 }
 
-export function getIconColor(item: GithubPullRequest | GithubIssue): Colors {
+export function getIconColor(item: GithubPullRequest | GithubIssue): Color {
 	// Pull request
 	if ('draft' in item) {
 		if (item.state === 'open') {
