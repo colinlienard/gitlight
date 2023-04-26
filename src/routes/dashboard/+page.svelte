@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import { Notifications, Sidebar } from '~/lib/components';
+	import { Main, Sidebar } from '~/lib/components';
 	import { createNotificationData, fetchGithub } from '~/lib/helpers';
 	import { githubNotifications, loading, savedEventIds } from '~/lib/stores';
 	import type { GithubItem, GithubNotification, SavedNotifications } from '~/lib/types';
@@ -72,7 +72,7 @@
 
 <div class="container">
 	<Sidebar />
-	<Notifications {synced} />
+	<Main {synced} />
 </div>
 
 <style lang="scss">

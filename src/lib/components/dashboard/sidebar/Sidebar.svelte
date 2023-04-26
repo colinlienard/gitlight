@@ -92,7 +92,7 @@
 			id: number;
 			active: boolean;
 		}[];
-		const repos = (await fetchGithub('user/subscriptions')) as GithubRepository[];
+		const repos = (await fetchGithub('user/subscriptions?per_page=100')) as GithubRepository[];
 		subscriptions = repos.map((repo) => {
 			const active = savedSubs.find((sub) => sub.id === repo.id)?.active ?? true;
 			return { repo, active };

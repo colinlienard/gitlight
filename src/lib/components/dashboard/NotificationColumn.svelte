@@ -167,6 +167,7 @@
 		align-items: center;
 		justify-content: center;
 		color: variables.$grey-4;
+		text-align: center;
 
 		:global(svg) {
 			height: 3rem;
