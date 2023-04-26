@@ -1,5 +1,10 @@
 import type { ComponentType } from 'svelte';
-import type { GithubLabel } from './github-types';
+import type {
+	GithubLabel,
+	GithubNotificationType,
+	GithubRepository,
+	GithubUser
+} from './github-types';
 
 export type User = {
 	name: string;
@@ -12,30 +17,22 @@ export type Session = {
 	accessToken: string;
 };
 
-export type Colors = 'blue' | 'purple' | 'green' | 'red' | 'grey';
+export type Color = 'blue' | 'purple' | 'green' | 'red' | 'grey';
 
-export type EventType = 'pr' | 'issue' | 'commit' | 'review' | 'branch/tag' | 'repo';
-
-export type EventData = {
+export type NotificationData = {
 	id: string;
-	type: EventType;
-	read: boolean;
+	type: GithubNotificationType;
+	unread: boolean;
 	pinned: boolean;
 	isNew: boolean;
+	author?: GithubUser;
 	title: string;
-	description: (
-		| {
-				text: string;
-				image?: string;
-				icon?: ComponentType;
-				iconColor?: Colors;
-		  }
-		| string
-	)[];
+	description: string;
 	time: string;
 	icon: ComponentType;
-	iconColor?: Colors;
+	iconColor: Color;
 	repo: string;
+	repoId: number;
 	number?: number;
 	labels?: GithubLabel[];
 	url?: string;
@@ -43,11 +40,16 @@ export type EventData = {
 
 export type TypeFilters = {
 	name: string;
-	type: EventType;
+	type: GithubNotificationType;
 	active: boolean;
 }[];
 
-export type EventSources = {
-	name: string;
+export type Subscription = {
+	repo: GithubRepository;
 	active: boolean;
-}[];
+};
+
+export type SavedNotifications = {
+	pinned: string[];
+	unread: string[];
+};

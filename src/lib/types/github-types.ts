@@ -12,6 +12,7 @@ export type GithubUser = {
 };
 
 export type GithubRepository = {
+	id: number;
 	full_name: string;
 };
 
@@ -36,11 +37,9 @@ export type GithubCommit = {
 	sha: string;
 	url: string;
 	message: string;
-	author: {
-		email: string;
-		name: string;
-	};
+	author: GithubUser;
 	distinct: boolean;
+	html_url: string;
 };
 
 export type GithubComment = {
@@ -50,6 +49,7 @@ export type GithubComment = {
 };
 
 export type GithubRelease = {
+	author: GithubUser;
 	tag_name: string;
 	name: string;
 	body: string;
@@ -57,6 +57,26 @@ export type GithubRelease = {
 	prerelease: boolean;
 	html_url: string;
 };
+
+export type GithubItem = GithubIssue | GithubRepository | GithubCommit | GithubRelease;
+
+export type GithubNotificationType = 'PullRequest' | 'Issue' | 'Commit' | 'Release' | 'Discussion';
+
+export type GithubNotification = {
+	id: string;
+	reason: string; // TODO
+	repository: GithubRepository;
+	subject: {
+		latest_comment_url: string | null;
+		title: string;
+		type: GithubNotificationType;
+		url: string | null;
+	};
+	unread: boolean;
+	updated_at: string;
+};
+
+// TODO: Delete the following
 
 type GithubEventCommon = {
 	actor: GithubUser;

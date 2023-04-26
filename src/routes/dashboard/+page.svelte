@@ -1,71 +1,68 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import { Notifications, Sidebar } from '~/lib/components';
-	import { createEventData, fetchGithub } from '~/lib/helpers';
-	import { githubEvents, loading, savedEventIds } from '~/lib/stores';
-	import type { EventSources, GithubEvent } from '~/lib/types';
+	import { Main, Sidebar } from '~/lib/components';
+	import { createNotificationData, fetchGithub } from '~/lib/helpers';
+	import { githubNotifications, loading, savedEventIds } from '~/lib/stores';
+	import type { GithubItem, GithubNotification, SavedNotifications } from '~/lib/types';
 
-	let eventSources: EventSources = [];
 	let synced = false;
 	let mounted = false;
 
 	const interval = setInterval(() => {
-		setEvents();
+		setNotifications();
 	}, 60000);
 
-	async function setEvents() {
+	async function setNotifications() {
 		synced = false;
-		const promises = eventSources
-			.filter(({ active }) => active)
-			.map(({ name }) => fetchGithub(`repos/${name}/events?per_page=25`));
-		const response = (await Promise.all(promises)).flat() as GithubEvent[];
-		const sorted = response.sort(
-			(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-		);
-		githubEvents.set(
-			sorted.map((event) => {
-				const pinned = $savedEventIds?.pinned.includes(event.id) || false;
-				const read = $savedEventIds?.read.includes(event.id) || false;
-				const isNew = (!read && !$savedEventIds?.unread.includes(event.id)) || false;
-				return createEventData(event, pinned, read, isNew);
-			})
-		);
+
+		let notifications = (await fetchGithub('notifications?all=true', {
+			noCache: true
+		})) as GithubNotification[];
+
+		// Keep only new notifications
+		if ($githubNotifications.length) {
+			notifications = notifications.filter(
+				(item) => !$githubNotifications.find((notification) => notification.id === item.id)
+			);
+		}
+
+		if (notifications.length) {
+			// Fetch additional data
+			const datas = (await Promise.all(
+				notifications.map((item) => (item.subject.url ? fetchGithub(item.subject.url) : null))
+			)) as GithubItem[];
+
+			// Add new notifications to the store
+			githubNotifications.update((previous) => [
+				...notifications.map((notification, index) =>
+					createNotificationData(notification, datas[index], $savedEventIds as SavedNotifications)
+				),
+				...previous
+			]);
+		}
+
 		synced = true;
 	}
 
 	// Save events ids to localStorage
-	$: if (mounted && $githubEvents.length) {
-		const pinned = $githubEvents.filter((event) => event.pinned).map((event) => event.id);
-		const unread = $githubEvents.filter((event) => !event.read).map((event) => event.id);
-		const read = $githubEvents.filter((event) => event.read).map((event) => event.id);
-		const toSave = { pinned, unread, read };
+	$: if (mounted && $githubNotifications.length) {
+		const pinned = $githubNotifications.filter((item) => item.pinned).map((item) => item.id);
+		const unread = $githubNotifications.filter((item) => item.unread).map((item) => item.id);
+		const toSave = { pinned, unread };
 		savedEventIds.set(toSave);
-		localStorage.setItem('githubEvents', JSON.stringify(toSave));
+		localStorage.setItem('githubNotifications', JSON.stringify(toSave));
 	}
 
-	$: if (mounted) {
-		// Save event sources to localStorage
-		localStorage.setItem('eventSources', JSON.stringify(eventSources));
-
-		// Refetch events
-		(async () => {
-			await setEvents();
-			loading.set(false);
-		})();
-	}
-
-	onMount(() => {
+	onMount(async () => {
 		// Get events ids from localStorage
 		savedEventIds.set(
-			JSON.parse(
-				localStorage.getItem('githubEvents') || '{ "pinned": [], "unread": [], "read": [] }'
-			)
+			JSON.parse(localStorage.getItem('githubNotifications') || '{ "pinned": [], "unread": [] }')
 		);
 
-		// Get event sources from localStorage
-		eventSources = JSON.parse(localStorage.getItem('eventSources') || '[]');
-
 		mounted = true;
+
+		await setNotifications();
+		loading.set(false);
 	});
 
 	onDestroy(() => {
@@ -74,8 +71,8 @@
 </script>
 
 <div class="container">
-	<Sidebar bind:eventSources />
-	<Notifications {synced} />
+	<Sidebar />
+	<Main {synced} />
 </div>
 
 <style lang="scss">

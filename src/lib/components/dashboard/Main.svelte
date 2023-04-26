@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { crossfade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
-	import { EventColumn, Settings, Separator } from '~/lib/components';
-	import { filteredEvents, githubEvents } from '~/lib/stores';
+	import { NotificationColumn, Settings, Separator } from '~/lib/components';
+	import { filteredNotifications, githubNotifications } from '~/lib/stores';
 	import { Check, Github, Gitlab, Mail, Pin, Refresh } from '~/lib/icons';
+	import { fetchGithub } from '~/lib/helpers';
 
 	export let synced: boolean;
 
@@ -11,9 +12,9 @@
 	let interval: ReturnType<typeof setInterval>;
 
 	// Filter events
-	$: pinned = $filteredEvents.filter((event) => event.pinned);
-	$: unread = $filteredEvents.filter((event) => !event.pinned && !event.read);
-	$: read = $filteredEvents.filter((event) => !event.pinned && event.read);
+	$: pinned = $filteredNotifications.filter((item) => item.pinned);
+	$: unread = $filteredNotifications.filter((item) => !item.pinned && item.unread);
+	$: read = $filteredNotifications.filter((item) => !item.pinned && !item.unread);
 
 	$: showReadAll = unread.length > 0;
 
@@ -27,9 +28,15 @@
 	}
 
 	function markAllAsRead() {
-		githubEvents.update((previous) =>
-			previous.map((event) => (unread.includes(event) ? { ...event, read: true } : event))
+		githubNotifications.update((previous) =>
+			previous.map((notifications) =>
+				unread.includes(notifications) ? { ...notifications, unread: false } : notifications
+			)
 		);
+		fetchGithub('notifications', {
+			method: 'PUT',
+			body: { read: true }
+		});
 	}
 
 	// Animations settings
@@ -71,26 +78,26 @@
 		</button>
 	</nav>
 	<section class="columns-container">
-		<EventColumn
+		<NotificationColumn
 			icon={Pin}
 			title="Pinned"
-			events={pinned}
+			notifications={pinned}
 			placeholder="Click on 📌 to mark an event as pinned."
 			{transitions}
 		/>
 		<Separator vertical />
-		<EventColumn
+		<NotificationColumn
 			icon={Mail}
 			title="Unread"
-			events={unread}
+			notifications={unread}
 			placeholder="New notifications 🔔 will appear here."
 			{transitions}
 		/>
 		<Separator vertical />
-		<EventColumn
+		<NotificationColumn
 			icon={Check}
 			title="Read"
-			events={read}
+			notifications={read}
 			placeholder="Click on ✅ to mark an event as read."
 			{transitions}
 		/>
@@ -240,6 +247,7 @@
 			justify-content: center;
 			gap: 0.25rem;
 			color: variables.$blue-3;
+			z-index: 1;
 
 			&:hover {
 				filter: brightness(130%);

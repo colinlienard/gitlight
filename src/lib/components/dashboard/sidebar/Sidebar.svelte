@@ -2,50 +2,72 @@
 	import { Github, Logo, Trash } from '~/lib/icons';
 	import { Separator, ShrinkableWrapper, Switch, Tooltip } from '~/lib/components';
 	import { onMount } from 'svelte';
-	import { getAppVersion } from '~/lib/helpers';
-	import type { EventSources, TypeFilters } from '~/lib/types';
-	import { filteredEvents, githubEvents, loading } from '~/lib/stores';
+	import { fetchGithub, getAppVersion } from '~/lib/helpers';
+	import { filteredNotifications, githubNotifications } from '~/lib/stores';
 	import { browser } from '$app/environment';
 	import SidebarModal from './SidebarModal.svelte';
 	import SidebarSearch from './SidebarSearch.svelte';
+	import type { GithubRepository, Subscription, TypeFilters } from '~/lib/types';
 
-	export let eventSources: EventSources;
-
+	let subscriptions: Subscription[] = [];
 	let search = '';
 	let typeFilters: TypeFilters = [
-		{ name: 'Pull requests', type: 'pr', active: true },
-		{ name: 'Issues', type: 'issue', active: true },
-		{ name: 'Commits', type: 'commit', active: true },
-		{ name: 'Reviews', type: 'review', active: true },
-		{ name: 'Branches & tags', type: 'branch/tag', active: true },
-		{ name: 'Repository events', type: 'repo', active: true }
+		{ name: 'Pull requests', type: 'PullRequest', active: true },
+		{ name: 'Issues', type: 'Issue', active: true },
+		{ name: 'Commits', type: 'Commit', active: true },
+		{ name: 'Discussions', type: 'Discussion', active: true },
+		{ name: 'Releases', type: 'Release', active: true }
 	];
+	let loading = true;
+	let others = true;
 
 	$: mostAreSelected = typeFilters.filter((filter) => filter.active).length > 3;
 
+	// Save subscriptions to localStorage
+	$: if (browser && !loading) {
+		localStorage.setItem(
+			'githubSubscriptions',
+			JSON.stringify([
+				...subscriptions.map(({ repo, active }) => ({ id: repo.id, active })),
+				{ id: 0, active: others }
+			])
+		);
+	}
+
 	// Save type filters to localStorage
-	$: if (browser && !$loading) {
+	$: if (browser && !loading) {
 		localStorage.setItem('typeFilters', JSON.stringify(typeFilters.map((filter) => filter.active)));
 	}
 
 	// Apply filters and search
-	$: filteredEvents.set(
-		$githubEvents.filter((event) => {
-			const source = eventSources.find((source) => source.name === event.repo);
-			const searched = event.title.toLowerCase().includes(search.toLowerCase());
-			const isOfType = typeFilters.some((filter) => filter.active && filter.type === event.type);
-			return source?.active && searched && isOfType;
+	$: filteredNotifications.set(
+		$githubNotifications.filter((notification) => {
+			const subscription = subscriptions.find(
+				(subscription) => subscription.repo.id === notification.repoId
+			);
+			const searched = notification.title.toLowerCase().includes(search.toLowerCase());
+			const isOfType = typeFilters.some(
+				(filter) => filter.active && filter.type === notification.type
+			);
+			return (subscription ? subscription.active : others) && searched && isOfType;
 		})
 	);
 
-	function handleAddSource({ detail }: { detail: { name: string } }) {
-		const { name } = detail;
-		eventSources = [...eventSources, { name, active: true }];
+	function handleAddSource({ detail }: { detail: { repo: GithubRepository } }) {
+		const { repo } = detail;
+		subscriptions = [{ repo, active: true }, ...subscriptions];
+		fetchGithub(`repos/${repo.full_name}/subscription`, {
+			method: 'PUT',
+			body: { subscribed: true }
+		});
 	}
 
-	function handleRemoveSource(name: string) {
+	function handleRemoveSource(repo: GithubRepository) {
 		return () => {
-			eventSources = eventSources.filter((source) => source.name !== name);
+			subscriptions = subscriptions.filter((subscription) => subscription.repo.id !== repo.id);
+			fetchGithub(`repos/${repo.full_name}/subscription`, {
+				method: 'DELETE'
+			});
 		};
 	}
 
@@ -55,7 +77,7 @@
 		};
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		// Get type filters from localStorage
 		const savedTypeFilters = JSON.parse(
 			localStorage.getItem('typeFilters') || '[true, true, true, true, true, true, true]'
@@ -64,6 +86,20 @@
 			...filter,
 			active: savedTypeFilters[index]
 		}));
+
+		// Set subscriptions
+		const savedSubs = JSON.parse(localStorage.getItem('githubSubscriptions') || '[]') as {
+			id: number;
+			active: boolean;
+		}[];
+		const repos = (await fetchGithub('user/subscriptions?per_page=100')) as GithubRepository[];
+		subscriptions = repos.map((repo) => {
+			const active = savedSubs.find((sub) => sub.id === repo.id)?.active ?? true;
+			return { repo, active };
+		});
+		others = savedSubs.find((sub) => sub.id === 0)?.active ?? true;
+
+		loading = false;
 	});
 </script>
 
@@ -74,7 +110,7 @@
 			<Logo />
 			<h1 class="title">GitLight</h1>
 		</header>
-		{#if !$loading}
+		{#if !loading}
 			<ShrinkableWrapper title="Filters">
 				<SidebarSearch bind:search />
 				<Separator />
@@ -88,17 +124,18 @@
 				{/each}
 			</ShrinkableWrapper>
 			<ShrinkableWrapper title="Watching">
-				{#each eventSources as source (source.name)}
+				{#each subscriptions as subscription (subscription.repo.id)}
 					<div class="repository">
-						<Switch bind:active={source.active} label={source.name} />
+						<Switch bind:active={subscription.active} label={subscription.repo.full_name} />
 						<Tooltip content="Delete" position="top">
-							<button class="delete" on:click={handleRemoveSource(source.name)}>
+							<button class="delete" on:click={handleRemoveSource(subscription.repo)}>
 								<Trash />
 							</button>
 						</Tooltip>
 					</div>
 				{/each}
-				<SidebarModal {eventSources} on:add={handleAddSource} />
+				<Switch bind:active={others} label="Others" />
+				<SidebarModal {subscriptions} on:add={handleAddSource} />
 			</ShrinkableWrapper>
 		{:else}
 			<div class="skeletons-container">
@@ -144,6 +181,7 @@
 	}
 
 	.scrollable {
+		width: 20rem;
 		padding: 3rem 2rem 2rem;
 		display: flex;
 		flex-direction: column;
@@ -207,7 +245,7 @@
 
 		.delete {
 			flex: 0 0 1.25rem;
-			transition: opacity variables.$transition;
+			transition: color variables.$transition;
 
 			:global(svg) {
 				height: 1.25rem;
@@ -218,8 +256,12 @@
 			}
 		}
 
-		&:not(:hover) .delete {
-			opacity: 0;
+		&:not(:hover) {
+			gap: 0;
+
+			.delete {
+				display: none;
+			}
 		}
 	}
 

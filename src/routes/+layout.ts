@@ -28,7 +28,9 @@ export async function load({ url }) {
 	// Set user data
 	if (!user && accessToken) {
 		try {
-			const { name, login, avatar_url } = (await fetchGithub('user', accessToken)) as GithubUser;
+			const { name, login, avatar_url } = (await fetchGithub('user', {
+				accessToken
+			})) as GithubUser;
 			user = { name, login, avatar: avatar_url };
 			localStorage.setItem('user', JSON.stringify(user));
 		} catch {

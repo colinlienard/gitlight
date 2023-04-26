@@ -1,69 +1,76 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import { formatRelativeDate, getHex } from '~/lib/helpers';
-	import { Check, ExternalLink, Mail, Pin, Unpin } from '~/lib/icons';
-	import type { EventData } from '~/lib/types';
-	import { Button, Tooltip } from '~/lib/components';
-	import { githubEvents, settings } from '~/lib/stores';
+	import { fetchGithub, formatRelativeDate, getHex } from '~/lib/helpers';
+	import { Check, ExternalLink, Pin, Mail, Unpin } from '~/lib/icons';
+	import { Button, Tooltip } from '../common';
+	import { githubNotifications, settings } from '~/lib/stores';
+	import type { NotificationData } from '~/lib/types';
 
-	export let data: EventData;
+	export let data: NotificationData;
 
 	let {
 		id,
-		read,
+		unread,
 		pinned,
 		isNew,
+		author,
+		title,
 		description,
+		time,
 		icon,
 		iconColor,
-		repo: fullRepo,
-		time,
-		title,
-		url,
+		repo: repoFullName,
+		number,
 		labels,
-		number
+		url
 	} = data;
-	let [owner, repo] = fullRepo.split('/');
+	let [owner, repo] = repoFullName.split('/');
 	let displayTime = formatRelativeDate(time);
 
 	const interval = setInterval(() => {
 		displayTime = formatRelativeDate(time);
 	}, 60000);
 
-	function handleToggle(key: 'read' | 'pinned') {
+	onDestroy(() => {
+		clearInterval(interval);
+	});
+
+	function handleToggle(key: 'unread' | 'pinned') {
 		return () => {
-			githubEvents.update((previous) =>
-				previous.map((event) => {
-					if (event.id !== id) {
-						return event;
+			githubNotifications.update((previous) =>
+				previous.map((notification) => {
+					if (notification.id !== id) {
+						return notification;
 					}
-					if (key === 'pinned' && $settings.readWhenPin) {
-						return { ...event, [key]: !event[key], read: true };
+					if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
+						return { ...notification, pinned: !notification.pinned, unread: false };
 					}
-					return { ...event, [key]: !event[key] };
+					return { ...notification, [key]: !notification[key] };
 				})
 			);
+
 			if (pinned) {
-				read = !read;
+				unread = !unread;
+			}
+
+			// Mark as read in GitHub
+			if (unread) {
+				fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
 			}
 		};
 	}
 
 	function handleOpenInBrowser() {
 		if ($settings.readWhenOpenInBrowser) {
-			githubEvents.update((previous) =>
+			githubNotifications.update((previous) =>
 				previous.map((event) => (event.id === id ? { ...event, read: true } : event))
 			);
 		}
 	}
-
-	onDestroy(() => {
-		clearInterval(interval);
-	});
 </script>
 
-<div class="event" on:mouseenter={isNew ? () => (isNew = false) : undefined}>
-	{#if isNew && !read}
+<div class="notification" on:mouseenter={isNew ? () => (isNew = false) : undefined}>
+	{#if isNew && unread}
 		<div class="new" />
 	{/if}
 	<div class="top">
@@ -71,23 +78,15 @@
 		<p class="time">{displayTime}</p>
 	</div>
 	<p class="description">
-		{#each description as item}
-			{#if typeof item === 'string'}
-				<span class="subtle">{item}</span>
-			{:else}
-				{item.text}
-				<span class="image-container">
-					{#if item.icon}
-						<span style:color={getHex(item.iconColor)}>
-							<svelte:component this={item.icon} />
-						</span>
-					{/if}
-					{#if item.image}
-						<img class="image" src={item.image} alt="" />
-					{/if}
-				</span>
-			{/if}
-		{/each}
+		{#if author}
+			{author.login}
+			<img class="image" src={author.avatar_url} alt="" />
+			<span class="subtle">
+				{description}
+			</span>
+		{:else}
+			{description}
+		{/if}
 	</p>
 	<div class="main">
 		<span class="icon-container" style:color={getHex(iconColor)}>
@@ -106,20 +105,26 @@
 		</ul>
 	{/if}
 	<div class="over">
-		<Tooltip content="Mark as {read ? 'un' : ''}read" position="left">
-			<Button type={read ? 'secondary' : 'primary'} small on:click={handleToggle('read')}>
-				{#if read}
-					<Mail />
-				{:else}
+		<Tooltip content="Mark as {unread ? '' : 'un'}read" position="left">
+			<Button type={unread ? 'primary' : 'secondary'} small on:click={handleToggle('unread')}>
+				{#if unread}
 					<Check />
+				{:else}
+					<Mail />
 				{/if}
 			</Button>
 		</Tooltip>
 		{#if url}
 			<Tooltip content="Open in GitHub" position="left">
-				<Button type="secondary" small href={url} external on:click={handleOpenInBrowser}
-					><ExternalLink /></Button
-				>
+				<Button type="secondary" small href={url} external on:click={handleOpenInBrowser}>
+					<ExternalLink />
+				</Button>
+			</Tooltip>
+		{:else}
+			<Tooltip content="Cannot open in GitHub" position="left">
+				<Button type="secondary" small disabled>
+					<ExternalLink />
+				</Button>
 			</Tooltip>
 		{/if}
 		<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left">
@@ -135,7 +140,7 @@
 </div>
 
 <style lang="scss">
-	.event {
+	.notification {
 		background-color: variables.$grey-2;
 		border: 1px solid variables.$grey-3;
 		border-radius: variables.$radius;
@@ -178,7 +183,6 @@
 			color: variables.$grey-4;
 		}
 
-		:global(svg),
 		.image {
 			display: inline-block;
 			width: 1.25rem;

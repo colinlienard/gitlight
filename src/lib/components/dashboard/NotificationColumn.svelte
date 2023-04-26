@@ -2,13 +2,13 @@
 	import { onDestroy, onMount, type ComponentType } from 'svelte';
 	import { fade, type CrossfadeParams, type TransitionConfig } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
-	import type { EventData } from '~/lib/types';
+	import type { NotificationData } from '~/lib/types';
 	import { debounce } from '~/lib/helpers';
 	import { ArrowUp, Folder } from '~/lib/icons';
 	import { Button } from '../common';
-	import Event from './Event.svelte';
 	import SkeletonEvent from './SkeletonEvent.svelte';
 	import { loading } from '~/lib/stores';
+	import Notification from './Notification.svelte';
 
 	type SvelteAnimation = (
 		node: Element,
@@ -19,7 +19,7 @@
 
 	export let icon: ComponentType;
 	export let title: string;
-	export let events: EventData[];
+	export let notifications: NotificationData[];
 	export let placeholder: string;
 	export let transitions: {
 		receive: SvelteAnimation;
@@ -32,7 +32,7 @@
 	let scrolled = false;
 
 	const handleScroll = debounce((e: Event) => {
-		scrolled = e.target.scrollTop > 100;
+		scrolled = (e.target as HTMLElement).scrollTop > 100;
 	}, 100);
 
 	function handleScrollToTop() {
@@ -53,7 +53,7 @@
 	<div class="column-header">
 		<svelte:component this={icon} />
 		<h3 class="title">{title}</h3>
-		<p class="number">{events.length}</p>
+		<p class="number">{notifications.length}</p>
 	</div>
 	{#if scrolled}
 		<div class="scroll-button" transition:fade={{ duration: 150 }}>
@@ -62,19 +62,19 @@
 			</Button>
 		</div>
 	{/if}
-	<ul class="list" bind:this={list}>
+	<ul class="list" class:empty={!notifications.length} bind:this={list}>
 		{#if $loading}
 			<li><SkeletonEvent /></li>
 			<li><SkeletonEvent /></li>
-		{:else if events.length}
-			{#each events as event (event.id)}
+		{:else if notifications.length}
+			{#each notifications as notification (notification.id)}
 				<li
 					class="item"
-					in:receive={{ key: event.id }}
-					out:send={{ key: event.id }}
+					in:receive={{ key: notification.id }}
+					out:send={{ key: notification.id }}
 					animate:flip={settings}
 				>
-					<Event data={event} />
+					<Notification data={notification} />
 				</li>
 			{/each}
 		{:else}
@@ -94,6 +94,7 @@
 		position: relative;
 		min-width: 0;
 		min-height: 0;
+		z-index: 1;
 
 		&::before {
 			content: '';
@@ -145,6 +146,10 @@
 		padding: 1rem 0;
 		height: 100%;
 
+		&.empty {
+			overflow: visible;
+		}
+
 		&::-webkit-scrollbar {
 			display: none;
 		}
@@ -162,6 +167,7 @@
 		align-items: center;
 		justify-content: center;
 		color: variables.$grey-4;
+		text-align: center;
 
 		:global(svg) {
 			height: 3rem;
