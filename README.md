@@ -10,21 +10,23 @@ GitHub & GitLab notifications on your desktop
 
 </div>
 
+![Dashboard](./assets/dashboard.png)
+
 ---
 
 ## About
 
-Better GitHub notifications and ~~GitLab push notifications~~ (not yet). Available on **MacOS**, **Windows**, **Linux** and in the **browser**. Free and open-source (as you can tell).
+Better GitHub notifications and ~~GitLab push notifications~~ (not yet). Available on **MacOS**, **Windows**, **Linux** and in the **browser**. Free and open-source.
+
+> **Warning**: GitLight is currently in development so bugs may be present
+
+## Features
 
 - Get push notifications
 - Monitor notifications with efficiency thanks to a kanban style interface
 - Filter by repository, organization, pull request, issues, commits...
 - Get precise notification data
 - And more...
-
-> **Warning**: GitLight is currently in development so bugs may be present
-
-![Dashboard](./assets/dashboard.png)
 
 ## Tech Stack
 
@@ -67,10 +69,10 @@ pnpm install
 
 ### Running the project
 
-|                      | With Tauri         | Without Tauri |
-| -------------------- | ------------------ | ------------- |
-| Start the dev server | `pnpm tauri dev`   | `pnpm dev`    |
-| Build the app        | `pnpm build:tauri` | `pnpm build`  |
+|                      | With Tauri         | In the browser |
+| -------------------- | ------------------ | -------------- |
+| Start the dev server | `pnpm tauri dev`   | `pnpm dev`     |
+| Build the app        | `pnpm build:tauri` | `pnpm build`   |
 
 ## License
 
