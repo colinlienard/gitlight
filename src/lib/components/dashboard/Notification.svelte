@@ -19,12 +19,12 @@
 		time,
 		icon,
 		iconColor,
-		repo: repoFullName,
+		owner,
+		repo,
 		number,
 		labels,
 		url
 	} = data;
-	let [owner, repo] = repoFullName.split('/');
 	let displayTime = formatRelativeDate(time);
 
 	const interval = setInterval(() => {

@@ -20,6 +20,7 @@ export function createNotificationData(
 	const unread = u || savedNotificationIds?.unread.includes(id) || false;
 	const isNew = (u && !savedNotificationIds?.unread.includes(id)) || false;
 
+	const [owner, repo] = repository.full_name.split('/');
 	const common = {
 		id,
 		pinned,
@@ -28,8 +29,10 @@ export function createNotificationData(
 		time: updated_at,
 		title: subject.title,
 		type: subject.type,
-		repo: repository.full_name,
-		repoId: repository.id
+		owner,
+		repo,
+		repoId: `${repository.id}`,
+		ownerAvatar: repository.owner.avatar_url
 	};
 
 	switch (subject.type) {

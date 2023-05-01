@@ -1,49 +1,70 @@
 <script lang="ts">
-	import { Github, Logo, Trash } from '~/lib/icons';
-	import { Separator, ShrinkableWrapper, Switch, Tooltip } from '~/lib/components';
+	import { ExternalLink, Github, Logo } from '~/lib/icons';
+	import { Button, Separator, Switch, WatchedRepos } from '~/lib/components';
 	import { onMount } from 'svelte';
-	import { fetchGithub, getAppVersion } from '~/lib/helpers';
-	import { filteredNotifications, githubNotifications } from '~/lib/stores';
+	import { getAppVersion } from '~/lib/helpers';
+	import { filteredNotifications, githubNotifications, loading } from '~/lib/stores';
 	import { browser } from '$app/environment';
-	import SidebarModal from './SidebarModal.svelte';
 	import SidebarSearch from './SidebarSearch.svelte';
-	import type { GithubRepository, Subscription, TypeFilters } from '~/lib/types';
+	import type { TypeFilters, WatchedRepo } from '~/lib/types';
 
-	let subscriptions: Subscription[] = [];
 	let search = '';
 	let typeFilters: TypeFilters = [
-		{ name: 'Pull requests', type: 'PullRequest', active: true },
-		{ name: 'Issues', type: 'Issue', active: true },
-		{ name: 'Commits', type: 'Commit', active: true },
-		{ name: 'Discussions', type: 'Discussion', active: true },
-		{ name: 'Releases', type: 'Release', active: true }
+		{ name: 'Pull requests', type: 'PullRequest', active: true, number: 0 },
+		{ name: 'Issues', type: 'Issue', active: true, number: 0 },
+		{ name: 'Commits', type: 'Commit', active: true, number: 0 },
+		{ name: 'Discussions', type: 'Discussion', active: true, number: 0 },
+		{ name: 'Releases', type: 'Release', active: true, number: 0 }
 	];
-	let loading = true;
+	let watchedRepos: WatchedRepo[] = [];
 	let others = true;
 
 	$: mostAreSelected = typeFilters.filter((filter) => filter.active).length > 3;
 
-	// Save subscriptions to localStorage
-	$: if (browser && !loading) {
-		localStorage.setItem(
-			'githubSubscriptions',
-			JSON.stringify([
-				...subscriptions.map(({ repo, active }) => ({ id: repo.id, active })),
-				{ id: 0, active: others }
-			])
-		);
+	// Save type filters to localStorage
+	$: if (browser && !$loading) {
+		localStorage.setItem('typeFilters', JSON.stringify(typeFilters.map((filter) => filter.active)));
 	}
 
-	// Save type filters to localStorage
-	$: if (browser && !loading) {
-		localStorage.setItem('typeFilters', JSON.stringify(typeFilters.map((filter) => filter.active)));
+	// Set watched repos
+	$: if (browser && !watchedRepos.length) {
+		const savedWatchedRepos = JSON.parse(localStorage.getItem('githubWatchedRepos') || '[]') as {
+			id: string;
+			active: boolean;
+		}[];
+		watchedRepos = $githubNotifications.reduce<WatchedRepo[]>((previous, current) => {
+			const index = previous.findIndex((repo) => repo.id === current.repoId);
+			if (index > -1) {
+				const repo = previous.splice(index, 1)[0];
+				return [...previous, { ...repo, number: repo.number + 1 }];
+			}
+			return [
+				...previous,
+				{
+					id: current.repoId,
+					name: current.repo,
+					ownerName: current.owner,
+					ownerAvatar: current.ownerAvatar,
+					number: 1,
+					active: savedWatchedRepos.find((repo) => repo.id === current.repoId)?.active ?? true
+				}
+			];
+		}, []);
+	}
+
+	// Save watched repos to localStorage
+	$: if (browser && !$loading) {
+		localStorage.setItem(
+			'githubWatchedRepos',
+			JSON.stringify(watchedRepos.map(({ id, active }) => ({ id, active })))
+		);
 	}
 
 	// Apply filters and search
 	$: filteredNotifications.set(
 		$githubNotifications.filter((notification) => {
-			const subscription = subscriptions.find(
-				(subscription) => subscription.repo.id === notification.repoId
+			const subscription = watchedRepos.find(
+				(subscription) => subscription.id === notification.repoId
 			);
 			const searched = notification.title.toLowerCase().includes(search.toLowerCase());
 			const isOfType = typeFilters.some(
@@ -53,22 +74,12 @@
 		})
 	);
 
-	function handleAddSource({ detail }: { detail: { repo: GithubRepository } }) {
-		const { repo } = detail;
-		subscriptions = [{ repo, active: true }, ...subscriptions];
-		fetchGithub(`repos/${repo.full_name}/subscription`, {
-			method: 'PUT',
-			body: { subscribed: true }
+	// Set notification numbers for each type
+	$: {
+		typeFilters = typeFilters.map((filter) => {
+			filter.number = $githubNotifications.filter((n) => n.type === filter.type).length;
+			return filter;
 		});
-	}
-
-	function handleRemoveSource(repo: GithubRepository) {
-		return () => {
-			subscriptions = subscriptions.filter((subscription) => subscription.repo.id !== repo.id);
-			fetchGithub(`repos/${repo.full_name}/subscription`, {
-				method: 'DELETE'
-			});
-		};
 	}
 
 	function changeSelectAll(active: boolean) {
@@ -86,20 +97,6 @@
 			...filter,
 			active: savedTypeFilters[index]
 		}));
-
-		// Set subscriptions
-		const savedSubs = JSON.parse(localStorage.getItem('githubSubscriptions') || '[]') as {
-			id: number;
-			active: boolean;
-		}[];
-		const repos = (await fetchGithub('user/subscriptions?per_page=100')) as GithubRepository[];
-		subscriptions = repos.map((repo) => {
-			const active = savedSubs.find((sub) => sub.id === repo.id)?.active ?? true;
-			return { repo, active };
-		});
-		others = savedSubs.find((sub) => sub.id === 0)?.active ?? true;
-
-		loading = false;
 	});
 </script>
 
@@ -108,10 +105,11 @@
 		<img src="/images/sidebar-gradient.png" alt="" class="gradient" />
 		<header class="header">
 			<Logo />
-			<h1 class="title">GitLight</h1>
+			<h1 class="hero">GitLight</h1>
 		</header>
-		{#if !loading}
-			<ShrinkableWrapper title="Filters">
+		{#if !$loading}
+			<div class="wrapper">
+				<h2 class="title">Filters</h2>
 				<SidebarSearch bind:search />
 				<Separator />
 				{#if mostAreSelected}
@@ -120,23 +118,20 @@
 					<button class="button" on:click={changeSelectAll(true)}>Select all</button>
 				{/if}
 				{#each typeFilters as filter (filter.name)}
-					<Switch bind:active={filter.active} label={filter.name} />
-				{/each}
-			</ShrinkableWrapper>
-			<ShrinkableWrapper title="Watching">
-				{#each subscriptions as subscription (subscription.repo.id)}
-					<div class="repository">
-						<Switch bind:active={subscription.active} label={subscription.repo.full_name} />
-						<Tooltip content="Delete" position="top">
-							<button class="delete" on:click={handleRemoveSource(subscription.repo)}>
-								<Trash />
-							</button>
-						</Tooltip>
+					<div class="switch-wrapper">
+						<Switch bind:active={filter.active} label={filter.name} />
+						<p class="filter-number">{filter.number}</p>
 					</div>
 				{/each}
-				<Switch bind:active={others} label="Others" />
-				<SidebarModal {subscriptions} on:add={handleAddSource} />
-			</ShrinkableWrapper>
+			</div>
+			<div class="wrapper">
+				<h2 class="title">Watching</h2>
+				<WatchedRepos bind:watchedRepos />
+				<Button type="secondary" small href="https://github.com/watching" external>
+					<ExternalLink />
+					Manage watched
+				</Button>
+			</div>
 		{:else}
 			<div class="skeletons-container">
 				<span class="skeleton" />
@@ -206,8 +201,18 @@
 			height: 2rem;
 		}
 
-		.title {
+		.hero {
 			@include typography.heading-1;
+		}
+	}
+
+	.wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+
+		.title {
+			@include typography.bold;
 		}
 	}
 
@@ -237,31 +242,13 @@
 		}
 	}
 
-	.repository {
+	.switch-wrapper {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
-		gap: 1rem;
+		gap: 0.5rem;
 
-		.delete {
-			flex: 0 0 1.25rem;
-			transition: color variables.$transition;
-
-			:global(svg) {
-				height: 1.25rem;
-
-				&:not(:hover) {
-					color: variables.$grey-4;
-				}
-			}
-		}
-
-		&:not(:hover) {
-			gap: 0;
-
-			.delete {
-				display: none;
-			}
+		.filter-number {
+			color: variables.$grey-4;
 		}
 	}
 
