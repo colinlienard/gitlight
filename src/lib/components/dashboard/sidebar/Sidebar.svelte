@@ -101,12 +101,12 @@
 </script>
 
 <article class="sidebar">
+	<img src="/images/sidebar-gradient.png" alt="" class="gradient" />
+	<header class="header">
+		<Logo />
+		<h1 class="hero">GitLight</h1>
+	</header>
 	<div class="scrollable">
-		<img src="/images/sidebar-gradient.png" alt="" class="gradient" />
-		<header class="header">
-			<Logo />
-			<h1 class="hero">GitLight</h1>
-		</header>
 		{#if !$loading}
 			<div class="wrapper">
 				<h2 class="title">Filters</h2>
@@ -175,9 +175,24 @@
 		flex-direction: column;
 	}
 
+	.header {
+		padding: 3rem 2rem;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+
+		:global(svg) {
+			height: 2rem;
+		}
+
+		.hero {
+			@include typography.heading-1;
+		}
+	}
+
 	.scrollable {
 		width: 20rem;
-		padding: 3rem 2rem 2rem;
+		padding: 0 2rem 2rem;
 		display: flex;
 		flex-direction: column;
 		gap: 3rem;
@@ -190,20 +205,6 @@
 		position: absolute;
 		inset: 0;
 		z-index: -1;
-	}
-
-	.header {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-
-		:global(svg) {
-			height: 2rem;
-		}
-
-		.hero {
-			@include typography.heading-1;
-		}
 	}
 
 	.wrapper {

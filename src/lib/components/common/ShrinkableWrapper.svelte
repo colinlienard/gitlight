@@ -23,7 +23,7 @@
 
 <div class="wrapper">
 	<div class="header" class:shrinked>
-		<button on:click={() => (shrinked = !shrinked)}>
+		<button class="arrow-button" on:click={() => (shrinked = !shrinked)}>
 			<SmallArrow />
 		</button>
 		<slot name="header" />
@@ -43,7 +43,7 @@
 	}
 
 	.content {
-		gap: 1rem;
+		gap: 0.5rem;
 		padding-left: 1.5rem;
 	}
 
@@ -52,6 +52,8 @@
 		align-items: center;
 		gap: 0.25rem;
 		width: fit-content;
+		max-width: 100%;
+		overflow: hidden;
 		transition: margin variables.$transition;
 
 		&.shrinked :global(svg) {
@@ -59,12 +61,16 @@
 		}
 
 		&:not(.shrinked) {
-			margin-bottom: 1rem;
+			margin-bottom: 0.5rem;
 		}
 
-		:global(svg) {
-			height: 1.25rem;
-			transition: rotate variables.$transition;
+		.arrow-button {
+			flex: 0 0 1.25rem;
+
+			:global(svg) {
+				height: 1.25rem;
+				transition: rotate variables.$transition;
+			}
 		}
 	}
 </style>

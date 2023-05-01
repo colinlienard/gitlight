@@ -59,7 +59,12 @@
 				return item;
 			});
 		}, [])
-		.map((item) => ({ ...item, active: item.repos.some((repo) => repo.active) }));
+		.sort((a, b) => b.number - a.number)
+		.map((item) => ({
+			...item,
+			active: item.repos.some((repo) => repo.active),
+			repos: item.repos.sort((a, b) => b.number - a.number)
+		}));
 
 	function handleToggleRepo(id: string) {
 		return () => {
@@ -127,18 +132,38 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
+		overflow: hidden;
+		transition: opacity variables.$transition;
 
 		&:not(.active) {
 			opacity: 0.5;
 
-			.name {
-				text-decoration: line-through;
+			.name::before {
+				width: 100%;
+			}
+		}
+
+		.name {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			max-width: 100%;
+			position: relative;
+
+			&::before {
+				content: '';
+				position: absolute;
+				inset: 55% 0 auto 0;
+				height: 1px;
+				width: 0;
+				background-color: currentColor;
+				transition: width variables.$transition;
 			}
 		}
 
 		.image,
 		.repo-icon {
-			width: 1.5rem;
+			flex: 0 0 1.5rem;
 			height: 1.5rem;
 			border-radius: 0.5rem;
 		}
