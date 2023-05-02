@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { ExternalLink, Github, Logo } from '~/lib/icons';
-	import { Button, Separator, Switch, WatchedRepos } from '~/lib/components';
+	import { Github, Logo } from '~/lib/icons';
+	import { Separator, Switch, WatchedRepos } from '~/lib/components';
 	import { onMount } from 'svelte';
 	import { getAppVersion } from '~/lib/helpers';
 	import { filteredNotifications, githubNotifications, loading } from '~/lib/stores';
@@ -127,10 +127,16 @@
 			<div class="wrapper">
 				<h2 class="title">Watching</h2>
 				<WatchedRepos bind:watchedRepos />
-				<Button type="secondary" small href="https://github.com/watching" external>
-					<ExternalLink />
-					Manage watched
-				</Button>
+			</div>
+			<div class="wrapper">
+				<h2 class="title">Manage</h2>
+				<div class="double-button">
+					<a href="https://github.com/watching" target="_blank" rel="noreferrer">Watching</a>
+					<div />
+					<a href="https://github.com/notifications/subscriptions" target="_blank" rel="noreferrer">
+						Subscriptions
+					</a>
+				</div>
 			</div>
 		{:else}
 			<div class="skeletons-container">
@@ -250,6 +256,43 @@
 
 		.filter-number {
 			color: variables.$grey-4;
+		}
+	}
+
+	.double-button {
+		@include mixins.shiny(variables.$grey-3, false);
+		display: flex;
+		justify-content: space-evenly;
+
+		a {
+			width: 100%;
+			padding: 0.5rem;
+			margin: 1px;
+			border-radius: inherit;
+			text-align: center;
+			background-color: variables.$grey-3;
+			transition: filter variables.$transition;
+
+			&:nth-of-type(1) {
+				border-top-right-radius: 0;
+				border-bottom-right-radius: 0;
+			}
+
+			&:nth-of-type(2) {
+				border-top-left-radius: 0;
+				border-bottom-left-radius: 0;
+			}
+
+			&:hover {
+				filter: brightness(130%);
+			}
+		}
+
+		div {
+			width: 1px;
+			margin: 0.5rem 0;
+			background-color: rgba(white, 0.1);
+			z-index: 1;
 		}
 	}
 
