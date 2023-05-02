@@ -2,8 +2,6 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { SmallArrow } from '~/lib/icons';
 
-	export let title: string;
-
 	let shrinked = false;
 
 	function shrink(node: HTMLElement) {
@@ -24,10 +22,12 @@
 </script>
 
 <div class="wrapper">
-	<button class="header" class:shrinked on:click={() => (shrinked = !shrinked)}>
-		<SmallArrow />
-		<p class="title">{title}</p>
-	</button>
+	<div class="header" class:shrinked>
+		<button class="arrow-button" on:click={() => (shrinked = !shrinked)}>
+			<SmallArrow />
+		</button>
+		<slot name="header" />
+	</div>
 	{#if !shrinked}
 		<div class="content" transition:shrink>
 			<slot />
@@ -43,14 +43,15 @@
 	}
 
 	.content {
-		gap: 1rem;
+		gap: 0.5rem;
+		padding-left: 1.5rem;
 	}
 
 	.header {
 		display: flex;
 		align-items: center;
 		gap: 0.25rem;
-		width: fit-content;
+		width: 100%;
 		transition: margin variables.$transition;
 
 		&.shrinked :global(svg) {
@@ -58,16 +59,16 @@
 		}
 
 		&:not(.shrinked) {
-			margin-bottom: 1rem;
+			margin-bottom: 0.5rem;
 		}
 
-		:global(svg) {
-			height: 1.25rem;
-			transition: rotate variables.$transition;
-		}
+		.arrow-button {
+			flex: 0 0 1.25rem;
 
-		.title {
-			@include typography.bold;
+			:global(svg) {
+				height: 1.25rem;
+				transition: rotate variables.$transition;
+			}
 		}
 	}
 </style>

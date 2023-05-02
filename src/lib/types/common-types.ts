@@ -31,8 +31,10 @@ export type NotificationData = {
 	time: string;
 	icon: ComponentType;
 	iconColor: Color;
+	owner: string;
 	repo: string;
-	repoId: number;
+	repoId: string;
+	ownerAvatar: string;
 	number?: number;
 	labels?: GithubLabel[];
 	url?: string;
@@ -42,6 +44,7 @@ export type TypeFilters = {
 	name: string;
 	type: GithubNotificationType;
 	active: boolean;
+	number: number;
 }[];
 
 export type Subscription = {
@@ -52,4 +55,13 @@ export type Subscription = {
 export type SavedNotifications = {
 	pinned: string[];
 	unread: string[];
+};
+
+export type WatchedRepo = {
+	id: string;
+	name: string;
+	ownerName: string;
+	ownerAvatar: string;
+	number: number;
+	active: boolean;
 };
