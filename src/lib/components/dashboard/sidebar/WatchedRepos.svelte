@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { WatchedRepo } from '~/lib/types';
-	import { ShrinkableWrapper } from '../common';
+	import { ShrinkableWrapper } from '../../common';
 	import { Repository } from '~/lib/icons';
 
 	type WatchedReposByOwner = {
@@ -99,7 +99,7 @@
 			<ShrinkableWrapper>
 				<button
 					slot="header"
-					class="wrapper"
+					class="wrapper smaller"
 					class:active
 					on:click={handleToggleOwner(name, !active)}
 				>
@@ -132,8 +132,13 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
-		overflow: hidden;
+		width: 100%;
+		position: relative;
 		transition: opacity variables.$transition;
+
+		&.smaller {
+			width: calc(100% - 1.5rem);
+		}
 
 		&:not(.active) {
 			opacity: 0.5;
@@ -141,6 +146,20 @@
 			.name::before {
 				width: 100%;
 			}
+		}
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: -0.25rem -0.5rem;
+			background-color: variables.$grey-2;
+			border-radius: variables.$radius;
+			z-index: -1;
+			opacity: 0;
+		}
+
+		&:hover::before {
+			opacity: 1;
 		}
 
 		.name {
@@ -153,7 +172,7 @@
 			&::before {
 				content: '';
 				position: absolute;
-				inset: 55% 0 auto 0;
+				inset: 50% 0 auto 0;
 				height: 1px;
 				width: 0;
 				background-color: currentColor;

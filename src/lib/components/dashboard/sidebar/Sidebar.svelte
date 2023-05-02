@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { Github, Logo } from '~/lib/icons';
-	import { Separator, Switch, WatchedRepos } from '~/lib/components';
+	import { Separator, Switch } from '~/lib/components';
 	import { onMount } from 'svelte';
 	import { getAppVersion } from '~/lib/helpers';
 	import { filteredNotifications, githubNotifications, loading } from '~/lib/stores';
 	import { browser } from '$app/environment';
 	import SidebarSearch from './SidebarSearch.svelte';
+	import WatchedRepos from './WatchedRepos.svelte';
 	import type { TypeFilters, WatchedRepo } from '~/lib/types';
 
 	let search = '';

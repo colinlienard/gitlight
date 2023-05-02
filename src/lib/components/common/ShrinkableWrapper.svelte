@@ -51,9 +51,7 @@
 		display: flex;
 		align-items: center;
 		gap: 0.25rem;
-		width: fit-content;
-		max-width: 100%;
-		overflow: hidden;
+		width: 100%;
 		transition: margin variables.$transition;
 
 		&.shrinked :global(svg) {
