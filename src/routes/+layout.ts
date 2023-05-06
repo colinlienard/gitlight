@@ -48,7 +48,6 @@ export async function load({ url }) {
 	}
 
 	// Open the desktop app with the access token
-
 	if (!window.__TAURI__ && accessToken) {
 		window.location.href = `gitlight://access_token=${accessToken}`;
 	}

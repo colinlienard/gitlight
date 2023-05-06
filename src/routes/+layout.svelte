@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 
 	onMount(() => {
-		// Listen for scheme request on desktop
+		// Listen for scheme request on desktop app
 		if (window.__TAURI__) {
 			listen('scheme-request', ({ payload }) => {
 				const accessToken = (payload as string).split('=')[1];
