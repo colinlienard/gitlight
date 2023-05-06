@@ -7,7 +7,7 @@
 		"distDir": "../build"
 	},
 	"package": {
-		"productName": "gitlight",
+		"productName": "GitLight",
 		"version": "0.1.0"
 	},
 	"tauri": {
@@ -56,10 +56,10 @@
 		"windows": [
 			{
 				"fullscreen": false,
-				"height": 600,
+				"height": 800,
 				"resizable": true,
 				"title": "GitLight",
-				"width": 800
+				"width": 1200
 			}
 		]
 	}

@@ -1,11 +1,11 @@
 import { redirect } from '@sveltejs/kit';
+import { browser } from '$app/environment';
+import { fetchGithub } from '~/lib/helpers';
+import type { GithubUser, User } from '~/lib/types';
 
 import '~/styles/_reset.scss';
 import '~/styles/_base.scss';
 import '~/styles/_fonts.scss';
-import { browser } from '$app/environment';
-import type { GithubUser, User } from '~/lib/types';
-import { fetchGithub } from '~/lib/helpers/fetchGithub.js';
 
 export const prerender = true;
 export const ssr = true;
@@ -45,6 +45,11 @@ export async function load({ url }) {
 		throw redirect(302, '/login');
 	} else if (url.pathname !== '/dashboard' && session) {
 		throw redirect(302, '/dashboard');
+	}
+
+	// Open the desktop app with the access token
+	if (!window.__TAURI__ && accessToken) {
+		window.location.href = `gitlight://access_token=${accessToken}`;
 	}
 
 	return { session };
