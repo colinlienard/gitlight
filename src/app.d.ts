@@ -10,6 +10,10 @@ declare global {
 		}
 	}
 
+	interface Window {
+		__TAURI__: unknown;
+	}
+
 	const __APP_VERSION__: string;
 }
 

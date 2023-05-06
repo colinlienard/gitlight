@@ -12,35 +12,18 @@ rust-version = "1.59"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.2.1", features = [] }
+tauri-build = { version = "1.3.0", features = [] }
 
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.2.4", features = [] }
-tokio = "1.24"
-url = "2.3.1"
+tauri = { version = "1.3.0", features = [] }
+tauri-plugin-deep-link = "0.1.1"
 
 [features]
 # by default Tauri runs in production mode
 # when `tauri dev` runs it is executed with `cargo run --no-default-features` if `devPath` is an URL
-default = [ "custom-protocol" ]
+default = ["custom-protocol"]
 # this feature is used for production builds where `devPath` points to the filesystem
 # DO NOT remove this
-custom-protocol = [ "tauri/custom-protocol" ]
-
-[target.'cfg(any(target_os = "linux", target_os = "dragonfly", target_os = "freebsd", target_os = "openbsd", target_os = "netbsd"))'.dependencies]
-webkit2gtk = { version = "0.18", features = [
-  "v2_22",
-], default-features = false }
-
-[target.'cfg(any(target_os = "ios", target_os = "macos"))'.dependencies]
-cacao = "0.3"
-
-[target.'cfg(target_os = "windows")'.dependencies]
-webview2-com = { version = "=0.19", default-features = false }
-windows = { version = "=0.39", default-features = false }
-
-# this revision is needed for the .on_navigation method in commands.rs
-[patch.crates-io]
-tauri = { git = "https://github.com/tauri-apps/tauri", rev = "3f35b45" }
+custom-protocol = ["tauri/custom-protocol"]
