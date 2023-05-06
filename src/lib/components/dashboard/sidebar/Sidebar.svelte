@@ -20,7 +20,8 @@
 	let watchedRepos: WatchedRepo[] = [];
 	let others = true;
 
-	$: mostAreSelected = typeFilters.filter((filter) => filter.active).length > 3;
+	$: mostFiltersAreSelected = typeFilters.filter((filter) => filter.active).length > 3;
+	$: mostReposAreSelected = watchedRepos.filter((filter) => filter.active).length > 3;
 
 	// Save type filters to localStorage
 	$: if (browser && !$loading) {
@@ -83,9 +84,15 @@
 		});
 	}
 
-	function changeSelectAll(active: boolean) {
+	function changeSelectAllFilters(active: boolean) {
 		return () => {
 			typeFilters = typeFilters.map((filter) => ({ ...filter, active }));
+		};
+	}
+
+	function changeSelectAllWatchedRepos(active: boolean) {
+		return () => {
+			watchedRepos = watchedRepos.map((item) => ({ ...item, active }));
 		};
 	}
 
@@ -110,14 +117,18 @@
 	<div class="scrollable">
 		{#if !$loading}
 			<div class="wrapper">
-				<h2 class="title">Filters</h2>
 				<SidebarSearch bind:search />
-				<Separator />
-				{#if mostAreSelected}
-					<button class="button" on:click={changeSelectAll(false)}>Deselect all</button>
-				{:else}
-					<button class="button" on:click={changeSelectAll(true)}>Select all</button>
-				{/if}
+			</div>
+			<Separator />
+			<div class="wrapper">
+				<div class="row">
+					<h2 class="title">Filters</h2>
+					{#if mostFiltersAreSelected}
+						<button class="button" on:click={changeSelectAllFilters(false)}>Deselect all</button>
+					{:else}
+						<button class="button" on:click={changeSelectAllFilters(true)}>Select all</button>
+					{/if}
+				</div>
 				{#each typeFilters as filter (filter.name)}
 					<div class="switch-wrapper">
 						<Switch bind:active={filter.active} label={filter.name} />
@@ -125,10 +136,21 @@
 					</div>
 				{/each}
 			</div>
+			<Separator />
 			<div class="wrapper">
-				<h2 class="title">Watching</h2>
+				<div class="row">
+					<h2 class="title">Watching</h2>
+					{#if mostReposAreSelected}
+						<button class="button" on:click={changeSelectAllWatchedRepos(false)}
+							>Deselect all</button
+						>
+					{:else}
+						<button class="button" on:click={changeSelectAllWatchedRepos(true)}>Select all</button>
+					{/if}
+				</div>
 				<WatchedRepos bind:watchedRepos />
 			</div>
+			<Separator />
 			<div class="wrapper">
 				<h2 class="title">Manage</h2>
 				<div class="double-button">
@@ -202,7 +224,7 @@
 		padding: 0 2rem 2rem;
 		display: flex;
 		flex-direction: column;
-		gap: 3rem;
+		gap: 1.5rem;
 		height: 100%;
 		overflow: auto;
 		position: relative;
@@ -222,6 +244,13 @@
 		.title {
 			@include typography.bold;
 		}
+	}
+
+	.row {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
 	}
 
 	.skeletons-container {
