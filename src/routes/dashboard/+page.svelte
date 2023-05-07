@@ -4,6 +4,7 @@
 	import { createNotificationData, fetchGithub } from '~/lib/helpers';
 	import { githubNotifications, loading, savedEventIds } from '~/lib/stores';
 	import type { GithubItem, GithubNotification, SavedNotifications } from '~/lib/types';
+	import { sendNotification } from '@tauri-apps/api/notification';
 
 	let synced = false;
 	let mounted = false;
@@ -32,13 +33,21 @@
 				notifications.map((item) => (item.subject.url ? fetchGithub(item.subject.url) : null))
 			)) as GithubItem[];
 
+			const newNotifications = notifications.map((notification, index) =>
+				createNotificationData(notification, datas[index], $savedEventIds as SavedNotifications)
+			);
+
+			// Send push notification
+			if ($githubNotifications.length) {
+				const { author, title, description } = newNotifications[0];
+				sendNotification({
+					title: `${author?.login}${author ? ' ' : ''}${description}`,
+					body: title
+				});
+			}
+
 			// Add new notifications to the store
-			githubNotifications.update((previous) => [
-				...notifications.map((notification, index) =>
-					createNotificationData(notification, datas[index], $savedEventIds as SavedNotifications)
-				),
-				...previous
-			]);
+			githubNotifications.update((previous) => [...newNotifications, ...previous]);
 		}
 
 		synced = true;
