@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
+	import { invoke } from '@tauri-apps/api/tauri';
+	import { sendNotification } from '@tauri-apps/api/notification';
 	import { Main, Sidebar } from '~/lib/components';
 	import { createNotificationData, fetchGithub } from '~/lib/helpers';
 	import { githubNotifications, loading, savedEventIds } from '~/lib/stores';
 	import type { GithubItem, GithubNotification, SavedNotifications } from '~/lib/types';
-	import { sendNotification } from '@tauri-apps/api/notification';
 
 	let synced = false;
 	let mounted = false;
@@ -53,13 +54,20 @@
 		synced = true;
 	}
 
-	// Save events ids to localStorage
 	$: if (mounted && $githubNotifications.length) {
 		const pinned = $githubNotifications.filter((item) => item.pinned).map((item) => item.id);
 		const unread = $githubNotifications.filter((item) => item.unread).map((item) => item.id);
+
+		// Save events ids to localStorage
 		const toSave = { pinned, unread };
 		savedEventIds.set(toSave);
 		localStorage.setItem('githubNotifications', JSON.stringify(toSave));
+
+		// Update menu bar
+		invoke('update_tray', {
+			title: `${pinned.length + unread.length}`,
+			description: `${pinned.length} pinned • ${unread.length} unread`
+		});
 	}
 
 	onMount(async () => {

@@ -71,6 +71,11 @@
 				"titleBarStyle": "Overlay",
 				"hiddenTitle": true
 			}
-		]
+		],
+		"systemTray": {
+			"iconPath": "icons/template-icon.png",
+			"iconAsTemplate": true,
+			"title": "..."
+		}
 	}
 }
