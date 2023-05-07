@@ -2,7 +2,7 @@
 	import { Github, Logo } from '~/lib/icons';
 	import { Separator, Switch } from '~/lib/components';
 	import { onMount } from 'svelte';
-	import { getAppVersion } from '~/lib/helpers';
+	import { getAppVersion, storage } from '~/lib/helpers';
 	import { filteredNotifications, githubNotifications, loading } from '~/lib/stores';
 	import { browser } from '$app/environment';
 	import SidebarSearch from './SidebarSearch.svelte';
@@ -23,17 +23,17 @@
 	$: mostFiltersAreSelected = typeFilters.filter((filter) => filter.active).length > 3;
 	$: mostReposAreSelected = watchedRepos.filter((filter) => filter.active).length > 3;
 
-	// Save type filters to localStorage
+	// Save type filters to storage
 	$: if (browser && !$loading) {
-		localStorage.setItem('typeFilters', JSON.stringify(typeFilters.map((filter) => filter.active)));
+		storage.set(
+			'type_filters',
+			typeFilters.map((filter) => filter.active)
+		);
 	}
 
 	// Set watched repos
 	$: if (browser && !watchedRepos.length) {
-		const savedWatchedRepos = JSON.parse(localStorage.getItem('githubWatchedRepos') || '[]') as {
-			id: string;
-			active: boolean;
-		}[];
+		const savedWatchedRepos = storage.get('github_watched_repos');
 		watchedRepos = $githubNotifications.reduce<WatchedRepo[]>((previous, current) => {
 			const index = previous.findIndex((repo) => repo.id === current.repoId);
 			if (index > -1) {
@@ -48,17 +48,17 @@
 					ownerName: current.owner,
 					ownerAvatar: current.ownerAvatar,
 					number: 1,
-					active: savedWatchedRepos.find((repo) => repo.id === current.repoId)?.active ?? true
+					active: savedWatchedRepos?.find((repo) => repo.id === current.repoId)?.active ?? true
 				}
 			];
 		}, []);
 	}
 
-	// Save watched repos to localStorage
+	// Save watched repos to storage
 	$: if (browser && !$loading) {
-		localStorage.setItem(
-			'githubWatchedRepos',
-			JSON.stringify(watchedRepos.map(({ id, active }) => ({ id, active })))
+		storage.set(
+			'github_watched_repos',
+			watchedRepos.map(({ id, active }) => ({ id, active }))
 		);
 	}
 
@@ -97,13 +97,11 @@
 	}
 
 	onMount(async () => {
-		// Get type filters from localStorage
-		const savedTypeFilters = JSON.parse(
-			localStorage.getItem('typeFilters') || '[true, true, true, true, true, true, true]'
-		);
+		// Get type filters from storage
+		const savedTypeFilters = storage.get('type_filters');
 		typeFilters = typeFilters.map((filter, index) => ({
 			...filter,
-			active: savedTypeFilters[index]
+			active: savedTypeFilters ? savedTypeFilters[index] : true
 		}));
 	});
 </script>

@@ -6,20 +6,21 @@
 	import SignOutButton from './SignOutButton.svelte';
 	import { onMount } from 'svelte';
 	import { settings } from '~/lib/stores';
+	import { storage } from '~/lib/helpers';
 
 	let user = $page.data.session?.user;
 	let mounted = false;
 
 	onMount(() => {
-		const saved = localStorage.getItem('settings');
+		const saved = storage.get('settings');
 		if (saved) {
-			settings.set(JSON.parse(saved));
+			settings.set(saved);
 		}
 		mounted = true;
 	});
 
 	$: if (mounted) {
-		localStorage.setItem('settings', JSON.stringify($settings));
+		storage.set('settings', $settings);
 	}
 </script>
 

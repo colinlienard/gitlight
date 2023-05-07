@@ -3,7 +3,7 @@
 	import { invoke } from '@tauri-apps/api/tauri';
 	import { sendNotification } from '@tauri-apps/api/notification';
 	import { Main, Sidebar } from '~/lib/components';
-	import { createNotificationData, fetchGithub } from '~/lib/helpers';
+	import { createNotificationData, fetchGithub, storage } from '~/lib/helpers';
 	import { githubNotifications, loading, savedEventIds } from '~/lib/stores';
 	import type { GithubItem, GithubNotification, SavedNotifications } from '~/lib/types';
 
@@ -58,23 +58,23 @@
 		const pinned = $githubNotifications.filter((item) => item.pinned).map((item) => item.id);
 		const unread = $githubNotifications.filter((item) => item.unread).map((item) => item.id);
 
-		// Save events ids to localStorage
+		// Save events ids to storage
 		const toSave = { pinned, unread };
 		savedEventIds.set(toSave);
-		localStorage.setItem('githubNotifications', JSON.stringify(toSave));
+		storage.set('github_notifications', toSave);
 
 		// Update menu bar
-		invoke('update_tray', {
-			title: `${pinned.length + unread.length}`,
-			description: `${pinned.length} pinned • ${unread.length} unread`
-		});
+		if (window.__TAURI__) {
+			invoke('update_tray', {
+				title: `${pinned.length + unread.length}`,
+				description: `${pinned.length} pinned • ${unread.length} unread`
+			});
+		}
 	}
 
 	onMount(async () => {
-		// Get events ids from localStorage
-		savedEventIds.set(
-			JSON.parse(localStorage.getItem('githubNotifications') || '{ "pinned": [], "unread": [] }')
-		);
+		// Get events ids from storage
+		savedEventIds.set(storage.get('github_notifications') || { pinned: [], unread: [] });
 
 		mounted = true;
 
