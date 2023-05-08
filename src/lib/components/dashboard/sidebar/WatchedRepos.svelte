@@ -2,6 +2,7 @@
 	import type { WatchedRepo } from '~/lib/types';
 	import { ShrinkableWrapper } from '../../common';
 	import { Repository } from '~/lib/icons';
+	import { watchedRepos } from '~/lib/stores';
 
 	type WatchedReposByOwner = {
 		name: string;
@@ -11,9 +12,7 @@
 		repos: WatchedRepo[];
 	}[];
 
-	export let watchedRepos: WatchedRepo[];
-
-	$: watchedReposByOwner = watchedRepos
+	$: watchedReposByOwner = $watchedRepos
 		.reduce<WatchedReposByOwner>((previous, current) => {
 			const repos = previous.find((owner) => owner.name === current.ownerName)?.repos;
 
@@ -68,16 +67,16 @@
 
 	function handleToggleRepo(id: string) {
 		return () => {
-			watchedRepos = watchedRepos.map((item) =>
-				item.id === id ? { ...item, active: !item.active } : item
+			watchedRepos.update((previous) =>
+				previous.map((item) => (item.id === id ? { ...item, active: !item.active } : item))
 			);
 		};
 	}
 
 	function handleToggleOwner(name: string, active: boolean) {
 		return () => {
-			watchedRepos = watchedRepos.map((item) =>
-				item.ownerName === name ? { ...item, active } : item
+			watchedRepos.update((previous) =>
+				previous.map((item) => (item.ownerName === name ? { ...item, active } : item))
 			);
 		};
 	}

@@ -4,8 +4,13 @@
 	import { sendNotification } from '@tauri-apps/api/notification';
 	import { Main, Sidebar } from '~/lib/components';
 	import { createNotificationData, fetchGithub, storage } from '~/lib/helpers';
-	import { githubNotifications, loading, savedEventIds } from '~/lib/stores';
-	import type { GithubItem, GithubNotification, SavedNotifications } from '~/lib/types';
+	import { githubNotifications, loading, savedEventIds, watchedRepos } from '~/lib/stores';
+	import type {
+		GithubItem,
+		GithubNotification,
+		SavedNotifications,
+		WatchedRepo
+	} from '~/lib/types';
 
 	let synced = false;
 	let mounted = false;
@@ -40,15 +45,38 @@
 
 			// Send push notification
 			if ($githubNotifications.length) {
-				const { author, title, description } = newNotifications[0];
+				const { author, title, description, repo } = newNotifications[0];
 				sendNotification({
-					title: `${author?.login}${author ? ' ' : ''}${description}`,
+					title: `${repo}: ${author ? `${author.login} ` : ''}${description}`,
 					body: title
 				});
 			}
 
 			// Add new notifications to the store
 			githubNotifications.update((previous) => [...newNotifications, ...previous]);
+
+			// Update watched repos
+			const savedWatchedRepos = storage.get('github_watched_repos');
+			watchedRepos.set(
+				$githubNotifications.reduce<WatchedRepo[]>((previous, current) => {
+					const index = previous.findIndex((repo) => repo.id === current.repoId);
+					if (index > -1) {
+						const repo = previous.splice(index, 1)[0];
+						return [...previous, { ...repo, number: repo.number + 1 }];
+					}
+					return [
+						...previous,
+						{
+							id: current.repoId,
+							name: current.repo,
+							ownerName: current.owner,
+							ownerAvatar: current.ownerAvatar,
+							number: 1,
+							active: savedWatchedRepos?.find((repo) => repo.id === current.repoId)?.active ?? true
+						}
+					];
+				}, [])
+			);
 		}
 
 		synced = true;

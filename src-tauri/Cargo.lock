@@ -51,6 +51,7 @@ checksum = "224afbd727c3d6e4b90103ece64b8d1b67fbb1973b1046c2281eed3f3803f800"
 name = "app"
 version = "0.2.0"
 dependencies = [
+ "libayatana-appindicator",
  "serde",
  "serde_json",
  "tauri",
@@ -1637,6 +1638,18 @@ dependencies = [
  "gtk-sys",
  "libloading",
  "once_cell",
+]
+
+[[package]]
+name = "libayatana-appindicator"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0379d22a323947cb27b4dbe3b14fc1dcde07c9e9c3eca52ddf97ca0819c28cc4"
+dependencies = [
+ "glib",
+ "gtk",
+ "gtk-sys",
+ "log",
 ]
 
 [[package]]

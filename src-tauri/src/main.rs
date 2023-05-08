@@ -6,7 +6,6 @@
 use tauri::{Manager, SystemTray, SystemTrayEvent, SystemTrayMenuItem, CustomMenuItem, SystemTrayMenu};
 
 #[tauri::command]
-#[cfg(target_os = "macos")]
 fn update_tray(app_handle: tauri::AppHandle, title: String, description: String) {
   let tray_handle = app_handle.tray_handle();
   tray_handle.set_title(&title).unwrap();
@@ -68,6 +67,12 @@ fn main() {
       _ => {}
     })
     .invoke_handler(tauri::generate_handler![update_tray])
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");
+    .build(tauri::generate_context!())
+    .expect("error while running tauri application")
+    .run(|_app_handle, event| match event {
+      tauri::RunEvent::ExitRequested { api, .. } => {
+        api.prevent_exit();
+      }
+      _ => {}
+    });
 }

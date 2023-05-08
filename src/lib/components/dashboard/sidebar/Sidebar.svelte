@@ -3,11 +3,11 @@
 	import { Separator, Switch } from '~/lib/components';
 	import { onMount } from 'svelte';
 	import { getAppVersion, storage } from '~/lib/helpers';
-	import { filteredNotifications, githubNotifications, loading } from '~/lib/stores';
+	import { filteredNotifications, githubNotifications, loading, watchedRepos } from '~/lib/stores';
 	import { browser } from '$app/environment';
 	import SidebarSearch from './SidebarSearch.svelte';
 	import WatchedRepos from './WatchedRepos.svelte';
-	import type { TypeFilters, WatchedRepo } from '~/lib/types';
+	import type { TypeFilters } from '~/lib/types';
 
 	let search = '';
 	let typeFilters: TypeFilters = [
@@ -17,11 +17,10 @@
 		{ name: 'Discussions', type: 'Discussion', active: true, number: 0 },
 		{ name: 'Releases', type: 'Release', active: true, number: 0 }
 	];
-	let watchedRepos: WatchedRepo[] = [];
 	let others = true;
 
 	$: mostFiltersAreSelected = typeFilters.filter((filter) => filter.active).length > 3;
-	$: mostReposAreSelected = watchedRepos.filter((filter) => filter.active).length > 3;
+	$: mostReposAreSelected = $watchedRepos.filter((filter) => filter.active).length > 3;
 
 	// Save type filters to storage
 	$: if (browser && !$loading) {
@@ -31,41 +30,18 @@
 		);
 	}
 
-	// Set watched repos
-	$: if (browser && !watchedRepos.length) {
-		const savedWatchedRepos = storage.get('github_watched_repos');
-		watchedRepos = $githubNotifications.reduce<WatchedRepo[]>((previous, current) => {
-			const index = previous.findIndex((repo) => repo.id === current.repoId);
-			if (index > -1) {
-				const repo = previous.splice(index, 1)[0];
-				return [...previous, { ...repo, number: repo.number + 1 }];
-			}
-			return [
-				...previous,
-				{
-					id: current.repoId,
-					name: current.repo,
-					ownerName: current.owner,
-					ownerAvatar: current.ownerAvatar,
-					number: 1,
-					active: savedWatchedRepos?.find((repo) => repo.id === current.repoId)?.active ?? true
-				}
-			];
-		}, []);
-	}
-
 	// Save watched repos to storage
 	$: if (browser && !$loading) {
 		storage.set(
 			'github_watched_repos',
-			watchedRepos.map(({ id, active }) => ({ id, active }))
+			$watchedRepos.map(({ id, active }) => ({ id, active }))
 		);
 	}
 
 	// Apply filters and search
 	$: filteredNotifications.set(
 		$githubNotifications.filter((notification) => {
-			const subscription = watchedRepos.find(
+			const subscription = $watchedRepos.find(
 				(subscription) => subscription.id === notification.repoId
 			);
 			const searched = notification.title.toLowerCase().includes(search.toLowerCase());
@@ -92,7 +68,7 @@
 
 	function changeSelectAllWatchedRepos(active: boolean) {
 		return () => {
-			watchedRepos = watchedRepos.map((item) => ({ ...item, active }));
+			watchedRepos.update((previous) => previous.map((item) => ({ ...item, active })));
 		};
 	}
 
@@ -146,7 +122,7 @@
 						<button class="button" on:click={changeSelectAllWatchedRepos(true)}>Select all</button>
 					{/if}
 				</div>
-				<WatchedRepos bind:watchedRepos />
+				<WatchedRepos />
 			</div>
 			<Separator />
 			<div class="wrapper">
