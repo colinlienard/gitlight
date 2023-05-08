@@ -12,7 +12,7 @@ import { Commit, Discussion, Release } from '../icons';
 import { getIconColor, getIssueIcon, getPullRequestIcon } from './getIcon';
 
 export function createNotificationData(
-	{ id, repository, subject, unread: u, updated_at }: GithubNotification,
+	{ id, repository, subject, unread: u, updated_at, reason }: GithubNotification,
 	data: GithubItem,
 	savedNotificationIds: SavedNotifications
 ): NotificationData {
@@ -60,13 +60,22 @@ export function createNotificationData(
 		}
 
 		case 'PullRequest': {
-			const { user, merged, number, labels, state, html_url } = data as GithubPullRequest;
+			const { user, merged, merged_by, number, labels, state, html_url } =
+				data as GithubPullRequest;
+			let author = user;
+			let description = '';
+			if (reason === 'review_requested') {
+				description = 'requested your review';
+			} else if (merged) {
+				author = merged_by;
+				description = 'merged this pull request';
+			} else {
+				description = `${state === 'open' ? 'opened' : 'closed'} this pull request`;
+			}
 			return {
 				...common,
-				author: user,
-				description: `${
-					merged ? 'merged' : state === 'open' ? 'opened' : 'closed'
-				} this pull request`,
+				author,
+				description,
 				icon: getPullRequestIcon(data as GithubPullRequest),
 				iconColor: getIconColor(data as GithubPullRequest),
 				number,
