@@ -63,7 +63,7 @@
 	function handleOpenInBrowser() {
 		if ($settings.readWhenOpenInBrowser) {
 			githubNotifications.update((previous) =>
-				previous.map((event) => (event.id === id ? { ...event, read: true } : event))
+				previous.map((event) => (event.id === id ? { ...event, unread: false } : event))
 			);
 		}
 	}
