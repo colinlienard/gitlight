@@ -25,7 +25,7 @@
 	// Save type filters to storage
 	$: if (browser && !$loading) {
 		storage.set(
-			'type_filters',
+			'type-filters',
 			typeFilters.map((filter) => filter.active)
 		);
 	}
@@ -33,7 +33,7 @@
 	// Save watched repos to storage
 	$: if (browser && !$loading) {
 		storage.set(
-			'github_watched_repos',
+			'github-watched-repos',
 			$watchedRepos.map(({ id, active }) => ({ id, active }))
 		);
 	}
@@ -74,7 +74,7 @@
 
 	onMount(async () => {
 		// Get type filters from storage
-		const savedTypeFilters = storage.get('type_filters');
+		const savedTypeFilters = storage.get('type-filters');
 		typeFilters = typeFilters.map((filter, index) => ({
 			...filter,
 			active: savedTypeFilters ? savedTypeFilters[index] : true

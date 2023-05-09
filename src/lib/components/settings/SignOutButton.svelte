@@ -10,7 +10,7 @@
 		active = true;
 		timeout = setTimeout(() => {
 			storage.remove('user');
-			storage.remove('access_token');
+			storage.remove('access-token');
 			goto('/');
 		}, 1000);
 	}

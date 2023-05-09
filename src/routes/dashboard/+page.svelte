@@ -4,7 +4,13 @@
 	import { sendNotification } from '@tauri-apps/api/notification';
 	import { Main, Sidebar } from '~/lib/components';
 	import { createNotificationData, fetchGithub, storage } from '~/lib/helpers';
-	import { githubNotifications, loading, savedEventIds, watchedRepos } from '~/lib/stores';
+	import {
+		githubNotifications,
+		loading,
+		savedEventIds,
+		settings,
+		watchedRepos
+	} from '~/lib/stores';
 	import type {
 		GithubItem,
 		GithubNotification,
@@ -39,24 +45,37 @@
 				notifications.map((item) => (item.subject.url ? fetchGithub(item.subject.url) : null))
 			)) as GithubItem[];
 
+			const savedDates = storage.get('github-notification-dates') || {};
 			const newNotifications = notifications.map((notification, index) =>
-				createNotificationData(notification, datas[index], $savedEventIds as SavedNotifications)
+				createNotificationData(
+					notification,
+					datas[index],
+					$savedEventIds as SavedNotifications,
+					savedDates[notification.id]
+				)
 			);
 
 			// Send push notification
-			if ($githubNotifications.length) {
-				const { author, title, description, repo } = newNotifications[0];
+			if (window.__TAURI__ && $githubNotifications.length && $settings.activateNotifications) {
+				const { author, title, description, repo, ownerAvatar } = newNotifications[0];
 				sendNotification({
 					title: `${repo}: ${author ? `${author.login} ` : ''}${description}`,
-					body: title
+					body: title,
+					icon: ownerAvatar
 				});
 			}
 
 			// Add new notifications to the store
 			githubNotifications.update((previous) => [...newNotifications, ...previous]);
 
+			// Save notification dates to storage
+			storage.set(
+				'github-notification-dates',
+				Object.fromEntries(newNotifications.map((item) => [item.id, item.time]))
+			);
+
 			// Update watched repos
-			const savedWatchedRepos = storage.get('github_watched_repos');
+			const savedWatchedRepos = storage.get('github-watched-repos');
 			watchedRepos.set(
 				$githubNotifications.reduce<WatchedRepo[]>((previous, current) => {
 					const index = previous.findIndex((repo) => repo.id === current.repoId);
@@ -89,7 +108,7 @@
 		// Save events ids to storage
 		const toSave = { pinned, unread };
 		savedEventIds.set(toSave);
-		storage.set('github_notifications', toSave);
+		storage.set('github-notifications', toSave);
 
 		// Update menu bar
 		if (window.__TAURI__) {
@@ -102,7 +121,7 @@
 
 	onMount(async () => {
 		// Get events ids from storage
-		savedEventIds.set(storage.get('github_notifications') || { pinned: [], unread: [] });
+		savedEventIds.set(storage.get('github-notifications') || { pinned: [], unread: [] });
 
 		mounted = true;
 

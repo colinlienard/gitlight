@@ -23,6 +23,9 @@ export type GithubIssue = {
 	url: string;
 	state: 'open' | 'closed';
 	state_reason: 'completed' | 'not_planned' | 'reopened' | null;
+	created_at: string;
+	closed_at: string | null;
+	closed_by?: GithubUser;
 	user: GithubUser;
 	labels: GithubLabel[];
 	html_url: string;
@@ -30,8 +33,8 @@ export type GithubIssue = {
 
 export type GithubPullRequest = GithubIssue & {
 	merged: boolean;
-	merged_by: GithubUser;
 	merged_at: string | null;
+	merged_by?: GithubUser;
 	draft: boolean;
 };
 

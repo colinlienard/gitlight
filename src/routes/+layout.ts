@@ -14,12 +14,12 @@ export async function load({ url }) {
 	if (!browser) return;
 
 	let user = storage.get('user');
-	let accessToken = storage.get('access_token');
+	let accessToken = storage.get('access-token');
 
 	// Get access token
 	if (url.searchParams.has('access_token')) {
 		accessToken = url.searchParams.get('access_token') as string;
-		storage.set('access_token', accessToken);
+		storage.set('access-token', accessToken);
 		history.replaceState({}, '', '/dashboard');
 	}
 

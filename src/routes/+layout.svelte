@@ -10,7 +10,7 @@
 			listen('scheme-request', ({ payload }) => {
 				const accessToken = (payload as string).split('=')[1];
 				if (accessToken) {
-					storage.set('access_token', accessToken);
+					storage.set('access-token', accessToken);
 					goto('/dashboard');
 				}
 			});

@@ -67,7 +67,7 @@ export type WatchedRepo = {
 };
 
 export type Settings = {
-	activateNotifcations: boolean;
+	activateNotifications: boolean;
 	readWhenOpenInBrowser: boolean;
 	readWhenPin: boolean;
 };

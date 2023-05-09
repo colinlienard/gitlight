@@ -1,12 +1,13 @@
 import type { Settings, User } from '../types';
 
 type StorageMap = {
-	type_filters: boolean[];
-	github_watched_repos: { id: string; active: boolean }[];
-	settings: Settings;
 	user: User;
-	access_token: string;
-	github_notifications: { pinned: string[]; unread: string[] };
+	'access-token': string;
+	settings: Settings;
+	'github-notifications': { pinned: string[]; unread: string[] };
+	'github-watched-repos': { id: string; active: boolean }[];
+	'github-notification-dates': Record<string, string>;
+	'type-filters': boolean[];
 };
 
 export const storage = {

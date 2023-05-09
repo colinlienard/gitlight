@@ -12,7 +12,7 @@ export const watchedRepos = writable<WatchedRepo[]>([]);
 export const loading = writable<boolean>(true);
 
 export const settings = writable<Settings>({
-	activateNotifcations: true,
+	activateNotifications: true,
 	readWhenOpenInBrowser: true,
 	readWhenPin: true
 });

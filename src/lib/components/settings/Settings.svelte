@@ -32,7 +32,7 @@
 		<h3 class="title">Preferences</h3>
 		<Switch
 			label="Activate push notifications (only on desktop app)"
-			bind:active={$settings.activateNotifcations}
+			bind:active={$settings.activateNotifications}
 		/>
 		<Switch
 			label="Mark an event as read when opening in the browser"
