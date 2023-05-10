@@ -12,9 +12,10 @@ import { Commit, Discussion, Release } from '../icons';
 import { getIconColor, getIssueIcon, getPullRequestIcon } from './getIcon';
 
 export function createNotificationData(
-	{ id, repository, subject, unread: u, updated_at }: GithubNotification,
+	{ id, repository, subject, unread: u, updated_at, reason }: GithubNotification,
 	data: GithubItem,
-	savedNotificationIds: SavedNotifications
+	savedNotificationIds: SavedNotifications,
+	date?: string
 ): NotificationData {
 	const pinned = savedNotificationIds?.pinned.includes(id) || false;
 	const unread = u || savedNotificationIds?.unread.includes(id) || false;
@@ -26,7 +27,7 @@ export function createNotificationData(
 		pinned,
 		unread,
 		isNew,
-		time: updated_at,
+		time: date || updated_at,
 		title: subject.title,
 		type: subject.type,
 		owner,
@@ -47,10 +48,29 @@ export function createNotificationData(
 			};
 
 		case 'Issue': {
-			const { labels, number, html_url } = data as GithubIssue;
+			const { labels, number, state, created_at, closed_at, closed_by, user, html_url } =
+				data as GithubIssue;
+
+			let author;
+			let description = 'New activity on issue';
+			if (
+				state == 'open' &&
+				new Date(common.time).getTime() - new Date(created_at).getTime() < 60000
+			) {
+				author = user;
+				description = 'opened this issue';
+			} else if (
+				state === 'closed' &&
+				new Date(common.time).getTime() - new Date(closed_at as string).getTime() < 60000
+			) {
+				author = closed_by;
+				description = 'closed this issue';
+			}
+
 			return {
 				...common,
-				description: 'New activity on issue',
+				author,
+				description,
 				icon: getIssueIcon(data as GithubIssue),
 				iconColor: getIconColor(data as GithubIssue),
 				number,
@@ -60,13 +80,32 @@ export function createNotificationData(
 		}
 
 		case 'PullRequest': {
-			const { user, merged, number, labels, state, html_url } = data as GithubPullRequest;
+			const { user, merged, merged_by, number, labels, state, created_at, closed_at, html_url } =
+				data as GithubPullRequest;
+
+			let author;
+			let description = 'New activity on pull request';
+			if (
+				state == 'open' &&
+				new Date(common.time).getTime() - new Date(created_at).getTime() < 60000
+			) {
+				author = user;
+				description = 'opened this pull request';
+			} else if (
+				state === 'closed' &&
+				new Date(common.time).getTime() - new Date(closed_at as string).getTime() < 60000
+			) {
+				author = merged ? merged_by : user;
+				description = `${merged ? 'merged' : 'closed'} this pull request`;
+			} else if (reason === 'review_requested') {
+				author = user;
+				description = 'requested your review';
+			}
+
 			return {
 				...common,
-				author: user,
-				description: `${
-					merged ? 'merged' : state === 'open' ? 'opened' : 'closed'
-				} this pull request`,
+				author,
+				description,
 				icon: getPullRequestIcon(data as GithubPullRequest),
 				iconColor: getIconColor(data as GithubPullRequest),
 				number,

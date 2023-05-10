@@ -2,12 +2,12 @@
 	import { Github, Logo } from '~/lib/icons';
 	import { Separator, Switch } from '~/lib/components';
 	import { onMount } from 'svelte';
-	import { getAppVersion } from '~/lib/helpers';
-	import { filteredNotifications, githubNotifications, loading } from '~/lib/stores';
+	import { getAppVersion, storage } from '~/lib/helpers';
+	import { filteredNotifications, githubNotifications, loading, watchedRepos } from '~/lib/stores';
 	import { browser } from '$app/environment';
 	import SidebarSearch from './SidebarSearch.svelte';
 	import WatchedRepos from './WatchedRepos.svelte';
-	import type { TypeFilters, WatchedRepo } from '~/lib/types';
+	import type { TypeFilters } from '~/lib/types';
 
 	let search = '';
 	let typeFilters: TypeFilters = [
@@ -17,55 +17,33 @@
 		{ name: 'Discussions', type: 'Discussion', active: true, number: 0 },
 		{ name: 'Releases', type: 'Release', active: true, number: 0 }
 	];
-	let watchedRepos: WatchedRepo[] = [];
 	let others = true;
 
-	$: mostFiltersAreSelected = typeFilters.filter((filter) => filter.active).length > 3;
-	$: mostReposAreSelected = watchedRepos.filter((filter) => filter.active).length > 3;
+	$: mostFiltersAreSelected =
+		typeFilters.filter((filter) => filter.active).length > typeFilters.length / 2;
+	$: mostReposAreSelected =
+		$watchedRepos.filter((filter) => filter.active).length > $watchedRepos.length / 2;
 
-	// Save type filters to localStorage
+	// Save type filters to storage
 	$: if (browser && !$loading) {
-		localStorage.setItem('typeFilters', JSON.stringify(typeFilters.map((filter) => filter.active)));
+		storage.set(
+			'type-filters',
+			typeFilters.map((filter) => filter.active)
+		);
 	}
 
-	// Set watched repos
-	$: if (browser && !watchedRepos.length) {
-		const savedWatchedRepos = JSON.parse(localStorage.getItem('githubWatchedRepos') || '[]') as {
-			id: string;
-			active: boolean;
-		}[];
-		watchedRepos = $githubNotifications.reduce<WatchedRepo[]>((previous, current) => {
-			const index = previous.findIndex((repo) => repo.id === current.repoId);
-			if (index > -1) {
-				const repo = previous.splice(index, 1)[0];
-				return [...previous, { ...repo, number: repo.number + 1 }];
-			}
-			return [
-				...previous,
-				{
-					id: current.repoId,
-					name: current.repo,
-					ownerName: current.owner,
-					ownerAvatar: current.ownerAvatar,
-					number: 1,
-					active: savedWatchedRepos.find((repo) => repo.id === current.repoId)?.active ?? true
-				}
-			];
-		}, []);
-	}
-
-	// Save watched repos to localStorage
+	// Save watched repos to storage
 	$: if (browser && !$loading) {
-		localStorage.setItem(
-			'githubWatchedRepos',
-			JSON.stringify(watchedRepos.map(({ id, active }) => ({ id, active })))
+		storage.set(
+			'github-watched-repos',
+			$watchedRepos.map(({ id, active }) => ({ id, active }))
 		);
 	}
 
 	// Apply filters and search
 	$: filteredNotifications.set(
 		$githubNotifications.filter((notification) => {
-			const subscription = watchedRepos.find(
+			const subscription = $watchedRepos.find(
 				(subscription) => subscription.id === notification.repoId
 			);
 			const searched = notification.title.toLowerCase().includes(search.toLowerCase());
@@ -92,18 +70,16 @@
 
 	function changeSelectAllWatchedRepos(active: boolean) {
 		return () => {
-			watchedRepos = watchedRepos.map((item) => ({ ...item, active }));
+			watchedRepos.update((previous) => previous.map((item) => ({ ...item, active })));
 		};
 	}
 
 	onMount(async () => {
-		// Get type filters from localStorage
-		const savedTypeFilters = JSON.parse(
-			localStorage.getItem('typeFilters') || '[true, true, true, true, true, true, true]'
-		);
+		// Get type filters from storage
+		const savedTypeFilters = storage.get('type-filters');
 		typeFilters = typeFilters.map((filter, index) => ({
 			...filter,
-			active: savedTypeFilters[index]
+			active: savedTypeFilters ? savedTypeFilters[index] : true
 		}));
 	});
 </script>
@@ -148,7 +124,7 @@
 						<button class="button" on:click={changeSelectAllWatchedRepos(true)}>Select all</button>
 					{/if}
 				</div>
-				<WatchedRepos bind:watchedRepos />
+				<WatchedRepos />
 			</div>
 			<Separator />
 			<div class="wrapper">
@@ -205,7 +181,7 @@
 	}
 
 	.header {
-		padding: 3rem 2rem;
+		padding: 3rem 2rem 2rem;
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
@@ -319,7 +295,7 @@
 		}
 
 		div {
-			width: 1px;
+			flex: 0 0 1px;
 			margin: 0.5rem 0;
 			background-color: rgba(white, 0.1);
 			z-index: 1;

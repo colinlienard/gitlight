@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import { browser } from '$app/environment';
-import { fetchGithub } from '~/lib/helpers';
-import type { GithubUser, User } from '~/lib/types';
+import { fetchGithub, storage } from '~/lib/helpers';
+import type { GithubUser } from '~/lib/types';
 
 import '~/styles/_reset.scss';
 import '~/styles/_base.scss';
@@ -13,15 +13,13 @@ export const ssr = true;
 export async function load({ url }) {
 	if (!browser) return;
 
-	let user: User = localStorage.getItem('user')
-		? JSON.parse(localStorage.getItem('user') as string)
-		: null;
-	let accessToken = localStorage.getItem('access_token');
+	let user = storage.get('user');
+	let accessToken = storage.get('access-token');
 
 	// Get access token
 	if (url.searchParams.has('access_token')) {
 		accessToken = url.searchParams.get('access_token') as string;
-		localStorage.setItem('access_token', accessToken);
+		storage.set('access-token', accessToken);
 		history.replaceState({}, '', '/dashboard');
 	}
 
@@ -32,7 +30,7 @@ export async function load({ url }) {
 				accessToken
 			})) as GithubUser;
 			user = { name, login, avatar: avatar_url };
-			localStorage.setItem('user', JSON.stringify(user));
+			storage.set('user', user);
 		} catch {
 			//
 		}
