@@ -80,10 +80,11 @@
 			align-items: center;
 			justify-content: center;
 			gap: 0.5rem;
+			white-space: nowrap;
 			transition: scale 0.05s ease-in-out;
 
 			:global(svg) {
-				width: 1.25rem;
+				flex: 0 0 1.25rem;
 				height: 1.25rem;
 			}
 		}

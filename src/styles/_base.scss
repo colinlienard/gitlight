@@ -3,10 +3,3 @@ body {
 	background-color: variables.$grey-1;
 	color: variables.$white;
 }
-
-// Tauri draggable titlebar
-div[data-tauri-drag-region] {
-	position: fixed;
-	inset: 0 0 auto 0;
-	height: 28px;
-}

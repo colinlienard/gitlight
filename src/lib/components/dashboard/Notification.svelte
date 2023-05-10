@@ -35,6 +35,10 @@
 		clearInterval(interval);
 	});
 
+	function markAsReadInGitHub() {
+		fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
+	}
+
 	function handleToggle(key: 'unread' | 'pinned') {
 		return () => {
 			githubNotifications.update((previous) =>
@@ -53,9 +57,8 @@
 				unread = !unread;
 			}
 
-			// Mark as read in GitHub
 			if (unread) {
-				fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
+				markAsReadInGitHub();
 			}
 		};
 	}
@@ -63,7 +66,15 @@
 	function handleOpenInBrowser() {
 		if ($settings.readWhenOpenInBrowser) {
 			githubNotifications.update((previous) =>
-				previous.map((event) => (event.id === id ? { ...event, unread: false } : event))
+				previous.map((event) => {
+					if (event.id === id) {
+						if (event.unread) {
+							markAsReadInGitHub();
+						}
+						return { ...event, unread: false };
+					}
+					return event;
+				})
 			);
 		}
 	}

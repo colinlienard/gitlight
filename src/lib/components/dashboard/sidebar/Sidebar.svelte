@@ -19,8 +19,10 @@
 	];
 	let others = true;
 
-	$: mostFiltersAreSelected = typeFilters.filter((filter) => filter.active).length > 3;
-	$: mostReposAreSelected = $watchedRepos.filter((filter) => filter.active).length > 3;
+	$: mostFiltersAreSelected =
+		typeFilters.filter((filter) => filter.active).length > typeFilters.length / 2;
+	$: mostReposAreSelected =
+		$watchedRepos.filter((filter) => filter.active).length > $watchedRepos.length / 2;
 
 	// Save type filters to storage
 	$: if (browser && !$loading) {
@@ -179,7 +181,7 @@
 	}
 
 	.header {
-		padding: 3rem 2rem;
+		padding: 3rem 2rem 2rem;
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
@@ -293,7 +295,7 @@
 		}
 
 		div {
-			width: 1px;
+			flex: 0 0 1px;
 			margin: 0.5rem 0;
 			background-color: rgba(white, 0.1);
 			z-index: 1;
