@@ -7,6 +7,7 @@
 	import type { NotificationData } from '~/lib/types';
 
 	export let data: NotificationData;
+	export let interactive = true;
 
 	let {
 		id,
@@ -80,7 +81,7 @@
 	}
 </script>
 
-<div class="notification" on:mouseenter={isNew ? () => (isNew = false) : undefined}>
+<div class="notification" on:mouseenter={isNew && interactive ? () => (isNew = false) : undefined}>
 	{#if isNew && unread}
 		<div class="new" />
 	{/if}
@@ -91,7 +92,7 @@
 	<p class="description">
 		{#if author}
 			{author.login}
-			<img class="image" src={author.avatar_url} alt="" />
+			<img class="image" src={author.avatar_url} alt="" width="20px" height="20px" />
 			<span class="subtle">
 				{description}
 			</span>
@@ -115,39 +116,41 @@
 			{/each}
 		</ul>
 	{/if}
-	<div class="over">
-		<Tooltip content="Mark as {unread ? '' : 'un'}read" position="left">
-			<Button type={unread ? 'primary' : 'secondary'} small on:click={handleToggle('unread')}>
-				{#if unread}
-					<Check />
-				{:else}
-					<Mail />
-				{/if}
-			</Button>
-		</Tooltip>
-		{#if url}
-			<Tooltip content="Open in GitHub" position="left">
-				<Button type="secondary" small href={url} external on:click={handleOpenInBrowser}>
-					<ExternalLink />
+	{#if interactive}
+		<div class="over">
+			<Tooltip content="Mark as {unread ? '' : 'un'}read" position="left">
+				<Button type={unread ? 'primary' : 'secondary'} small on:click={handleToggle('unread')}>
+					{#if unread}
+						<Check />
+					{:else}
+						<Mail />
+					{/if}
 				</Button>
 			</Tooltip>
-		{:else}
-			<Tooltip content="Cannot open in GitHub" position="left">
-				<Button type="secondary" small disabled>
-					<ExternalLink />
+			{#if url}
+				<Tooltip content="Open in GitHub" position="left">
+					<Button type="secondary" small href={url} external on:click={handleOpenInBrowser}>
+						<ExternalLink />
+					</Button>
+				</Tooltip>
+			{:else}
+				<Tooltip content="Cannot open in GitHub" position="left">
+					<Button type="secondary" small disabled>
+						<ExternalLink />
+					</Button>
+				</Tooltip>
+			{/if}
+			<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left">
+				<Button type="secondary" small on:click={handleToggle('pinned')}>
+					{#if pinned}
+						<Unpin />
+					{:else}
+						<Pin />
+					{/if}
 				</Button>
 			</Tooltip>
-		{/if}
-		<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left">
-			<Button type="secondary" small on:click={handleToggle('pinned')}>
-				{#if pinned}
-					<Unpin />
-				{:else}
-					<Pin />
-				{/if}
-			</Button>
-		</Tooltip>
-	</div>
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -196,8 +199,6 @@
 
 		.image {
 			display: inline-block;
-			width: 1.25rem;
-			height: 1.25rem;
 			translate: 0 0.25rem;
 		}
 
