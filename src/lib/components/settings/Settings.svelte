@@ -3,7 +3,7 @@
 	import { Button } from '~/lib/components';
 	import { Modal, Separator, Switch } from '~/lib/components';
 	import { Github, Gitlab } from '~/lib/icons';
-	import SignOutButton from './SignOutButton.svelte';
+	import LogOutButton from './LogOutButton.svelte';
 	import { onMount } from 'svelte';
 	import { settings } from '~/lib/stores';
 	import { storage } from '~/lib/helpers';
@@ -55,7 +55,7 @@
 							<p class="name">{user?.name}</p>
 						</figcaption>
 					</figure>
-					<SignOutButton />
+					<LogOutButton />
 				</div>
 			</li>
 			<li class="account">

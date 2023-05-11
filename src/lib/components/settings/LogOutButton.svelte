@@ -11,7 +11,7 @@
 		timeout = setTimeout(() => {
 			storage.remove('user');
 			storage.remove('access-token');
-			goto('/');
+			goto(`/login${window.__TAURI__ ? '?desktop=true' : ''}`);
 		}, 1000);
 	}
 

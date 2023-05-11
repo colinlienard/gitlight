@@ -8,6 +8,7 @@ env:
   AUTH_GITHUB_ID: ${{ secrets.AUTH_GITHUB_ID }}
   AUTH_GITHUB_SECRET: ${{ secrets.AUTH_GITHUB_SECRET }}
   AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+  PUBLIC_SITE_URL: ${{ secrets.PUBLIC_SITE_URL }}
 jobs:
   release:
     if: contains(github.event.head_commit.message, 'release')

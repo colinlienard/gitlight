@@ -57,6 +57,8 @@
 		flex-direction: column;
 		align-items: center;
 		height: 100vh;
+		overflow: hidden;
+		padding: 0 2rem;
 	}
 
 	.background-image {

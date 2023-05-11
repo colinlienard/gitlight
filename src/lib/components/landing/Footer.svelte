@@ -8,8 +8,8 @@
 
 <style lang="scss">
 	.footer {
-		margin-top: auto;
-		padding: 2rem;
+		position: absolute;
+		inset: auto auto 2rem;
 		text-align: center;
 		color: variables.$grey-4;
 	}
