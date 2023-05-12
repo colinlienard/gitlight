@@ -1,3 +1,9 @@
+html {
+	@include screens.mobile {
+		font-size: 14px;
+	}
+}
+
 body {
 	font-family: 'Inter', sans-serif;
 	background-color: variables.$grey-1;

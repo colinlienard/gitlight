@@ -9,6 +9,7 @@ export default defineConfig({
 				additionalData: `
           @use 'sass:color';
           @use "~/styles/mixins";
+          @use "~/styles/screens";
           @use "~/styles/typography";
           @use "~/styles/variables";
         `

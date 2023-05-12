@@ -126,7 +126,12 @@
 <style lang="scss">
 	.container {
 		margin-top: 4rem;
+		margin-bottom: auto;
 		position: relative;
+
+		@include screens.mobile {
+			display: none;
+		}
 
 		.notification-container {
 			background-color: variables.$grey-1;

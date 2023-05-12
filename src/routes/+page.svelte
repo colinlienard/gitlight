@@ -56,14 +56,25 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		height: 100vh;
-		overflow: hidden;
+		overflow-x: hidden;
 		padding: 0 2rem;
+		position: relative;
+		min-height: 100vh;
+
+		@include screens.mobile {
+			padding-bottom: 6rem;
+		}
 	}
 
 	.background-image {
 		position: absolute;
 		z-index: -1;
+
+		@include screens.mobile {
+			width: 40rem;
+			max-width: unset;
+			height: auto;
+		}
 	}
 
 	.header {
@@ -105,7 +116,16 @@
 		flex-direction: column;
 		align-items: center;
 		gap: 2rem;
-		margin-top: 10rem;
+
+		@include screens.mobile {
+			width: 100vw;
+			padding: 0 2rem;
+			margin-top: 4rem;
+		}
+
+		@include screens.laptop {
+			margin-top: auto;
+		}
 
 		.hero-container {
 			display: flex;
@@ -114,8 +134,7 @@
 
 			.hero {
 				@include typography.bold;
-				font-size: 3rem;
-				max-width: 45rem;
+				font-size: 2.5rem;
 				text-align: center;
 				padding-bottom: 1rem;
 				background-image: linear-gradient(rgba(variables.$white, 0.5), variables.$white);
@@ -124,16 +143,24 @@
 				-moz-background-clip: text;
 				-webkit-text-fill-color: transparent;
 				-moz-text-fill-color: transparent;
+
+				@include screens.laptop {
+					font-size: 3rem;
+					max-width: 45rem;
+				}
 			}
 
 			.subhero {
 				font-size: 1.25rem;
+				text-align: center;
 				color: variables.$grey-4;
 			}
 		}
 
 		.buttons-container {
 			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
 			gap: 1rem;
 		}
 
@@ -144,10 +171,16 @@
 		}
 
 		.features-list {
-			display: grid;
-			grid-template-columns: repeat(3, 16rem);
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+
+			@include screens.mobile {
+				gap: 2rem;
+			}
 
 			.feature {
+				width: 16rem;
 				display: flex;
 				flex-direction: column;
 				align-items: center;

@@ -3,7 +3,7 @@
 	import { fade } from 'svelte/transition';
 	import { sineInOut } from 'svelte/easing';
 	import { Apple, ArrowRight, Linux, Windows } from '~/lib/icons';
-	import { Button, Tooltip } from '~/lib/components';
+	import { Button } from '~/lib/components';
 
 	type Releases = {
 		assets: Array<{
@@ -43,15 +43,18 @@
 	</Button>
 	{#if open}
 		<div class="tooltip" transition:fade={{ duration: 150, easing: sineInOut }}>
-			<Tooltip content="Download for Mac">
-				<Button type="secondary" small on:click={handleDownload('mac')}><Apple /></Button>
-			</Tooltip>
-			<Tooltip content="Download for Windows">
-				<Button type="secondary" small on:click={handleDownload('win')}><Windows /></Button>
-			</Tooltip>
-			<Tooltip content="Download for Linux">
-				<Button type="secondary" small on:click={handleDownload('linux')}><Linux /></Button>
-			</Tooltip>
+			<Button type="secondary" on:click={handleDownload('mac')}>
+				<Apple />
+				Download for Mac
+			</Button>
+			<Button type="secondary" on:click={handleDownload('win')}>
+				<Windows />
+				Download for Windows
+			</Button>
+			<Button type="secondary" on:click={handleDownload('linux')}>
+				<Linux />
+				Download for Linux
+			</Button>
 		</div>
 	{/if}
 </div>
@@ -59,6 +62,7 @@
 <style lang="scss">
 	.container {
 		position: relative;
+		z-index: 1;
 	}
 
 	.tooltip {
@@ -73,6 +77,7 @@
 		left: 50%;
 		translate: -50% 0;
 		display: flex;
+		flex-direction: column;
 		gap: 0.5rem;
 		width: max-content;
 

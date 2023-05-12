@@ -43,12 +43,19 @@
 		height: 100vh;
 		overflow: hidden;
 		padding: 0 2rem;
+		position: relative;
 	}
 
 	.background-image {
 		position: absolute;
 		top: 0;
 		z-index: -1;
+
+		@include screens.mobile {
+			width: 40rem;
+			max-width: unset;
+			height: auto;
+		}
 	}
 
 	.main {
