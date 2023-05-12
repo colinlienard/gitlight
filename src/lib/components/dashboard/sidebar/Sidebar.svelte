@@ -160,7 +160,7 @@
 	<footer class="footer">
 		<p>v{getAppVersion()}</p>
 		<a
-			href="https://github.com/ColinLienard/gitlight"
+			href="https://github.com/colinlienard/gitlight"
 			class="link"
 			target="_blank"
 			rel="noreferrer"

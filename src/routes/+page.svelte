@@ -15,7 +15,7 @@
 			<h1 class="title">GitLight</h1>
 		</div>
 		<a
-			href="https://github.com/ColinLienard/gitlight"
+			href="https://github.com/colinlienard/gitlight"
 			target="_blank"
 			rel="noreferrer"
 			class="icon-link"
@@ -25,15 +25,19 @@
 	</header>
 	<main class="main">
 		<div class="hero-container">
-			<h2 class="hero">GitHub and GitLab notifications on your desktop</h2>
-			<h3 class="subhero">Never miss a pull request, issue, commit, review...</h3>
+			<h2 class="hero" data-slide style="--stagger: 0">
+				GitHub and GitLab notifications on your desktop
+			</h2>
+			<h3 class="subhero" data-slide style="--stagger: 1">
+				Never miss a pull request, issue, commit, review...
+			</h3>
 		</div>
-		<div class="buttons-container">
+		<div class="buttons-container" data-slide style="--stagger: 2">
 			<DownloadButton />
 			<Button type="secondary" href="/login">or use in the browser</Button>
 		</div>
-		<span class="separator" />
-		<ul class="features-list">
+		<span class="separator" data-slide style="--stagger: 3" />
+		<ul class="features-list" data-slide style="--stagger: 4">
 			<li class="feature">
 				<Sparkles />
 				<h4 class="title">Filter and monitor events</h4>
@@ -56,6 +60,23 @@
 </div>
 
 <style lang="scss">
+	[data-slide] {
+		@keyframes slide {
+			from {
+				opacity: 0;
+				translate: 0 0.5rem;
+			}
+
+			to {
+				opacity: 1;
+				translate: 0;
+			}
+		}
+
+		--stagger: 1;
+		animation: slide 0.3s calc(var(--stagger) * 0.1s) ease-in-out backwards;
+	}
+
 	.wrapper {
 		display: flex;
 		flex-direction: column;
@@ -127,7 +148,7 @@
 			margin-top: 4rem;
 		}
 
-		@include screens.laptop {
+		@include screens.desktop {
 			margin-top: auto;
 		}
 
@@ -148,7 +169,7 @@
 				-webkit-text-fill-color: transparent;
 				-moz-text-fill-color: transparent;
 
-				@include screens.laptop {
+				@include screens.desktop {
 					font-size: 3rem;
 					max-width: 45rem;
 				}

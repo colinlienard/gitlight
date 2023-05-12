@@ -4,20 +4,8 @@
 	}
 }
 
-@mixin tablet() {
-	@media (min-width: 480px) {
-		@content;
-	}
-}
-
-@mixin laptop() {
-	@media (min-width: 1024px) {
-		@content;
-	}
-}
-
 @mixin desktop() {
-	@media (min-width: 1600px) {
+	@media (min-width: 480px) {
 		@content;
 	}
 }

@@ -18,7 +18,7 @@
 	let releases: Record<OS, string> = { mac: '', win: '', linux: '' };
 
 	onMount(async () => {
-		const response = await fetch('https://api.github.com/repos/ColinLienard/gitlight/releases');
+		const response = await fetch('https://api.github.com/repos/colinlienard/gitlight/releases');
 		const data = (await response.json()) as Releases;
 		const { assets } = data[0];
 		releases = {
@@ -31,7 +31,9 @@
 	function handleDownload(os: OS) {
 		return () => {
 			open = false;
-			window.open(releases[os], '_blank');
+			const link = document.createElement('a');
+			link.href = releases[os];
+			link.click();
 		};
 	}
 </script>
@@ -43,15 +45,15 @@
 	</Button>
 	{#if open}
 		<div class="tooltip" transition:fade={{ duration: 150, easing: sineInOut }}>
-			<Button type="secondary" on:click={handleDownload('mac')}>
+			<Button on:click={handleDownload('mac')}>
 				<Apple />
 				Download for Mac
 			</Button>
-			<Button type="secondary" on:click={handleDownload('win')}>
+			<Button on:click={handleDownload('win')}>
 				<Windows />
 				Download for Windows
 			</Button>
-			<Button type="secondary" on:click={handleDownload('linux')}>
+			<Button on:click={handleDownload('linux')}>
 				<Linux />
 				Download for Linux
 			</Button>
@@ -73,9 +75,9 @@
 		border-radius: variables.$radius;
 		white-space: nowrap;
 		position: absolute;
-		top: calc(100% + 0.25rem);
+		top: 50%;
 		left: 50%;
-		translate: -50% 0;
+		translate: -50% -50%;
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;

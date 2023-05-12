@@ -28,7 +28,7 @@
 			type: 'Commit',
 			author: {
 				...commonAuthor,
-				login: 'ColinLienard',
+				login: 'colinlienard',
 				avatar_url: 'https://avatars.githubusercontent.com/u/64312634?v=4'
 			},
 			title: 'feat(back): tauri functionnalities',
@@ -36,7 +36,7 @@
 			time: new Date().toString(),
 			icon: Commit,
 			iconColor: 'blue',
-			owner: 'ColinLienard',
+			owner: 'colinlienard',
 			repo: 'gitlight'
 		},
 		{
@@ -96,7 +96,7 @@
 			isNew: true,
 			author: {
 				...commonAuthor,
-				login: 'ColinLienard',
+				login: 'colinlienard',
 				avatar_url: 'https://avatars.githubusercontent.com/u/64312634?v=4'
 			},
 			title: 'feat(front): add the landing page',
@@ -104,7 +104,7 @@
 			time: new Date(new Date().getTime() - 23000).toString(),
 			icon: PullRequestOpen,
 			iconColor: 'green',
-			owner: 'ColinLienard',
+			owner: 'colinlienard',
 			repo: 'gitlight',
 			number: 44,
 			labels: [
@@ -143,10 +143,24 @@
 				position: absolute;
 			}
 
-			@mixin notification($top, $left, $rotate, $opacity) {
+			@keyframes slide {
+				from {
+					opacity: 0;
+					translate: 0 4rem;
+					transform: perspective(500px) rotate3d(1, 0, 0, -45deg);
+				}
+				to {
+					opacity: 1;
+					translate: 0;
+					transform: perspective(500px) rotate3d(1, 0, 0, 0deg);
+				}
+			}
+
+			@mixin notification($top, $left, $rotate, $opacity, $animation-stagger) {
 				top: $top;
 				left: $left;
 				rotate: $rotate;
+				animation: slide 0.5s calc(#{$animation-stagger} * 0.2s + 0.6s) ease-in-out backwards;
 
 				& > :global(div) {
 					opacity: $opacity;
@@ -155,19 +169,23 @@
 			}
 
 			&:nth-child(1) {
-				@include notification(8rem, calc(-200% + 8rem), -15deg, 0.25);
+				@include notification(8rem, calc(-200% + 8rem), -15deg, 0.25, 2);
 			}
 
 			&:nth-child(2) {
-				@include notification(2rem, calc(-100% + 4rem), -5deg, 0.5);
+				@include notification(2rem, calc(-100% + 4rem), -5deg, 0.5, 1);
 			}
 
 			&:nth-child(3) {
-				@include notification(8rem, calc(200% - 8rem), 15deg, 0.25);
+				@include notification(8rem, calc(200% - 8rem), 15deg, 0.25, 2);
 			}
 
 			&:nth-child(4) {
-				@include notification(2rem, calc(100% - 4rem), 5deg, 0.5);
+				@include notification(2rem, calc(100% - 4rem), 5deg, 0.5, 1);
+			}
+
+			&:nth-child(5) {
+				animation: slide 0.5s 0.6s ease-in-out backwards;
 			}
 
 			&:hover {
