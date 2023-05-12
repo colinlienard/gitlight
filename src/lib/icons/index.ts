@@ -1,3 +1,4 @@
+export { default as Apple } from './Apple.svelte';
 export { default as ArrowRight } from './ArrowRight.svelte';
 export { default as ArrowUp } from './ArrowUp.svelte';
 export { default as Branch } from './Branch.svelte';
@@ -16,6 +17,7 @@ export { default as IssueDraft } from './IssueDraft.svelte';
 export { default as IssueNotPlanned } from './IssueNotPlanned.svelte';
 export { default as IssueOpen } from './IssueOpen.svelte';
 export { default as Lightning } from './Lightning.svelte';
+export { default as Linux } from './Linux.svelte';
 export { default as Logo } from './Logo.svelte';
 export { default as Mail } from './Mail.svelte';
 export { default as Pin } from './Pin.svelte';
@@ -33,3 +35,4 @@ export { default as Sparkles } from './Sparkles.svelte';
 export { default as Tag } from './Tag.svelte';
 export { default as Trash } from './Trash.svelte';
 export { default as Unpin } from './Unpin.svelte';
+export { default as Windows } from './Windows.svelte';

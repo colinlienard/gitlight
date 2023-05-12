@@ -1,6 +1,6 @@
-<script>
-	import { Button, FakeNotifications, Footer } from '~/lib/components';
-	import { ArrowRight, Github, Heart, Lightning, Logo, Sparkles } from '~/lib/icons';
+<script lang="ts">
+	import { Button, DownloadButton, FakeNotifications, Footer } from '~/lib/components';
+	import { Github, Heart, Lightning, Logo, Sparkles } from '~/lib/icons';
 </script>
 
 <div class="wrapper">
@@ -25,7 +25,7 @@
 			<h3 class="subhero">Never miss a pull request, issue, commit, review...</h3>
 		</div>
 		<div class="buttons-container">
-			<Button><ArrowRight />Download for Mac</Button>
+			<DownloadButton />
 			<Button type="secondary" href="/login">or use in the browser</Button>
 		</div>
 		<span class="separator" />

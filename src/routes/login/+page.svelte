@@ -1,10 +1,15 @@
 <script>
+	import { onMount } from 'svelte';
 	import { PUBLIC_SITE_URL } from '$env/static/public';
 	import { Button, Footer, Tooltip } from '~/lib/components';
 	import { ArrowRight, Github, Gitlab } from '~/lib/icons';
 	import { page } from '$app/stores';
 
-	let onTauriApp = $page.url.search === '?desktop=true';
+	let onTauriApp = false;
+
+	onMount(() => {
+		onTauriApp = $page.url.search === '?desktop=true';
+	});
 </script>
 
 <div class="wrapper">
