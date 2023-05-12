@@ -22,13 +22,13 @@
 	}
 </script>
 
-<div class="sign-out" on:mousedown={handleMouseDown} on:mouseup={handleMouseUp}>
+<div class="log-out" on:mousedown={handleMouseDown} on:mouseup={handleMouseUp}>
 	<div class="progress" class:active class:ended={!timeout} />
-	<Button type="secondary" small>Hold to sign out</Button>
+	<Button type="secondary" small>Hold to log out</Button>
 </div>
 
 <style lang="scss">
-	.sign-out {
+	.log-out {
 		display: flex;
 		flex-direction: column;
 		color: variables.$red;

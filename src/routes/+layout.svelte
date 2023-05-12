@@ -22,6 +22,10 @@
 	});
 </script>
 
+<svelte:head>
+	<meta name="description" content="GitHub and GitLab notifications on your desktop" />
+</svelte:head>
+
 {#if onTauriApp}
 	<!-- Tauri draggable titlebar -->
 	<div data-tauri-drag-region />

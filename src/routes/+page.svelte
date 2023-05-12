@@ -3,6 +3,10 @@
 	import { Github, Heart, Lightning, Logo, Sparkles } from '~/lib/icons';
 </script>
 
+<svelte:head>
+	<title>GitLight • GitHub and GitLab notifications on your desktop</title>
+</svelte:head>
+
 <div class="wrapper">
 	<img src="/images/large-light.png" alt="" class="background-image" width="1600" height="384" />
 	<header class="header">

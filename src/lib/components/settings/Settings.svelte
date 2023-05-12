@@ -51,7 +51,7 @@
 					<figure class="user">
 						<img class="image" src={user?.avatar} alt="" />
 						<figcaption class="user-info">
-							<p class="sub">Signed in as</p>
+							<p class="sub">Logged in as</p>
 							<p class="name">{user?.name}</p>
 						</figcaption>
 					</figure>
@@ -64,8 +64,8 @@
 					<h4 class="title">GitLab</h4>
 				</div>
 				<div class="content">
-					<p class="sub">Not signed in.</p>
-					<Button small disabled>Sign in</Button>
+					<p class="sub">Not logged in.</p>
+					<Button small disabled>Log in</Button>
 				</div>
 			</li>
 		</ul>

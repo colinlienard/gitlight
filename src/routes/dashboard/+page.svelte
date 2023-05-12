@@ -134,6 +134,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>GitLight • Dashboard</title>
+</svelte:head>
+
 <div class="container">
 	<Sidebar />
 	<Main {synced} />
