@@ -143,6 +143,10 @@
 				position: absolute;
 			}
 
+			& > :global(div) {
+				@include mixins.shadow;
+			}
+
 			@keyframes slide {
 				from {
 					opacity: 0;

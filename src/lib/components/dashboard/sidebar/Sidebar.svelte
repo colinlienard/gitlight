@@ -85,7 +85,7 @@
 </script>
 
 <article class="sidebar">
-	<img src="/images/small-light.png" alt="" class="gradient" />
+	<img src="/images/small-light.webp" alt="" class="gradient" />
 	<header class="header">
 		<Logo />
 		<h1 class="hero">GitLight</h1>

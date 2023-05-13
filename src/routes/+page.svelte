@@ -8,14 +8,14 @@
 </svelte:head>
 
 <div class="wrapper">
-	<img src="/images/large-light.png" alt="" class="background-image" width="1600" height="384" />
+	<img src="/images/large-light.webp" alt="" class="background-image" width="1600" height="384" />
 	<header class="header">
 		<div class="title-container">
 			<Logo />
 			<h1 class="title">GitLight</h1>
 		</div>
 		<a
-			href="https://github.com/colinlienard/gitlight"
+			href="https://github.com/ColinLienard/gitlight"
 			target="_blank"
 			rel="noreferrer"
 			class="icon-link"
@@ -93,11 +93,11 @@
 
 	.background-image {
 		position: absolute;
+		max-width: unset;
 		z-index: -1;
 
 		@include screens.mobile {
 			width: 40rem;
-			max-width: unset;
 			height: auto;
 		}
 	}
@@ -162,7 +162,7 @@
 				font-size: 2.5rem;
 				text-align: center;
 				padding-bottom: 1rem;
-				background-image: linear-gradient(rgba(variables.$white, 0.5), variables.$white);
+				background-image: linear-gradient(variables.$white, rgba(variables.$white, 0.5));
 				background-clip: text;
 				-webkit-background-clip: text;
 				-moz-background-clip: text;
@@ -213,6 +213,7 @@
 
 				:global(svg) {
 					height: 2rem;
+					color: variables.$blue-3;
 				}
 
 				.title {

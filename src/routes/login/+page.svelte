@@ -17,7 +17,7 @@
 </svelte:head>
 
 <div class="wrapper">
-	<img src="/images/large-light.png" alt="" class="background-image" width="1600" height="384" />
+	<img src="/images/large-light.webp" alt="" class="background-image" width="1600" height="384" />
 	<main class="main">
 		{#if !onTauriApp}
 			<a href="/" class="back-button">
