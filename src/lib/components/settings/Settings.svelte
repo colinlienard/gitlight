@@ -3,7 +3,7 @@
 	import { Button } from '~/lib/components';
 	import { Modal, Separator, Switch } from '~/lib/components';
 	import { Github, Gitlab } from '~/lib/icons';
-	import SignOutButton from './SignOutButton.svelte';
+	import LogOutButton from './LogOutButton.svelte';
 	import { onMount } from 'svelte';
 	import { settings } from '~/lib/stores';
 	import { storage } from '~/lib/helpers';
@@ -51,11 +51,11 @@
 					<figure class="user">
 						<img class="image" src={user?.avatar} alt="" />
 						<figcaption class="user-info">
-							<p class="sub">Signed in as</p>
+							<p class="sub">Logged in as</p>
 							<p class="name">{user?.name}</p>
 						</figcaption>
 					</figure>
-					<SignOutButton />
+					<LogOutButton />
 				</div>
 			</li>
 			<li class="account">
@@ -64,8 +64,8 @@
 					<h4 class="title">GitLab</h4>
 				</div>
 				<div class="content">
-					<p class="sub">Not signed in.</p>
-					<Button small disabled>Sign in</Button>
+					<p class="sub">Not logged in.</p>
+					<Button small disabled>Log in</Button>
 				</div>
 			</li>
 		</ul>

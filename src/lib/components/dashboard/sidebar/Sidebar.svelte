@@ -85,7 +85,7 @@
 </script>
 
 <article class="sidebar">
-	<img src="/images/sidebar-gradient.png" alt="" class="gradient" />
+	<img src="/images/small-light.webp" alt="" class="gradient" />
 	<header class="header">
 		<Logo />
 		<h1 class="hero">GitLight</h1>
@@ -160,7 +160,7 @@
 	<footer class="footer">
 		<p>v{getAppVersion()}</p>
 		<a
-			href="https://github.com/ColinLienard/gitlight"
+			href="https://github.com/colinlienard/gitlight"
 			class="link"
 			target="_blank"
 			rel="noreferrer"

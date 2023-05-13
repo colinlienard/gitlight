@@ -4,7 +4,7 @@
 	export let type: 'primary' | 'secondary' = 'primary';
 	export let small = false;
 	export let href: string | undefined = undefined;
-	export let external: true | undefined = undefined;
+	export let external = false;
 	export let loading = false;
 	export let disabled = false;
 
@@ -24,8 +24,8 @@
 		class:loading
 		class:disabled
 		{href}
-		target={external && '_blank'}
-		rel={external && 'noreferrer'}
+		target={external ? '_blank' : undefined}
+		rel={external ? 'noreferrer' : undefined}
 		on:click={handleClick}
 	>
 		<span class="content">
@@ -76,6 +76,8 @@
 		}
 
 		.content {
+			width: 100%;
+			height: 100%;
 			display: flex;
 			align-items: center;
 			justify-content: center;

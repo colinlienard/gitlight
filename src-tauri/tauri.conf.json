@@ -69,13 +69,13 @@
 				"title": "GitLight",
 				"width": 1400,
 				"titleBarStyle": "Overlay",
-				"hiddenTitle": true
+				"hiddenTitle": true,
+				"url": "/login?desktop=true"
 			}
 		],
 		"systemTray": {
 			"iconPath": "icons/template-icon.png",
-			"iconAsTemplate": true,
-			"title": "..."
+			"iconAsTemplate": true
 		}
 	}
 }
