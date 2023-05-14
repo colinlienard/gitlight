@@ -37,5 +37,6 @@
 		position: fixed;
 		inset: 0 0 auto 0;
 		height: 28px;
+		z-index: 9999;
 	}
 </style>

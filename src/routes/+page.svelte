@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button, DownloadButton, FakeNotifications, Footer } from '~/lib/components';
-	import { Github, Heart, Lightning, Logo, Sparkles } from '~/lib/icons';
+	import { ArrowRight, Github, Heart, Lightning, Logo, Sparkles } from '~/lib/icons';
 </script>
 
 <svelte:head>
@@ -33,7 +33,12 @@
 			</h3>
 		</div>
 		<div class="buttons-container" data-slide style="--stagger: 2">
-			<DownloadButton />
+			<DownloadButton>
+				<Button>
+					<ArrowRight />
+					Download the app
+				</Button>
+			</DownloadButton>
 			<Button type="secondary" href="/login">or use in the browser</Button>
 		</div>
 		<span class="separator" data-slide style="--stagger: 3" />

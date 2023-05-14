@@ -45,10 +45,5 @@ export async function load({ url }) {
 		throw redirect(302, '/dashboard');
 	}
 
-	// Open the desktop app with the access token
-	if (!window.__TAURI__ && accessToken) {
-		window.location.href = `gitlight://access_token=${accessToken}`;
-	}
-
 	return { session };
 }

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { crossfade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
-	import { NotificationColumn, Settings, Separator } from '~/lib/components';
+	import { NotificationColumn, Settings, Separator, Banner } from '~/lib/components';
 	import { filteredNotifications, githubNotifications } from '~/lib/stores';
 	import { Check, Github, Gitlab, Mail, Pin, Refresh } from '~/lib/icons';
 	import { fetchGithub } from '~/lib/helpers';
@@ -46,6 +46,7 @@
 </script>
 
 <main class="main">
+	<Banner />
 	<header class="header">
 		<h1 class="title">Notifications</h1>
 		<div class="sync-pill" class:loading={!synced}>
