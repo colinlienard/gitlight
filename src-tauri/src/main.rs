@@ -7,11 +7,18 @@ use tauri::{
     CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
 };
 
+#[cfg(target_os = "macos")]
 #[tauri::command]
 fn update_tray(app_handle: tauri::AppHandle, title: String, description: String) {
     let tray_handle = app_handle.tray_handle();
-    #[cfg(target_os = "macos")]
     tray_handle.set_title(&title).unwrap();
+    tray_handle.get_item("text").set_title(description).unwrap();
+}
+
+#[cfg(not(target_os = "macos"))]
+#[tauri::command]
+fn update_tray(app_handle: tauri::AppHandle, _title: String, description: String) {
+    let tray_handle = app_handle.tray_handle();
     tray_handle.get_item("text").set_title(description).unwrap();
 }
 
