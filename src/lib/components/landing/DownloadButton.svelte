@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { sineInOut } from 'svelte/easing';
-	import { Apple, ArrowRight, Linux, Windows } from '~/lib/icons';
+	import { Apple, Linux, Windows } from '~/lib/icons';
 	import { Button } from '~/lib/components';
 
 	type Releases = {
@@ -13,6 +13,9 @@
 	}[];
 
 	type OS = 'mac' | 'win' | 'linux';
+
+	export let show = true;
+	export let position: 'center' | 'bottom' = 'center';
 
 	let open = false;
 	let releases: Record<OS, string> = { mac: '', win: '', linux: '' };
@@ -38,13 +41,10 @@
 	}
 </script>
 
-<div class="container" on:mouseleave={() => (open = false)}>
-	<Button on:click={() => (open = !open)}>
-		<ArrowRight />
-		Download the app
-	</Button>
-	{#if open}
-		<div class="tooltip" transition:fade={{ duration: 150, easing: sineInOut }}>
+<button class="container" on:click={() => (open = !open)} on:mouseleave={() => (open = false)}>
+	<slot />
+	{#if show && open}
+		<div class="tooltip {position}" transition:fade={{ duration: 150, easing: sineInOut }}>
 			<Button on:click={handleDownload('mac')}>
 				<Apple />
 				Download for Mac
@@ -59,7 +59,7 @@
 			</Button>
 		</div>
 	{/if}
-</div>
+</button>
 
 <style lang="scss">
 	.container {
@@ -87,6 +87,11 @@
 			content: '';
 			position: absolute;
 			inset: -0.5rem;
+		}
+
+		&.bottom {
+			top: calc(100% + 0.25rem);
+			translate: -50% 0;
 		}
 	}
 </style>

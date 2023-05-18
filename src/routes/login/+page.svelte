@@ -5,7 +5,7 @@
 	import { ArrowRight, Github, Gitlab } from '~/lib/icons';
 	import { page } from '$app/stores';
 
-	let onTauriApp = false;
+	let onTauriApp = true;
 
 	onMount(() => {
 		onTauriApp = $page.url.search === '?desktop=true';
@@ -27,7 +27,10 @@
 		<h2 class="title">Log in to start monitoring your notifications</h2>
 		<p class="description">You will be able to log in to the other provider afterward.</p>
 		<span />
-		<Button href={`${onTauriApp ? PUBLIC_SITE_URL : ''}/auth/login`} external={onTauriApp}>
+		<Button
+			href={`${onTauriApp ? PUBLIC_SITE_URL : ''}/auth/login`}
+			external={onTauriApp && import.meta.env.PROD}
+		>
 			<Github />
 			Log in to GitHub
 		</Button>
@@ -67,8 +70,11 @@
 		flex-direction: column;
 		gap: 1rem;
 		width: 20rem;
+		position: relative;
 
 		.back-button {
+			position: absolute;
+			bottom: calc(100% + 1rem);
 			width: 2.25rem;
 			height: 2.25rem;
 			display: flex;
