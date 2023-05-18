@@ -10,20 +10,10 @@ env:
   AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
   PUBLIC_SITE_URL: ${{ secrets.PUBLIC_SITE_URL }}
 jobs:
-  lint:
+  lint-ts:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Install Tauri dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libayatana-appindicator3-dev librsvg2-dev
-      - name: Rust setup
-        uses: dtolnay/rust-toolchain@stable
-      - name: Rust cache
-        uses: swatinem/rust-cache@v2
-        with:
-          workspaces: './src-tauri -> target'
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -34,10 +24,27 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
-      - name: Build front
-        run: pnpm build
-      - name: Lint
-        run: pnpm lint
+      - name: Lint TypeScript
+        run: pnpm lint:ts
+  lint-rs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7
+      - name: Install Tauri dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libayatana-appindicator3-dev librsvg2-dev
+      - name: Rust setup
+        uses: dtolnay/rust-toolchain@stable
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+      - name: Lint Rust
+        run: pnpm lint:rs
   typecheck:
     runs-on: ubuntu-latest
     steps:
