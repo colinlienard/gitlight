@@ -9,6 +9,7 @@ env:
   AUTH_GITHUB_SECRET: ${{ secrets.AUTH_GITHUB_SECRET }}
   AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
   PUBLIC_SITE_URL: ${{ secrets.PUBLIC_SITE_URL }}
+  TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
 jobs:
   lint-ts:
     runs-on: ubuntu-latest

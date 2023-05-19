@@ -4,13 +4,7 @@
 	import { sineInOut } from 'svelte/easing';
 	import { Apple, Linux, Windows } from '~/lib/icons';
 	import { Button } from '~/lib/components';
-
-	type Releases = {
-		assets: Array<{
-			name: string;
-			browser_download_url: string;
-		}>;
-	}[];
+	import type { GithubRelease } from '~/lib/types';
 
 	type OS = 'mac' | 'win' | 'linux';
 
@@ -22,12 +16,12 @@
 
 	onMount(async () => {
 		const response = await fetch('https://api.github.com/repos/colinlienard/gitlight/releases');
-		const data = (await response.json()) as Releases;
+		const data = (await response.json()) as GithubRelease[];
 		const { assets } = data[0];
 		releases = {
 			mac: assets.find(({ name }) => name.endsWith('.dmg'))?.browser_download_url as string,
 			win: assets.find(({ name }) => name.endsWith('.msi'))?.browser_download_url as string,
-			linux: assets.find(({ name }) => name.endsWith('.deb'))?.browser_download_url as string
+			linux: assets.find(({ name }) => name.endsWith('.AppImage'))?.browser_download_url as string
 		};
 	});
 
