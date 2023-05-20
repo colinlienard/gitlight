@@ -61,6 +61,11 @@ export type GithubRelease = {
 	draft: boolean;
 	prerelease: boolean;
 	html_url: string;
+	assets: Array<{
+		name: string;
+		browser_download_url: string;
+	}>;
+	published_at: string;
 };
 
 export type GithubItem = GithubIssue | GithubRepository | GithubCommit | GithubRelease;
