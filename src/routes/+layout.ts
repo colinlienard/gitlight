@@ -20,6 +20,12 @@ export async function load({ url }) {
 	if (url.searchParams.has('access_token')) {
 		accessToken = url.searchParams.get('access_token') as string;
 		storage.set('access-token', accessToken);
+
+		// Open the app with the access token
+		if (url.searchParams.has('from_app')) {
+			window.location.href = `gitlight://access_token=${accessToken}`;
+		}
+
 		history.replaceState({}, '', '/dashboard');
 	}
 

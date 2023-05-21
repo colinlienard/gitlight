@@ -28,7 +28,7 @@
 		<p class="description">You will be able to log in to the other provider afterward.</p>
 		<span />
 		<Button
-			href={`${onTauriApp ? PUBLIC_SITE_URL : ''}/auth/login`}
+			href={onTauriApp ? `${PUBLIC_SITE_URL}/auth/login?from_app=true` : '/auth/login'}
 			external={onTauriApp && import.meta.env.PROD}
 		>
 			<Github />

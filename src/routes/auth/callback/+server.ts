@@ -30,7 +30,11 @@ export async function GET({ url, cookies }) {
 				path: '/',
 				expires: new Date('Tue, 19 Jan 2038 04:14:07 GMT')
 			});
-			throw redirect(302, `/dashboard?access_token=${data.access_token}`);
+			const url = `/dashboard?access_token=${data.access_token}`;
+			if (searchParams.has('from_app')) {
+				throw redirect(302, `${url}&from_app=true`);
+			}
+			throw redirect(302, url);
 		}
 
 		throw redirect(302, '/');
