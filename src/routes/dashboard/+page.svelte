@@ -102,19 +102,21 @@
 	}
 
 	$: if (mounted && $githubNotifications.length) {
-		const pinned = $githubNotifications.filter((item) => item.pinned).map((item) => item.id);
-		const unread = $githubNotifications.filter((item) => item.unread).map((item) => item.id);
+		const pinnedIds = $githubNotifications.filter(({ pinned }) => pinned).map(({ id }) => id);
+		const unreadNotifications = $githubNotifications.filter(({ unread }) => unread);
+		const unreadIds = unreadNotifications.map(({ id }) => id);
 
 		// Save events ids to storage
-		const toSave = { pinned, unread };
+		const toSave = { pinned: pinnedIds, unread: unreadIds };
 		savedEventIds.set(toSave);
 		storage.set('github-notifications', toSave);
 
 		// Update menu bar
 		if (window.__TAURI__) {
+			const unread = unreadNotifications.filter(({ pinned }) => !pinned);
 			invoke('update_tray', {
-				title: `${pinned.length + unread.length}`,
-				description: `${pinned.length} pinned • ${unread.length} unread`
+				title: `${unread.length}`,
+				description: `${unread.length} unread • ${pinnedIds.length} pinned`
 			});
 		}
 	}
