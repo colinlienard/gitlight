@@ -81,7 +81,11 @@
 	}
 </script>
 
-<div class="notification" on:mouseenter={isNew && interactive ? () => (isNew = false) : undefined}>
+<div
+	class="notification"
+	class:unread
+	on:mouseenter={isNew && interactive ? () => (isNew = false) : undefined}
+>
 	{#if isNew && unread}
 		<div class="new" />
 	{/if}
@@ -167,6 +171,15 @@
 		&:not(:hover) {
 			.over {
 				opacity: 0;
+			}
+		}
+
+		&:not(.unread) {
+			opacity: 0.6;
+			transition: opacity variables.$transition;
+
+			&:hover {
+				opacity: 1;
 			}
 		}
 	}
