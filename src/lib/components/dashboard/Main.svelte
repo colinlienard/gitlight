@@ -230,8 +230,7 @@
 		height: 100%;
 		display: grid;
 		grid-template-columns: 1fr 1px 1fr 1px 1fr;
-		gap: 1.5rem;
-		padding: 2rem;
+		padding: 2rem 0.5rem;
 		overflow: hidden;
 		position: relative;
 
