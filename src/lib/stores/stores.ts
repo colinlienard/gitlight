@@ -16,3 +16,5 @@ export const settings = writable<Settings>({
 	readWhenOpenInBrowser: true,
 	readWhenPin: false
 });
+
+export const smallScreen = writable<boolean>(false);

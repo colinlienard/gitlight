@@ -1,12 +1,13 @@
 <script lang="ts">
 	export let vertical = false;
-	export let margin = 0;
+	export let marginX = 0;
+	export let marginY = 0;
 </script>
 
 <div
 	class="separator"
 	class:vertical
-	style:margin={vertical ? `0 ${margin}rem` : `${margin}rem 0`}
+	style:margin={vertical ? `${marginX}rem ${marginY}rem` : `${marginY}rem ${marginX}rem`}
 />
 
 <style lang="scss">
@@ -23,7 +24,6 @@
 		&:not(.vertical) {
 			background-image: linear-gradient(to right, variables.$grey-3 50%, rgba(255, 255, 255, 0) 0%);
 			background-size: 1.5rem 1px;
-			width: 100%;
 		}
 	}
 </style>

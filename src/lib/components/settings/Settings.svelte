@@ -39,7 +39,7 @@
 			bind:active={$settings.readWhenOpenInBrowser}
 		/>
 		<Switch label="Mark an event as read when pinned" bind:active={$settings.readWhenPin} />
-		<Separator margin={1} />
+		<Separator marginY={1} />
 		<h3 class="title">Accounts</h3>
 		<ul class="accounts-wrapper">
 			<li class="account">
