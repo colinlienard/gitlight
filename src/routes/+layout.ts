@@ -6,6 +6,7 @@ import type { GithubUser } from '~/lib/types';
 import '~/styles/_reset.scss';
 import '~/styles/_base.scss';
 import '~/styles/_fonts.scss';
+import 'overlayscrollbars/overlayscrollbars.css';
 
 export const prerender = true;
 export const ssr = true;

@@ -5,7 +5,7 @@
 	import type { NotificationData } from '~/lib/types';
 	import { debounce } from '~/lib/helpers';
 	import { ArrowUp, Folder } from '~/lib/icons';
-	import { Button } from '../common';
+	import { Button, ScrollbarContainer } from '../common';
 	import SkeletonEvent from './SkeletonEvent.svelte';
 	import { loading } from '~/lib/stores';
 	import Notification from './Notification.svelte';
@@ -62,29 +62,31 @@
 			</Button>
 		</div>
 	{/if}
-	<ul class="list" class:empty={!notifications.length} bind:this={list}>
-		{#if $loading}
-			<li><SkeletonEvent /></li>
-			<li><SkeletonEvent /></li>
-		{:else if notifications.length}
-			{#each notifications as notification (notification.id)}
-				<li
-					class="item"
-					in:receive={{ key: notification.id }}
-					out:send={{ key: notification.id }}
-					animate:flip={settings}
-				>
-					<Notification data={notification} />
+	<ScrollbarContainer margin="1rem 0">
+		<ul class="list" class:empty={!notifications.length} bind:this={list}>
+			{#if $loading}
+				<li><SkeletonEvent /></li>
+				<li><SkeletonEvent /></li>
+			{:else if notifications.length}
+				{#each notifications as notification (notification.id)}
+					<li
+						class="item"
+						in:receive={{ key: notification.id }}
+						out:send={{ key: notification.id }}
+						animate:flip={settings}
+					>
+						<Notification data={notification} />
+					</li>
+				{/each}
+			{:else}
+				<li class="placeholder">
+					<Folder />
+					<h4 class="title">No events to display</h4>
+					<p>{placeholder}</p>
 				</li>
-			{/each}
-		{:else}
-			<li class="placeholder">
-				<Folder />
-				<h4 class="title">No events to display</h4>
-				<p>{placeholder}</p>
-			</li>
-		{/if}
-	</ul>
+			{/if}
+		</ul>
+	</ScrollbarContainer>
 </div>
 
 <style lang="scss">
@@ -94,6 +96,7 @@
 		position: relative;
 		min-width: 0;
 		min-height: 0;
+		padding: 0 0.5rem 0 1.5rem;
 		z-index: 1;
 
 		&::before {
@@ -117,6 +120,7 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
+		margin-right: 1rem;
 
 		:global(svg) {
 			height: 1.25rem;
@@ -142,9 +146,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
-		overflow: auto;
-		padding: 1rem 0;
-		height: 100%;
+		padding: 1rem 1rem 1rem 0;
 
 		&.empty {
 			overflow: visible;

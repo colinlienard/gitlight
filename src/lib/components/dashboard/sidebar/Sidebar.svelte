@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { Github, Logo } from '~/lib/icons';
-	import { Separator, Switch } from '~/lib/components';
 	import { onMount } from 'svelte';
+	import { Github, Logo } from '~/lib/icons';
+	import { ScrollbarContainer, Separator, Switch } from '~/lib/components';
 	import { getAppVersion, storage } from '~/lib/helpers';
-	import { filteredNotifications, githubNotifications, loading, watchedRepos } from '~/lib/stores';
 	import { browser } from '$app/environment';
+	import { filteredNotifications, githubNotifications, loading, watchedRepos } from '~/lib/stores';
+	import type { TypeFilters } from '~/lib/types';
 	import SidebarSearch from './SidebarSearch.svelte';
 	import WatchedRepos from './WatchedRepos.svelte';
-	import type { TypeFilters } from '~/lib/types';
 
 	let search = '';
 	let typeFilters: TypeFilters = [
@@ -90,73 +90,81 @@
 		<Logo />
 		<h1 class="hero">GitLight</h1>
 	</header>
-	<div class="scrollable">
-		{#if !$loading}
-			<div class="wrapper">
-				<SidebarSearch bind:search />
-			</div>
-			<Separator />
-			<div class="wrapper">
-				<div class="row">
-					<h2 class="title">Filters</h2>
-					{#if mostFiltersAreSelected}
-						<button class="button" on:click={changeSelectAllFilters(false)}>Deselect all</button>
-					{:else}
-						<button class="button" on:click={changeSelectAllFilters(true)}>Select all</button>
-					{/if}
+	<ScrollbarContainer>
+		<div class="scrollable">
+			{#if !$loading}
+				<div class="wrapper">
+					<SidebarSearch bind:search />
 				</div>
-				{#each typeFilters as filter (filter.name)}
-					<div class="switch-wrapper">
-						<Switch bind:active={filter.active} label={filter.name} />
-						<p class="filter-number">{filter.number}</p>
+				<Separator />
+				<div class="wrapper">
+					<div class="row">
+						<h2 class="title">Filters</h2>
+						{#if mostFiltersAreSelected}
+							<button class="button" on:click={changeSelectAllFilters(false)}>Deselect all</button>
+						{:else}
+							<button class="button" on:click={changeSelectAllFilters(true)}>Select all</button>
+						{/if}
 					</div>
-				{/each}
-			</div>
-			<Separator />
-			<div class="wrapper">
-				<div class="row">
-					<h2 class="title">Watching</h2>
-					{#if mostReposAreSelected}
-						<button class="button" on:click={changeSelectAllWatchedRepos(false)}
-							>Deselect all</button
+					{#each typeFilters as filter (filter.name)}
+						<div class="switch-wrapper">
+							<Switch bind:active={filter.active} label={filter.name} />
+							<p class="filter-number">{filter.number}</p>
+						</div>
+					{/each}
+				</div>
+				<Separator />
+				<div class="wrapper">
+					<div class="row">
+						<h2 class="title">Watching</h2>
+						{#if mostReposAreSelected}
+							<button class="button" on:click={changeSelectAllWatchedRepos(false)}>
+								Deselect all
+							</button>
+						{:else}
+							<button class="button" on:click={changeSelectAllWatchedRepos(true)}>
+								Select all
+							</button>
+						{/if}
+					</div>
+					<WatchedRepos />
+				</div>
+				<Separator />
+				<div class="wrapper">
+					<h2 class="title">Manage</h2>
+					<div class="double-button">
+						<a href="https://github.com/watching" target="_blank" rel="noreferrer">Watching</a>
+						<div />
+						<a
+							href="https://github.com/notifications/subscriptions"
+							target="_blank"
+							rel="noreferrer"
 						>
-					{:else}
-						<button class="button" on:click={changeSelectAllWatchedRepos(true)}>Select all</button>
-					{/if}
+							Subscriptions
+						</a>
+					</div>
 				</div>
-				<WatchedRepos />
-			</div>
-			<Separator />
-			<div class="wrapper">
-				<h2 class="title">Manage</h2>
-				<div class="double-button">
-					<a href="https://github.com/watching" target="_blank" rel="noreferrer">Watching</a>
-					<div />
-					<a href="https://github.com/notifications/subscriptions" target="_blank" rel="noreferrer">
-						Subscriptions
-					</a>
+			{:else}
+				<div class="skeletons-container">
+					<span class="skeleton" />
+					<span class="skeleton" />
+					<span class="skeleton" />
+					<span class="skeleton" />
+					<span class="skeleton" />
+					<span class="skeleton" />
+					<span class="skeleton" />
 				</div>
-			</div>
-		{:else}
-			<div class="skeletons-container">
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-			</div>
-			<div class="skeletons-container">
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-			</div>
-		{/if}
-	</div>
+				<div class="skeletons-container">
+					<span class="skeleton" />
+					<span class="skeleton" />
+					<span class="skeleton" />
+					<span class="skeleton" />
+					<span class="skeleton" />
+					<span class="skeleton" />
+				</div>
+			{/if}
+		</div>
+	</ScrollbarContainer>
 	<footer class="footer">
 		<p>v{getAppVersion()}</p>
 		<a
@@ -201,8 +209,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1.5rem;
-		height: 100%;
-		overflow: auto;
 		position: relative;
 	}
 

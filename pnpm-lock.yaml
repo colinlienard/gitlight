@@ -4,6 +4,12 @@ dependencies:
   '@tauri-apps/api':
     specifier: ^1.3.0
     version: 1.3.0
+  overlayscrollbars:
+    specifier: ^2.1.1
+    version: 2.1.1
+  overlayscrollbars-svelte:
+    specifier: ^0.4.0
+    version: 0.4.0(overlayscrollbars@2.1.1)(svelte@3.59.0)
 
 devDependencies:
   '@sveltejs/adapter-static':
@@ -1625,6 +1631,20 @@ packages:
       word-wrap: 1.2.3
     dev: true
 
+  /overlayscrollbars-svelte@0.4.0(overlayscrollbars@2.1.1)(svelte@3.59.0):
+    resolution: {integrity: sha512-5liVtMb0WgHu2ngICYS2c5ihEVQ/6rSFCDuymamTO6fS8M1pgfPeUyaQp9dTms+p+yuQmjdNmplR5dGgzgFhkw==}
+    peerDependencies:
+      overlayscrollbars: ^2.0.0
+      svelte: ^3.44.0
+    dependencies:
+      overlayscrollbars: 2.1.1
+      svelte: 3.59.0
+    dev: false
+
+  /overlayscrollbars@2.1.1:
+    resolution: {integrity: sha512-xvs2g8Tcq9+CZDpLEUchN3YUzjJhnTWw9kwqT/qcC53FIkOyP9mqnRMot5sW16tcsPT1KaMyzF0AMXw/7E4a8g==}
+    dev: false
+
   /p-limit@3.1.0:
     resolution: {integrity: sha512-TYOanM3wGwNGsZN2cVTYPArw454xnXj5qmWF1bEoAc4+cU/ol7GVh7odevjp1FNHduHc3KZMcFduxU5Xc6uJRQ==}
     engines: {node: '>=10'}
@@ -2002,7 +2022,6 @@ packages:
   /svelte@3.59.0:
     resolution: {integrity: sha512-Di1wVPwdWriw5pSyInMRpr5EZmwrzKxtDKv5aXu8A/WDUi59Y5bIvl42eLef0x1vwz+ZtrjdnT8nXir2bDqR/A==}
     engines: {node: '>= 8'}
-    dev: true
 
   /tar@6.1.14:
     resolution: {integrity: sha512-piERznXu0U7/pW7cdSn7hjqySIVTYT6F76icmFk7ptU7dDYlXTm5r9A6K04R2vU3olYgoKeo1Cg3eeu5nhftAw==}

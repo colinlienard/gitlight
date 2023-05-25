@@ -19,7 +19,9 @@
 		"prepare": "svelte-kit sync"
 	},
 	"dependencies": {
-		"@tauri-apps/api": "^1.3.0"
+		"@tauri-apps/api": "^1.3.0",
+		"overlayscrollbars": "^2.1.1",
+		"overlayscrollbars-svelte": "^0.4.0"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-static": "^2.0.2",
