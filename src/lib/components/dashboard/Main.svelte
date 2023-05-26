@@ -8,7 +8,7 @@
 		Banner,
 		ScrollbarContainer
 	} from '~/lib/components';
-	import { filteredNotifications, githubNotifications, smallScreen } from '~/lib/stores';
+	import { filteredNotifications, githubNotifications, smallScreen, settings } from '~/lib/stores';
 	import { Check, Github, Gitlab, Mail, Pin, Refresh } from '~/lib/icons';
 	import { fetchGithub } from '~/lib/helpers';
 	import { onDestroy, onMount } from 'svelte';
@@ -48,12 +48,26 @@
 	}
 
 	// Animations settings
-	const settings = { duration: 400, easing: cubicInOut };
-	const [send, receive] = crossfade(settings);
-	const transitions = { send, receive, settings };
+	const animationSettings = { duration: 400, easing: cubicInOut };
+	const [send, receive] = crossfade(animationSettings);
+	const transitions = { send, receive, settings: animationSettings };
 
 	function handleResize() {
-		$smallScreen = window.innerWidth > 1200;
+		if (browser && $settings.notificationAxis === 'Auto') {
+			$smallScreen = window.innerWidth > 1200;
+		}
+	}
+
+	$: switch ($settings.notificationAxis) {
+		case 'Auto':
+			handleResize();
+			break;
+		case 'Vertical':
+			$smallScreen = false;
+			break;
+		case 'Horizontal':
+			$smallScreen = true;
+			break;
 	}
 
 	onMount(() => {
@@ -102,7 +116,7 @@
 		</button>
 	</nav>
 	<ScrollbarContainer>
-		<section class="columns-container">
+		<section class="columns-container" class:horizontal={!$smallScreen}>
 			<NotificationColumn
 				icon={Pin}
 				title="Pinned"
@@ -262,7 +276,7 @@
 		overflow: hidden;
 		position: relative;
 
-		@media (max-width: 1200px) {
+		&.horizontal {
 			display: flex;
 			flex-direction: column;
 			overflow: visible;

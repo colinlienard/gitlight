@@ -1,15 +1,18 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Button } from '~/lib/components';
+	import { Button, InlineSelect } from '~/lib/components';
 	import { Modal, Separator, Switch } from '~/lib/components';
 	import { Github, Gitlab } from '~/lib/icons';
 	import LogOutButton from './LogOutButton.svelte';
 	import { onMount } from 'svelte';
 	import { settings } from '~/lib/stores';
 	import { storage } from '~/lib/helpers';
+	import type { Settings } from '~/lib/types';
 
 	let user = $page.data.session?.user;
 	let mounted = false;
+
+	const options: Array<Settings['notificationAxis']> = ['Auto', 'Vertical', 'Horizontal'];
 
 	onMount(() => {
 		const saved = storage.get('settings');
@@ -39,6 +42,7 @@
 			bind:active={$settings.readWhenOpenInBrowser}
 		/>
 		<Switch label="Mark an event as read when pinned" bind:active={$settings.readWhenPin} />
+		<InlineSelect label="Notification axis" {options} bind:value={$settings.notificationAxis} />
 		<Separator marginY={1} />
 		<h3 class="title">Accounts</h3>
 		<ul class="accounts-wrapper">

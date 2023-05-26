@@ -49,7 +49,7 @@
 	});
 </script>
 
-<div class="column">
+<div class="column" class:vertical={$smallScreen}>
 	<div class="column-header">
 		<svelte:component this={icon} />
 		<h3 class="title">{title}</h3>
@@ -101,8 +101,23 @@
 		padding: 0 0.5rem 0 1.5rem;
 		z-index: 1;
 
-		@media (min-width: 1200px) {
+		&.vertical {
 			min-height: 0;
+		}
+
+		&:not(.vertical) {
+			.column-header {
+				position: sticky;
+				inset: 1rem 0 auto;
+			}
+
+			.list {
+				padding-bottom: 0;
+			}
+
+			&::after {
+				display: none;
+			}
 		}
 
 		&::after {
@@ -111,10 +126,6 @@
 			inset: calc(100% - 1rem) 0 0 0;
 			background-image: linear-gradient(transparent, variables.$grey-1);
 			z-index: 1;
-
-			@media (max-width: 1200px) {
-				display: none;
-			}
 		}
 	}
 
@@ -124,11 +135,6 @@
 		gap: 0.5rem;
 		margin-right: 1rem;
 		z-index: 2;
-
-		@media (max-width: 1200px) {
-			position: sticky;
-			inset: 1rem 0 auto;
-		}
 
 		&::before {
 			content: '';
@@ -168,10 +174,6 @@
 		flex-direction: column;
 		gap: 1rem;
 		padding: 1rem 1rem 1rem 0;
-
-		@media (max-width: 1200px) {
-			padding-bottom: 0;
-		}
 
 		&.empty {
 			overflow: visible;

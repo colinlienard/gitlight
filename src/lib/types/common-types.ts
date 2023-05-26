@@ -70,4 +70,5 @@ export type Settings = {
 	activateNotifications: boolean;
 	readWhenOpenInBrowser: boolean;
 	readWhenPin: boolean;
+	notificationAxis: 'Auto' | 'Vertical' | 'Horizontal';
 };
