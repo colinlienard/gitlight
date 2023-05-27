@@ -7,7 +7,7 @@
 	import { ArrowUp, Folder } from '~/lib/icons';
 	import { Button, ScrollbarContainer } from '../common';
 	import SkeletonEvent from './SkeletonEvent.svelte';
-	import { loading, smallScreen } from '~/lib/stores';
+	import { loading, largeScreen } from '~/lib/stores';
 	import Notification from './Notification.svelte';
 
 	type SvelteAnimation = (
@@ -49,7 +49,7 @@
 	});
 </script>
 
-<div class="column" class:vertical={$smallScreen}>
+<div class="column" class:vertical={$largeScreen}>
 	<div class="column-header">
 		<svelte:component this={icon} />
 		<h3 class="title">{title}</h3>
@@ -65,12 +65,14 @@
 			</Button>
 		</div>
 	{/if}
-	<ScrollbarContainer margin="1rem 0" scroll={$smallScreen}>
-		<ul class="list" class:empty={!notifications.length} bind:this={list}>
-			{#if $loading}
-				<li><SkeletonEvent /></li>
-				<li><SkeletonEvent /></li>
-			{:else if notifications.length}
+	{#if $loading}
+		<ul class="list">
+			<li><SkeletonEvent /></li>
+			<li><SkeletonEvent /></li>
+		</ul>
+	{:else if notifications.length}
+		<ScrollbarContainer margin="1rem 0" scroll={$largeScreen}>
+			<ul class="list" class:empty={!notifications.length} bind:this={list}>
 				{#each notifications as notification (notification.id)}
 					<li
 						class="item"
@@ -81,15 +83,15 @@
 						<Notification data={notification} />
 					</li>
 				{/each}
-			{:else}
-				<li class="placeholder">
-					<Folder />
-					<h4 class="title">No events to display</h4>
-					<p>{placeholder}</p>
-				</li>
-			{/if}
-		</ul>
-	</ScrollbarContainer>
+			</ul>
+		</ScrollbarContainer>
+	{:else}
+		<div class="placeholder">
+			<Folder />
+			<h4 class="title">No events to display</h4>
+			<p>{placeholder}</p>
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -197,6 +199,7 @@
 		justify-content: center;
 		color: variables.$grey-4;
 		text-align: center;
+		padding: 1rem 0;
 
 		:global(svg) {
 			height: 3rem;

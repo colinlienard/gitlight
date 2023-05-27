@@ -18,4 +18,4 @@ export const settings = writable<Settings>({
 	notificationAxis: 'Auto'
 });
 
-export const smallScreen = writable<boolean>(false);
+export const largeScreen = writable<boolean>(true);

@@ -8,7 +8,7 @@
 		Banner,
 		ScrollbarContainer
 	} from '~/lib/components';
-	import { filteredNotifications, githubNotifications, smallScreen, settings } from '~/lib/stores';
+	import { filteredNotifications, githubNotifications, largeScreen, settings } from '~/lib/stores';
 	import { Check, Github, Gitlab, Mail, Pin, Refresh } from '~/lib/icons';
 	import { fetchGithub } from '~/lib/helpers';
 	import { onDestroy, onMount } from 'svelte';
@@ -54,7 +54,7 @@
 
 	function handleResize() {
 		if (browser && $settings.notificationAxis === 'Auto') {
-			$smallScreen = window.innerWidth > 1200;
+			$largeScreen = window.innerWidth > 1200;
 		}
 	}
 
@@ -63,10 +63,10 @@
 			handleResize();
 			break;
 		case 'Vertical':
-			$smallScreen = false;
+			$largeScreen = false;
 			break;
 		case 'Horizontal':
-			$smallScreen = true;
+			$largeScreen = true;
 			break;
 	}
 
@@ -116,7 +116,7 @@
 		</button>
 	</nav>
 	<ScrollbarContainer>
-		<section class="columns-container" class:horizontal={!$smallScreen}>
+		<section class="columns-container" class:horizontal={!$largeScreen}>
 			<NotificationColumn
 				icon={Pin}
 				title="Pinned"
@@ -124,7 +124,7 @@
 				placeholder="Click on 📌 to mark an event as pinned."
 				{transitions}
 			/>
-			<Separator vertical={$smallScreen} marginX={1.5} />
+			<Separator vertical={$largeScreen} marginX={1.5} />
 			<NotificationColumn
 				icon={Mail}
 				title="Unread"
@@ -141,7 +141,7 @@
 					{/if}
 				</div>
 			</NotificationColumn>
-			<Separator vertical={$smallScreen} />
+			<Separator vertical={$largeScreen} />
 			<NotificationColumn
 				icon={Check}
 				title="Read"

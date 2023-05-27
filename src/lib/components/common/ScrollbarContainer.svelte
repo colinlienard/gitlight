@@ -9,8 +9,12 @@
 	<OverlayScrollbarsComponent
 		style="--margin: {margin};"
 		options={{
+			overflow: {
+				x: 'hidden'
+			},
 			scrollbars: {
-				autoHide: 'leave'
+				autoHide: 'leave',
+				autoHideDelay: 0
 			}
 		}}
 	>
