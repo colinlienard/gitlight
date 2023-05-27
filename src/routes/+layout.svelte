@@ -12,8 +12,9 @@
 
 			// Listen for scheme request on desktop app
 			listen('scheme-request', ({ payload }) => {
-				const accessToken = (payload as string).split('=')[1];
+				let accessToken = (payload as string).split('=')[1];
 				if (accessToken) {
+					accessToken = accessToken.replace('/', '');
 					storage.set('access-token', accessToken);
 					goto('/dashboard');
 				}
