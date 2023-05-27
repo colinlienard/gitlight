@@ -318,6 +318,7 @@
 		align-items: center;
 		justify-content: space-between;
 		color: variables.$grey-4;
+		margin-top: auto;
 
 		.link {
 			display: flex;

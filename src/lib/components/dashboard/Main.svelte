@@ -1,10 +1,18 @@
 <script lang="ts">
 	import { crossfade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
-	import { NotificationColumn, Settings, Separator, Banner } from '~/lib/components';
-	import { filteredNotifications, githubNotifications } from '~/lib/stores';
+	import {
+		NotificationColumn,
+		Settings,
+		Separator,
+		Banner,
+		ScrollbarContainer
+	} from '~/lib/components';
+	import { filteredNotifications, githubNotifications, largeScreen, settings } from '~/lib/stores';
 	import { Check, Github, Gitlab, Mail, Pin, Refresh } from '~/lib/icons';
 	import { fetchGithub } from '~/lib/helpers';
+	import { onDestroy, onMount } from 'svelte';
+	import { browser } from '$app/environment';
 
 	export let synced: boolean;
 
@@ -40,9 +48,38 @@
 	}
 
 	// Animations settings
-	const settings = { duration: 400, easing: cubicInOut };
-	const [send, receive] = crossfade(settings);
-	const transitions = { send, receive, settings };
+	const animationSettings = { duration: 400, easing: cubicInOut };
+	const [send, receive] = crossfade(animationSettings);
+	const transitions = { send, receive, settings: animationSettings };
+
+	function handleResize() {
+		if (browser && $settings.notificationAxis === 'Auto') {
+			$largeScreen = window.innerWidth > 1200;
+		}
+	}
+
+	$: switch ($settings.notificationAxis) {
+		case 'Auto':
+			handleResize();
+			break;
+		case 'Vertical':
+			$largeScreen = false;
+			break;
+		case 'Horizontal':
+			$largeScreen = true;
+			break;
+	}
+
+	onMount(() => {
+		handleResize();
+		window.addEventListener('resize', handleResize);
+	});
+
+	onDestroy(() => {
+		if (browser) {
+			window.removeEventListener('resize', handleResize);
+		}
+	});
 </script>
 
 <main class="main">
@@ -78,42 +115,47 @@
 			<div class="tag soon">Coming soon</div>
 		</button>
 	</nav>
-	<section class="columns-container">
-		<NotificationColumn
-			icon={Pin}
-			title="Pinned"
-			notifications={pinned}
-			placeholder="Click on 📌 to mark an event as pinned."
-			{transitions}
-		/>
-		<Separator vertical />
-		<NotificationColumn
-			icon={Mail}
-			title="Unread"
-			notifications={unread}
-			placeholder="New notifications 🔔 will appear here."
-			{transitions}
-		/>
-		<Separator vertical />
-		<NotificationColumn
-			icon={Check}
-			title="Read"
-			notifications={read}
-			placeholder="Click on ✅ to mark an event as read."
-			{transitions}
-		/>
-		{#if showReadAll}
-			<button class="read-all" on:click={markAllAsRead}>
-				<Check />
-				All
-			</button>
-		{/if}
-	</section>
+	<ScrollbarContainer>
+		<section class="columns-container" class:horizontal={!$largeScreen}>
+			<NotificationColumn
+				icon={Pin}
+				title="Pinned"
+				notifications={pinned}
+				placeholder="Click on 📌 to mark an event as pinned."
+				{transitions}
+			/>
+			<Separator vertical={$largeScreen} marginX={1.5} />
+			<NotificationColumn
+				icon={Mail}
+				title="Unread"
+				notifications={unread}
+				placeholder="New notifications 🔔 will appear here."
+				{transitions}
+			>
+				<div slot="header-addon">
+					{#if showReadAll}
+						<button class="read-all" on:click={markAllAsRead}>
+							<Check />
+							All
+						</button>
+					{/if}
+				</div>
+			</NotificationColumn>
+			<Separator vertical={$largeScreen} />
+			<NotificationColumn
+				icon={Check}
+				title="Read"
+				notifications={read}
+				placeholder="Click on ✅ to mark an event as read."
+				{transitions}
+			/>
+		</section>
+	</ScrollbarContainer>
 </main>
 
 <style lang="scss">
 	.main {
-		flex: 1 1 100%;
+		width: calc(100% - 20rem);
 		height: 100vh;
 		display: flex;
 		flex-direction: column;
@@ -234,14 +276,16 @@
 		overflow: hidden;
 		position: relative;
 
+		&.horizontal {
+			display: flex;
+			flex-direction: column;
+			overflow: visible;
+			gap: 2rem;
+		}
+
 		.read-all {
 			@include typography.small;
 			@include typography.bold;
-
-			position: absolute;
-			top: 2rem;
-			right: calc(33% + 2rem);
-			height: 1.25rem;
 			display: flex;
 			align-items: center;
 			justify-content: center;

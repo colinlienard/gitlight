@@ -146,6 +146,10 @@
 </div>
 
 <style lang="scss">
+	:global(body) {
+		overflow: hidden;
+	}
+
 	.container {
 		display: flex;
 	}

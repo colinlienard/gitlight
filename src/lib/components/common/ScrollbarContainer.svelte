@@ -1,19 +1,28 @@
 <script lang="ts">
 	import { OverlayScrollbarsComponent } from 'overlayscrollbars-svelte';
 
+	export let scroll = true;
 	export let margin = '0.25rem';
 </script>
 
-<OverlayScrollbarsComponent
-	style="--margin: {margin};"
-	options={{
-		scrollbars: {
-			autoHide: 'leave'
-		}
-	}}
->
+{#if scroll}
+	<OverlayScrollbarsComponent
+		style="--margin: {margin};"
+		options={{
+			overflow: {
+				x: 'hidden'
+			},
+			scrollbars: {
+				autoHide: 'leave',
+				autoHideDelay: 0
+			}
+		}}
+	>
+		<slot />
+	</OverlayScrollbarsComponent>
+{:else}
 	<slot />
-</OverlayScrollbarsComponent>
+{/if}
 
 <style lang="scss">
 	:global([data-overlayscrollbars]) {

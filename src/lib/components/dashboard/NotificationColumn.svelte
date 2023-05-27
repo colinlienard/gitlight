@@ -7,7 +7,7 @@
 	import { ArrowUp, Folder } from '~/lib/icons';
 	import { Button, ScrollbarContainer } from '../common';
 	import SkeletonEvent from './SkeletonEvent.svelte';
-	import { loading } from '~/lib/stores';
+	import { loading, largeScreen } from '~/lib/stores';
 	import Notification from './Notification.svelte';
 
 	type SvelteAnimation = (
@@ -49,11 +49,14 @@
 	});
 </script>
 
-<div class="column">
+<div class="column" class:vertical={$largeScreen}>
 	<div class="column-header">
 		<svelte:component this={icon} />
 		<h3 class="title">{title}</h3>
 		<p class="number">{notifications.length}</p>
+		<div class="addon-container">
+			<slot name="header-addon" />
+		</div>
 	</div>
 	{#if scrolled}
 		<div class="scroll-button" transition:fade={{ duration: 150 }}>
@@ -62,12 +65,14 @@
 			</Button>
 		</div>
 	{/if}
-	<ScrollbarContainer margin="1rem 0">
-		<ul class="list" class:empty={!notifications.length} bind:this={list}>
-			{#if $loading}
-				<li><SkeletonEvent /></li>
-				<li><SkeletonEvent /></li>
-			{:else if notifications.length}
+	{#if $loading}
+		<ul class="list">
+			<li><SkeletonEvent /></li>
+			<li><SkeletonEvent /></li>
+		</ul>
+	{:else if notifications.length}
+		<ScrollbarContainer margin="1rem 0" scroll={$largeScreen}>
+			<ul class="list" class:empty={!notifications.length} bind:this={list}>
 				{#each notifications as notification (notification.id)}
 					<li
 						class="item"
@@ -78,15 +83,15 @@
 						<Notification data={notification} />
 					</li>
 				{/each}
-			{:else}
-				<li class="placeholder">
-					<Folder />
-					<h4 class="title">No events to display</h4>
-					<p>{placeholder}</p>
-				</li>
-			{/if}
-		</ul>
-	</ScrollbarContainer>
+			</ul>
+		</ScrollbarContainer>
+	{:else}
+		<div class="placeholder">
+			<Folder />
+			<h4 class="title">No events to display</h4>
+			<p>{placeholder}</p>
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -95,16 +100,26 @@
 		flex-direction: column;
 		position: relative;
 		min-width: 0;
-		min-height: 0;
 		padding: 0 0.5rem 0 1.5rem;
 		z-index: 1;
 
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 1.25rem 0 calc(100% - 2.25rem) 0;
-			background-image: linear-gradient(variables.$grey-1, transparent);
-			z-index: 1;
+		&.vertical {
+			min-height: 0;
+		}
+
+		&:not(.vertical) {
+			.column-header {
+				position: sticky;
+				inset: 1rem 0 auto;
+			}
+
+			.list {
+				padding-bottom: 0;
+			}
+
+			&::after {
+				display: none;
+			}
 		}
 
 		&::after {
@@ -121,6 +136,16 @@
 		align-items: center;
 		gap: 0.5rem;
 		margin-right: 1rem;
+		z-index: 2;
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: -1rem 0 auto;
+			height: 3.5rem;
+			background-image: linear-gradient(variables.$grey-1 2.5rem, transparent);
+			z-index: -1;
+		}
 
 		:global(svg) {
 			height: 1.25rem;
@@ -132,6 +157,10 @@
 
 		.number {
 			color: variables.$grey-4;
+		}
+
+		.addon-container {
+			margin-left: auto;
 		}
 	}
 
@@ -170,6 +199,7 @@
 		justify-content: center;
 		color: variables.$grey-4;
 		text-align: center;
+		padding: 1rem 0;
 
 		:global(svg) {
 			height: 3rem;
