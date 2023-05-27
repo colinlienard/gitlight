@@ -5,10 +5,10 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"dev:tauri": "APP_ENV=tauri tauri dev",
+		"dev:tauri": "set APP_ENV=tauri && tauri dev",
 		"build": "vite build",
-		"build:tauri": "APP_ENV=tauri tauri build",
-		"build:vercel": "APP_ENV=vercel vite build",
+		"build:tauri": "set APP_ENV=tauri && tauri build",
+		"build:vercel": "set APP_ENV=vercel && vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",

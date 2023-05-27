@@ -14,6 +14,9 @@
 			listen('scheme-request', ({ payload }) => {
 				const accessToken = (payload as string).split('=')[1];
 				if (accessToken) {
+					if (accessToken.endsWith('/')) {
+						accessToken.replace('/', '');
+					}
 					storage.set('access-token', accessToken);
 					goto('/dashboard');
 				}
