@@ -116,8 +116,9 @@
 	{#if labels && labels.length}
 		<ul class="labels">
 			{#each labels as label}
-				<li class="label" style:color={`#${label.color}`}>
-					<span class="label-text" style:color={lightenColor(label.color)}>{label.name}</span>
+				<li class="label" style:color={lightenColor(label.color)}>
+					{label.name}
+					<div class="label-background" style:background-color={`#${label.color}`} />
 				</li>
 			{/each}
 		</ul>
@@ -263,12 +264,10 @@
 			border: 1px solid;
 			position: relative;
 
-			&::before {
-				content: '';
+			.label-background {
 				position: absolute;
 				inset: 0;
 				border-radius: variables.$radius;
-				background-color: currentColor;
 				opacity: 0.1;
 			}
 		}
