@@ -138,28 +138,13 @@ export function createNotificationData(
 				iconColor: 'blue'
 			};
 
-		case 'WorkflowRun':
-			return {
-				...common,
-				description: 'New activity on workflow run',
-				icon: Discussion,
-				iconColor: 'blue'
-			};
-
-		case 'CheckSuite': {
+		default:
 			return {
 				...common,
 				type: 'PullRequest',
-				description: 'New activity on check suite',
+				description: `⚠️ ${subject.type} notifications are not yet fully supported`,
 				icon: Discussion,
 				iconColor: 'blue'
 			};
-		}
-
-		case 'aaa':
-			throw new Error('aaa');
-
-		default:
-			throw new Error(`Invalid notification type: ${subject.type}`);
 	}
 }
