@@ -8,7 +8,7 @@ import type {
 	NotificationData,
 	SavedNotifications
 } from '~/lib/types';
-import { Commit, Discussion, Release } from '../icons';
+import { Commit, Discussion, ExclamationMark, Release } from '../icons';
 import { getIconColor, getIssueIcon, getPullRequestIcon } from './getIcon';
 
 export function createNotificationData(
@@ -139,6 +139,12 @@ export function createNotificationData(
 			};
 
 		default:
-			throw new Error(`Invalid notification type: ${subject.type}`);
+			return {
+				...common,
+				type: 'PullRequest',
+				description: `'${subject.type}' notifications are not yet fully supported`,
+				icon: ExclamationMark,
+				iconColor: 'grey'
+			};
 	}
 }
