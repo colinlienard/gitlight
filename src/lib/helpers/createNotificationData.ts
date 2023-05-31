@@ -123,7 +123,7 @@ export function createNotificationData(
 				icon: Release,
 				iconColor: 'blue',
 				labels: [
-					{ name: tag_name, color: 'white' },
+					{ name: tag_name, color: 'FFFFFF' },
 					...(prerelease ? [{ name: 'pre-release', color: 'FFA723' }] : [])
 				],
 				url: html_url
