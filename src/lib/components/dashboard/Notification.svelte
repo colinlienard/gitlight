@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import { fetchGithub, formatRelativeDate, getHex } from '~/lib/helpers';
+	import { fetchGithub, formatRelativeDate, getHex, lightenColor } from '~/lib/helpers';
 	import { Check, ExternalLink, Pin, Mail, Unpin } from '~/lib/icons';
 	import { Button, Tooltip } from '../common';
 	import { githubNotifications, settings } from '~/lib/stores';
@@ -116,7 +116,10 @@
 	{#if labels && labels.length}
 		<ul class="labels">
 			{#each labels as label}
-				<li class="label" style:color={`#${label.color}`}>{label.name}</li>
+				<li class="label" style:color={lightenColor(label.color)}>
+					{label.name}
+					<div class="label-background" style:background-color={`#${label.color}`} />
+				</li>
 			{/each}
 		</ul>
 	{/if}
@@ -261,12 +264,10 @@
 			border: 1px solid;
 			position: relative;
 
-			&::before {
-				content: '';
+			.label-background {
 				position: absolute;
 				inset: 0;
 				border-radius: variables.$radius;
-				background-color: currentColor;
 				opacity: 0.1;
 			}
 		}

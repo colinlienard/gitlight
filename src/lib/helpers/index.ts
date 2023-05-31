@@ -5,6 +5,5 @@ export * from './formatRelativeDate';
 export * from './getAppVersion';
 export * from './getHex';
 export * from './getIcon';
-export * from './onScrollVisible';
-export * from './reactiveFetch';
+export * from './lightenColor';
 export * from './storage';
