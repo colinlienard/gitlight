@@ -70,7 +70,14 @@ export type GithubRelease = {
 
 export type GithubItem = GithubIssue | GithubRepository | GithubCommit | GithubRelease;
 
-export type GithubNotificationType = 'PullRequest' | 'Issue' | 'Commit' | 'Release' | 'Discussion';
+export type GithubNotificationType =
+	| 'PullRequest'
+	| 'Issue'
+	| 'Commit'
+	| 'Release'
+	| 'Discussion'
+	| 'WorkflowRun'
+	| 'CheckSuite';
 
 export type GithubNotification = {
 	id: string;
