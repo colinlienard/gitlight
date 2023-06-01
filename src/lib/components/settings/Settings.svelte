@@ -17,11 +17,9 @@
 	const options: Array<Settings['notificationAxis']> = ['Auto', 'Vertical', 'Horizontal'];
 
 	function handleKeyDown(event: KeyboardEvent) {
-		if (browser && event.keyCode === 188 && event.metaKey) {
+		if (browser && event.key === ',' && event.metaKey) {
 			event.preventDefault();
-			forceOpenSettings = true;
-		} else {
-			forceOpenSettings = false;
+			forceOpenSettings = !forceOpenSettings;
 		}
 	}
 
@@ -46,7 +44,7 @@
 	}
 </script>
 
-<Modal title="Settings" open={forceOpenSettings}>
+<Modal title="Settings" bind:open={forceOpenSettings}>
 	<button slot="trigger">
 		<img class="trigger" src={user?.avatar} alt="" />
 	</button>
