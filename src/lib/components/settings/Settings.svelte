@@ -12,18 +12,18 @@
 
 	let user = $page.data.session?.user;
 	let mounted = false;
-  let forceOpenSettings = false;
+	let forceOpenSettings = false;
 
 	const options: Array<Settings['notificationAxis']> = ['Auto', 'Vertical', 'Horizontal'];
 
-  function handleKeyDown(event: KeyboardEvent) {
-    if (browser && event.keyCode === 188 && event.metaKey) {
-      event.preventDefault();
-      forceOpenSettings = true;
-    } else {
-      forceOpenSettings = false;
-    }
-  }
+	function handleKeyDown(event: KeyboardEvent) {
+		if (browser && event.keyCode === 188 && event.metaKey) {
+			event.preventDefault();
+			forceOpenSettings = true;
+		} else {
+			forceOpenSettings = false;
+		}
+	}
 
 	onMount(() => {
 		const saved = storage.get('settings');
@@ -32,12 +32,12 @@
 		}
 		mounted = true;
 
-    window.addEventListener('keydown', handleKeyDown);
+		window.addEventListener('keydown', handleKeyDown);
 	});
 
 	onDestroy(() => {
 		if (browser) {
-      window.removeEventListener('keydown', handleKeyDown);
+			window.removeEventListener('keydown', handleKeyDown);
 		}
 	});
 
