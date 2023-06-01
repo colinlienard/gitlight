@@ -4,15 +4,26 @@
 	import { Modal, Separator, Switch } from '~/lib/components';
 	import { Github, Gitlab } from '~/lib/icons';
 	import LogOutButton from './LogOutButton.svelte';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { settings } from '~/lib/stores';
 	import { storage } from '~/lib/helpers';
 	import type { Settings } from '~/lib/types';
+	import { browser } from '$app/environment';
 
 	let user = $page.data.session?.user;
 	let mounted = false;
+  let forceOpenSettings = false;
 
 	const options: Array<Settings['notificationAxis']> = ['Auto', 'Vertical', 'Horizontal'];
+
+  function handleKeyDown(event: KeyboardEvent) {
+    if (browser && event.keyCode === 188 && event.metaKey) {
+      event.preventDefault();
+      forceOpenSettings = true;
+    } else {
+      forceOpenSettings = false;
+    }
+  }
 
 	onMount(() => {
 		const saved = storage.get('settings');
@@ -20,6 +31,14 @@
 			settings.set(saved);
 		}
 		mounted = true;
+
+    window.addEventListener('keydown', handleKeyDown);
+	});
+
+	onDestroy(() => {
+		if (browser) {
+      window.removeEventListener('keydown', handleKeyDown);
+		}
 	});
 
 	$: if (mounted) {
@@ -27,7 +46,7 @@
 	}
 </script>
 
-<Modal title="Settings">
+<Modal title="Settings" open={forceOpenSettings}>
 	<button slot="trigger">
 		<img class="trigger" src={user?.avatar} alt="" />
 	</button>

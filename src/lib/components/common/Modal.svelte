@@ -6,8 +6,7 @@
 
 	export let title: string;
 	export let small = false;
-
-	let open = false;
+  export let open = false;
 
 	const dispatch = createEventDispatcher();
 
