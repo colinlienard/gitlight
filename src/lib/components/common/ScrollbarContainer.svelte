@@ -25,6 +25,10 @@
 {/if}
 
 <style lang="scss">
+	:global([data-overlayscrollbars]) {
+		height: 100%;
+	}
+
 	:global(.os-scrollbar) {
 		--os-handle-bg: #262626;
 		--os-handle-bg-hover: #343434;

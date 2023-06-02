@@ -24,7 +24,8 @@
 		repo,
 		number,
 		labels,
-		url
+		url,
+		previously
 	} = data;
 	let displayTime = formatRelativeDate(time);
 
@@ -81,100 +82,106 @@
 	}
 </script>
 
-<div
-	class="notification"
-	class:unread
-	on:mouseenter={isNew && interactive ? () => (isNew = false) : undefined}
->
-	{#if isNew && unread}
-		<div class="new" />
-	{/if}
-	<div class="top">
-		<p class="repo">{owner}/<span class="bold">{repo}</span></p>
-		<p class="time">{displayTime}</p>
-	</div>
-	<p class="description">
-		{#if author}
-			{author.login}
-			<img class="image" src={author.avatar_url} alt="" width="20px" height="20px" />
-			<span class="subtle">
-				{description}
-			</span>
-		{:else}
-			{description}
+<div class="container" class:unread>
+	<div
+		class="notification"
+		on:mouseenter={isNew && interactive ? () => (isNew = false) : undefined}
+	>
+		{#if isNew && unread}
+			<div class="new" />
 		{/if}
-	</p>
-	<div class="main">
-		<span class="icon-container" style:color={getHex(iconColor)}>
-			<svelte:component this={icon} />
-		</span>
-		<h3 class="title">{title}</h3>
-		{#if number}
-			<span class="number">#{number}</span>
-		{/if}
-	</div>
-	{#if labels && labels.length}
-		<ul class="labels">
-			{#each labels as label}
-				<li class="label" style:color={lightenColor(label.color)}>
-					{label.name}
-					<div class="label-background" style:background-color={`#${label.color}`} />
-				</li>
-			{/each}
-		</ul>
-	{/if}
-	{#if interactive}
-		<div class="over">
-			<Tooltip content="Mark as {unread ? '' : 'un'}read" position="left">
-				<Button type={unread ? 'primary' : 'secondary'} small on:click={handleToggle('unread')}>
-					{#if unread}
-						<Check />
-					{:else}
-						<Mail />
-					{/if}
-				</Button>
-			</Tooltip>
-			{#if url}
-				<Tooltip content="Open in GitHub" position="left">
-					<Button type="secondary" small href={url} external on:click={handleOpenInBrowser}>
-						<ExternalLink />
-					</Button>
-				</Tooltip>
+		<div class="top">
+			<p class="repo">{owner}/<span class="bold">{repo}</span></p>
+			<p class="time">{displayTime}</p>
+		</div>
+		<p class="description">
+			{#if author}
+				<span class="strong">{author.login}</span>
+				<img class="image" src={author.avatar} alt="" width="20px" height="20px" />
+				<span class="subtle">
+					{description}
+				</span>
 			{:else}
-				<Tooltip content="Cannot open in GitHub" position="left">
-					<Button type="secondary" small disabled>
-						<ExternalLink />
+				<span class="strong">{description}</span>
+			{/if}
+		</p>
+		<div class="main">
+			<span class="icon-container" style:color={getHex(iconColor)}>
+				<svelte:component this={icon} />
+			</span>
+			<h3 class="title">{title}</h3>
+			{#if number}
+				<span class="number">#{number}</span>
+			{/if}
+		</div>
+		{#if labels && labels.length}
+			<ul class="labels">
+				{#each labels as label}
+					<li class="label" style:color={lightenColor(label.color)}>
+						{label.name}
+						<div class="label-background" style:background-color={`#${label.color}`} />
+					</li>
+				{/each}
+			</ul>
+		{/if}
+		{#if interactive}
+			<div class="over">
+				<Tooltip content="Mark as {unread ? '' : 'un'}read" position="left">
+					<Button type={unread ? 'primary' : 'secondary'} small on:click={handleToggle('unread')}>
+						{#if unread}
+							<Check />
+						{:else}
+							<Mail />
+						{/if}
 					</Button>
 				</Tooltip>
+				{#if url}
+					<Tooltip content="Open in GitHub" position="left">
+						<Button type="secondary" small href={url} external on:click={handleOpenInBrowser}>
+							<ExternalLink />
+						</Button>
+					</Tooltip>
+				{:else}
+					<Tooltip content="Cannot open in GitHub" position="left">
+						<Button type="secondary" small disabled>
+							<ExternalLink />
+						</Button>
+					</Tooltip>
+				{/if}
+				<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left">
+					<Button type="secondary" small on:click={handleToggle('pinned')}>
+						{#if pinned}
+							<Unpin />
+						{:else}
+							<Pin />
+						{/if}
+					</Button>
+				</Tooltip>
+			</div>
+		{/if}
+	</div>
+	{#if previously}
+		<div class="previously description">
+			<span>Previously: </span>
+			{#if previously.author}
+				<span class="strong"> {previously.author.login}</span>
+				<img class="image" src={previously.author.avatar} alt="" width="20px" height="20px" />
 			{/if}
-			<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left">
-				<Button type="secondary" small on:click={handleToggle('pinned')}>
-					{#if pinned}
-						<Unpin />
-					{:else}
-						<Pin />
-					{/if}
-				</Button>
-			</Tooltip>
+			{previously.description}
 		</div>
 	{/if}
 </div>
 
 <style lang="scss">
-	.notification {
-		background-color: variables.$grey-2;
-		border: 1px solid variables.$grey-3;
-		border-radius: variables.$radius;
-		padding: 1rem;
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
-
+	.container {
 		&:not(:hover) {
 			.over {
 				opacity: 0;
 			}
+		}
+
+		&:hover .previously {
+			opacity: 1;
 		}
 
 		&:not(.unread) {
@@ -185,6 +192,17 @@
 				opacity: 1;
 			}
 		}
+	}
+
+	.notification {
+		background-color: variables.$grey-2;
+		border: 1px solid variables.$grey-3;
+		border-radius: variables.$radius;
+		padding: 1rem;
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
 	}
 
 	.new {
@@ -205,21 +223,6 @@
 
 		.repo .bold {
 			@include typography.bold;
-		}
-	}
-
-	.description {
-		.subtle {
-			color: variables.$grey-4;
-		}
-
-		.image {
-			display: inline-block;
-			translate: 0 0.25rem;
-		}
-
-		.image {
-			border-radius: 50%;
 		}
 	}
 
@@ -286,5 +289,45 @@
 		justify-content: start;
 		gap: 0.5rem;
 		transition: opacity variables.$transition;
+	}
+
+	.description {
+		color: variables.$grey-4;
+
+		.strong {
+			color: variables.$white;
+		}
+
+		.image {
+			display: inline-block;
+			translate: 0 0.25rem;
+			border-radius: 50%;
+		}
+	}
+
+	.previously {
+		padding: 0.5rem 1rem 1rem;
+		position: relative;
+		z-index: -1;
+		opacity: 0.6;
+		transition: opacity variables.$transition;
+
+		&::before,
+		&::after {
+			content: '';
+			position: absolute;
+			inset: -0.5rem 0 0;
+			z-index: -1;
+		}
+
+		&::before {
+			background-color: variables.$grey-2;
+			border: 1px solid variables.$grey-3;
+			border-radius: 0 0 variables.$radius variables.$radius;
+		}
+
+		&::after {
+			background-image: linear-gradient(rgba(variables.$grey-1, 0.5), transparent);
+		}
 	}
 </style>

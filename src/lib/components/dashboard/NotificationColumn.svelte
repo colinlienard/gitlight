@@ -5,7 +5,7 @@
 	import type { NotificationData } from '~/lib/types';
 	import { debounce } from '~/lib/helpers';
 	import { ArrowUp, Folder } from '~/lib/icons';
-	import { Button, ScrollbarContainer } from '../common';
+	import { Button } from '../common';
 	import SkeletonEvent from './SkeletonEvent.svelte';
 	import { loading, largeScreen } from '~/lib/stores';
 	import Notification from './Notification.svelte';
@@ -71,20 +71,18 @@
 			<li><SkeletonEvent /></li>
 		</ul>
 	{:else if notifications.length}
-		<ScrollbarContainer margin="1rem 0" scroll={$largeScreen}>
-			<ul class="list" class:empty={!notifications.length} bind:this={list}>
-				{#each notifications as notification (notification.id)}
-					<li
-						class="item"
-						in:receive={{ key: notification.id }}
-						out:send={{ key: notification.id }}
-						animate:flip={settings}
-					>
-						<Notification data={notification} />
-					</li>
-				{/each}
-			</ul>
-		</ScrollbarContainer>
+		<ul class="list" class:empty={!notifications.length} bind:this={list}>
+			{#each notifications as notification (notification.id)}
+				<li
+					class="item"
+					in:receive={{ key: notification.id }}
+					out:send={{ key: notification.id }}
+					animate:flip={settings}
+				>
+					<Notification data={notification} />
+				</li>
+			{/each}
+		</ul>
 	{:else}
 		<div class="placeholder">
 			<Folder />
@@ -136,7 +134,6 @@
 		align-items: center;
 		gap: 0.5rem;
 		margin-right: 1rem;
-		z-index: 2;
 
 		&::before {
 			content: '';
@@ -144,11 +141,16 @@
 			inset: -1rem 0 auto;
 			height: 3.5rem;
 			background-image: linear-gradient(variables.$grey-1 2.5rem, transparent);
-			z-index: -1;
+			z-index: 1;
 		}
 
 		:global(svg) {
 			height: 1.25rem;
+			z-index: 2;
+		}
+
+		* {
+			z-index: 2;
 		}
 
 		.title {
@@ -176,6 +178,7 @@
 		flex-direction: column;
 		gap: 1rem;
 		padding: 1rem 1rem 1rem 0;
+		overflow: scroll;
 
 		&.empty {
 			overflow: visible;

@@ -1,12 +1,11 @@
-import type { Settings, User } from '../types';
+import type { SavedNotifications, Settings, User } from '../types';
 
 type StorageMap = {
 	user: User;
 	'access-token': string;
 	settings: Settings;
-	'github-notifications': { pinned: string[]; unread: string[] };
+	'github-notifications': SavedNotifications;
 	'github-watched-repos': { id: string; active: boolean }[];
-	'github-notification-dates': Record<string, string>;
 	'type-filters': boolean[];
 };
 

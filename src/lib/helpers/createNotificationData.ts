@@ -14,12 +14,12 @@ import { getIconColor, getIssueIcon, getPullRequestIcon } from './getIcon';
 export function createNotificationData(
 	{ id, repository, subject, unread: u, updated_at, reason }: GithubNotification,
 	data: GithubItem,
-	savedNotificationIds: SavedNotifications,
-	date?: string
+	savedNotifications: SavedNotifications
 ): NotificationData {
-	const pinned = savedNotificationIds?.pinned.includes(id) || false;
-	const unread = u || savedNotificationIds?.unread.includes(id) || false;
-	const isNew = (u && !savedNotificationIds?.unread.includes(id)) || false;
+	const previous = savedNotifications.find((n) => n.id === id);
+	const pinned = previous?.pinned || false;
+	const unread = u || previous?.unread || false;
+	const isNew = (u && !previous?.unread) || false;
 
 	const [owner, repo] = repository.full_name.split('/');
 	const common = {
@@ -27,25 +27,27 @@ export function createNotificationData(
 		pinned,
 		unread,
 		isNew,
-		time: date || updated_at,
+		time: previous?.time || updated_at,
 		title: subject.title,
 		type: subject.type,
 		owner,
 		repo,
 		repoId: `${repository.id}`,
 		ownerAvatar: repository.owner.avatar_url
-	};
+	} satisfies Partial<NotificationData>;
 
 	switch (subject.type) {
-		case 'Commit':
+		case 'Commit': {
+			const { author, html_url } = data as GithubCommit;
 			return {
 				...common,
-				author: (data as GithubCommit).author,
+				author: { login: author.login, avatar: author.avatar_url },
 				description: 'made a commit',
 				icon: Commit,
 				iconColor: 'blue',
-				url: (data as GithubCommit).html_url
+				url: html_url
 			};
+		}
 
 		case 'Issue': {
 			const { labels, number, state, created_at, closed_at, closed_by, user, html_url } =
@@ -57,13 +59,13 @@ export function createNotificationData(
 				state == 'open' &&
 				new Date(common.time).getTime() - new Date(created_at).getTime() < 60000
 			) {
-				author = user;
+				author = { login: user.login, avatar: user.avatar_url };
 				description = 'opened this issue';
 			} else if (
 				state === 'closed' &&
 				new Date(common.time).getTime() - new Date(closed_at as string).getTime() < 60000
 			) {
-				author = closed_by;
+				author = closed_by ? { login: closed_by.login, avatar: closed_by.avatar_url } : undefined;
 				description = 'closed this issue';
 			}
 
@@ -75,7 +77,9 @@ export function createNotificationData(
 				iconColor: getIconColor(data as GithubIssue),
 				number,
 				labels,
-				url: html_url
+				url: html_url,
+				previously:
+					previous?.previously || previous?.description !== description ? previous : undefined
 			};
 		}
 
@@ -89,16 +93,18 @@ export function createNotificationData(
 				state == 'open' &&
 				new Date(common.time).getTime() - new Date(created_at).getTime() < 60000
 			) {
-				author = user;
+				author = { login: user.login, avatar: user.avatar_url };
 				description = 'opened this pull request';
 			} else if (
 				state === 'closed' &&
 				new Date(common.time).getTime() - new Date(closed_at as string).getTime() < 60000
 			) {
-				author = merged ? merged_by : user;
+				author = merged_by
+					? { login: merged_by.login, avatar: merged_by.avatar_url }
+					: { login: user.login, avatar: user.avatar_url };
 				description = `${merged ? 'merged' : 'closed'} this pull request`;
 			} else if (reason === 'review_requested') {
-				author = user;
+				author = { login: user.login, avatar: user.avatar_url };
 				description = 'requested your review';
 			}
 
@@ -110,7 +116,9 @@ export function createNotificationData(
 				iconColor: getIconColor(data as GithubPullRequest),
 				number,
 				labels,
-				url: html_url
+				url: html_url,
+				previously:
+					previous?.previously || previous?.description !== description ? previous : undefined
 			};
 		}
 
@@ -118,7 +126,7 @@ export function createNotificationData(
 			const { author, tag_name, prerelease, html_url } = data as GithubRelease;
 			return {
 				...common,
-				author,
+				author: { login: author.login, avatar: author.avatar_url },
 				description: 'made a release',
 				icon: Release,
 				iconColor: 'blue',

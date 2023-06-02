@@ -7,16 +7,11 @@
 	import {
 		githubNotifications,
 		loading,
-		savedEventIds,
+		savedNotifications,
 		settings,
 		watchedRepos
 	} from '~/lib/stores';
-	import type {
-		GithubItem,
-		GithubNotification,
-		SavedNotifications,
-		WatchedRepo
-	} from '~/lib/types';
+	import type { GithubItem, GithubNotification, WatchedRepo } from '~/lib/types';
 
 	let synced = false;
 	let mounted = false;
@@ -35,7 +30,8 @@
 		// Keep only new notifications
 		if ($githubNotifications.length) {
 			notifications = notifications.filter(
-				(item) => !$githubNotifications.find((notification) => notification.id === item.id)
+				(item) =>
+					item.unread || !$githubNotifications.find((notification) => notification.id === item.id)
 			);
 		}
 
@@ -45,14 +41,8 @@
 				notifications.map((item) => (item.subject.url ? fetchGithub(item.subject.url) : null))
 			)) as GithubItem[];
 
-			const savedDates = storage.get('github-notification-dates') || {};
 			const newNotifications = notifications.map((notification, index) =>
-				createNotificationData(
-					notification,
-					datas[index],
-					$savedEventIds as SavedNotifications,
-					savedDates[notification.id]
-				)
+				createNotificationData(notification, datas[index], $savedNotifications)
 			);
 
 			// Send push notification
@@ -65,14 +55,11 @@
 				});
 			}
 
-			// Add new notifications to the store
-			githubNotifications.update((previous) => [...newNotifications, ...previous]);
-
-			// Save notification dates to storage
-			storage.set(
-				'github-notification-dates',
-				Object.fromEntries(newNotifications.map((item) => [item.id, item.time]))
-			);
+			// Add new notifications to the store and remove duplicates
+			githubNotifications.update((previous) => [
+				...newNotifications,
+				...previous.filter((item) => !newNotifications.find((n) => n.id === item.id))
+			]);
 
 			// Update watched repos
 			const savedWatchedRepos = storage.get('github-watched-repos');
@@ -102,28 +89,35 @@
 	}
 
 	$: if (mounted && $githubNotifications.length) {
-		const pinnedIds = $githubNotifications.filter(({ pinned }) => pinned).map(({ id }) => id);
-		const unreadNotifications = $githubNotifications.filter(({ unread }) => unread);
-		const unreadIds = unreadNotifications.map(({ id }) => id);
-
 		// Save events ids to storage
-		const toSave = { pinned: pinnedIds, unread: unreadIds };
-		savedEventIds.set(toSave);
+		const toSave = $githubNotifications.map(
+			({ id, description, author, pinned, unread, time, previously }) => ({
+				id,
+				description,
+				author,
+				pinned,
+				unread,
+				time,
+				previously
+			})
+		);
+		savedNotifications.set(toSave);
 		storage.set('github-notifications', toSave);
 
 		// Update menu bar
 		if (window.__TAURI__) {
-			const unread = unreadNotifications.filter(({ pinned }) => !pinned);
+			const pinned = $githubNotifications.filter(({ pinned }) => pinned);
+			const unread = $githubNotifications.filter(({ pinned, unread }) => !pinned && unread);
 			invoke('update_tray', {
 				title: `${unread.length}`,
-				description: `${unread.length} unread • ${pinnedIds.length} pinned`
+				description: `${unread.length} unread • ${pinned.length} pinned`
 			});
 		}
 	}
 
 	onMount(async () => {
 		// Get events ids from storage
-		savedEventIds.set(storage.get('github-notifications') || { pinned: [], unread: [] });
+		savedNotifications.set(storage.get('github-notifications') || []);
 
 		mounted = true;
 
