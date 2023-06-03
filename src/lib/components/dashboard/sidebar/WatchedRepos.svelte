@@ -67,29 +67,29 @@
 
 	function handleToggleRepo(id: string) {
 		return (event: MouseEvent) => {
-      if (event.altKey || event.ctrlKey || event.shiftKey || event.metaKey) {
-        watchedRepos.update((previous) =>
-          previous.map((item) => ({ ...item, active: item.id === id }))
-        );
-      } else {
-        watchedRepos.update((previous) =>
-          previous.map((item) => (item.id === id ? { ...item, active: !item.active } : item))
-        );
-      }
+			if (event.altKey || event.ctrlKey || event.shiftKey || event.metaKey) {
+				watchedRepos.update((previous) =>
+					previous.map((item) => ({ ...item, active: item.id === id }))
+				);
+			} else {
+				watchedRepos.update((previous) =>
+					previous.map((item) => (item.id === id ? { ...item, active: !item.active } : item))
+				);
+			}
 		};
 	}
 
 	function handleToggleOwner(name: string, active: boolean) {
 		return (event: MouseEvent) => {
-      if (event.altKey || event.ctrlKey || event.shiftKey || event.metaKey) {
-        watchedRepos.update((previous) =>
-          previous.map((item) => ({ ...item, active: item.ownerName === name }))
-        );
-      } else {
-        watchedRepos.update((previous) =>
-          previous.map((item) => (item.ownerName === name ? { ...item, active } : item))
-        );
-      }
+			if (event.altKey || event.ctrlKey || event.shiftKey || event.metaKey) {
+				watchedRepos.update((previous) =>
+					previous.map((item) => ({ ...item, active: item.ownerName === name }))
+				);
+			} else {
+				watchedRepos.update((previous) =>
+					previous.map((item) => (item.ownerName === name ? { ...item, active } : item))
+				);
+			}
 		};
 	}
 </script>
