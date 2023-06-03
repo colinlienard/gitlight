@@ -161,20 +161,22 @@
 		{/if}
 	</div>
 	{#if previously}
-		<div class="previously description">
-			<span>Previously: </span>
-			{#if previously.author}
-				<span class="strong"> {previously.author.login}</span>
-				<img
-					class="image"
-					src={previously.author.avatar}
-					alt=""
-					width="20px"
-					height="20px"
-					loading="lazy"
-				/>
-			{/if}
-			{previously.description}
+		<div class="previously">
+			<div class="description">
+				<span>Previously: </span>
+				{#if previously.author}
+					<span class="strong"> {previously.author.login}</span>
+					<img
+						class="image"
+						src={previously.author.avatar}
+						alt=""
+						width="20px"
+						height="20px"
+						loading="lazy"
+					/>
+				{/if}
+				{previously.description}
+			</div>
 		</div>
 	{/if}
 </div>

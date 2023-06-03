@@ -32,5 +32,5 @@ export async function fetchGithub(url: string, options?: Options): Promise<unkno
 		return data;
 	}
 
-	throw new Error('Failed to fetch');
+	throw new Error(response.statusText);
 }
