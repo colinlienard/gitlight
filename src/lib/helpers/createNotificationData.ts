@@ -17,7 +17,9 @@ export async function createNotificationData(
 	{ id, repository, subject, unread: u, updated_at, reason }: GithubNotification,
 	savedNotifications: SavedNotifications
 ): Promise<NotificationData> {
-	const previous = savedNotifications.find((n) => n.id === id);
+	const previous = Array.isArray(savedNotifications)
+		? savedNotifications.find((n) => n.id === id)
+		: undefined;
 	const pinned = previous?.pinned || false;
 	const unread = u || previous?.unread || false;
 	const isNew = (u && !previous?.unread) || false;
@@ -114,7 +116,6 @@ export async function createNotificationData(
 				comments,
 				comments_url
 			} = data as GithubPullRequest;
-
 			let author;
 			let description = 'New activity on pull request';
 			if (
