@@ -29,7 +29,7 @@
 			author: {
 				...commonAuthor,
 				login: 'colinlienard',
-				avatar_url: 'https://avatars.githubusercontent.com/u/64312634?v=4'
+				avatar: 'https://avatars.githubusercontent.com/u/64312634?v=4'
 			},
 			title: 'feat(back): tauri functionnalities',
 			description: 'made a commit',
@@ -45,7 +45,7 @@
 			author: {
 				...commonAuthor,
 				login: 'QuiiBz',
-				avatar_url: 'https://avatars.githubusercontent.com/u/43268759?v=4'
+				avatar: 'https://avatars.githubusercontent.com/u/43268759?v=4'
 			},
 			title: 'feat(astro): write config if not present when building',
 			description: 'merged this pull request',
@@ -66,7 +66,7 @@
 			author: {
 				...commonAuthor,
 				login: 'lucasfernog',
-				avatar_url: 'https://avatars.githubusercontent.com/u/20051258?v=4'
+				avatar: 'https://avatars.githubusercontent.com/u/20051258?v=4'
 			},
 			title: 'feat(cli): add rustls as default Cargo feature',
 			description: 'merged this pull request',
@@ -80,8 +80,14 @@
 		{
 			...common,
 			type: 'Issue',
+			author: {
+				...commonAuthor,
+				login: 'Rich-Harris',
+				avatar: 'https://avatars.githubusercontent.com/u/1162160?v=4'
+			},
 			title: 'TS to JSDoc Conversion',
-			description: 'New activity on issue',
+			description:
+				'commented: The Svelte repo is currently in the process of heavy restructuring for Svelte 4. After that, work on Svelte 5 will likely change',
 			time: new Date(new Date().getTime() - 10000000).toString(),
 			icon: IssueOpen,
 			iconColor: 'green',
@@ -97,7 +103,7 @@
 			author: {
 				...commonAuthor,
 				login: 'colinlienard',
-				avatar_url: 'https://avatars.githubusercontent.com/u/64312634?v=4'
+				avatar: 'https://avatars.githubusercontent.com/u/64312634?v=4'
 			},
 			title: 'feat(front): add the landing page',
 			description: 'opened this pull request',

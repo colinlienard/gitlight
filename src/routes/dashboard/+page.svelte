@@ -11,7 +11,7 @@
 		settings,
 		watchedRepos
 	} from '~/lib/stores';
-	import type { GithubItem, GithubNotification, WatchedRepo } from '~/lib/types';
+	import type { GithubNotification, WatchedRepo } from '~/lib/types';
 
 	let synced = false;
 	let mounted = false;
@@ -36,13 +36,10 @@
 		}
 
 		if (notifications.length) {
-			// Fetch additional data
-			const datas = (await Promise.all(
-				notifications.map((item) => (item.subject.url ? fetchGithub(item.subject.url) : null))
-			)) as GithubItem[];
-
-			const newNotifications = notifications.map((notification, index) =>
-				createNotificationData(notification, datas[index], $savedNotifications)
+			const newNotifications = await Promise.all(
+				notifications.map((notification) =>
+					createNotificationData(notification, $savedNotifications)
+				)
 			);
 
 			// Send push notification

@@ -97,7 +97,7 @@
 		<p class="description">
 			{#if author}
 				<span class="strong">{author.login}</span>
-				<img class="image" src={author.avatar} alt="" width="20px" height="20px" />
+				<img class="image" src={author.avatar} alt="" width="20px" height="20px" loading="lazy" />
 				<span class="subtle">
 					{description}
 				</span>
@@ -165,7 +165,14 @@
 			<span>Previously: </span>
 			{#if previously.author}
 				<span class="strong"> {previously.author.login}</span>
-				<img class="image" src={previously.author.avatar} alt="" width="20px" height="20px" />
+				<img
+					class="image"
+					src={previously.author.avatar}
+					alt=""
+					width="20px"
+					height="20px"
+					loading="lazy"
+				/>
 			{/if}
 			{previously.description}
 		</div>
@@ -180,12 +187,8 @@
 			}
 		}
 
-		&:hover .previously {
-			opacity: 1;
-		}
-
 		&:not(.unread) {
-			opacity: 0.6;
+			opacity: 0.65;
 			transition: opacity variables.$transition;
 
 			&:hover {
@@ -247,7 +250,6 @@
 			white-space: nowrap;
 			overflow-x: hidden;
 			text-overflow: ellipsis;
-			padding-bottom: 2px;
 		}
 
 		.number {
@@ -292,25 +294,30 @@
 	}
 
 	.description {
+		width: 100%;
 		color: variables.$grey-4;
+		line-height: 1.3em;
+		display: -webkit-box;
+		overflow: hidden;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		word-wrap: break-word;
 
 		.strong {
 			color: variables.$white;
 		}
 
 		.image {
-			display: inline-block;
-			translate: 0 0.25rem;
+			display: inline;
+			vertical-align: sub;
 			border-radius: 50%;
 		}
 	}
 
 	.previously {
-		padding: 0.5rem 1rem 1rem;
+		padding: 0.75rem 1rem;
 		position: relative;
 		z-index: -1;
-		opacity: 0.6;
-		transition: opacity variables.$transition;
 
 		&::before,
 		&::after {
@@ -327,7 +334,7 @@
 		}
 
 		&::after {
-			background-image: linear-gradient(rgba(variables.$grey-1, 0.5), transparent);
+			background-image: linear-gradient(rgba(variables.$grey-1, 0.75), transparent);
 		}
 	}
 </style>

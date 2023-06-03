@@ -29,6 +29,8 @@ export type GithubIssue = {
 	user: GithubUser;
 	labels: GithubLabel[];
 	html_url: string;
+	comments: number;
+	comments_url: string;
 };
 
 export type GithubPullRequest = GithubIssue & {
@@ -70,7 +72,13 @@ export type GithubRelease = {
 
 export type GithubItem = GithubIssue | GithubRepository | GithubCommit | GithubRelease;
 
-export type GithubNotificationType = 'PullRequest' | 'Issue' | 'Commit' | 'Release' | 'Discussion';
+export type GithubNotificationType =
+	| 'PullRequest'
+	| 'Issue'
+	| 'Commit'
+	| 'Release'
+	| 'Discussion'
+	| 'CheckSuite';
 
 export type GithubNotification = {
 	id: string;

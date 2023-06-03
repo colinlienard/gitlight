@@ -1,4 +1,5 @@
 import type {
+	GithubComment,
 	GithubCommit,
 	GithubIssue,
 	GithubItem,
@@ -10,16 +11,19 @@ import type {
 } from '~/lib/types';
 import { Commit, Discussion, ExclamationMark, Release } from '../icons';
 import { getIconColor, getIssueIcon, getPullRequestIcon } from './getIcon';
+import { fetchGithub } from './fetchGithub';
 
-export function createNotificationData(
+export async function createNotificationData(
 	{ id, repository, subject, unread: u, updated_at, reason }: GithubNotification,
-	data: GithubItem,
 	savedNotifications: SavedNotifications
-): NotificationData {
+): Promise<NotificationData> {
 	const previous = savedNotifications.find((n) => n.id === id);
 	const pinned = previous?.pinned || false;
 	const unread = u || previous?.unread || false;
 	const isNew = (u && !previous?.unread) || false;
+
+	// Fetch additional data
+	const data = subject.url ? ((await fetchGithub(subject.url)) as GithubItem) : null;
 
 	const [owner, repo] = repository.full_name.split('/');
 	const common = {
@@ -27,7 +31,7 @@ export function createNotificationData(
 		pinned,
 		unread,
 		isNew,
-		time: previous?.time || updated_at,
+		time: updated_at,
 		title: subject.title,
 		type: subject.type,
 		owner,
@@ -50,8 +54,18 @@ export function createNotificationData(
 		}
 
 		case 'Issue': {
-			const { labels, number, state, created_at, closed_at, closed_by, user, html_url } =
-				data as GithubIssue;
+			const {
+				labels,
+				number,
+				state,
+				created_at,
+				closed_at,
+				closed_by,
+				user,
+				html_url,
+				comments,
+				comments_url
+			} = data as GithubIssue;
 
 			let author;
 			let description = 'New activity on issue';
@@ -67,6 +81,10 @@ export function createNotificationData(
 			) {
 				author = closed_by ? { login: closed_by.login, avatar: closed_by.avatar_url } : undefined;
 				description = 'closed this issue';
+			} else if (comments > 0) {
+				const comment = await getLatestComment(comments_url);
+				author = comment.author;
+				description = comment.description;
 			}
 
 			return {
@@ -79,13 +97,23 @@ export function createNotificationData(
 				labels,
 				url: html_url,
 				previously:
-					previous?.previously || previous?.description !== description ? previous : undefined
+					previous?.description !== description ? previous : previous?.previously || undefined
 			};
 		}
 
 		case 'PullRequest': {
-			const { user, merged, merged_by, number, labels, state, created_at, closed_at, html_url } =
-				data as GithubPullRequest;
+			const {
+				user,
+				merged_by,
+				number,
+				labels,
+				state,
+				created_at,
+				closed_at,
+				html_url,
+				comments,
+				comments_url
+			} = data as GithubPullRequest;
 
 			let author;
 			let description = 'New activity on pull request';
@@ -102,10 +130,14 @@ export function createNotificationData(
 				author = merged_by
 					? { login: merged_by.login, avatar: merged_by.avatar_url }
 					: { login: user.login, avatar: user.avatar_url };
-				description = `${merged ? 'merged' : 'closed'} this pull request`;
+				description = `${merged_by ? 'merged' : 'closed'} this pull request`;
 			} else if (reason === 'review_requested') {
 				author = { login: user.login, avatar: user.avatar_url };
 				description = 'requested your review';
+			} else if (comments > 0) {
+				const comment = await getLatestComment(comments_url);
+				author = comment.author;
+				description = comment.description;
 			}
 
 			return {
@@ -118,7 +150,7 @@ export function createNotificationData(
 				labels,
 				url: html_url,
 				previously:
-					previous?.previously || previous?.description !== description ? previous : undefined
+					previous?.description !== description ? previous : previous?.previously || undefined
 			};
 		}
 
@@ -149,10 +181,19 @@ export function createNotificationData(
 		default:
 			return {
 				...common,
-				type: 'PullRequest',
+				type: 'CheckSuite',
 				description: `'${subject.type}' notifications are not yet fully supported`,
 				icon: ExclamationMark,
 				iconColor: 'grey'
 			};
 	}
+}
+
+async function getLatestComment(url: string) {
+	const comments = (await fetchGithub(url)) as GithubComment[];
+	const comment = comments[comments.length - 1];
+	const author = { login: comment.user.login, avatar: comment.user.avatar_url };
+	const body = comment.body.slice(0, 100);
+	const description = `commented: ${body}${body.length === 100 ? '...' : ''}`;
+	return { author, description };
 }
