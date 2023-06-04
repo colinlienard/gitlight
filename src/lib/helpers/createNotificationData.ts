@@ -39,8 +39,7 @@ export async function createNotificationData(
 		owner,
 		repo,
 		repoId: `${repository.id}`,
-		ownerAvatar: repository.owner.avatar_url,
-		reason
+		ownerAvatar: repository.owner.avatar_url
 	} satisfies Partial<NotificationData>;
 
 	switch (subject.type) {

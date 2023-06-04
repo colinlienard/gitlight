@@ -29,15 +29,14 @@
 
 		// Keep only new or modified notifications
 		if ($githubNotifications.length) {
-			notifications = notifications.filter(({ id, updated_at, last_read_at, reason }) => {
+			notifications = notifications.filter(({ id, updated_at }) => {
 				const current = $githubNotifications.find((item) => item.id === id);
-				return current
-					? updated_at !== current.time ||
-							new Date(updated_at).getTime() > new Date(last_read_at).getTime() ||
-							reason !== current.reason
-					: true;
+				if (!current) return true;
+				return updated_at !== current.time;
 			});
 		}
+
+		console.log(notifications);
 
 		if (notifications.length) {
 			const newNotifications = await Promise.all(
@@ -92,14 +91,13 @@
 	$: if (mounted && $githubNotifications.length) {
 		// Save events ids to storage
 		const toSave = $githubNotifications.map(
-			({ id, description, author, pinned, unread, time, reason, previously }) => ({
+			({ id, description, author, pinned, unread, time, previously }) => ({
 				id,
 				description,
 				author,
 				pinned,
 				unread,
 				time,
-				reason,
 				previously
 			})
 		);
