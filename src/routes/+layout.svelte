@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { listen } from '@tauri-apps/api/event';
+	import { enable } from 'tauri-plugin-autostart-api';
 	import { goto } from '$app/navigation';
 	import { storage } from '~/lib/helpers';
 
@@ -19,6 +20,9 @@
 					goto('/dashboard');
 				}
 			});
+
+			// Enable autostart
+			enable();
 		}
 	});
 </script>

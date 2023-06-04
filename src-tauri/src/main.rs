@@ -6,6 +6,7 @@
 use tauri::{
     CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
 };
+use tauri_plugin_autostart::MacosLauncher;
 
 #[cfg(target_os = "macos")]
 #[tauri::command]
@@ -54,6 +55,7 @@ fn main() {
             Ok(())
         })
         .plugin(tauri_plugin_window_state::Builder::default().build())
+        .plugin(tauri_plugin_autostart::init(MacosLauncher::LaunchAgent, Some(vec![""])))
         .system_tray(tray)
         .on_system_tray_event(|app, event| {
             if let SystemTrayEvent::MenuItemClick { id, .. } = event {
@@ -71,7 +73,12 @@ fn main() {
         })
         .on_window_event(|event| {
             if let tauri::WindowEvent::CloseRequested { api, .. } = event.event() {
+                #[cfg(not(target_os = "macos"))]
                 event.window().hide().unwrap();
+
+                #[cfg(target_os = "macos")]
+                tauri::AppHandle::hide(&event.window().app_handle()).unwrap();
+
                 api.prevent_close();
             }
         })
