@@ -12,7 +12,7 @@
 	<header class="header">
 		<div class="title-container">
 			<Logo />
-			<h1 class="title">GitLight</h1>
+			<h1 class="title"><strong>GitLight</strong></h1>
 		</div>
 		<a
 			href="https://github.com/ColinLienard/gitlight"
@@ -26,7 +26,7 @@
 	<main class="main">
 		<div class="hero-container">
 			<h2 class="hero" data-slide style="--stagger: 0">
-				GitHub and GitLab notifications on your desktop
+				<strong>GitHub and GitLab notifications on your desktop</strong>
 			</h2>
 			<h3 class="subhero" data-slide style="--stagger: 1">
 				Never miss a pull request, issue, commit, review...
@@ -46,17 +46,17 @@
 			<li class="feature">
 				<Sparkles />
 				<h4 class="title">Filter and monitor events</h4>
-				<p class="description">Kanban style interface.</p>
+				<p class="description"><strong>Kanban</strong> style interface.</p>
 			</li>
 			<li class="feature">
 				<Heart />
-				<h4 class="title">Free and open source</h4>
+				<h4 class="title"><strong>Free</strong> and <strong>open source</strong></h4>
 				<p class="description">Contribute on GitHub!</p>
 			</li>
 			<li class="feature">
 				<Lightning />
 				<h4 class="title">Made for performance</h4>
-				<p class="description">Built with Tauri and SvelteKit.</p>
+				<p class="description">Built with <strong>Tauri</strong> and <strong>SvelteKit</strong>.</p>
 			</li>
 		</ul>
 	</main>

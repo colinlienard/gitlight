@@ -38,6 +38,8 @@ export type GithubPullRequest = GithubIssue & {
 	merged_at: string | null;
 	merged_by?: GithubUser;
 	draft: boolean;
+	review_comments: number;
+	review_comments_url: string;
 };
 
 export type GithubCommit = {
@@ -53,6 +55,7 @@ export type GithubComment = {
 	body: string;
 	html_url: string;
 	user: GithubUser;
+	created_at: string;
 };
 
 export type GithubRelease = {

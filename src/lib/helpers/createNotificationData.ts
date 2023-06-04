@@ -25,7 +25,7 @@ export async function createNotificationData(
 	const isNew = (u && !previous?.unread) || false;
 
 	// Fetch additional data
-	const data = subject.url ? ((await fetchGithub(subject.url)) as GithubItem) : null;
+	const data = subject.url ? await fetchGithub<GithubItem>(subject.url) : null;
 
 	const [owner, repo] = repository.full_name.split('/');
 	const common = {
@@ -83,7 +83,7 @@ export async function createNotificationData(
 			) {
 				author = closed_by ? { login: closed_by.login, avatar: closed_by.avatar_url } : undefined;
 				description = 'closed this issue';
-			} else if (comments > 0) {
+			} else if (comments) {
 				const comment = await getLatestComment(comments_url);
 				author = comment.author;
 				description = comment.description;
@@ -114,8 +114,11 @@ export async function createNotificationData(
 				closed_at,
 				html_url,
 				comments,
-				comments_url
+				comments_url,
+				review_comments,
+				review_comments_url
 			} = data as GithubPullRequest;
+
 			let author;
 			let description = 'New activity on pull request';
 			if (
@@ -135,10 +138,23 @@ export async function createNotificationData(
 			} else if (reason === 'review_requested') {
 				author = { login: user.login, avatar: user.avatar_url };
 				description = 'requested your review';
-			} else if (comments > 0) {
-				const comment = await getLatestComment(comments_url);
-				author = comment.author;
-				description = comment.description;
+			} else if (review_comments || comments) {
+				const [reviewComment, regularComment] = await Promise.all([
+					review_comments ? getLatestComment(review_comments_url) : undefined,
+					comments ? getLatestComment(comments_url) : undefined
+				]);
+				if (
+					(reviewComment &&
+						regularComment &&
+						new Date(reviewComment.time).getTime() < new Date(regularComment.time).getTime()) ||
+					(!reviewComment && regularComment)
+				) {
+					author = regularComment.author;
+					description = regularComment.description;
+				} else if (reviewComment) {
+					author = reviewComment.author;
+					description = reviewComment.description;
+				}
 			}
 
 			return {
@@ -191,10 +207,10 @@ export async function createNotificationData(
 }
 
 async function getLatestComment(url: string) {
-	const comments = (await fetchGithub(url)) as GithubComment[];
+	const comments = await fetchGithub<GithubComment[]>(url);
 	const comment = comments[comments.length - 1];
 	const author = { login: comment.user.login, avatar: comment.user.avatar_url };
 	const body = comment.body.slice(0, 100);
 	const description = `commented: ${body}${body.length === 100 ? '...' : ''}`;
-	return { author, description };
+	return { author, description, time: comment.created_at };
 }

@@ -23,16 +23,16 @@
 	async function setNotifications() {
 		synced = false;
 
-		let notifications = (await fetchGithub('notifications?all=true', {
+		let notifications = await fetchGithub<GithubNotification[]>('notifications?all=true', {
 			noCache: true
-		})) as GithubNotification[];
+		});
 
-		// Keep only new notifications
+		// Keep only new or modified notifications
 		if ($githubNotifications.length) {
-			notifications = notifications.filter(
-				(item) =>
-					item.unread || !$githubNotifications.find((notification) => notification.id === item.id)
-			);
+			notifications = notifications.filter(({ unread, id, updated_at }) => {
+				const current = $githubNotifications.find((item) => item.id === id);
+				return current ? (unread && !current.unread) || updated_at !== current.time : true;
+			});
 		}
 
 		if (notifications.length) {
