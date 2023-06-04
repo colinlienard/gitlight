@@ -55,7 +55,10 @@ fn main() {
             Ok(())
         })
         .plugin(tauri_plugin_window_state::Builder::default().build())
-        .plugin(tauri_plugin_autostart::init(MacosLauncher::LaunchAgent, Some(vec![""])))
+        .plugin(tauri_plugin_autostart::init(
+            MacosLauncher::LaunchAgent,
+            Some(vec![""]),
+        ))
         .system_tray(tray)
         .on_system_tray_event(|app, event| {
             if let SystemTrayEvent::MenuItemClick { id, .. } = event {
