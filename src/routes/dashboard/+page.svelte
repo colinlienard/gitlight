@@ -29,9 +29,13 @@
 
 		// Keep only new or modified notifications
 		if ($githubNotifications.length) {
-			notifications = notifications.filter(({ unread, id, updated_at }) => {
+			notifications = notifications.filter(({ id, updated_at, last_read_at, reason }) => {
 				const current = $githubNotifications.find((item) => item.id === id);
-				return current ? (unread && !current.unread) || updated_at !== current.time : true;
+				return current
+					? updated_at !== current.time ||
+							new Date(updated_at).getTime() > new Date(last_read_at).getTime() ||
+							reason !== current.reason
+					: true;
 			});
 		}
 
@@ -88,13 +92,14 @@
 	$: if (mounted && $githubNotifications.length) {
 		// Save events ids to storage
 		const toSave = $githubNotifications.map(
-			({ id, description, author, pinned, unread, time, previously }) => ({
+			({ id, description, author, pinned, unread, time, reason, previously }) => ({
 				id,
 				description,
 				author,
 				pinned,
 				unread,
 				time,
+				reason,
 				previously
 			})
 		);
@@ -113,7 +118,6 @@
 	}
 
 	onMount(async () => {
-		// Get events ids from storage
 		savedNotifications.set(storage.get('github-notifications') || []);
 
 		mounted = true;

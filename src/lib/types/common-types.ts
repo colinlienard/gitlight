@@ -1,5 +1,10 @@
 import type { ComponentType } from 'svelte';
-import type { GithubLabel, GithubNotificationType, GithubRepository } from './github-types';
+import type {
+	GithubLabel,
+	GithubNotificationReason,
+	GithubNotificationType,
+	GithubRepository
+} from './github-types';
 
 export type User = {
 	name?: string;
@@ -33,6 +38,7 @@ export type NotificationData = {
 	number?: number;
 	labels?: GithubLabel[];
 	url?: string;
+	reason: GithubNotificationReason;
 	previously?: {
 		author?: User;
 		description: string;
@@ -58,6 +64,7 @@ export type SavedNotifications = Array<{
 	pinned: boolean;
 	unread: boolean;
 	time: string;
+	reason: GithubNotificationReason;
 	previously?: NotificationData['previously'];
 }>;
 

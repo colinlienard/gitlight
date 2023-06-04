@@ -83,21 +83,24 @@ export type GithubNotificationType =
 	| 'Discussion'
 	| 'CheckSuite';
 
+export type GithubNotificationReason =
+	| 'assign'
+	| 'author'
+	| 'comment'
+	| 'ci_activity'
+	| 'invitation'
+	| 'manual'
+	| 'mention'
+	| 'review_requested'
+	| 'security_alert'
+	| 'state_change'
+	| 'subscribed'
+	| 'team_mention';
+
 export type GithubNotification = {
 	id: string;
-	reason:
-		| 'assign'
-		| 'author'
-		| 'comment'
-		| 'ci_activity'
-		| 'invitation'
-		| 'manual'
-		| 'mention'
-		| 'review_requested'
-		| 'security_alert'
-		| 'state_change'
-		| 'subscribed'
-		| 'team_mention';
+	last_read_at: string;
+	reason: GithubNotificationReason;
 	repository: GithubRepository;
 	subject: {
 		latest_comment_url: string | null;
