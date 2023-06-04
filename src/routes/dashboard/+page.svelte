@@ -31,12 +31,9 @@
 		if ($githubNotifications.length) {
 			notifications = notifications.filter(({ id, updated_at }) => {
 				const current = $githubNotifications.find((item) => item.id === id);
-				if (!current) return true;
-				return updated_at !== current.time;
+				return current ? updated_at !== current.time : true;
 			});
 		}
-
-		console.log(notifications);
 
 		if (notifications.length) {
 			const newNotifications = await Promise.all(
@@ -46,8 +43,14 @@
 			);
 
 			// Send push notification
-			if (window.__TAURI__ && $githubNotifications.length && $settings.activateNotifications) {
-				const { author, title, description, repo, ownerAvatar } = newNotifications[0];
+			const pushNotification = newNotifications[0];
+			if (
+				window.__TAURI__ &&
+				$githubNotifications.length &&
+				pushNotification.unread &&
+				$settings.activateNotifications
+			) {
+				const { author, title, description, repo, ownerAvatar } = pushNotification;
 				sendNotification({
 					title: `${repo}: ${author ? `${author.login} ` : ''}${description}`,
 					body: title,
@@ -55,11 +58,11 @@
 				});
 			}
 
-			// Add new notifications to the store and remove duplicates
-			githubNotifications.update((previous) => [
+			// Remove duplicates and add new notifications to the store
+			$githubNotifications = [
 				...newNotifications,
-				...previous.filter((item) => !newNotifications.find((n) => n.id === item.id))
-			]);
+				...$githubNotifications.filter((item) => !newNotifications.find((n) => n.id === item.id))
+			];
 
 			// Update watched repos
 			const savedWatchedRepos = storage.get('github-watched-repos');

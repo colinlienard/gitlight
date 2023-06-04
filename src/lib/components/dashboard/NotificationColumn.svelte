@@ -81,7 +81,7 @@
 		</ul>
 	{:else if !empty}
 		<ul class="list" class:empty bind:this={list}>
-			{#each notifications as notification (notification.id)}
+			{#each notifications as notification (notification)}
 				<li
 					class="item"
 					in:receive={{ key: notification.id }}
