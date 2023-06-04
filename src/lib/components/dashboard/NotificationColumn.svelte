@@ -30,6 +30,7 @@
 
 	let list: HTMLUListElement;
 	let scrolled = false;
+	let empty = !notifications.length;
 
 	const handleScroll = debounce((e: Event) => {
 		scrolled = (e.target as HTMLElement).scrollTop > 100;
@@ -47,6 +48,14 @@
 	onDestroy(() => {
 		list?.removeEventListener('scroll', handleScroll);
 	});
+
+	$: if (notifications.length) {
+		empty = false;
+	} else {
+		setTimeout(() => {
+			empty = true;
+		}, settings.duration as number);
+	}
 </script>
 
 <div class="column" class:vertical={$largeScreen}>
@@ -70,8 +79,8 @@
 			<li><SkeletonEvent /></li>
 			<li><SkeletonEvent /></li>
 		</ul>
-	{:else if notifications.length}
-		<ul class="list" class:empty={!notifications.length} bind:this={list}>
+	{:else if !empty}
+		<ul class="list" class:empty bind:this={list}>
 			{#each notifications as notification (notification.id)}
 				<li
 					class="item"
