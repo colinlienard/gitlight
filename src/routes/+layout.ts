@@ -33,9 +33,9 @@ export async function load({ url }) {
 	// Set user data
 	if (!user && accessToken) {
 		try {
-			const { name, login, avatar_url } = (await fetchGithub('user', {
+			const { name, login, avatar_url } = await fetchGithub<GithubUser>('user', {
 				accessToken
-			})) as GithubUser;
+			});
 			user = { name, login, avatar: avatar_url };
 			storage.set('user', user);
 		} catch {

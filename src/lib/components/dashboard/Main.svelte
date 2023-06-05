@@ -124,7 +124,7 @@
 				placeholder="Click on 📌 to mark an event as pinned."
 				{transitions}
 			/>
-			<Separator vertical={$largeScreen} marginX={1.5} />
+			<Separator vertical={$largeScreen} />
 			<NotificationColumn
 				icon={Mail}
 				title="Unread"

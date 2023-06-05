@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { listen } from '@tauri-apps/api/event';
-	import { enable } from 'tauri-plugin-autostart-api';
+	import { enable, isEnabled } from 'tauri-plugin-autostart-api';
 	import { goto } from '$app/navigation';
 	import { storage } from '~/lib/helpers';
 
 	let onTauriApp = false;
 
-	onMount(() => {
+	onMount(async () => {
 		if (window.__TAURI__) {
 			onTauriApp = true;
 
@@ -22,7 +22,9 @@
 			});
 
 			// Enable autostart
-			enable();
+			if (!(await isEnabled())) {
+				enable();
+			}
 		}
 	});
 </script>

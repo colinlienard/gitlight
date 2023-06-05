@@ -7,7 +7,7 @@ type Options = {
 	body?: Record<string, unknown>;
 };
 
-export async function fetchGithub(url: string, options?: Options): Promise<unknown> {
+export async function fetchGithub<T = void>(url: string, options?: Options): Promise<T> {
 	let { accessToken } = options || {};
 	if (!accessToken) {
 		page.subscribe(({ data }) => {
@@ -25,12 +25,12 @@ export async function fetchGithub(url: string, options?: Options): Promise<unkno
 		cache: options?.noCache ? 'no-store' : undefined
 	});
 
-	if (options?.method) return;
+	if (options?.method) return undefined as T;
 
 	if (response.ok) {
 		const data = await response.json();
 		return data;
 	}
 
-	throw new Error('Failed to fetch');
+	throw new Error(response.statusText);
 }

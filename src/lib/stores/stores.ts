@@ -5,7 +5,7 @@ export const filteredNotifications = writable<NotificationData[]>([]);
 
 export const githubNotifications = writable<NotificationData[]>([]);
 
-export const savedEventIds = writable<SavedNotifications | null>(null);
+export const savedNotifications = writable<SavedNotifications>([]);
 
 export const watchedRepos = writable<WatchedRepo[]>([]);
 

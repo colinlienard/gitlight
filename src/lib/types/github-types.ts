@@ -29,6 +29,8 @@ export type GithubIssue = {
 	user: GithubUser;
 	labels: GithubLabel[];
 	html_url: string;
+	comments: number;
+	comments_url: string;
 };
 
 export type GithubPullRequest = GithubIssue & {
@@ -36,6 +38,8 @@ export type GithubPullRequest = GithubIssue & {
 	merged_at: string | null;
 	merged_by?: GithubUser;
 	draft: boolean;
+	review_comments: number;
+	review_comments_url: string;
 };
 
 export type GithubCommit = {
@@ -51,6 +55,7 @@ export type GithubComment = {
 	body: string;
 	html_url: string;
 	user: GithubUser;
+	created_at: string;
 };
 
 export type GithubRelease = {
@@ -70,23 +75,32 @@ export type GithubRelease = {
 
 export type GithubItem = GithubIssue | GithubRepository | GithubCommit | GithubRelease;
 
-export type GithubNotificationType = 'PullRequest' | 'Issue' | 'Commit' | 'Release' | 'Discussion';
+export type GithubNotificationType =
+	| 'PullRequest'
+	| 'Issue'
+	| 'Commit'
+	| 'Release'
+	| 'Discussion'
+	| 'CheckSuite';
+
+export type GithubNotificationReason =
+	| 'assign'
+	| 'author'
+	| 'comment'
+	| 'ci_activity'
+	| 'invitation'
+	| 'manual'
+	| 'mention'
+	| 'review_requested'
+	| 'security_alert'
+	| 'state_change'
+	| 'subscribed'
+	| 'team_mention';
 
 export type GithubNotification = {
 	id: string;
-	reason:
-		| 'assign'
-		| 'author'
-		| 'comment'
-		| 'ci_activity'
-		| 'invitation'
-		| 'manual'
-		| 'mention'
-		| 'review_requested'
-		| 'security_alert'
-		| 'state_change'
-		| 'subscribed'
-		| 'team_mention';
+	last_read_at: string;
+	reason: GithubNotificationReason;
 	repository: GithubRepository;
 	subject: {
 		latest_comment_url: string | null;

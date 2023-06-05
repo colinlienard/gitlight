@@ -14,6 +14,7 @@
 		{ name: 'Pull requests', type: 'PullRequest', active: true, number: 0 },
 		{ name: 'Issues', type: 'Issue', active: true, number: 0 },
 		{ name: 'Commits', type: 'Commit', active: true, number: 0 },
+		{ name: 'Workflow', type: 'CheckSuite', active: true, number: 0 },
 		{ name: 'Discussions', type: 'Discussion', active: true, number: 0 },
 		{ name: 'Releases', type: 'Release', active: true, number: 0 }
 	];
