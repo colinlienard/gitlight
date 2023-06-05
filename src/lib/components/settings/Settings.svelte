@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import { Button, InlineSelect } from '~/lib/components';
 	import { Modal, Separator, Switch } from '~/lib/components';
-	import { Github, Gitlab } from '~/lib/icons';
+	import { ExternalLink, Github, Gitlab } from '~/lib/icons';
 	import LogOutButton from './LogOutButton.svelte';
 	import { onDestroy, onMount } from 'svelte';
 	import { settings } from '~/lib/stores';
@@ -61,6 +61,23 @@
 		<Switch label="Mark an event as read when pinned" bind:active={$settings.readWhenPin} />
 		<InlineSelect label="Notification axis" {options} bind:value={$settings.notificationAxis} />
 		<Separator marginY={1} />
+		<h3 class="title">GitHub links</h3>
+		<div class="wrapper">
+			<Button
+				href="https://github.com/settings/connections/applications/3db3813c5828d8bbe530"
+				external
+				small
+				type="secondary"
+			>
+				<ExternalLink />
+				Organization access
+			</Button>
+			<Button href="https://github.com/settings/notifications" external small type="secondary">
+				<ExternalLink />
+				Notification settings
+			</Button>
+		</div>
+		<Separator marginY={1} />
 		<h3 class="title">Accounts</h3>
 		<ul class="accounts-wrapper">
 			<li class="account">
@@ -113,6 +130,11 @@
 
 		.title {
 			@include typography.bold;
+		}
+
+		.wrapper {
+			display: flex;
+			gap: 1rem;
 		}
 
 		.accounts-wrapper {
