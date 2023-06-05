@@ -73,13 +73,13 @@ export async function createNotificationData(
 			let description = 'New activity on issue';
 			if (
 				state == 'open' &&
-				new Date(common.time).getTime() - new Date(created_at).getTime() < 60000
+				new Date(common.time).getTime() - new Date(created_at).getTime() < 30000
 			) {
 				author = { login: user.login, avatar: user.avatar_url };
 				description = 'opened this issue';
 			} else if (
 				state === 'closed' &&
-				new Date(common.time).getTime() - new Date(closed_at as string).getTime() < 60000
+				new Date(common.time).getTime() - new Date(closed_at as string).getTime() < 30000
 			) {
 				author = closed_by ? { login: closed_by.login, avatar: closed_by.avatar_url } : undefined;
 				description = 'closed this issue';
@@ -123,13 +123,13 @@ export async function createNotificationData(
 			let description = 'New activity on pull request';
 			if (
 				state == 'open' &&
-				new Date(common.time).getTime() - new Date(created_at).getTime() < 60000
+				new Date(common.time).getTime() - new Date(created_at).getTime() < 30000
 			) {
 				author = { login: user.login, avatar: user.avatar_url };
 				description = 'opened this pull request';
 			} else if (
 				state === 'closed' &&
-				new Date(common.time).getTime() - new Date(closed_at as string).getTime() < 60000
+				new Date(common.time).getTime() - new Date(closed_at as string).getTime() < 30000
 			) {
 				author = merged_by
 					? { login: merged_by.login, avatar: merged_by.avatar_url }

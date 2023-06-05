@@ -250,7 +250,7 @@
 			@include typography.bold;
 			flex: 0 1 auto;
 			white-space: nowrap;
-			overflow-x: hidden;
+			overflow: hidden;
 			text-overflow: ellipsis;
 		}
 
