@@ -80,7 +80,7 @@
 			<li><SkeletonEvent /></li>
 		</ul>
 	{:else if !empty}
-		<ul class="list" class:empty bind:this={list}>
+		<ul class="list" class:no-scroll={empty || !$largeScreen} bind:this={list}>
 			{#each notifications as notification (notification)}
 				<li
 					class="item"
@@ -143,6 +143,7 @@
 		align-items: center;
 		gap: 0.5rem;
 		margin-right: 1rem;
+		z-index: 1;
 
 		&::before {
 			content: '';
@@ -190,7 +191,7 @@
 		overflow: scroll;
 		height: 100%;
 
-		&.empty {
+		&.no-scroll {
 			overflow: visible;
 		}
 
