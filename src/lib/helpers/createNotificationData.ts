@@ -9,7 +9,15 @@ import type {
 	NotificationData,
 	SavedNotifications
 } from '~/lib/types';
-import { Commit, Discussion, ExclamationMark, Release } from '../icons';
+import {
+	Check,
+	Commit,
+	Cross,
+	Discussion,
+	ExclamationMark,
+	IssueNotPlanned,
+	Release
+} from '../icons';
 import { getIconColor, getIssueIcon, getPullRequestIcon } from './getIcon';
 import { fetchGithub } from './fetchGithub';
 
@@ -116,21 +124,18 @@ export async function createNotificationData(
 				comments,
 				comments_url,
 				review_comments,
-				review_comments_url
+				review_comments_url,
+				commits,
+				commits_url
 			} = data as GithubPullRequest;
 
 			let author;
 			let description = 'New activity on pull request';
-			if (
-				state == 'open' &&
-				new Date(common.time).getTime() - new Date(created_at).getTime() < 30000
-			) {
+			const time = new Date(common.time).getTime();
+			if (state == 'open' && time - new Date(created_at).getTime() < 30000) {
 				author = { login: user.login, avatar: user.avatar_url };
 				description = 'opened this pull request';
-			} else if (
-				state === 'closed' &&
-				new Date(common.time).getTime() - new Date(closed_at as string).getTime() < 30000
-			) {
+			} else if (state === 'closed' && time - new Date(closed_at as string).getTime() < 30000) {
 				author = merged_by
 					? { login: merged_by.login, avatar: merged_by.avatar_url }
 					: { login: user.login, avatar: user.avatar_url };
@@ -138,22 +143,26 @@ export async function createNotificationData(
 			} else if (reason === 'review_requested') {
 				author = { login: user.login, avatar: user.avatar_url };
 				description = 'requested your review';
-			} else if (review_comments || comments) {
-				const [reviewComment, regularComment] = await Promise.all([
+			} else if (review_comments || comments || commits) {
+				const events = await Promise.all([
 					review_comments ? getLatestComment(review_comments_url) : undefined,
-					comments ? getLatestComment(comments_url) : undefined
+					comments ? getLatestComment(comments_url) : undefined,
+					commits ? getLatestCommit(commits_url) : undefined
 				]);
-				if (
-					(reviewComment &&
-						regularComment &&
-						new Date(reviewComment.time).getTime() < new Date(regularComment.time).getTime()) ||
-					(!reviewComment && regularComment)
-				) {
-					author = regularComment.author;
-					description = regularComment.description;
-				} else if (reviewComment) {
-					author = reviewComment.author;
-					description = reviewComment.description;
+				const event = events.reduce<Awaited<ReturnType<typeof getLatestComment>> | undefined>(
+					(previous, current) => {
+						if (!current) return previous;
+						if (!previous) return current;
+						return Math.abs(new Date(current.time).getTime() - time) <
+							Math.abs(new Date(previous.time).getTime() - time)
+							? current
+							: previous;
+					},
+					undefined
+				);
+				if (event) {
+					author = event.author;
+					description = event.description;
 				}
 			}
 
@@ -195,6 +204,29 @@ export async function createNotificationData(
 				iconColor: 'blue'
 			};
 
+		case 'CheckSuite': {
+			const splited = subject.title.split(' ');
+			const workflowName = splited[0];
+			const branch = splited[splited.length - 2];
+			const status = splited[3];
+			const data = {
+				...common,
+				title: `${workflowName} for ${branch}`,
+				description: `Workflow run ${status}`,
+				url: `https://github.com/${repository.full_name}/pull/${branch}`
+			};
+
+			if (subject.title.includes('succeeded')) {
+				return { ...data, icon: Check, iconColor: 'green' };
+			}
+
+			if (subject.title.includes('failed')) {
+				return { ...data, icon: Cross, iconColor: 'red' };
+			}
+
+			return { ...data, icon: IssueNotPlanned, iconColor: 'grey' };
+		}
+
 		default:
 			return {
 				...common,
@@ -213,4 +245,12 @@ async function getLatestComment(url: string) {
 	const body = comment.body.slice(0, 100);
 	const description = `commented: ${body}${body.length === 100 ? '...' : ''}`;
 	return { author, description, time: comment.created_at };
+}
+
+async function getLatestCommit(url: string) {
+	const commits = await fetchGithub<GithubCommit[]>(url);
+	const commit = commits[commits.length - 1];
+	const author = { login: commit.author.login, avatar: commit.author.avatar_url };
+	const description = `committed: ${commit.commit.message}`;
+	return { author, description, time: commit.commit.author.date };
 }

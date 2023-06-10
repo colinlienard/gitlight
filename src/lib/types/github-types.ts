@@ -40,15 +40,21 @@ export type GithubPullRequest = GithubIssue & {
 	draft: boolean;
 	review_comments: number;
 	review_comments_url: string;
+	commits: number;
+	commits_url: string;
 };
 
 export type GithubCommit = {
 	sha: string;
 	url: string;
-	message: string;
 	author: GithubUser;
-	distinct: boolean;
 	html_url: string;
+	commit: {
+		message: string;
+		author: {
+			date: string;
+		};
+	};
 };
 
 export type GithubComment = {
