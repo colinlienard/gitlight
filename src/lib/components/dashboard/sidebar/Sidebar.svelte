@@ -4,10 +4,18 @@
 	import { ScrollbarContainer, Separator, Switch } from '~/lib/components';
 	import { getAppVersion, storage } from '~/lib/helpers';
 	import { browser } from '$app/environment';
-	import { filteredNotifications, githubNotifications, loading, watchedRepos } from '~/lib/stores';
+	import {
+		filteredNotifications,
+		githubNotifications,
+		loading,
+		watchedRepos,
+		settings
+	} from '~/lib/stores';
 	import type { TypeFilters } from '~/lib/types';
 	import SidebarSearch from './SidebarSearch.svelte';
 	import WatchedRepos from './WatchedRepos.svelte';
+	import ArrowRight from '~/lib/icons/ArrowRight.svelte';
+	import Tooltip from '../../common/Tooltip.svelte';
 
 	let search = '';
 	let typeFilters: TypeFilters = [
@@ -88,8 +96,15 @@
 <article class="sidebar">
 	<img src="/images/small-light.webp" alt="" class="gradient" />
 	<header class="header">
-		<Logo />
-		<h1 class="hero">GitLight</h1>
+		<div class="logo-container">
+			<Logo />
+			<h1 class="hero">GitLight</h1>
+		</div>
+		<Tooltip content="Hide sidebar" position="bottom">
+			<button class="hide-button" on:click={() => ($settings.sidebarHidden = true)}>
+				<ArrowRight />
+			</button>
+		</Tooltip>
 	</header>
 	<ScrollbarContainer>
 		<div class="scrollable">
@@ -193,14 +208,44 @@
 		padding: 3rem 2rem 2rem;
 		display: flex;
 		align-items: center;
-		gap: 0.5rem;
+		justify-content: space-between;
+		z-index: 1;
 
-		:global(svg) {
-			height: 2rem;
+		.logo-container {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+
+			:global(svg) {
+				height: 2rem;
+			}
+
+			.hero {
+				@include typography.heading-1;
+			}
 		}
 
-		.hero {
-			@include typography.heading-1;
+		.hide-button {
+			width: 2.25rem;
+			height: 2.25rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: variables.$radius;
+			transition: background-color variables.$transition;
+
+			&:hover {
+				background-color: rgba(variables.$white, 0.05);
+			}
+
+			&:active {
+				background-color: rgba(variables.$white, 0.1);
+			}
+
+			:global(svg) {
+				height: 1.25rem;
+				rotate: 180deg;
+			}
 		}
 	}
 
