@@ -131,16 +131,11 @@ export async function createNotificationData(
 
 			let author;
 			let description = 'New activity on pull request';
-			if (
-				state == 'open' &&
-				new Date(common.time).getTime() - new Date(created_at).getTime() < 30000
-			) {
+			const time = new Date(common.time).getTime();
+			if (state == 'open' && time - new Date(created_at).getTime() < 30000) {
 				author = { login: user.login, avatar: user.avatar_url };
 				description = 'opened this pull request';
-			} else if (
-				state === 'closed' &&
-				new Date(common.time).getTime() - new Date(closed_at as string).getTime() < 30000
-			) {
+			} else if (state === 'closed' && time - new Date(closed_at as string).getTime() < 30000) {
 				author = merged_by
 					? { login: merged_by.login, avatar: merged_by.avatar_url }
 					: { login: user.login, avatar: user.avatar_url };
@@ -149,31 +144,25 @@ export async function createNotificationData(
 				author = { login: user.login, avatar: user.avatar_url };
 				description = 'requested your review';
 			} else if (review_comments || comments || commits) {
-				const [reviewComment, regularComment, commit] = await Promise.all([
+				const events = await Promise.all([
 					review_comments ? getLatestComment(review_comments_url) : undefined,
 					comments ? getLatestComment(comments_url) : undefined,
 					commits ? getLatestCommit(commits_url) : undefined
 				]);
-				const reviewCommentTime = reviewComment ? new Date(reviewComment.time).getTime() : 0;
-				const regularCommentTime = regularComment ? new Date(regularComment.time).getTime() : 0;
-				const commitTime = commit ? new Date(commit.time).getTime() : 0;
-				if (
-					reviewComment &&
-					reviewCommentTime > regularCommentTime &&
-					reviewCommentTime > commitTime
-				) {
-					author = reviewComment.author;
-					description = reviewComment.description;
-				} else if (
-					regularComment &&
-					regularCommentTime > reviewCommentTime &&
-					regularCommentTime > commitTime
-				) {
-					author = regularComment.author;
-					description = regularComment.description;
-				} else if (commit) {
-					author = commit.author;
-					description = commit.description;
+				const event = events.reduce<Awaited<ReturnType<typeof getLatestComment>> | undefined>(
+					(previous, current) => {
+						if (!current) return previous;
+						if (!previous) return current;
+						return Math.abs(new Date(current.time).getTime() - time) <
+							Math.abs(new Date(previous.time).getTime() - time)
+							? current
+							: previous;
+					},
+					undefined
+				);
+				if (event) {
+					author = event.author;
+					description = event.description;
 				}
 			}
 
