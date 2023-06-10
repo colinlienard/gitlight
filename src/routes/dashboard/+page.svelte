@@ -136,7 +136,7 @@
 	<title>GitLight • Dashboard</title>
 </svelte:head>
 
-<div class="container">
+<div class="container" class:sidebar-hidden={$settings.sidebarHidden}>
 	<Sidebar />
 	<Main {synced} />
 </div>
@@ -148,5 +148,12 @@
 
 	.container {
 		display: flex;
+		width: 100vw;
+		transition: ease-in-out 0.3s;
+
+		&.sidebar-hidden {
+			width: calc(100vw + 20rem);
+			translate: -20rem;
+		}
 	}
 </style>

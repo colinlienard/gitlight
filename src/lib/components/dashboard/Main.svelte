@@ -1,15 +1,16 @@
 <script lang="ts">
-	import { crossfade } from 'svelte/transition';
+	import { crossfade, slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 	import {
 		NotificationColumn,
 		Settings,
 		Separator,
 		Banner,
-		ScrollbarContainer
+		ScrollbarContainer,
+		Tooltip
 	} from '~/lib/components';
 	import { filteredNotifications, githubNotifications, largeScreen, settings } from '~/lib/stores';
-	import { Check, Github, Gitlab, Mail, Pin, Refresh } from '~/lib/icons';
+	import { Check, Github, Gitlab, Logo, Mail, Pin, Refresh } from '~/lib/icons';
 	import { fetchGithub } from '~/lib/helpers';
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
@@ -85,6 +86,17 @@
 <main class="main">
 	<Banner />
 	<header class="header">
+		{#if $settings.sidebarHidden}
+			<Tooltip content="Show sidebar" position="bottom">
+				<button
+					class="logo-button"
+					on:click={() => ($settings.sidebarHidden = false)}
+					transition:slide={{ axis: 'x', duration: 300, easing: cubicInOut }}
+				>
+					<Logo />
+				</button>
+			</Tooltip>
+		{/if}
 		<h1 class="title">Notifications</h1>
 		<div class="sync-pill" class:loading={!synced}>
 			<Refresh />
@@ -165,6 +177,10 @@
 		padding: 3rem 2rem 2rem;
 		display: flex;
 		align-items: center;
+
+		.logo-button {
+			margin-right: 1rem;
+		}
 
 		.title {
 			@include typography.heading-1;

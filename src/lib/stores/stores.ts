@@ -15,7 +15,8 @@ export const settings = writable<Settings>({
 	activateNotifications: true,
 	readWhenOpenInBrowser: true,
 	readWhenPin: false,
-	notificationAxis: 'Auto'
+	notificationAxis: 'Auto',
+	sidebarHidden: false
 });
 
 export const largeScreen = writable<boolean>(true);

@@ -75,4 +75,5 @@ export type Settings = {
 	readWhenOpenInBrowser: boolean;
 	readWhenPin: boolean;
 	notificationAxis: 'Auto' | 'Vertical' | 'Horizontal';
+	sidebarHidden: boolean;
 };
