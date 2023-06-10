@@ -1,20 +1,24 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Button, InlineSelect } from '~/lib/components';
-	import { Modal, Separator, Switch } from '~/lib/components';
-	import { ExternalLink, Github, Gitlab } from '~/lib/icons';
-	import LogOutButton from './LogOutButton.svelte';
-	import { onDestroy, onMount } from 'svelte';
+	import { Modal, Separator } from '~/lib/components';
+	import { onDestroy, onMount, type ComponentType } from 'svelte';
 	import { settings } from '~/lib/stores';
 	import { storage } from '~/lib/helpers';
-	import type { Settings } from '~/lib/types';
 	import { browser } from '$app/environment';
+	import Accounts from './Accounts.svelte';
+	import GithubSettings from './GithubSettings.svelte';
+	import Preferences from './Preferences.svelte';
 
-	let user = $page.data.session?.user;
 	let mounted = false;
 	let forceOpenSettings = false;
+	let currentTab = 0;
 
-	const options: Array<Settings['notificationAxis']> = ['Auto', 'Vertical', 'Horizontal'];
+	const user = $page.data.session?.user;
+	const tabs: Array<{ name: string; component: ComponentType }> = [
+		{ name: 'Preferences', component: Preferences },
+		{ name: 'Accounts', component: Accounts },
+		{ name: 'GitHub settings', component: GithubSettings }
+	];
 
 	function handleKeyDown(event: KeyboardEvent) {
 		if (browser && event.key === ',' && event.metaKey) {
@@ -49,64 +53,17 @@
 		<img class="trigger" src={user?.avatar} alt="" />
 	</button>
 	<div class="content" slot="content">
-		<h3 class="title">Preferences</h3>
-		<Switch
-			label="Activate push notifications (only on desktop app)"
-			bind:active={$settings.activateNotifications}
-		/>
-		<Switch
-			label="Mark an event as read when opening in the browser"
-			bind:active={$settings.readWhenOpenInBrowser}
-		/>
-		<Switch label="Mark an event as read when pinned" bind:active={$settings.readWhenPin} />
-		<InlineSelect label="Notification axis" {options} bind:value={$settings.notificationAxis} />
-		<Separator marginY={1} />
-		<h3 class="title">GitHub links</h3>
-		<div class="wrapper">
-			<Button
-				href="https://github.com/settings/connections/applications/3db3813c5828d8bbe530"
-				external
-				small
-				type="secondary"
-			>
-				<ExternalLink />
-				Organization access
-			</Button>
-			<Button href="https://github.com/settings/notifications" external small type="secondary">
-				<ExternalLink />
-				Notification settings
-			</Button>
-		</div>
-		<Separator marginY={1} />
-		<h3 class="title">Accounts</h3>
-		<ul class="accounts-wrapper">
-			<li class="account">
-				<div class="header">
-					<Github />
-					<h4 class="title">GitHub</h4>
-				</div>
-				<div class="content">
-					<figure class="user">
-						<img class="image" src={user?.avatar} alt="" />
-						<figcaption class="user-info">
-							<p class="sub">Logged in as</p>
-							<p class="name">{user?.name}</p>
-						</figcaption>
-					</figure>
-					<LogOutButton />
-				</div>
-			</li>
-			<li class="account">
-				<div class="header">
-					<Gitlab />
-					<h4 class="title">GitLab</h4>
-				</div>
-				<div class="content">
-					<p class="sub">Not logged in.</p>
-					<Button small disabled>Log in</Button>
-				</div>
-			</li>
+		<ul class="tabs">
+			{#each tabs as tab, index}
+				<li class="tab" class:active={currentTab === index}>
+					<button on:click={() => (currentTab = index)}>
+						{tab.name}
+					</button>
+				</li>
+			{/each}
 		</ul>
+		<Separator vertical />
+		<svelte:component this={tabs[currentTab].component} />
 	</div>
 </Modal>
 
@@ -125,67 +82,21 @@
 
 	.content {
 		display: flex;
-		flex-direction: column;
-		gap: 1rem;
+		gap: 2rem;
+		height: 100%;
 
-		.title {
-			@include typography.bold;
-		}
-
-		.wrapper {
-			display: flex;
-			gap: 1rem;
-		}
-
-		.accounts-wrapper {
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-			gap: 1rem;
-		}
-
-		.account {
-			@include mixins.shiny(variables.$grey-2, false);
+		.tabs {
 			display: flex;
 			flex-direction: column;
+			gap: 1.5rem;
+			width: 10rem;
 
-			.header {
-				padding: 1rem;
-				display: flex;
-				align-items: center;
-				gap: 0.5rem;
-				border-bottom: 1px solid variables.$grey-3;
+			.tab {
+				transition: color variables.$transition;
 
-				:global(svg) {
-					height: 1.25rem;
+				&:not(:hover, .active) {
+					color: variables.$grey-4;
 				}
-			}
-
-			.content {
-				padding: 1rem;
-				justify-content: space-between;
-				height: 100%;
-			}
-
-			.user {
-				display: flex;
-				align-items: center;
-				gap: 0.5rem;
-
-				.image {
-					width: 2rem;
-					height: 2rem;
-					border-radius: 50%;
-				}
-
-				.user-info {
-					display: flex;
-					flex-direction: column;
-					gap: 0.25rem;
-				}
-			}
-
-			.sub {
-				color: variables.$grey-4;
 			}
 		}
 	}

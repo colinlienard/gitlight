@@ -80,6 +80,7 @@
 		position: fixed;
 		inset: 0;
 		backdrop-filter: blur(0.25rem);
+		-webkit-backdrop-filter: blur(0.25rem);
 		background-color: rgba(black, 0.5);
 		cursor: not-allowed;
 		z-index: 998;
@@ -90,10 +91,13 @@
 		top: 50%;
 		left: 50%;
 		translate: -50% -50%;
+		display: flex;
+		flex-direction: column;
 		background-color: variables.$grey-1;
 		border: 1px solid variables.$grey-2;
 		border-radius: variables.$radius;
-		width: 40rem;
+		width: min(50rem, calc(100vw - 4rem));
+		height: min(40rem, calc(100vh - 4rem));
 		box-shadow: 0 1rem 2rem rgba(black, 0.25);
 		z-index: 999;
 
@@ -133,6 +137,7 @@
 
 		.content {
 			padding: 2rem;
+			height: 100%;
 		}
 	}
 </style>
