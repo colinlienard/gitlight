@@ -24,9 +24,13 @@
 	const user = $page.data.session?.user;
 
 	function handleKeyDown(event: KeyboardEvent) {
-		if (browser && event.key === ',' && event.metaKey) {
+		if (!browser) return;
+		if (event.key === ',' && event.metaKey) {
 			event.preventDefault();
 			forceOpenSettings = !forceOpenSettings;
+		} else if (event.key === 'Escape') {
+			event.preventDefault();
+			forceOpenSettings = false;
 		}
 	}
 
