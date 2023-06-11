@@ -1,32 +1,46 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Button, InlineSelect } from '~/lib/components';
-	import { Modal, Separator, Switch } from '~/lib/components';
-	import { ExternalLink, Github, Gitlab } from '~/lib/icons';
-	import LogOutButton from './LogOutButton.svelte';
-	import { onDestroy, onMount } from 'svelte';
-	import { settings } from '~/lib/stores';
-	import { storage } from '~/lib/helpers';
-	import type { Settings } from '~/lib/types';
+	import { Modal, ScrollbarContainer, Separator } from '~/lib/components';
+	import { onDestroy, onMount, type ComponentType } from 'svelte';
+	import { settings, updateAvailable } from '~/lib/stores';
+	import { fetchGithub, getAppVersion, storage } from '~/lib/helpers';
 	import { browser } from '$app/environment';
+	import Accounts from './Accounts.svelte';
+	import GithubSettings from './GithubSettings.svelte';
+	import Preferences from './Preferences.svelte';
+	import Update from './Update.svelte';
+	import type { GithubRelease } from '~/lib/types';
 
-	let user = $page.data.session?.user;
 	let mounted = false;
 	let forceOpenSettings = false;
+	let currentTab = 0;
+	$: tabs = [
+		{ name: 'Preferences', component: Preferences },
+		{ name: 'GitHub settings', component: GithubSettings },
+		{ name: 'Accounts', component: Accounts },
+		{ name: 'Update', indicator: !!$updateAvailable, component: Update }
+	] satisfies Array<{ name: string; indicator?: boolean; component: ComponentType }>;
 
-	const options: Array<Settings['notificationAxis']> = ['Auto', 'Vertical', 'Horizontal'];
+	const user = $page.data.session?.user;
 
 	function handleKeyDown(event: KeyboardEvent) {
-		if (browser && event.key === ',' && event.metaKey) {
+		if (!browser) return;
+		if (event.key === ',' && event.metaKey) {
 			event.preventDefault();
 			forceOpenSettings = !forceOpenSettings;
+		} else if (event.key === 'Escape') {
+			event.preventDefault();
+			forceOpenSettings = false;
 		}
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		const saved = storage.get('settings');
 		if (saved) {
 			settings.set(saved);
+		} else {
+			forceOpenSettings = true;
+			currentTab = 1;
 		}
 		mounted = true;
 
@@ -42,150 +56,139 @@
 	$: if (mounted) {
 		storage.set('settings', $settings);
 	}
+
+	$: if (forceOpenSettings) {
+		currentTab = storage.has('settings') ? 0 : 1;
+
+		(async () => {
+			if (!window.__TAURI__) return;
+
+			const release = await fetchGithub<GithubRelease>(
+				'https://api.github.com/repos/colinlienard/gitlight/releases/latest'
+			);
+			const latest = release.tag_name.split('v')[1];
+			if (latest !== getAppVersion()) {
+				$updateAvailable = latest;
+			}
+		})();
+	}
 </script>
 
 <Modal title="Settings" bind:open={forceOpenSettings}>
-	<button slot="trigger">
-		<img class="trigger" src={user?.avatar} alt="" />
+	<button class="trigger" slot="trigger">
+		<img class="image" src={user?.avatar} alt="" />
+		{#if $updateAvailable}
+			<div class="indicator" />
+		{/if}
 	</button>
 	<div class="content" slot="content">
-		<h3 class="title">Preferences</h3>
-		<Switch
-			label="Activate push notifications (only on desktop app)"
-			bind:active={$settings.activateNotifications}
-		/>
-		<Switch
-			label="Mark an event as read when opening in the browser"
-			bind:active={$settings.readWhenOpenInBrowser}
-		/>
-		<Switch label="Mark an event as read when pinned" bind:active={$settings.readWhenPin} />
-		<InlineSelect label="Notification axis" {options} bind:value={$settings.notificationAxis} />
-		<Separator marginY={1} />
-		<h3 class="title">GitHub links</h3>
-		<div class="wrapper">
-			<Button
-				href="https://github.com/settings/connections/applications/3db3813c5828d8bbe530"
-				external
-				small
-				type="secondary"
-			>
-				<ExternalLink />
-				Organization access
-			</Button>
-			<Button href="https://github.com/settings/notifications" external small type="secondary">
-				<ExternalLink />
-				Notification settings
-			</Button>
-		</div>
-		<Separator marginY={1} />
-		<h3 class="title">Accounts</h3>
-		<ul class="accounts-wrapper">
-			<li class="account">
-				<div class="header">
-					<Github />
-					<h4 class="title">GitHub</h4>
-				</div>
-				<div class="content">
-					<figure class="user">
-						<img class="image" src={user?.avatar} alt="" />
-						<figcaption class="user-info">
-							<p class="sub">Logged in as</p>
-							<p class="name">{user?.name}</p>
-						</figcaption>
-					</figure>
-					<LogOutButton />
-				</div>
-			</li>
-			<li class="account">
-				<div class="header">
-					<Gitlab />
-					<h4 class="title">GitLab</h4>
-				</div>
-				<div class="content">
-					<p class="sub">Not logged in.</p>
-					<Button small disabled>Log in</Button>
-				</div>
-			</li>
+		<ul class="tabs">
+			{#each tabs as tab, index}
+				<li class="tab" class:active={currentTab === index}>
+					<button on:click={() => (currentTab = index)}>
+						{tab.name}
+						{#if tab.indicator}
+							<div class="indicator">1</div>
+						{/if}
+					</button>
+				</li>
+			{/each}
 		</ul>
+		<Separator vertical />
+		<ScrollbarContainer>
+			<div class="tab-content">
+				<svelte:component this={tabs[currentTab].component} />
+			</div>
+		</ScrollbarContainer>
 	</div>
 </Modal>
 
 <style lang="scss">
 	.trigger {
-		width: 2rem;
-		height: 2rem;
-		border-radius: 50%;
-		background-color: variables.$grey-2;
+		position: relative;
 		transition: opacity variables.$transition;
 
 		&:hover {
 			opacity: 0.75;
 		}
+
+		.image {
+			width: 2rem;
+			height: 2rem;
+			border-radius: 50%;
+			background-color: variables.$grey-2;
+		}
+
+		.indicator {
+			width: 1rem;
+			height: 1rem;
+			border-radius: 50%;
+			background-color: variables.$blue-2;
+			position: absolute;
+			inset: -0.25rem auto auto -0.25rem;
+			box-shadow: 0 0 0.5rem variables.$grey-2;
+			animation: pulse 1s infinite ease-in-out;
+
+			@keyframes pulse {
+				0% {
+					scale: 0.75;
+				}
+				50% {
+					scale: 1;
+				}
+				100% {
+					scale: 0.75;
+				}
+			}
+		}
 	}
 
 	.content {
 		display: flex;
-		flex-direction: column;
-		gap: 1rem;
+		gap: 2rem;
+		height: 100%;
 
-		.title {
-			@include typography.bold;
-		}
-
-		.wrapper {
-			display: flex;
-			gap: 1rem;
-		}
-
-		.accounts-wrapper {
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-			gap: 1rem;
-		}
-
-		.account {
-			@include mixins.shiny(variables.$grey-2, false);
+		.tabs {
 			display: flex;
 			flex-direction: column;
+			gap: 1.5rem;
+			width: 10rem;
 
-			.header {
-				padding: 1rem;
-				display: flex;
-				align-items: center;
-				gap: 0.5rem;
-				border-bottom: 1px solid variables.$grey-3;
+			.tab {
+				transition: color variables.$transition;
 
-				:global(svg) {
-					height: 1.25rem;
-				}
-			}
-
-			.content {
-				padding: 1rem;
-				justify-content: space-between;
-				height: 100%;
-			}
-
-			.user {
-				display: flex;
-				align-items: center;
-				gap: 0.5rem;
-
-				.image {
-					width: 2rem;
-					height: 2rem;
-					border-radius: 50%;
+				&:not(:hover, .active) {
+					color: variables.$grey-4;
 				}
 
-				.user-info {
-					display: flex;
-					flex-direction: column;
-					gap: 0.25rem;
+				button {
+					position: relative;
+
+					.indicator {
+						@include typography.small;
+						@include typography.bold;
+						width: 1.5rem;
+						height: 1.5rem;
+						border-radius: 50%;
+						background-color: variables.$blue-2;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						color: variables.$white;
+						position: absolute;
+						inset: -0.2rem auto auto calc(100% + 0.5rem);
+					}
 				}
 			}
+		}
 
-			.sub {
-				color: variables.$grey-4;
+		.tab-content {
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+
+			:global(h3) {
+				@include typography.bold;
 			}
 		}
 	}
