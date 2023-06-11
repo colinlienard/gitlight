@@ -31,6 +31,7 @@
 	let list: HTMLUListElement;
 	let scrolled = false;
 	let empty = !notifications.length;
+	let noScroll = false;
 
 	const handleScroll = debounce((e: Event) => {
 		scrolled = (e.target as HTMLElement).scrollTop > 100;
@@ -56,6 +57,18 @@
 			empty = true;
 		}, settings.duration as number);
 	}
+
+	$: {
+		notifications;
+		noScroll = true;
+		setTimeout(() => {
+			noScroll = false;
+		}, settings.duration as number);
+	}
+
+	function conditionalFlip(...args: Parameters<typeof flip>) {
+		return args[2] ? flip(...args) : { duration: 0, easing: () => 0 };
+	}
 </script>
 
 <div class="column" class:vertical={$largeScreen}>
@@ -74,31 +87,29 @@
 			</Button>
 		</div>
 	{/if}
-	{#if $loading}
-		<ul class="list">
+	<ul class="list" class:no-scroll={noScroll || empty || !$largeScreen} bind:this={list}>
+		{#if $loading}
 			<li><SkeletonEvent /></li>
 			<li><SkeletonEvent /></li>
-		</ul>
-	{:else if !empty}
-		<ul class="list" class:no-scroll={empty || !$largeScreen} bind:this={list}>
-			{#each notifications as notification (notification)}
+		{:else if !empty}
+			{#each notifications as notification, index (notification)}
 				<li
 					class="item"
 					in:receive={{ key: notification.id }}
 					out:send={{ key: notification.id }}
-					animate:flip={settings}
+					animate:conditionalFlip={index < 5 ? settings : undefined}
 				>
 					<Notification data={notification} />
 				</li>
 			{/each}
-		</ul>
-	{:else}
-		<div class="placeholder">
-			<Folder />
-			<h4 class="title">No events to display</h4>
-			<p>{placeholder}</p>
-		</div>
-	{/if}
+		{:else}
+			<div class="placeholder">
+				<Folder />
+				<h4 class="title">No events to display</h4>
+				<p>{placeholder}</p>
+			</div>
+		{/if}
+	</ul>
 </div>
 
 <style lang="scss">
@@ -132,8 +143,8 @@
 		&::after {
 			content: '';
 			position: absolute;
-			inset: calc(100% - 1rem) 0 0 0;
-			background-image: linear-gradient(transparent, variables.$grey-1);
+			inset: calc(100% - 1rem) 0 -2rem 0;
+			background-image: linear-gradient(transparent, variables.$grey-1 1rem);
 			z-index: 1;
 		}
 	}
