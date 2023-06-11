@@ -19,4 +19,6 @@ export const settings = writable<Settings>({
 	sidebarHidden: false
 });
 
+export const updateAvailable = writable<string | false>(false);
+
 export const largeScreen = writable<boolean>(true);

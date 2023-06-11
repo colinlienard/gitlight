@@ -138,6 +138,7 @@
 		.content {
 			padding: 2rem;
 			height: 100%;
+			overflow: hidden;
 		}
 	}
 </style>
