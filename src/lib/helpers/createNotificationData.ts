@@ -20,6 +20,7 @@ import {
 } from '../icons';
 import { getIconColor, getIssueIcon, getPullRequestIcon } from './getIcon';
 import { fetchGithub } from './fetchGithub';
+import { removeMarkdownSymbols } from './removeMarkdownSymbols';
 
 export async function createNotificationData(
 	{ id, repository, subject, unread: u, updated_at, reason }: GithubNotification,
@@ -242,7 +243,7 @@ async function getLatestComment(url: string) {
 	const comments = await fetchGithub<GithubComment[]>(url);
 	const comment = comments[comments.length - 1];
 	const author = { login: comment.user.login, avatar: comment.user.avatar_url };
-	const body = comment.body.slice(0, 100);
+	const body = removeMarkdownSymbols(comment.body).slice(0, 100);
 	const description = `commented: ${body}${body.length === 100 ? '...' : ''}`;
 	return { author, description, time: comment.created_at };
 }
