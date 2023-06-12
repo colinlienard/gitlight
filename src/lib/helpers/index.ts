@@ -6,4 +6,5 @@ export * from './getAppVersion';
 export * from './getHex';
 export * from './getIcon';
 export * from './lightenColor';
+export * from './removeMarkdownSymbols';
 export * from './storage';
