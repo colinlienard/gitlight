@@ -4,7 +4,7 @@ import type { GithubLabel, GithubNotificationType, GithubRepository } from './gi
 export type User = {
 	name?: string;
 	login: string;
-	avatar: string;
+	avatar?: string;
 };
 
 export type Session = {

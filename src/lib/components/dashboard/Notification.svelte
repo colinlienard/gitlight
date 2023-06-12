@@ -97,10 +97,10 @@
 		<p class="description">
 			{#if author}
 				<span class="strong">{author.login}</span>
-				<img class="image" src={author.avatar} alt="" width="20px" height="20px" loading="lazy" />
-				<span class="subtle">
-					{description}
-				</span>
+				{#if author.avatar}
+					<img class="image" src={author.avatar} alt="" width="20px" height="20px" loading="lazy" />
+				{/if}
+				{description}
 			{:else}
 				<span class="strong">{description}</span>
 			{/if}
@@ -165,15 +165,17 @@
 			<div class="description">
 				<span>Previously: </span>
 				{#if previously.author}
-					<span class="strong"> {previously.author.login}</span>
-					<img
-						class="image"
-						src={previously.author.avatar}
-						alt=""
-						width="20px"
-						height="20px"
-						loading="lazy"
-					/>
+					<span class="strong">{previously.author.login}</span>
+					{#if previously.author.avatar}
+						<img
+							class="image"
+							src={previously.author.avatar}
+							alt=""
+							width="20px"
+							height="20px"
+							loading="lazy"
+						/>
+					{/if}
 				{/if}
 				{previously.description}
 			</div>

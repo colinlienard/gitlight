@@ -47,11 +47,13 @@ export type GithubPullRequest = GithubIssue & {
 export type GithubCommit = {
 	sha: string;
 	url: string;
-	author: GithubUser;
+	author?: GithubUser;
 	html_url: string;
 	commit: {
 		message: string;
 		author: {
+			name: string;
+			email: string;
 			date: string;
 		};
 	};
