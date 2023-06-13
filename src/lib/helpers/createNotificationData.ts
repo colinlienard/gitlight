@@ -53,10 +53,12 @@ export async function createNotificationData(
 
 	switch (subject.type) {
 		case 'Commit': {
-			const { author, html_url } = data as GithubCommit;
+			const { author, html_url, commit } = data as GithubCommit;
 			return {
 				...common,
-				author: { login: author.login, avatar: author.avatar_url },
+				author: author
+					? { login: author.login, avatar: author.avatar_url }
+					: { login: commit.author.name },
 				description: 'made a commit',
 				icon: Commit,
 				iconColor: 'blue',
@@ -150,7 +152,7 @@ export async function createNotificationData(
 					comments ? getLatestComment(comments_url) : undefined,
 					commits ? getLatestCommit(commits_url) : undefined
 				]);
-				const event = events.reduce<Awaited<ReturnType<typeof getLatestComment>> | undefined>(
+				const event = events.reduce<Awaited<ReturnType<typeof getLatestCommit>> | undefined>(
 					(previous, current) => {
 						if (!current) return previous;
 						if (!previous) return current;
@@ -251,7 +253,9 @@ async function getLatestComment(url: string) {
 async function getLatestCommit(url: string) {
 	const commits = await fetchGithub<GithubCommit[]>(url);
 	const commit = commits[commits.length - 1];
-	const author = { login: commit.author.login, avatar: commit.author.avatar_url };
+	const author = commit.author
+		? { login: commit.author.login, avatar: commit.author.avatar_url }
+		: { login: commit.commit.author.name };
 	const description = `committed: ${commit.commit.message}`;
 	return { author, description, time: commit.commit.author.date };
 }
