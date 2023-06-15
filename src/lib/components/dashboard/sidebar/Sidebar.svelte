@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { Github, Logo } from '~/lib/icons';
 	import { ScrollbarContainer, Separator, Switch } from '~/lib/components';
 	import { getAppVersion, storage } from '~/lib/helpers';
@@ -83,6 +83,13 @@
 		};
 	}
 
+	// Toggle sidebar when Cmd+S or ctrl+S is pressed
+	function toogleSidebar(event: KeyboardEvent) {
+		if ((event.metaKey || event.ctrlKey) && event.key === 's') {
+			$settings.sidebarHidden = !$settings.sidebarHidden;
+		}
+	}
+
 	onMount(async () => {
 		// Get type filters from storage
 		const savedTypeFilters = storage.get('type-filters');
@@ -90,6 +97,12 @@
 			...filter,
 			active: savedTypeFilters ? savedTypeFilters[index] : true
 		}));
+		window.addEventListener('keydown', toogleSidebar);
+	});
+
+	onDestroy(() => {
+		if (!browser) return;
+		window.removeEventListener('keydown', toogleSidebar);
 	});
 </script>
 
