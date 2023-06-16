@@ -7,9 +7,7 @@ const config = {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter:
-			process.env.APP_ENV === 'vercel'
-				? vercelAdapter()
-				: staticAdapter({ fallback: 'index.html' }),
+			process.env.APP_ENV === 'vercel' ? vercelAdapter() : staticAdapter({ fallback: '200.html' }),
 		alias: {
 			'~': './src'
 		}
