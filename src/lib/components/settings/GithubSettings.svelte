@@ -64,7 +64,7 @@
 		}
 	}
 
-	:global(a) {
+	* ~ :global(a) {
 		width: fit-content;
 	}
 </style>
