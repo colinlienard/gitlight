@@ -77,16 +77,12 @@
 	}
 
 	.background {
-		position: fixed;
-		inset: 0;
-		backdrop-filter: blur(0.25rem);
-		-webkit-backdrop-filter: blur(0.25rem);
-		background-color: rgba(black, 0.5);
+		@include mixins.blurred-background;
 		cursor: not-allowed;
-		z-index: 998;
 	}
 
 	.modal {
+		@include mixins.modal-shadow;
 		position: fixed;
 		top: 50%;
 		left: 50%;
@@ -98,7 +94,6 @@
 		border-radius: variables.$radius;
 		width: min(50rem, calc(100vw - 4rem));
 		height: min(40rem, calc(100vh - 4rem));
-		box-shadow: 0 1rem 2rem rgba(black, 0.25);
 		z-index: 999;
 
 		&.small {

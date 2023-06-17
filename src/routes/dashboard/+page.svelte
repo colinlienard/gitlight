@@ -2,16 +2,17 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { invoke } from '@tauri-apps/api/tauri';
 	import { sendNotification } from '@tauri-apps/api/notification';
-	import { Main, Sidebar } from '~/lib/components';
+	import { Error, Main, Sidebar } from '~/lib/components';
 	import { createNotificationData, fetchGithub, storage } from '~/lib/helpers';
 	import {
+		error,
 		githubNotifications,
 		loading,
 		savedNotifications,
 		settings,
 		watchedRepos
 	} from '~/lib/stores';
-	import type { GithubNotification, WatchedRepo } from '~/lib/types';
+	import type { GithubNotification, NotificationData, WatchedRepo } from '~/lib/types';
 
 	let synced = false;
 	let mounted = false;
@@ -36,11 +37,21 @@
 		}
 
 		if (notifications.length) {
-			const newNotifications = await Promise.all(
-				notifications.map((notification) =>
-					createNotificationData(notification, $savedNotifications)
-				)
-			);
+			let newNotifications: NotificationData[] = [];
+
+			try {
+				newNotifications = await Promise.all(
+					notifications.map((notification) =>
+						createNotificationData(notification, $savedNotifications)
+					)
+				);
+			} catch (e) {
+				synced = true;
+				if (e && typeof e === 'object' && 'stack' in e) {
+					return error.set(e.stack as string);
+				}
+				error.set('An error occured while fetching notifications');
+			}
 
 			// Send push notification
 			const pushNotification = newNotifications[0];
@@ -139,6 +150,9 @@
 <div class="container" class:sidebar-hidden={$settings.sidebarHidden}>
 	<Sidebar />
 	<Main {synced} />
+	{#if $error}
+		<Error />
+	{/if}
 </div>
 
 <style lang="scss">
