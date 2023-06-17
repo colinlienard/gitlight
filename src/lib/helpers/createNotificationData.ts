@@ -96,8 +96,10 @@ export async function createNotificationData(
 				description = 'closed this issue';
 			} else if (comments) {
 				const comment = await getLatestComment(comments_url);
-				author = comment.author;
-				description = comment.description;
+				if (comment) {
+					author = comment.author;
+					description = comment.description;
+				}
 			}
 
 			return {
@@ -243,6 +245,7 @@ export async function createNotificationData(
 
 async function getLatestComment(url: string) {
 	const comments = await fetchGithub<GithubComment[]>(url);
+	if (!comments.length) return undefined;
 	const comment = comments[comments.length - 1];
 	const author = { login: comment.user.login, avatar: comment.user.avatar_url };
 	const body = removeMarkdownSymbols(comment.body).slice(0, 100);
@@ -252,6 +255,7 @@ async function getLatestComment(url: string) {
 
 async function getLatestCommit(url: string) {
 	const commits = await fetchGithub<GithubCommit[]>(url);
+	if (!commits.length) return undefined;
 	const commit = commits[commits.length - 1];
 	const author = commit.author
 		? { login: commit.author.login, avatar: commit.author.avatar_url }
