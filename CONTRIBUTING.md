@@ -2,7 +2,7 @@
 
 👋 Hey, thanks for wanting to improve GitLight!
 
-- [Things to know](#things-to-know)
+- [Before contributing](#before-contributing)
   - [Roadmap](#roadmap)
   - [Tech stack](#tech-stack)
 - [How to contribute](#how-to-contribute)
@@ -14,13 +14,9 @@
     - [Running the project](#running-the-project)
 - [Styleguides](#styleguides)
 
-## Things to know
+## Before contributing
 
-The goal of GitLight is to make developers work faster and stay up to date with their git workflow by providing accurate data, filters and more.
-
-It is focused on receiving and managing notifications. I'm trying to make the UI the more intuitive and easy to use to provide the best experience.
-
-GitLight is firstly a side project but I want to make it as better as it can be.
+The goal of GitLight is to make developers work faster and stay up to date with their git workflow by providing accurate data, filters and more. It is focused on receiving and managing notifications. I'm trying to make the UI more intuitive and easier to use in order to provide the best possible experience.
 
 ### Roadmap
 
@@ -28,18 +24,22 @@ GitLight is firstly a side project but I want to make it as better as it can be.
 
 ### Tech Stack
 
-- **UI** → [Svelte](https://svelte.dev/)
-- **Framework** → [SvelteKit](https://kit.svelte.dev/)
-- **Langage** → [Typescript](https://www.typescriptlang.org/)
-- **Desktop app** → [Tauri](https://tauri.app/)
-- **Deployment** → [Vercel](https://vercel.com)
-- **Package manager** → [pnpm](https://pnpm.io/)
+- UI → [Svelte](https://svelte.dev/)
+- Framework → [SvelteKit](https://kit.svelte.dev/)
+- Langage → [Typescript](https://www.typescriptlang.org/)
+- Desktop app → [Tauri](https://tauri.app/)
+- Deployment → [Vercel](https://vercel.com)
+- Package manager → [pnpm](https://pnpm.io/)
+
+## How to contribute
 
 ### Feature request
 
+If you are using GitLight and are missing a feature that you would find helful, please create an issue. Other maybe also find it missing.
+
 ### Reporting bugs
 
-## How to contribute
+If you hit a bug, you should first check if it's not already reported in the issues, and if not, please create an issue or contact me on Twitter.
 
 ### Running locally
 
@@ -80,4 +80,4 @@ pnpm install
 
 ## Styleguides
 
-pr name, checks, conventionnal commits, eslint & prettier
+PR names should follow the [conventionnal commits](https://www.conventionalcommits.org/en/v1.0.0/) guidelines.
