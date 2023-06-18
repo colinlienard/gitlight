@@ -10,9 +10,15 @@
 		loading,
 		savedNotifications,
 		settings,
+		watchedPersons,
 		watchedRepos
 	} from '~/lib/stores';
-	import type { GithubNotification, NotificationData, WatchedRepo } from '~/lib/types';
+	import type {
+		GithubNotification,
+		NotificationData,
+		WatchedPerson,
+		WatchedRepo
+	} from '~/lib/types';
 
 	let synced = false;
 	let mounted = false;
@@ -96,6 +102,29 @@
 						}
 					];
 				}, [])
+			);
+
+			// Update watched persons
+			watchedPersons.set(
+				$githubNotifications
+					.reduce<WatchedPerson[]>((previous, current) => {
+						if (!current.author) return previous;
+						const index = previous.findIndex((person) => person.login === current?.author?.login);
+						if (index > -1) {
+							const person = previous.splice(index, 1)[0];
+							return [...previous, { ...person, number: person.number + 1 }];
+						}
+						return [
+							...previous,
+							{
+								login: current.author?.login ?? '',
+								avatar: current.author?.avatar ?? '',
+								number: 1,
+								active: true
+							}
+						];
+					}, [])
+					.sort((a, b) => b.number - a.number)
 			);
 		}
 

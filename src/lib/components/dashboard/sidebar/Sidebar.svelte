@@ -9,13 +9,15 @@
 		githubNotifications,
 		loading,
 		watchedRepos,
-		settings
+		settings,
+		watchedPersons
 	} from '~/lib/stores';
 	import type { TypeFilters } from '~/lib/types';
 	import SidebarSearch from './SidebarSearch.svelte';
 	import WatchedRepos from './WatchedRepos.svelte';
 	import ArrowRight from '~/lib/icons/ArrowRight.svelte';
 	import Tooltip from '../../common/Tooltip.svelte';
+	import Persons from './Persons.svelte';
 
 	let search = '';
 	let typeFilters: TypeFilters = [
@@ -26,12 +28,13 @@
 		{ name: 'Discussions', type: 'Discussion', active: true, number: 0 },
 		{ name: 'Releases', type: 'Release', active: true, number: 0 }
 	];
-	let others = true;
 
 	$: mostFiltersAreSelected =
 		typeFilters.filter((filter) => filter.active).length > typeFilters.length / 2;
 	$: mostReposAreSelected =
 		$watchedRepos.filter((filter) => filter.active).length > $watchedRepos.length / 2;
+	$: mostPersonsAreSelected =
+		$watchedPersons.filter((filter) => filter.active).length > $watchedPersons.length / 2;
 
 	// Save type filters to storage
 	$: if (browser && !$loading) {
@@ -52,14 +55,13 @@
 	// Apply filters and search
 	$: filteredNotifications.set(
 		$githubNotifications.filter((notification) => {
-			const subscription = $watchedRepos.find(
-				(subscription) => subscription.id === notification.repoId
-			);
+			const repo = $watchedRepos.find((item) => item.id === notification.repoId);
+			const person = $watchedPersons.find((item) => item.login === notification.author?.login);
 			const searched = notification.title.toLowerCase().includes(search.toLowerCase());
 			const isOfType = typeFilters.some(
 				(filter) => filter.active && filter.type === notification.type
 			);
-			return (subscription ? subscription.active : others) && searched && isOfType;
+			return repo?.active && person?.active && searched && isOfType;
 		})
 	);
 
@@ -90,6 +92,12 @@
 		}
 	}
 
+	function changeSelectAllWatchedPersons(active: boolean) {
+		return () => {
+			watchedPersons.update((previous) => previous.map((item) => ({ ...item, active })));
+		};
+	}
+
 	onMount(async () => {
 		// Get type filters from storage
 		const savedTypeFilters = storage.get('type-filters');
@@ -97,6 +105,7 @@
 			...filter,
 			active: savedTypeFilters ? savedTypeFilters[index] : true
 		}));
+
 		window.addEventListener('keydown', toogleSidebar);
 	});
 
@@ -157,6 +166,22 @@
 						{/if}
 					</div>
 					<WatchedRepos />
+				</div>
+				<Separator />
+				<div class="wrapper">
+					<div class="row">
+						<h2 class="title">Persons</h2>
+						{#if mostPersonsAreSelected}
+							<button class="button" on:click={changeSelectAllWatchedPersons(false)}>
+								Deselect all
+							</button>
+						{:else}
+							<button class="button" on:click={changeSelectAllWatchedPersons(true)}>
+								Select all
+							</button>
+						{/if}
+					</div>
+					<Persons />
 				</div>
 				<Separator />
 				<div class="wrapper">

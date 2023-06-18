@@ -70,6 +70,13 @@ export type WatchedRepo = {
 	active: boolean;
 };
 
+export type WatchedPerson = {
+	login: string;
+	avatar: string;
+	number: number;
+	active: boolean;
+};
+
 export type Settings = {
 	activateNotifications: boolean;
 	readWhenOpenInBrowser: boolean;

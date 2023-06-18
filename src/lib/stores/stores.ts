@@ -1,5 +1,11 @@
 import { writable } from 'svelte/store';
-import type { NotificationData, SavedNotifications, Settings, WatchedRepo } from '~/lib/types';
+import type {
+	NotificationData,
+	SavedNotifications,
+	Settings,
+	WatchedPerson,
+	WatchedRepo
+} from '~/lib/types';
 
 export const filteredNotifications = writable<NotificationData[]>([]);
 
@@ -8,6 +14,8 @@ export const githubNotifications = writable<NotificationData[]>([]);
 export const savedNotifications = writable<SavedNotifications>([]);
 
 export const watchedRepos = writable<WatchedRepo[]>([]);
+
+export const watchedPersons = writable<WatchedPerson[]>([]);
 
 export const loading = writable<boolean>(true);
 
