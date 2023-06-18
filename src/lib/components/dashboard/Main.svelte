@@ -87,7 +87,7 @@
 	<Banner />
 	<header class="header">
 		{#if $settings.sidebarHidden}
-			<Tooltip content="Show sidebar" position="bottom">
+			<Tooltip content="Show sidebar" position="bottom" hover>
 				<button
 					class="logo-button"
 					on:click={() => ($settings.sidebarHidden = false)}

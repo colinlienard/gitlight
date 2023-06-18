@@ -9,6 +9,7 @@ export { default as Discussion } from './Discussion.svelte';
 export { default as ExternalLink } from './ExternalLink.svelte';
 export { default as ExclamationMark } from './ExclamationMark.svelte';
 export { default as Folder } from './Folder.svelte';
+export { default as Gear } from './Gear.svelte';
 export { default as Github } from './Github.svelte';
 export { default as Gitlab } from './Gitlab.svelte';
 export { default as Heart } from './Heart.svelte';

@@ -6,6 +6,7 @@ type StorageMap = {
 	settings: Settings;
 	'github-notifications': SavedNotifications;
 	'github-watched-repos': { id: string; active: boolean }[];
+	'github-watched-persons': { login: string; active: boolean }[];
 	'type-filters': boolean[];
 };
 

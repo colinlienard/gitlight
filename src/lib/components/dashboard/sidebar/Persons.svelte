@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { watchedPersons } from '~/lib/stores';
+	import SidebarSection from './SidebarSection.svelte';
 
 	function handleToggle(login: string) {
 		return (event: MouseEvent) => {
@@ -18,7 +19,7 @@
 	}
 </script>
 
-<div class="container">
+<SidebarSection title="Persons" bind:items={$watchedPersons}>
 	{#each $watchedPersons as { login, avatar, active, number }}
 		<button class="wrapper" class:active on:click={null} on:click={handleToggle(login)}>
 			<img class="image" src={avatar} alt="" />
@@ -26,15 +27,9 @@
 			<span class="number">{number}</span>
 		</button>
 	{/each}
-</div>
+</SidebarSection>
 
 <style lang="scss">
-	.container {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-
 	.wrapper {
 		display: flex;
 		align-items: center;

@@ -3,6 +3,7 @@
 	import { ShrinkableWrapper } from '../../common';
 	import { Repository } from '~/lib/icons';
 	import { watchedRepos } from '~/lib/stores';
+	import SidebarSection from './SidebarSection.svelte';
 
 	type WatchedReposByOwner = {
 		name: string;
@@ -94,7 +95,7 @@
 	}
 </script>
 
-<div class="container">
+<SidebarSection title="Repositories" bind:items={$watchedRepos}>
 	{#each watchedReposByOwner as { name, avatar, number, active, repos }}
 		{#if repos.length === 1}
 			<button
@@ -130,15 +131,9 @@
 			</ShrinkableWrapper>
 		{/if}
 	{/each}
-</div>
+</SidebarSection>
 
 <style lang="scss">
-	.container {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-
 	.wrapper {
 		display: flex;
 		align-items: center;

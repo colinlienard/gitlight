@@ -18,6 +18,7 @@
 	import ArrowRight from '~/lib/icons/ArrowRight.svelte';
 	import Tooltip from '../../common/Tooltip.svelte';
 	import Persons from './Persons.svelte';
+	import SidebarSection from './SidebarSection.svelte';
 
 	let search = '';
 	let typeFilters: TypeFilters = [
@@ -28,13 +29,6 @@
 		{ name: 'Discussions', type: 'Discussion', active: true, number: 0 },
 		{ name: 'Releases', type: 'Release', active: true, number: 0 }
 	];
-
-	$: mostFiltersAreSelected =
-		typeFilters.filter((filter) => filter.active).length > typeFilters.length / 2;
-	$: mostReposAreSelected =
-		$watchedRepos.filter((filter) => filter.active).length > $watchedRepos.length / 2;
-	$: mostPersonsAreSelected =
-		$watchedPersons.filter((filter) => filter.active).length > $watchedPersons.length / 2;
 
 	// Save type filters to storage
 	$: if (browser && !$loading) {
@@ -49,6 +43,14 @@
 		storage.set(
 			'github-watched-repos',
 			$watchedRepos.map(({ id, active }) => ({ id, active }))
+		);
+	}
+
+	// Save watched persons to storage
+	$: if (browser && !$loading) {
+		storage.set(
+			'github-watched-persons',
+			$watchedPersons.map(({ login, active }) => ({ login, active }))
 		);
 	}
 
@@ -73,29 +75,11 @@
 		});
 	}
 
-	function changeSelectAllFilters(active: boolean) {
-		return () => {
-			typeFilters = typeFilters.map((filter) => ({ ...filter, active }));
-		};
-	}
-
-	function changeSelectAllWatchedRepos(active: boolean) {
-		return () => {
-			watchedRepos.update((previous) => previous.map((item) => ({ ...item, active })));
-		};
-	}
-
 	// Toggle sidebar when Cmd+S or ctrl+S is pressed
 	function toogleSidebar(event: KeyboardEvent) {
 		if ((event.metaKey || event.ctrlKey) && event.key === 's') {
 			$settings.sidebarHidden = !$settings.sidebarHidden;
 		}
-	}
-
-	function changeSelectAllWatchedPersons(active: boolean) {
-		return () => {
-			watchedPersons.update((previous) => previous.map((item) => ({ ...item, active })));
-		};
 	}
 
 	onMount(async () => {
@@ -122,7 +106,7 @@
 			<Logo />
 			<h1 class="hero">GitLight</h1>
 		</div>
-		<Tooltip content="Hide sidebar" position="bottom">
+		<Tooltip content="Hide sidebar" position="bottom" hover>
 			<button class="hide-button" on:click={() => ($settings.sidebarHidden = true)}>
 				<ArrowRight />
 			</button>
@@ -135,54 +119,18 @@
 					<SidebarSearch bind:search />
 				</div>
 				<Separator />
-				<div class="wrapper">
-					<div class="row">
-						<h2 class="title">Filters</h2>
-						{#if mostFiltersAreSelected}
-							<button class="button" on:click={changeSelectAllFilters(false)}>Deselect all</button>
-						{:else}
-							<button class="button" on:click={changeSelectAllFilters(true)}>Select all</button>
-						{/if}
-					</div>
+				<SidebarSection title="Filters" bind:items={typeFilters}>
 					{#each typeFilters as filter (filter.name)}
 						<div class="switch-wrapper">
 							<Switch bind:active={filter.active} label={filter.name} />
 							<p class="filter-number">{filter.number}</p>
 						</div>
 					{/each}
-				</div>
+				</SidebarSection>
 				<Separator />
-				<div class="wrapper">
-					<div class="row">
-						<h2 class="title">Watching</h2>
-						{#if mostReposAreSelected}
-							<button class="button" on:click={changeSelectAllWatchedRepos(false)}>
-								Deselect all
-							</button>
-						{:else}
-							<button class="button" on:click={changeSelectAllWatchedRepos(true)}>
-								Select all
-							</button>
-						{/if}
-					</div>
-					<WatchedRepos />
-				</div>
+				<WatchedRepos />
 				<Separator />
-				<div class="wrapper">
-					<div class="row">
-						<h2 class="title">Persons</h2>
-						{#if mostPersonsAreSelected}
-							<button class="button" on:click={changeSelectAllWatchedPersons(false)}>
-								Deselect all
-							</button>
-						{:else}
-							<button class="button" on:click={changeSelectAllWatchedPersons(true)}>
-								Select all
-							</button>
-						{/if}
-					</div>
-					<Persons />
-				</div>
+				<Persons />
 				<Separator />
 				<div class="wrapper">
 					<h2 class="title">Manage</h2>
@@ -312,13 +260,6 @@
 		}
 	}
 
-	.row {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
-	}
-
 	.skeletons-container {
 		display: flex;
 		flex-direction: column;
@@ -331,17 +272,6 @@
 				height: 1.5rem;
 				width: 70%;
 			}
-		}
-	}
-
-	.button {
-		@include typography.small;
-		@include typography.bold;
-		color: variables.$blue-3;
-		width: fit-content;
-
-		&:hover {
-			filter: brightness(130%);
 		}
 	}
 

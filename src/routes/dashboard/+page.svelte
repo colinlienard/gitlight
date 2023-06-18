@@ -105,6 +105,7 @@
 			);
 
 			// Update watched persons
+			const savedWatchedPersons = storage.get('github-watched-persons');
 			watchedPersons.set(
 				$githubNotifications
 					.reduce<WatchedPerson[]>((previous, current) => {
@@ -120,7 +121,9 @@
 								login: current.author?.login ?? '',
 								avatar: current.author?.avatar ?? '',
 								number: 1,
-								active: true
+								active:
+									savedWatchedPersons?.find((person) => person.login === current.author?.login)
+										?.active ?? true
 							}
 						];
 					}, [])

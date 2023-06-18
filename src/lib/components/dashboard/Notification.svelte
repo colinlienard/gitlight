@@ -126,7 +126,7 @@
 		{/if}
 		{#if interactive}
 			<div class="over">
-				<Tooltip content="Mark as {unread ? '' : 'un'}read" position="left">
+				<Tooltip content="Mark as {unread ? '' : 'un'}read" position="left" hover>
 					<Button type={unread ? 'primary' : 'secondary'} small on:click={handleToggle('unread')}>
 						{#if unread}
 							<Check />
@@ -136,19 +136,19 @@
 					</Button>
 				</Tooltip>
 				{#if url}
-					<Tooltip content="Open in GitHub" position="left">
+					<Tooltip content="Open in GitHub" position="left" hover>
 						<Button type="secondary" small href={url} external on:click={handleOpenInBrowser}>
 							<ExternalLink />
 						</Button>
 					</Tooltip>
 				{:else}
-					<Tooltip content="Cannot open in GitHub" position="left">
+					<Tooltip content="Cannot open in GitHub" position="left" hover>
 						<Button type="secondary" small disabled>
 							<ExternalLink />
 						</Button>
 					</Tooltip>
 				{/if}
-				<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left">
+				<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left" hover>
 					<Button type="secondary" small on:click={handleToggle('pinned')}>
 						{#if pinned}
 							<Unpin />
