@@ -22,3 +22,5 @@ export const settings = writable<Settings>({
 export const updateAvailable = writable<string | false>(false);
 
 export const largeScreen = writable<boolean>(true);
+
+export const error = writable<string | null>(null);
