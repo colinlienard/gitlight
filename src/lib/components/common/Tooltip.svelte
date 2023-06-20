@@ -24,8 +24,8 @@
 	export let width = 'auto';
 
 	let open = false;
-	let tooltip: HTMLDivElement;
 	let timeout: ReturnType<typeof setTimeout>;
+	let container: HTMLDivElement;
 
 	function handleClick() {
 		open = !open;
@@ -44,12 +44,8 @@
 		}
 	}
 
-	function handleWindowClick({ clientX, clientY }: MouseEvent) {
-		const { top, left, height, width } = tooltip.getBoundingClientRect();
-		if (
-			open &&
-			!(clientX > left && clientX < left + width && clientY > top && clientY < top + height)
-		) {
+	function handleWindowClick(event: MouseEvent) {
+		if (open && !container.contains(event.target as Node)) {
 			open = false;
 		}
 	}
@@ -86,13 +82,12 @@
 	});
 </script>
 
-<div class="container">
+<div class="container" bind:this={container}>
 	{#if open}
 		<div
 			class="tooltip {position}"
 			class:no-wrap={width === 'auto'}
 			transition:fade={{ duration: 150, easing: sineInOut }}
-			bind:this={tooltip}
 			style:width
 		>
 			{#if typeof content === 'string'}
@@ -130,7 +125,7 @@
 			<slot />
 		</div>
 	{:else}
-		<button class="trigger" on:click={open ? undefined : handleClick}>
+		<button class="trigger" on:click={handleClick}>
 			<slot />
 		</button>
 	{/if}
@@ -220,7 +215,7 @@
 
 			.checkbox {
 				@include mixins.shiny(variables.$blue-2, true, 0.25rem);
-				width: 1rem;
+				flex: 0 0 1rem;
 				height: 1rem;
 				display: flex;
 				align-items: center;

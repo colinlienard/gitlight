@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { page } from '$app/stores';
 	import { Github, Gitlab } from '~/lib/icons';
 	import { Button, Tooltip } from '~/lib/components';

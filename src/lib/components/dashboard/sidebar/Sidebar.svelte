@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import { Github, Logo } from '~/lib/icons';
-	import { ScrollbarContainer, Separator } from '~/lib/components';
+	import { Tooltip, ScrollbarContainer, Separator } from '~/lib/components';
+	import { Github, Logo, ArrowRight } from '~/lib/icons';
 	import { getAppVersion } from '~/lib/helpers';
 	import {
 		filteredNotifications,
@@ -14,26 +14,27 @@
 	} from '~/lib/stores';
 	import SidebarSearch from './SidebarSearch.svelte';
 	import WatchedRepos from './WatchedRepos.svelte';
-	import ArrowRight from '~/lib/icons/ArrowRight.svelte';
-	import Tooltip from '../../common/Tooltip.svelte';
-	import Persons from './Persons.svelte';
+	import WatchedPersons from './WatchedPersons.svelte';
 	import TypeFilters from './TypeFilters.svelte';
 	import { browser } from '$app/environment';
 
 	let search = '';
 
 	// Apply filters and search
-	$: filteredNotifications.set(
-		$githubNotifications.filter((notification) => {
-			const repo = $watchedRepos.find((item) => item.id === notification.repoId);
-			const person = $watchedPersons.find((item) => item.login === notification.author?.login);
-			const searched = notification.title.toLowerCase().includes(search.toLowerCase());
-			const isOfType = $typeFilters.some(
-				(filter) => filter.active && filter.type === notification.type
-			);
-			return repo?.active && person?.active && searched && isOfType;
-		})
-	);
+	$: $filteredNotifications = $githubNotifications.filter((notification) => {
+		const repo = $watchedRepos.find((item) => item.id === notification.repoId);
+		const person = $watchedPersons.find((item) => item.login === notification.author?.login);
+		const searched = notification.title.toLowerCase().includes(search.toLowerCase());
+		const isOfType = $typeFilters.some(
+			(filter) => filter.active && filter.type === notification.type
+		);
+		const onlyOpen = $settings.showOnlyOpen
+			? notification.type === 'PullRequest' || notification.type === 'Issue'
+				? notification.opened
+				: true
+			: true;
+		return repo?.active && person?.active && searched && isOfType && onlyOpen;
+	});
 
 	// Toggle sidebar when Cmd+S or ctrl+S is pressed
 	function toogleSidebar(event: KeyboardEvent) {
@@ -76,7 +77,7 @@
 				<Separator />
 				<WatchedRepos />
 				<Separator />
-				<Persons />
+				<WatchedPersons />
 				<Separator />
 				<div class="wrapper">
 					<h2 class="title">Manage</h2>

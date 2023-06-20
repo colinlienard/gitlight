@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
-	import { githubNotifications, loading, typeFilters } from '~/lib/stores';
+	import { githubNotifications, loading, settings, typeFilters } from '~/lib/stores';
 	import { storage } from '~/lib/helpers';
+	import { Switch } from '~/lib/components';
 	import { browser } from '$app/environment';
 	import SidebarSection from './SidebarSection.svelte';
-	import Switch from '../../common/Switch.svelte';
 
 	// Save type filters to storage
 	$: if (browser && !$loading) {
@@ -20,6 +20,14 @@
 			filter.number = $githubNotifications.filter((n) => n.type === filter.type).length;
 			return filter;
 		});
+	}
+
+	function handleSelectOne(name: string) {
+		return () => {
+			$typeFilters = $typeFilters.map((filter) =>
+				filter.name === name ? { ...filter, active: true } : { ...filter, active: false }
+			);
+		};
 	}
 
 	onMount(async () => {
@@ -38,17 +46,19 @@
 	bind:items={$typeFilters}
 	actions={[
 		{
-			text: 'Show only open',
-			active: false,
-			onToggle: (ok) => {
-				console.log(ok);
-			}
+			text: 'Hide closed PRs and issues',
+			active: $settings.showOnlyOpen,
+			onToggle: (value) => settings.update((previous) => ({ ...previous, showOnlyOpen: value }))
 		}
 	]}
 >
 	{#each $typeFilters as filter (filter.name)}
 		<div class="switch-wrapper">
-			<Switch bind:active={filter.active} label={filter.name} />
+			<Switch
+				bind:active={filter.active}
+				label={filter.name}
+				on:meta-click={handleSelectOne(filter.name)}
+			/>
 			<p class="filter-number">{filter.number}</p>
 		</div>
 	{/each}

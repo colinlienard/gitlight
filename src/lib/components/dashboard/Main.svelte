@@ -37,10 +37,8 @@
 	}
 
 	function markAllAsRead() {
-		githubNotifications.update((previous) =>
-			previous.map((notifications) =>
-				unread.includes(notifications) ? { ...notifications, unread: false } : notifications
-			)
+		$githubNotifications = $githubNotifications.map((notifications) =>
+			unread.includes(notifications) ? { ...notifications, unread: false } : notifications
 		);
 		fetchGithub('notifications', {
 			method: 'PUT',

@@ -17,22 +17,21 @@
 	function handleToggle(login: string) {
 		return (event: MouseEvent) => {
 			if (event.altKey || event.ctrlKey || event.shiftKey || event.metaKey) {
-				watchedPersons.update((persons) =>
-					persons.map((person) => ({ ...person, active: person.login === login }))
-				);
+				$watchedPersons = $watchedPersons.map((person) => ({
+					...person,
+					active: person.login === login
+				}));
 			} else {
-				watchedPersons.update((persons) =>
-					persons.map((person) =>
-						person.login === login ? { ...person, active: !person.active } : person
-					)
+				$watchedPersons = $watchedPersons.map((person) =>
+					person.login === login ? { ...person, active: !person.active } : person
 				);
 			}
 		};
 	}
 
 	function handleHideBots(active: boolean) {
-		watchedPersons.update((persons) =>
-			persons.map((person) => (person.bot ? { ...person, active } : person))
+		$watchedPersons = $watchedPersons.map((person) =>
+			person.bot ? { ...person, active } : person
 		);
 	}
 </script>

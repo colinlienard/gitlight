@@ -27,6 +27,7 @@ export type NotificationData = {
 	time: string;
 	icon: ComponentType;
 	iconColor: Color;
+	opened?: boolean;
 	owner: string;
 	repo: string;
 	repoId: string;
@@ -40,12 +41,12 @@ export type NotificationData = {
 	};
 };
 
-export type TypeFilters = {
+export type TypeFilters = Array<{
 	name: string;
 	type: GithubNotificationType;
 	active: boolean;
 	number: number;
-}[];
+}>;
 
 export type Subscription = {
 	repo: GithubRepository;
@@ -85,4 +86,5 @@ export type Settings = {
 	readWhenPin: boolean;
 	notificationAxis: 'Auto' | 'Vertical' | 'Horizontal';
 	sidebarHidden: boolean;
+	showOnlyOpen: boolean;
 };

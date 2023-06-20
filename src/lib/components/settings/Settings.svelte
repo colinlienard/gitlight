@@ -37,7 +37,7 @@
 	onMount(async () => {
 		const saved = storage.get('settings');
 		if (saved) {
-			settings.set(saved);
+			$settings = saved;
 		} else {
 			forceOpenSettings = true;
 			currentTab = 1;

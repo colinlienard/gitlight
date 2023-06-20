@@ -54,9 +54,9 @@
 			} catch (e) {
 				synced = true;
 				if (e && typeof e === 'object' && 'stack' in e) {
-					return error.set(e.stack as string);
+					return ($error = e.stack as string);
 				}
-				error.set('An error occured while fetching notifications');
+				$error = 'An error occured while fetching notifications';
 			}
 
 			// Send push notification
@@ -83,53 +83,49 @@
 
 			// Update watched repos
 			const savedWatchedRepos = storage.get('github-watched-repos');
-			watchedRepos.set(
-				$githubNotifications.reduce<WatchedRepo[]>((previous, current) => {
-					const index = previous.findIndex((repo) => repo.id === current.repoId);
+			$watchedRepos = $githubNotifications.reduce<WatchedRepo[]>((previous, current) => {
+				const index = previous.findIndex((repo) => repo.id === current.repoId);
+				if (index > -1) {
+					const repo = previous.splice(index, 1)[0];
+					return [...previous, { ...repo, number: repo.number + 1 }];
+				}
+				return [
+					...previous,
+					{
+						id: current.repoId,
+						name: current.repo,
+						ownerName: current.owner,
+						ownerAvatar: current.ownerAvatar,
+						number: 1,
+						active: savedWatchedRepos?.find((repo) => repo.id === current.repoId)?.active ?? true
+					}
+				];
+			}, []);
+
+			// Update watched persons
+			const savedWatchedPersons = storage.get('github-watched-persons');
+			$watchedPersons = $githubNotifications
+				.reduce<WatchedPerson[]>((previous, current) => {
+					if (!current.author) return previous;
+					const index = previous.findIndex((person) => person.login === current?.author?.login);
 					if (index > -1) {
-						const repo = previous.splice(index, 1)[0];
-						return [...previous, { ...repo, number: repo.number + 1 }];
+						const person = previous.splice(index, 1)[0];
+						return [...previous, { ...person, number: person.number + 1 }];
 					}
 					return [
 						...previous,
 						{
-							id: current.repoId,
-							name: current.repo,
-							ownerName: current.owner,
-							ownerAvatar: current.ownerAvatar,
+							login: current.author?.login ?? '',
+							avatar: current.author?.avatar ?? '',
 							number: 1,
-							active: savedWatchedRepos?.find((repo) => repo.id === current.repoId)?.active ?? true
+							bot: current.author.bot,
+							active:
+								savedWatchedPersons?.find((person) => person.login === current.author?.login)
+									?.active ?? true
 						}
 					];
 				}, [])
-			);
-
-			// Update watched persons
-			const savedWatchedPersons = storage.get('github-watched-persons');
-			watchedPersons.set(
-				$githubNotifications
-					.reduce<WatchedPerson[]>((previous, current) => {
-						if (!current.author) return previous;
-						const index = previous.findIndex((person) => person.login === current?.author?.login);
-						if (index > -1) {
-							const person = previous.splice(index, 1)[0];
-							return [...previous, { ...person, number: person.number + 1 }];
-						}
-						return [
-							...previous,
-							{
-								login: current.author?.login ?? '',
-								avatar: current.author?.avatar ?? '',
-								number: 1,
-								bot: current.author.bot,
-								active:
-									savedWatchedPersons?.find((person) => person.login === current.author?.login)
-										?.active ?? true
-							}
-						];
-					}, [])
-					.sort((a, b) => b.number - a.number)
-			);
+				.sort((a, b) => b.number - a.number);
 		}
 
 		synced = true;
@@ -148,7 +144,7 @@
 				previously
 			})
 		);
-		savedNotifications.set(toSave);
+		$savedNotifications = toSave;
 		storage.set('github-notifications', toSave);
 
 		// Update menu bar
@@ -163,7 +159,7 @@
 	}
 
 	onMount(async () => {
-		savedNotifications.set(storage.get('github-notifications') || []);
+		$savedNotifications = storage.get('github-notifications') || [];
 
 		mounted = true;
 

@@ -43,17 +43,15 @@
 
 	function handleToggle(key: 'unread' | 'pinned') {
 		return () => {
-			githubNotifications.update((previous) =>
-				previous.map((notification) => {
-					if (notification.id !== id) {
-						return notification;
-					}
-					if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
-						return { ...notification, pinned: !notification.pinned, unread: false };
-					}
-					return { ...notification, [key]: !notification[key] };
-				})
-			);
+			$githubNotifications = $githubNotifications.map((notification) => {
+				if (notification.id !== id) {
+					return notification;
+				}
+				if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
+					return { ...notification, pinned: !notification.pinned, unread: false };
+				}
+				return { ...notification, [key]: !notification[key] };
+			});
 
 			if (pinned) {
 				unread = !unread;
@@ -67,17 +65,15 @@
 
 	function handleOpenInBrowser() {
 		if ($settings.readWhenOpenInBrowser) {
-			githubNotifications.update((previous) =>
-				previous.map((event) => {
-					if (event.id === id) {
-						if (event.unread) {
-							markAsReadInGitHub();
-						}
-						return { ...event, unread: false };
+			$githubNotifications = $githubNotifications.map((event) => {
+				if (event.id === id) {
+					if (event.unread) {
+						markAsReadInGitHub();
 					}
-					return event;
-				})
-			);
+					return { ...event, unread: false };
+				}
+				return event;
+			});
 		}
 	}
 </script>

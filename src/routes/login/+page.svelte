@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import { PUBLIC_SITE_URL } from '$env/static/public';
 	import { Button, Footer, Tooltip } from '~/lib/components';
