@@ -1,17 +1,11 @@
 <script lang="ts">
 	import { Gear } from '~/lib/icons';
-	import { Tooltip } from '~/lib/components';
+	import { Tooltip, type TooltipContent } from '~/lib/components';
 
 	export let items: { active: boolean }[];
 	export let title: string;
 	export let description: string;
-	export let actions: Array<{
-		text: string;
-		disabled?: boolean;
-		active?: boolean;
-		onClick?(): void;
-		onToggle?(active: boolean): void;
-	}> = [];
+	export let actions: TooltipContent = [];
 
 	$: mostAreSelected = items.filter((filter) => filter.active).length > items.length / 2;
 

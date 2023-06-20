@@ -1,3 +1,13 @@
+<script context="module" lang="ts">
+	export type TooltipContent = Array<{
+		text: string;
+		disabled?: boolean;
+		active?: boolean;
+		onClick?(): void;
+		onToggle?(active: boolean): void;
+	}>;
+</script>
+
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -5,15 +15,7 @@
 	import { browser } from '$app/environment';
 	import { Check } from '~/lib/icons';
 
-	export let content:
-		| string
-		| Array<{
-				text: string;
-				disabled?: boolean;
-				active?: boolean;
-				onClick?(): void;
-				onToggle?(active: boolean): void;
-		  }>;
+	export let content: string | TooltipContent;
 	export let position:
 		| 'top'
 		| 'bottom'
