@@ -1,15 +1,18 @@
 <script lang="ts">
+	import { onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { sineInOut } from 'svelte/easing';
-	import { onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
+	import { Check } from '~/lib/icons';
 
 	export let content:
 		| string
 		| Array<{
 				text: string;
-				click?(): void;
 				disabled?: boolean;
+				active?: boolean;
+				onClick?(): void;
+				onToggle?(active: boolean): void;
 		  }>;
 	export let position:
 		| 'top'
@@ -18,6 +21,7 @@
 		| 'right'
 		| `${'top' | 'bottom'} ${'left' | 'right'}` = 'top';
 	export let hover = false;
+	export let width = 'auto';
 
 	let open = false;
 	let tooltip: HTMLDivElement;
@@ -50,6 +54,19 @@
 		}
 	}
 
+	function handleToggleActive(text: string, callback: (active: boolean) => void) {
+		return () => {
+			if (typeof content === 'string') return;
+			content = content.map((item) => {
+				if (item.text === text) {
+					callback(!item.active);
+					return { ...item, active: !item.active };
+				}
+				return item;
+			});
+		};
+	}
+
 	$: if (browser && !hover) {
 		if (open) {
 			window.addEventListener('mouseup', handleWindowClick);
@@ -69,21 +86,34 @@
 	});
 </script>
 
-<div class="tooltip-trigger">
+<div class="container">
 	{#if open}
 		<div
 			class="tooltip {position}"
+			class:no-wrap={width === 'auto'}
 			transition:fade={{ duration: 150, easing: sineInOut }}
 			bind:this={tooltip}
+			style:width
 		>
 			{#if typeof content === 'string'}
 				<div class="tooltip-item">
 					{content}
 				</div>
 			{:else}
-				{#each content as { text, click, disabled }}
-					{#if click}
-						<button class="tooltip-button" class:disabled on:click={click}>
+				{#each content as { text, disabled, active, onClick, onToggle }}
+					{#if onClick}
+						<button class="tooltip-button" class:disabled on:click={onClick}>
+							{text}
+						</button>
+					{:else if onToggle}
+						<button
+							class="tooltip-button"
+							class:disabled
+							on:click={handleToggleActive(text, onToggle)}
+						>
+							<div class="checkbox" class:active>
+								<Check />
+							</div>
 							{text}
 						</button>
 					{:else}
@@ -96,22 +126,19 @@
 		</div>
 	{/if}
 	{#if hover}
-		<div on:mouseenter={handleMouseEnter} on:mouseleave={handleMouseLeave}>
+		<div class="trigger" on:mouseenter={handleMouseEnter} on:mouseleave={handleMouseLeave}>
 			<slot />
 		</div>
 	{:else}
-		<button on:click={open ? undefined : handleClick}>
+		<button class="trigger" on:click={open ? undefined : handleClick}>
 			<slot />
 		</button>
 	{/if}
 </div>
 
 <style lang="scss">
-	.tooltip-trigger {
+	.container {
 		position: relative;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
 	}
 
 	.tooltip {
@@ -119,10 +146,13 @@
 		background-color: variables.$grey-1;
 		border: 1px solid variables.$grey-3;
 		border-radius: variables.$radius;
-		white-space: nowrap;
 		position: absolute;
 		display: flex;
 		flex-direction: column;
+
+		&.no-wrap {
+			white-space: nowrap;
+		}
 
 		&.left {
 			top: 50%;
@@ -180,10 +210,40 @@
 			@include typography.bold;
 			text-align: left;
 			transition: background-color variables.$transition;
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
 
 			&:hover {
 				background-color: variables.$grey-3;
 			}
+
+			.checkbox {
+				@include mixins.shiny(variables.$blue-2, true, 0.25rem);
+				width: 1rem;
+				height: 1rem;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				:global(svg) {
+					height: 0.75rem;
+				}
+
+				&:not(.active) {
+					@include mixins.shiny(variables.$grey-3, true, 0.25rem);
+
+					& > :global(svg) {
+						color: variables.$grey-4;
+					}
+				}
+			}
 		}
+	}
+
+	.trigger {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 	}
 </style>

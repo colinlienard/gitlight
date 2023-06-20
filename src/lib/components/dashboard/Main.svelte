@@ -177,6 +177,7 @@
 		padding: 3rem 2rem 2rem;
 		display: flex;
 		align-items: center;
+		z-index: 1;
 
 		.logo-button {
 			margin-right: 1rem;

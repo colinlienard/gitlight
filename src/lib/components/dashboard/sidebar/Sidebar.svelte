@@ -1,58 +1,26 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { Github, Logo } from '~/lib/icons';
-	import { ScrollbarContainer, Separator, Switch } from '~/lib/components';
-	import { getAppVersion, storage } from '~/lib/helpers';
-	import { browser } from '$app/environment';
+	import { ScrollbarContainer, Separator } from '~/lib/components';
+	import { getAppVersion } from '~/lib/helpers';
 	import {
 		filteredNotifications,
 		githubNotifications,
 		loading,
 		watchedRepos,
 		settings,
-		watchedPersons
+		watchedPersons,
+		typeFilters
 	} from '~/lib/stores';
-	import type { TypeFilters } from '~/lib/types';
 	import SidebarSearch from './SidebarSearch.svelte';
 	import WatchedRepos from './WatchedRepos.svelte';
 	import ArrowRight from '~/lib/icons/ArrowRight.svelte';
 	import Tooltip from '../../common/Tooltip.svelte';
 	import Persons from './Persons.svelte';
-	import SidebarSection from './SidebarSection.svelte';
+	import TypeFilters from './TypeFilters.svelte';
+	import { browser } from '$app/environment';
 
 	let search = '';
-	let typeFilters: TypeFilters = [
-		{ name: 'Pull requests', type: 'PullRequest', active: true, number: 0 },
-		{ name: 'Issues', type: 'Issue', active: true, number: 0 },
-		{ name: 'Commits', type: 'Commit', active: true, number: 0 },
-		{ name: 'Workflow', type: 'CheckSuite', active: true, number: 0 },
-		{ name: 'Discussions', type: 'Discussion', active: true, number: 0 },
-		{ name: 'Releases', type: 'Release', active: true, number: 0 }
-	];
-
-	// Save type filters to storage
-	$: if (browser && !$loading) {
-		storage.set(
-			'type-filters',
-			typeFilters.map((filter) => filter.active)
-		);
-	}
-
-	// Save watched repos to storage
-	$: if (browser && !$loading) {
-		storage.set(
-			'github-watched-repos',
-			$watchedRepos.map(({ id, active }) => ({ id, active }))
-		);
-	}
-
-	// Save watched persons to storage
-	$: if (browser && !$loading) {
-		storage.set(
-			'github-watched-persons',
-			$watchedPersons.map(({ login, active }) => ({ login, active }))
-		);
-	}
 
 	// Apply filters and search
 	$: filteredNotifications.set(
@@ -60,20 +28,12 @@
 			const repo = $watchedRepos.find((item) => item.id === notification.repoId);
 			const person = $watchedPersons.find((item) => item.login === notification.author?.login);
 			const searched = notification.title.toLowerCase().includes(search.toLowerCase());
-			const isOfType = typeFilters.some(
+			const isOfType = $typeFilters.some(
 				(filter) => filter.active && filter.type === notification.type
 			);
 			return repo?.active && person?.active && searched && isOfType;
 		})
 	);
-
-	// Set notification numbers for each type
-	$: {
-		typeFilters = typeFilters.map((filter) => {
-			filter.number = $githubNotifications.filter((n) => n.type === filter.type).length;
-			return filter;
-		});
-	}
 
 	// Toggle sidebar when Cmd+S or ctrl+S is pressed
 	function toogleSidebar(event: KeyboardEvent) {
@@ -83,13 +43,6 @@
 	}
 
 	onMount(async () => {
-		// Get type filters from storage
-		const savedTypeFilters = storage.get('type-filters');
-		typeFilters = typeFilters.map((filter, index) => ({
-			...filter,
-			active: savedTypeFilters ? savedTypeFilters[index] : true
-		}));
-
 		window.addEventListener('keydown', toogleSidebar);
 	});
 
@@ -119,14 +72,7 @@
 					<SidebarSearch bind:search />
 				</div>
 				<Separator />
-				<SidebarSection title="Filters" bind:items={typeFilters}>
-					{#each typeFilters as filter (filter.name)}
-						<div class="switch-wrapper">
-							<Switch bind:active={filter.active} label={filter.name} />
-							<p class="filter-number">{filter.number}</p>
-						</div>
-					{/each}
-				</SidebarSection>
+				<TypeFilters />
 				<Separator />
 				<WatchedRepos />
 				<Separator />
@@ -272,16 +218,6 @@
 				height: 1.5rem;
 				width: 70%;
 			}
-		}
-	}
-
-	.switch-wrapper {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-
-		.filter-number {
-			color: variables.$grey-4;
 		}
 	}
 

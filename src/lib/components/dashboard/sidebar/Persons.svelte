@@ -1,6 +1,18 @@
 <script lang="ts">
-	import { watchedPersons } from '~/lib/stores';
+	import { loading, watchedPersons } from '~/lib/stores';
+	import { browser } from '$app/environment';
+	import { storage } from '~/lib/helpers';
 	import SidebarSection from './SidebarSection.svelte';
+
+	// Save watched persons to storage
+	$: if (browser && !$loading) {
+		storage.set(
+			'github-watched-persons',
+			$watchedPersons.map(({ login, active }) => ({ login, active }))
+		);
+	}
+
+	$: botsHidden = $watchedPersons.some((person) => person.login.endsWith('[bot]') && person.active);
 
 	function handleToggle(login: string) {
 		return (event: MouseEvent) => {
@@ -17,9 +29,20 @@
 			}
 		};
 	}
+
+	function handleHideBots(active: boolean) {
+		watchedPersons.update((persons) =>
+			persons.map((person) => (person.bot ? { ...person, active } : person))
+		);
+	}
 </script>
 
-<SidebarSection title="Persons" bind:items={$watchedPersons}>
+<SidebarSection
+	title="Persons"
+	description="Authors of notifications."
+	bind:items={$watchedPersons}
+	actions={[{ text: 'Show bots', active: botsHidden, onToggle: handleHideBots }]}
+>
 	{#each $watchedPersons as { login, avatar, active, number }}
 		<button class="wrapper" class:active on:click={null} on:click={handleToggle(login)}>
 			<img class="image" src={avatar} alt="" />

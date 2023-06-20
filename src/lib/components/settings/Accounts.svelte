@@ -1,7 +1,7 @@
 <script>
 	import { page } from '$app/stores';
 	import { Github, Gitlab } from '~/lib/icons';
-	import { Button } from '~/lib/components';
+	import { Button, Tooltip } from '~/lib/components';
 	import LogOutButton from './LogOutButton.svelte';
 
 	const user = $page.data.session?.user;
@@ -31,7 +31,9 @@
 		</div>
 		<div class="content">
 			<p class="sub">Not logged in.</p>
-			<Button small disabled>Log in</Button>
+			<Tooltip content="Coming soon!" position="bottom" hover>
+				<Button small disabled>Log in</Button>
+			</Tooltip>
 		</div>
 	</li>
 </ul>

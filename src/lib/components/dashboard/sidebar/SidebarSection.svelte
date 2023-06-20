@@ -4,6 +4,14 @@
 
 	export let items: { active: boolean }[];
 	export let title: string;
+	export let description: string;
+	export let actions: Array<{
+		text: string;
+		disabled?: boolean;
+		active?: boolean;
+		onClick?(): void;
+		onToggle?(active: boolean): void;
+	}> = [];
 
 	$: mostAreSelected = items.filter((filter) => filter.active).length > items.length / 2;
 
@@ -19,13 +27,17 @@
 		<h2 class="title">{title}</h2>
 		<Tooltip
 			content={[
-				{ text: 'Lorem ipsum dolor sit amet', disabled: true },
-				{ text: 'Select all', click: changeSelectAll(true), disabled: mostAreSelected },
-				{ text: 'Deselect all', click: changeSelectAll(false), disabled: !mostAreSelected }
+				{ text: description, disabled: true },
+				{ text: 'Select all', onClick: changeSelectAll(true), disabled: mostAreSelected },
+				{ text: 'Deselect all', onClick: changeSelectAll(false), disabled: !mostAreSelected },
+				...actions
 			]}
 			position="bottom right"
+			width="14rem"
 		>
-			<Gear />
+			<div class="icon-container">
+				<Gear />
+			</div>
 		</Tooltip>
 	</div>
 	<div class="wrapper">
@@ -51,7 +63,7 @@
 			@include typography.bold;
 		}
 
-		:global(svg) {
+		.icon-container :global(svg) {
 			height: 1.25rem;
 
 			&:hover {

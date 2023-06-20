@@ -121,6 +121,7 @@
 								login: current.author?.login ?? '',
 								avatar: current.author?.avatar ?? '',
 								number: 1,
+								bot: current.author.bot,
 								active:
 									savedWatchedPersons?.find((person) => person.login === current.author?.login)
 										?.active ?? true

@@ -34,7 +34,7 @@
 			<Github />
 			Log in to GitHub
 		</Button>
-		<Tooltip content="Coming soon!" position="bottom">
+		<Tooltip content="Coming soon!" position="bottom" hover>
 			<Button disabled><Gitlab />Log in to GitLab</Button>
 		</Tooltip>
 	</main>

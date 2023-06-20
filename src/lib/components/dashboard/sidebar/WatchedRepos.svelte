@@ -1,8 +1,10 @@
 <script lang="ts">
 	import type { WatchedRepo } from '~/lib/types';
-	import { ShrinkableWrapper } from '../../common';
+	import { ShrinkableWrapper } from '~/lib/components';
 	import { Repository } from '~/lib/icons';
-	import { watchedRepos } from '~/lib/stores';
+	import { loading, watchedRepos } from '~/lib/stores';
+	import { browser } from '$app/environment';
+	import { storage } from '~/lib/helpers';
 	import SidebarSection from './SidebarSection.svelte';
 
 	type WatchedReposByOwner = {
@@ -66,6 +68,14 @@
 			repos: item.repos.sort((a, b) => b.number - a.number)
 		}));
 
+	// Save watched repos to storage
+	$: if (browser && !$loading) {
+		storage.set(
+			'github-watched-repos',
+			$watchedRepos.map(({ id, active }) => ({ id, active }))
+		);
+	}
+
 	function handleToggleRepo(id: string) {
 		return (event: MouseEvent) => {
 			if (event.altKey || event.ctrlKey || event.shiftKey || event.metaKey) {
@@ -95,7 +105,11 @@
 	}
 </script>
 
-<SidebarSection title="Repositories" bind:items={$watchedRepos}>
+<SidebarSection
+	title="Repositories"
+	description="Repos from where notifications come."
+	bind:items={$watchedRepos}
+>
 	{#each watchedReposByOwner as { name, avatar, number, active, repos }}
 		{#if repos.length === 1}
 			<button

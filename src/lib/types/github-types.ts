@@ -9,6 +9,7 @@ export type GithubUser = {
 	login: string;
 	name: string;
 	url: string;
+	type: 'User' | 'Bot';
 };
 
 export type GithubRepository = {

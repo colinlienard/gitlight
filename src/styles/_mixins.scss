@@ -30,7 +30,7 @@
 }
 
 @mixin modal-shadow() {
-	box-shadow: 0 1rem 2rem rgba(black, 0.25);
+	box-shadow: 0 2rem 4rem rgba(black, 0.5);
 }
 
 @mixin skeleton($width: 100%, $height: 100%) {

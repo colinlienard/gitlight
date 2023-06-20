@@ -5,6 +5,7 @@ export type User = {
 	name?: string;
 	login: string;
 	avatar?: string;
+	bot?: boolean;
 };
 
 export type Session = {
@@ -75,6 +76,7 @@ export type WatchedPerson = {
 	avatar: string;
 	number: number;
 	active: boolean;
+	bot?: boolean;
 };
 
 export type Settings = {
