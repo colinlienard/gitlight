@@ -1,18 +1,8 @@
 # Contributing to GitLight
 
-👋 Hey, thanks for wanting to improve GitLight!
+👋 Hey, thanks for wanting to improve GitLight! Any contribution is welcome and appreciated!
 
-- [Before contributing](#before-contributing)
-  - [Roadmap](#roadmap)
-  - [Tech stack](#tech-stack)
-- [How to contribute](#how-to-contribute)
-  - [Feature request](#feature-request)
-  - [Running locally](#running-locally)
-    - [Desktop app](#desktop-app)
-    - [GiHub OAuth app](#github-oauth-app)
-    - [Frontend](#frontend)
-    - [Running the project](#running-the-project)
-- [Styleguides](#styleguides)
+---
 
 ## Before contributing
 
@@ -35,7 +25,7 @@ The goal of GitLight is to make developers work faster and stay up to date with 
 
 ### Feature request
 
-If you are using GitLight and are missing a feature that you would find helful, please create an issue. Other maybe also find it missing.
+If you are using GitLight and are missing a feature that you would find helful, please create an issue. Other may also find it missing.
 
 ### Reporting bugs
 
@@ -71,13 +61,10 @@ Just install dependencies:
 pnpm install
 ```
 
-#### Running the project
-
-|                      | With Tauri         | In the browser |
-| -------------------- | ------------------ | -------------- |
-| Start the dev server | `pnpm tauri dev`   | `pnpm dev`     |
-| Build the app        | `pnpm build:tauri` | `pnpm build`   |
+Finally, run `pnpm dev` or `pnpm dev:tauri` to start the dev server!
 
 ## Styleguides
 
-PR names should follow the [conventionnal commits](https://www.conventionalcommits.org/en/v1.0.0/) guidelines.
+- PR names should follow the [conventionnal commits](https://www.conventionalcommits.org/en/v1.0.0/) guidelines.
+- Code should be valid for Eslint and Prettier.
+- In css, `rem` should be used instead of `px` (apart from borders).

@@ -4,19 +4,19 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev",
-		"dev:tauri": "APP_ENV=tauri tauri dev",
 		"build": "vite build",
 		"build:tauri": "APP_ENV=tauri tauri build",
 		"build:vercel": "APP_ENV=vercel vite build",
-		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint:ts": "prettier --plugin-search-dir . --check . && eslint --max-warnings=0 .",
-		"lint:rs": "mkdir build && cd src-tauri && cargo clippy -- -Dwarnings --no-deps; cargo fmt -- --check",
-		"lint": "pnpm lint:ts && pnpm lint:rs",
+		"dev": "vite dev",
+		"dev:tauri": "APP_ENV=tauri tauri dev",
 		"format": "prettier --plugin-search-dir . --write .",
-		"prepare": "svelte-kit sync"
+		"lint": "pnpm lint:ts && pnpm lint:rs",
+		"lint:rs": "mkdir build && cd src-tauri && cargo clippy -- -Dwarnings --no-deps; cargo fmt -- --check",
+		"lint:ts": "prettier --plugin-search-dir . --check . && eslint --max-warnings=0 .",
+		"prepare": "svelte-kit sync",
+		"preview": "vite preview"
 	},
 	"dependencies": {
 		"@tauri-apps/api": "^1.3.0",
@@ -42,5 +42,6 @@
 		"tslib": "^2.5.3",
 		"typescript": "^5.1.3",
 		"vite": "^4.3.9"
-	}
+	},
+	"packageManager": "^pnpm@8.6.0"
 }
