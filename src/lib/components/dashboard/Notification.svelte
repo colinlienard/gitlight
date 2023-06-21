@@ -43,17 +43,15 @@
 
 	function handleToggle(key: 'unread' | 'pinned') {
 		return () => {
-			githubNotifications.update((previous) =>
-				previous.map((notification) => {
-					if (notification.id !== id) {
-						return notification;
-					}
-					if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
-						return { ...notification, pinned: !notification.pinned, unread: false };
-					}
-					return { ...notification, [key]: !notification[key] };
-				})
-			);
+			$githubNotifications = $githubNotifications.map((notification) => {
+				if (notification.id !== id) {
+					return notification;
+				}
+				if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
+					return { ...notification, pinned: !notification.pinned, unread: false };
+				}
+				return { ...notification, [key]: !notification[key] };
+			});
 
 			if (pinned) {
 				unread = !unread;
@@ -67,17 +65,15 @@
 
 	function handleOpenInBrowser() {
 		if ($settings.readWhenOpenInBrowser) {
-			githubNotifications.update((previous) =>
-				previous.map((event) => {
-					if (event.id === id) {
-						if (event.unread) {
-							markAsReadInGitHub();
-						}
-						return { ...event, unread: false };
+			$githubNotifications = $githubNotifications.map((event) => {
+				if (event.id === id) {
+					if (event.unread) {
+						markAsReadInGitHub();
 					}
-					return event;
-				})
-			);
+					return { ...event, unread: false };
+				}
+				return event;
+			});
 		}
 	}
 </script>
@@ -126,7 +122,7 @@
 		{/if}
 		{#if interactive}
 			<div class="over">
-				<Tooltip content="Mark as {unread ? '' : 'un'}read" position="left">
+				<Tooltip content="Mark as {unread ? '' : 'un'}read" position="left" hover>
 					<Button type={unread ? 'primary' : 'secondary'} small on:click={handleToggle('unread')}>
 						{#if unread}
 							<Check />
@@ -136,19 +132,19 @@
 					</Button>
 				</Tooltip>
 				{#if url}
-					<Tooltip content="Open in GitHub" position="left">
+					<Tooltip content="Open in GitHub" position="left" hover>
 						<Button type="secondary" small href={url} external on:click={handleOpenInBrowser}>
 							<ExternalLink />
 						</Button>
 					</Tooltip>
 				{:else}
-					<Tooltip content="Cannot open in GitHub" position="left">
+					<Tooltip content="Cannot open in GitHub" position="left" hover>
 						<Button type="secondary" small disabled>
 							<ExternalLink />
 						</Button>
 					</Tooltip>
 				{/if}
-				<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left">
+				<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left" hover>
 					<Button type="secondary" small on:click={handleToggle('pinned')}>
 						{#if pinned}
 							<Unpin />

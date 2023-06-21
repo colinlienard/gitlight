@@ -37,10 +37,8 @@
 	}
 
 	function markAllAsRead() {
-		githubNotifications.update((previous) =>
-			previous.map((notifications) =>
-				unread.includes(notifications) ? { ...notifications, unread: false } : notifications
-			)
+		$githubNotifications = $githubNotifications.map((notifications) =>
+			unread.includes(notifications) ? { ...notifications, unread: false } : notifications
 		);
 		fetchGithub('notifications', {
 			method: 'PUT',
@@ -87,7 +85,7 @@
 	<Banner />
 	<header class="header">
 		{#if $settings.sidebarHidden}
-			<Tooltip content="Show sidebar" position="bottom">
+			<Tooltip content="Show sidebar" position="bottom" hover>
 				<button
 					class="logo-button"
 					on:click={() => ($settings.sidebarHidden = false)}
@@ -177,6 +175,7 @@
 		padding: 3rem 2rem 2rem;
 		display: flex;
 		align-items: center;
+		z-index: 1;
 
 		.logo-button {
 			margin-right: 1rem;

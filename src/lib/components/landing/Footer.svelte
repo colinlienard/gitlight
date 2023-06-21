@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { getAppVersion } from '~/lib/helpers';
 </script>
 

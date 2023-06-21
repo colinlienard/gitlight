@@ -1,68 +1,154 @@
+<script context="module" lang="ts">
+	export type TooltipContent = Array<{
+		text: string;
+		disabled?: boolean;
+		active?: boolean;
+		onClick?(): void;
+		onToggle?(active: boolean): void;
+	}>;
+</script>
+
 <script lang="ts">
+	import { onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { sineInOut } from 'svelte/easing';
+	import { browser } from '$app/environment';
+	import { Check } from '~/lib/icons';
 
-	export let content: string;
-	export let position: 'top' | 'bottom' | 'left' | 'right' = 'top';
-	export let instant = false;
+	export let content: string | TooltipContent;
+	export let position:
+		| 'top'
+		| 'bottom'
+		| 'left'
+		| 'right'
+		| `${'top' | 'bottom'} ${'left' | 'right'}` = 'top';
+	export let hover = false;
+	export let width = 'auto';
 
-	let visible = false;
+	let open = false;
 	let timeout: ReturnType<typeof setTimeout>;
+	let container: HTMLDivElement;
+
+	function handleClick() {
+		open = !open;
+	}
 
 	function handleMouseEnter() {
-		if (instant) {
-			visible = true;
-			return;
-		}
 		timeout = setTimeout(() => {
-			visible = true;
+			open = true;
 		}, 500);
 	}
 
 	function handleMouseLeave() {
-		visible = false;
+		open = false;
 		if (timeout) {
 			clearTimeout(timeout);
 		}
 	}
+
+	function handleWindowClick(event: MouseEvent) {
+		if (open && !container.contains(event.target as Node)) {
+			open = false;
+		}
+	}
+
+	function handleToggleActive(text: string, callback: (active: boolean) => void) {
+		return () => {
+			if (typeof content === 'string') return;
+			content = content.map((item) => {
+				if (item.text === text) {
+					callback(!item.active);
+					return { ...item, active: !item.active };
+				}
+				return item;
+			});
+		};
+	}
+
+	$: if (browser && !hover) {
+		if (open) {
+			window.addEventListener('mouseup', handleWindowClick);
+		} else {
+			window.removeEventListener('mouseup', handleWindowClick);
+		}
+	}
+
+	onDestroy(() => {
+		if (!browser) return;
+
+		if (!hover) {
+			window.removeEventListener('mouseup', handleWindowClick);
+		} else if (timeout) {
+			clearTimeout(timeout);
+		}
+	});
 </script>
 
-<span class="tooltip-trigger" on:mouseenter={handleMouseEnter} on:mouseleave={handleMouseLeave}>
-	{#if visible}
-		<div class="tooltip {position}" transition:fade={{ duration: 150, easing: sineInOut }}>
-			{content}
+<div class="container" bind:this={container}>
+	{#if open}
+		<div
+			class="tooltip {position}"
+			class:no-wrap={width === 'auto'}
+			transition:fade={{ duration: 150, easing: sineInOut }}
+			style:width
+		>
+			{#if typeof content === 'string'}
+				<div class="tooltip-item">
+					{content}
+				</div>
+			{:else}
+				{#each content as { text, disabled, active, onClick, onToggle }}
+					{#if onClick}
+						<button class="tooltip-button" class:disabled on:click={onClick}>
+							{text}
+						</button>
+					{:else if onToggle}
+						<button
+							class="tooltip-button"
+							class:disabled
+							on:click={handleToggleActive(text, onToggle)}
+						>
+							<div class="checkbox" class:active>
+								<Check />
+							</div>
+							{text}
+						</button>
+					{:else}
+						<div class="tooltip-item" class:disabled>
+							{text}
+						</div>
+					{/if}
+				{/each}
+			{/if}
 		</div>
 	{/if}
-	<slot />
-</span>
+	{#if hover}
+		<div class="trigger" on:mouseenter={handleMouseEnter} on:mouseleave={handleMouseLeave}>
+			<slot />
+		</div>
+	{:else}
+		<button class="trigger" on:click={handleClick}>
+			<slot />
+		</button>
+	{/if}
+</div>
 
 <style lang="scss">
-	.tooltip-trigger {
+	.container {
 		position: relative;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
 	}
 
 	.tooltip {
-		@include mixins.shadow;
+		@include mixins.modal-shadow;
 		background-color: variables.$grey-1;
-		padding: 0.5rem;
 		border: 1px solid variables.$grey-3;
 		border-radius: variables.$radius;
-		white-space: nowrap;
 		position: absolute;
+		display: flex;
+		flex-direction: column;
 
-		&.top {
-			bottom: calc(100% + 0.25rem);
-			left: 50%;
-			translate: -50% 0;
-		}
-
-		&.bottom {
-			top: calc(100% + 0.25rem);
-			left: 50%;
-			translate: -50% 0;
+		&.no-wrap {
+			white-space: nowrap;
 		}
 
 		&.left {
@@ -76,5 +162,85 @@
 			left: calc(100% + 0.25rem);
 			translate: 0 -50%;
 		}
+
+		&.top {
+			bottom: calc(100% + 0.25rem);
+			left: 50%;
+			translate: -50% 0;
+		}
+
+		&.bottom {
+			top: calc(100% + 0.25rem);
+			left: 50%;
+			translate: -50% 0;
+		}
+
+		&.bottom,
+		&.top {
+			&.left {
+				left: 0;
+				translate: 0 0;
+			}
+
+			&.right {
+				right: 0;
+				left: unset;
+				translate: 0 0;
+			}
+		}
+
+		.tooltip-item,
+		.tooltip-button {
+			padding: 0.5rem;
+
+			&:not(:last-child) {
+				border-bottom: inherit;
+			}
+
+			&.disabled {
+				color: variables.$grey-4;
+				pointer-events: none;
+			}
+		}
+
+		.tooltip-button {
+			@include typography.bold;
+			text-align: left;
+			transition: background-color variables.$transition;
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+
+			&:hover {
+				background-color: variables.$grey-3;
+			}
+
+			.checkbox {
+				@include mixins.shiny(variables.$blue-2, true, 0.25rem);
+				flex: 0 0 1rem;
+				height: 1rem;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				:global(svg) {
+					height: 0.75rem;
+				}
+
+				&:not(.active) {
+					@include mixins.shiny(variables.$grey-3, true, 0.25rem);
+
+					& > :global(svg) {
+						color: variables.$grey-4;
+					}
+				}
+			}
+		}
+	}
+
+	.trigger {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 	}
 </style>

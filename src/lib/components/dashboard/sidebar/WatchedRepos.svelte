@@ -1,8 +1,11 @@
 <script lang="ts">
 	import type { WatchedRepo } from '~/lib/types';
-	import { ShrinkableWrapper } from '../../common';
+	import { ShrinkableWrapper } from '~/lib/components';
 	import { Repository } from '~/lib/icons';
-	import { watchedRepos } from '~/lib/stores';
+	import { loading, watchedRepos } from '~/lib/stores';
+	import { browser } from '$app/environment';
+	import { storage } from '~/lib/helpers';
+	import SidebarSection from './SidebarSection.svelte';
 
 	type WatchedReposByOwner = {
 		name: string;
@@ -65,15 +68,21 @@
 			repos: item.repos.sort((a, b) => b.number - a.number)
 		}));
 
+	// Save watched repos to storage
+	$: if (browser && !$loading) {
+		storage.set(
+			'github-watched-repos',
+			$watchedRepos.map(({ id, active }) => ({ id, active }))
+		);
+	}
+
 	function handleToggleRepo(id: string) {
 		return (event: MouseEvent) => {
 			if (event.altKey || event.ctrlKey || event.shiftKey || event.metaKey) {
-				watchedRepos.update((previous) =>
-					previous.map((item) => ({ ...item, active: item.id === id }))
-				);
+				$watchedRepos = $watchedRepos.map((item) => ({ ...item, active: item.id === id }));
 			} else {
-				watchedRepos.update((previous) =>
-					previous.map((item) => (item.id === id ? { ...item, active: !item.active } : item))
+				$watchedRepos = $watchedRepos.map((item) =>
+					item.id === id ? { ...item, active: !item.active } : item
 				);
 			}
 		};
@@ -82,19 +91,21 @@
 	function handleToggleOwner(name: string, active: boolean) {
 		return (event: MouseEvent) => {
 			if (event.altKey || event.ctrlKey || event.shiftKey || event.metaKey) {
-				watchedRepos.update((previous) =>
-					previous.map((item) => ({ ...item, active: item.ownerName === name }))
-				);
+				$watchedRepos = $watchedRepos.map((item) => ({ ...item, active: item.ownerName === name }));
 			} else {
-				watchedRepos.update((previous) =>
-					previous.map((item) => (item.ownerName === name ? { ...item, active } : item))
+				$watchedRepos = $watchedRepos.map((item) =>
+					item.ownerName === name ? { ...item, active } : item
 				);
 			}
 		};
 	}
 </script>
 
-<div class="container">
+<SidebarSection
+	title="Repositories"
+	description="Repos from where notifications come."
+	bind:items={$watchedRepos}
+>
 	{#each watchedReposByOwner as { name, avatar, number, active, repos }}
 		{#if repos.length === 1}
 			<button
@@ -130,15 +141,9 @@
 			</ShrinkableWrapper>
 		{/if}
 	{/each}
-</div>
+</SidebarSection>
 
 <style lang="scss">
-	.container {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-
 	.wrapper {
 		display: flex;
 		align-items: center;

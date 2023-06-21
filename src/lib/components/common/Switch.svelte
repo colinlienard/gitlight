@@ -1,11 +1,22 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
 	import { Check, Cross } from '~/lib/icons';
 
 	export let label: string | undefined;
 	export let active: boolean;
+
+	const dispatch = createEventDispatcher();
+
+	function handleClick(event: MouseEvent) {
+		if (event.altKey || event.ctrlKey || event.shiftKey || event.metaKey) {
+			event.preventDefault();
+			dispatch('meta-click', event);
+		}
+	}
 </script>
 
-<label class="switch-container">
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<label class="switch-container" on:click={handleClick}>
 	<span class="switch" class:active>
 		<input class="input" type="checkbox" bind:checked={active} />
 		<div class="icon-container">

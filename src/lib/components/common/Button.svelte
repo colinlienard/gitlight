@@ -47,6 +47,7 @@
 	.button {
 		@include mixins.shiny(variables.$blue-2);
 		@include mixins.shadow;
+		display: block;
 
 		&.secondary {
 			@include mixins.shiny(variables.$grey-3);

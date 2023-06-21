@@ -16,6 +16,7 @@
 	bind:active={$settings.readWhenOpenInBrowser}
 />
 <Switch label="Mark an event as read when pinned" bind:active={$settings.readWhenPin} />
+<Switch label="Hide closed PRs and issues" bind:active={$settings.showOnlyOpen} />
 <span />
 <h3>Interface</h3>
 <Switch label="Hide sidebar" bind:active={$settings.sidebarHidden} />

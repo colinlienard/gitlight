@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import { PUBLIC_SITE_URL } from '$env/static/public';
 	import { Button, Footer, Tooltip } from '~/lib/components';
@@ -34,7 +34,7 @@
 			<Github />
 			Log in to GitHub
 		</Button>
-		<Tooltip content="Coming soon!" position="bottom">
+		<Tooltip content="Coming soon!" position="bottom" hover>
 			<Button disabled><Gitlab />Log in to GitLab</Button>
 		</Tooltip>
 	</main>

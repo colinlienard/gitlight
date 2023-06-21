@@ -5,6 +5,7 @@ export type User = {
 	name?: string;
 	login: string;
 	avatar?: string;
+	bot?: boolean;
 };
 
 export type Session = {
@@ -26,6 +27,7 @@ export type NotificationData = {
 	time: string;
 	icon: ComponentType;
 	iconColor: Color;
+	opened?: boolean;
 	owner: string;
 	repo: string;
 	repoId: string;
@@ -39,12 +41,12 @@ export type NotificationData = {
 	};
 };
 
-export type TypeFilters = {
+export type TypeFilters = Array<{
 	name: string;
 	type: GithubNotificationType;
 	active: boolean;
 	number: number;
-}[];
+}>;
 
 export type Subscription = {
 	repo: GithubRepository;
@@ -70,10 +72,19 @@ export type WatchedRepo = {
 	active: boolean;
 };
 
+export type WatchedPerson = {
+	login: string;
+	avatar: string;
+	number: number;
+	active: boolean;
+	bot?: boolean;
+};
+
 export type Settings = {
 	activateNotifications: boolean;
 	readWhenOpenInBrowser: boolean;
 	readWhenPin: boolean;
 	notificationAxis: 'Auto' | 'Vertical' | 'Horizontal';
 	sidebarHidden: boolean;
+	showOnlyOpen: boolean;
 };

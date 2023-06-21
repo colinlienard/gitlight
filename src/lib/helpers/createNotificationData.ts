@@ -57,7 +57,7 @@ export async function createNotificationData(
 			return {
 				...common,
 				author: author
-					? { login: author.login, avatar: author.avatar_url }
+					? { login: author.login, avatar: author.avatar_url, bot: author.type === 'Bot' }
 					: { login: commit.author.name },
 				description: 'made a commit',
 				icon: Commit,
@@ -86,13 +86,15 @@ export async function createNotificationData(
 				state == 'open' &&
 				new Date(common.time).getTime() - new Date(created_at).getTime() < 30000
 			) {
-				author = { login: user.login, avatar: user.avatar_url };
+				author = { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
 				description = 'opened this issue';
 			} else if (
 				state === 'closed' &&
 				new Date(common.time).getTime() - new Date(closed_at as string).getTime() < 30000
 			) {
-				author = closed_by ? { login: closed_by.login, avatar: closed_by.avatar_url } : undefined;
+				author = closed_by
+					? { login: closed_by.login, avatar: closed_by.avatar_url, bot: user.type === 'Bot' }
+					: undefined;
 				description = 'closed this issue';
 			} else if (comments) {
 				const comment = await getLatestComment(comments_url);
@@ -108,6 +110,7 @@ export async function createNotificationData(
 				description,
 				icon: getIssueIcon(data as GithubIssue),
 				iconColor: getIconColor(data as GithubIssue),
+				opened: state === 'open',
 				number,
 				labels,
 				url: html_url,
@@ -138,15 +141,15 @@ export async function createNotificationData(
 			let description = 'New activity on pull request';
 			const time = new Date(common.time).getTime();
 			if (state == 'open' && time - new Date(created_at).getTime() < 30000) {
-				author = { login: user.login, avatar: user.avatar_url };
+				author = { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
 				description = 'opened this pull request';
 			} else if (state === 'closed' && time - new Date(closed_at as string).getTime() < 30000) {
 				author = merged_by
-					? { login: merged_by.login, avatar: merged_by.avatar_url }
-					: { login: user.login, avatar: user.avatar_url };
+					? { login: merged_by.login, avatar: merged_by.avatar_url, bot: user.type === 'Bot' }
+					: { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
 				description = `${merged_by ? 'merged' : 'closed'} this pull request`;
 			} else if (reason === 'review_requested') {
-				author = { login: user.login, avatar: user.avatar_url };
+				author = { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
 				description = 'requested your review';
 			} else if (review_comments || comments || commits) {
 				const events = await Promise.all([
@@ -177,6 +180,7 @@ export async function createNotificationData(
 				description,
 				icon: getPullRequestIcon(data as GithubPullRequest),
 				iconColor: getIconColor(data as GithubPullRequest),
+				opened: state === 'open',
 				number,
 				labels,
 				url: html_url,
@@ -189,7 +193,7 @@ export async function createNotificationData(
 			const { author, tag_name, prerelease, html_url } = data as GithubRelease;
 			return {
 				...common,
-				author: { login: author.login, avatar: author.avatar_url },
+				author: { login: author.login, avatar: author.avatar_url, bot: author.type === 'Bot' },
 				description: 'made a release',
 				icon: Release,
 				iconColor: 'blue',
@@ -247,7 +251,11 @@ async function getLatestComment(url: string) {
 	const comments = await fetchGithub<GithubComment[]>(url);
 	if (!comments.length) return undefined;
 	const comment = comments[comments.length - 1];
-	const author = { login: comment.user.login, avatar: comment.user.avatar_url };
+	const author = {
+		login: comment.user.login,
+		avatar: comment.user.avatar_url,
+		bot: comment.user.type === 'Bot'
+	};
 	const body = removeMarkdownSymbols(comment.body).slice(0, 100);
 	const description = `commented: ${body}${body.length === 100 ? '...' : ''}`;
 	return { author, description, time: comment.created_at };
@@ -258,7 +266,11 @@ async function getLatestCommit(url: string) {
 	if (!commits.length) return undefined;
 	const commit = commits[commits.length - 1];
 	const author = commit.author
-		? { login: commit.author.login, avatar: commit.author.avatar_url }
+		? {
+				login: commit.author.login,
+				avatar: commit.author.avatar_url,
+				bot: commit.author.type === 'Bot'
+		  }
 		: { login: commit.commit.author.name };
 	const description = `committed: ${commit.commit.message}`;
 	return { author, description, time: commit.commit.author.date };

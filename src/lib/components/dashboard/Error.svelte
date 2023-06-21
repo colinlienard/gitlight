@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { error } from '~/lib/stores';
 	import { Button } from '../common';
 
