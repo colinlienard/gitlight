@@ -29,6 +29,13 @@
 	} = data;
 	let displayTime = formatRelativeDate(time);
 
+	$: repoUrl = `https://github.com/${owner}/${repo}`;
+	$: authorUrl = author && !author.bot ? `https://github.com/${author.login}` : '';
+	$: previousAuthorUrl =
+		previously?.author && !previously?.author.bot
+			? `https://github.com/${previously.author.login}`
+			: '';
+
 	const interval = setInterval(() => {
 		displayTime = formatRelativeDate(time);
 	}, 60000);
@@ -87,14 +94,22 @@
 			<div class="new" />
 		{/if}
 		<div class="top">
-			<p class="repo">{owner}/<span class="bold">{repo}</span></p>
+			<a class="repo" href={repoUrl} target="_blank" rel="noreferrer">
+				{owner}/<span class="bold">{repo}</span>
+			</a>
 			<p class="time">{displayTime}</p>
 		</div>
 		<p class="description">
 			{#if author}
-				<span class="strong">{author.login}</span>
 				{#if author.avatar}
 					<img class="image" src={author.avatar} alt="" width="20px" height="20px" loading="lazy" />
+				{/if}
+				{#if authorUrl}
+					<a class="strong clickable" href={authorUrl} target="_blank" rel="noreferrer">
+						{author.login}
+					</a>
+				{:else}
+					<span class="strong">{author.login}</span>
 				{/if}
 				{description}
 			{:else}
@@ -161,7 +176,6 @@
 			<div class="description">
 				<span>Previously: </span>
 				{#if previously.author}
-					<span class="strong">{previously.author.login}</span>
 					{#if previously.author.avatar}
 						<img
 							class="image"
@@ -171,6 +185,13 @@
 							height="20px"
 							loading="lazy"
 						/>
+					{/if}
+					{#if previousAuthorUrl}
+						<a class="strong clickable" href={previousAuthorUrl} target="_blank" rel="noreferrer">
+							{previously.author.login}
+						</a>
+					{:else}
+						<span class="strong">{previously.author.login}</span>
 					{/if}
 				{/if}
 				{previously.description}
@@ -224,8 +245,14 @@
 		justify-content: space-between;
 		color: variables.$grey-4;
 
-		.repo .bold {
-			@include typography.bold;
+		.repo {
+			&:hover {
+				text-decoration: underline;
+			}
+
+			.bold {
+				@include typography.bold;
+			}
 		}
 	}
 
@@ -281,9 +308,6 @@
 	.over {
 		position: absolute;
 		inset: 0 0 0 auto;
-		width: 12rem;
-		background-image: linear-gradient(to right, transparent, variables.$grey-1);
-		border-radius: 0 calc(variables.$radius - 1px) calc(variables.$radius - 1px) 0;
 		display: flex;
 		flex-direction: column;
 		padding: 0.5rem;
@@ -291,6 +315,16 @@
 		justify-content: start;
 		gap: 0.5rem;
 		transition: opacity variables.$transition;
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0 0 0 auto;
+			width: 12rem;
+			background-image: linear-gradient(to right, transparent, variables.$grey-1);
+			border-radius: 0 calc(variables.$radius - 1px) calc(variables.$radius - 1px) 0;
+			pointer-events: none;
+		}
 	}
 
 	.description {
@@ -305,6 +339,10 @@
 
 		.strong {
 			color: variables.$white;
+
+			&.clickable:hover {
+				text-decoration: underline;
+			}
 		}
 
 		.image {
@@ -317,7 +355,6 @@
 	.previously {
 		padding: 0.75rem 1rem;
 		position: relative;
-		z-index: -1;
 
 		&::before,
 		&::after {
