@@ -55,9 +55,9 @@
 					return notification;
 				}
 				if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
-					return { ...notification, pinned: !notification.pinned, unread: false };
+					return { ...notification, pinned: !notification.pinned, unread: false, isNew: false };
 				}
-				return { ...notification, [key]: !notification[key] };
+				return { ...notification, [key]: !notification[key], isNew: false };
 			});
 
 			if (pinned) {
