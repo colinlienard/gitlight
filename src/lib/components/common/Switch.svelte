@@ -15,8 +15,7 @@
 	}
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<label class="switch-container" on:click={handleClick}>
+<label class="switch-container" on:click={handleClick} role="presentation">
 	<span class="switch" class:active>
 		<input class="input" type="checkbox" bind:checked={active} />
 		<div class="icon-container">
