@@ -52,11 +52,13 @@
 					)
 				);
 			} catch (e) {
-				synced = true;
 				if (e && typeof e === 'object' && 'stack' in e) {
-					return ($error = e.stack as string);
+					$error = e.stack as string;
+				} else {
+					$error = e as string;
 				}
-				$error = 'An error occured while fetching notifications';
+				synced = true;
+				console.error(e);
 			}
 
 			// Send push notification
