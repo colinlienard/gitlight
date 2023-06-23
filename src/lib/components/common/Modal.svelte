@@ -90,7 +90,7 @@
 		display: flex;
 		flex-direction: column;
 		background-color: variables.$grey-1;
-		border: 1px solid variables.$grey-2;
+		border: 1px solid variables.$grey-3;
 		border-radius: variables.$radius;
 		width: min(50rem, calc(100vw - 4rem));
 		height: min(40rem, calc(100vh - 4rem));

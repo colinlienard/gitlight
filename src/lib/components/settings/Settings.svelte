@@ -162,6 +162,8 @@
 				}
 
 				button {
+					width: 100%;
+					text-align: left;
 					position: relative;
 
 					.indicator {
