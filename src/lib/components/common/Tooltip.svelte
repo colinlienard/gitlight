@@ -123,7 +123,12 @@
 		</div>
 	{/if}
 	{#if hover}
-		<div class="trigger" on:mouseenter={handleMouseEnter} on:mouseleave={handleMouseLeave}>
+		<div
+			class="trigger"
+			on:mouseenter={handleMouseEnter}
+			on:mouseleave={handleMouseLeave}
+			role="presentation"
+		>
 			<slot />
 		</div>
 	{:else}

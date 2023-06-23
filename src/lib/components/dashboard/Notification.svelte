@@ -89,6 +89,7 @@
 	<div
 		class="notification"
 		on:mouseenter={isNew && interactive ? () => (isNew = false) : undefined}
+		role="presentation"
 	>
 		{#if isNew && unread}
 			<div class="new" />
