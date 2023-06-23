@@ -7,7 +7,7 @@
 	export let description: string;
 	export let actions: TooltipContent = [];
 
-	$: mostAreSelected = items.filter((filter) => filter.active).length > items.length / 2;
+	$: activeLenght = items.filter((filter) => filter.active).length;
 
 	function changeSelectAll(active: boolean) {
 		return () => {
@@ -22,8 +22,12 @@
 		<Tooltip
 			content={[
 				{ text: description, disabled: true },
-				{ text: 'Select all', onClick: changeSelectAll(true), disabled: mostAreSelected },
-				{ text: 'Deselect all', onClick: changeSelectAll(false), disabled: !mostAreSelected },
+				{
+					text: 'Select all',
+					onClick: changeSelectAll(true),
+					disabled: activeLenght === items.length
+				},
+				{ text: 'Deselect all', onClick: changeSelectAll(false), disabled: activeLenght === 0 },
 				...actions
 			]}
 			position="bottom right"
