@@ -33,7 +33,7 @@
 				? notification.opened
 				: true
 			: true;
-		return repo?.active && person?.active && searched && isOfType && onlyOpen;
+		return repo?.active && (person ? person?.active : true) && searched && isOfType && onlyOpen;
 	});
 
 	// Toggle sidebar when Cmd+S or ctrl+S is pressed

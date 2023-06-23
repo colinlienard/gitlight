@@ -25,7 +25,7 @@ import { removeMarkdownSymbols } from './removeMarkdownSymbols';
 export async function createNotificationData(
 	{ id, repository, subject, unread: u, updated_at, reason }: GithubNotification,
 	savedNotifications: SavedNotifications
-): Promise<NotificationData> {
+): Promise<NotificationData | null> {
 	const previous = Array.isArray(savedNotifications)
 		? savedNotifications.find((n) => n.id === id)
 		: undefined;
@@ -104,6 +104,8 @@ export async function createNotificationData(
 				}
 			}
 
+			if (previous?.description === description) return null;
+
 			return {
 				...common,
 				author,
@@ -173,6 +175,8 @@ export async function createNotificationData(
 					description = event.description;
 				}
 			}
+
+			if (previous?.description === description) return null;
 
 			return {
 				...common,

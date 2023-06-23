@@ -46,18 +46,26 @@
 			let newNotifications: NotificationData[] = [];
 
 			try {
-				newNotifications = await Promise.all(
-					notifications.map((notification) =>
-						createNotificationData(notification, $savedNotifications)
+				newNotifications = (
+					await Promise.all(
+						notifications.map((notification) =>
+							createNotificationData(notification, $savedNotifications)
+						)
 					)
-				);
+				).filter((item): item is NotificationData => !!item);
 			} catch (e) {
-				synced = true;
 				if (e && typeof e === 'object' && 'stack' in e) {
-					return ($error = e.stack as string);
+					$error = e.stack as string;
+				} else {
+					$error = e as string;
 				}
-				$error = 'An error occured while fetching notifications';
+				synced = true;
+				console.error(e);
 			}
+
+			synced = true;
+
+			if (!newNotifications.length) return;
 
 			// Send push notification
 			const pushNotification = newNotifications[0];
@@ -127,8 +135,6 @@
 				}, [])
 				.sort((a, b) => b.number - a.number);
 		}
-
-		synced = true;
 	}
 
 	$: if (mounted && $githubNotifications.length) {

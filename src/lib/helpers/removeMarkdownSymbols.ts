@@ -5,8 +5,8 @@ const markdownSymbols: Array<[RegExp, string]> = [
 	[/\[(.*?)\]\((.*?)\)/g, '$1'], // Remove links (e.g., [link](url))
 	[/\n- (.*)/g, '$1'], // Remove unordered list (e.g., - Item)
 	[/\n\d+\. (.*)/g, '$1'], // Remove ordered list (e.g., 1. Item)
-	[/^>\s(.*)$/gm, '$1'], // Remove blockquotes (e.g., > Quote)
-	[/\[vc\]: #[\w=:]+/g, ''] // Remove vercel comment beginning
+	[/^>\s(.*)$/gm, ''], // Remove blockquotes (e.g., > Quote)
+	[/^\[vc\]: #[^\r\n]*/g, ''] // Remove vercel comment beginning
 ];
 
 export function removeMarkdownSymbols(markdown: string): string {

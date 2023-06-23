@@ -78,6 +78,7 @@
 		box-shadow: 0 0 1rem variables.$blue-2;
 		overflow: hidden;
 		transition: filter variables.$transition;
+		z-index: 1;
 
 		&:hover {
 			filter: brightness(130%);
