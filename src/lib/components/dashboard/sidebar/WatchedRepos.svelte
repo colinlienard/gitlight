@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { WatchedRepo } from '~/lib/types';
 	import { ShrinkableWrapper } from '~/lib/components';
-	import { Repository } from '~/lib/icons';
+	import { RepositoryIcon } from '~/lib/icons';
 	import { loading, watchedRepos } from '~/lib/stores';
 	import { browser } from '$app/environment';
 	import { storage } from '~/lib/helpers';
@@ -132,7 +132,7 @@
 				{#each repos as { id, name, number, active }}
 					<button class="wrapper" class:active on:click={handleToggleRepo(id)}>
 						<div class="repo-icon">
-							<Repository />
+							<RepositoryIcon />
 						</div>
 						<h4 class="name">{name}</h4>
 						<span class="number">{number}</span>

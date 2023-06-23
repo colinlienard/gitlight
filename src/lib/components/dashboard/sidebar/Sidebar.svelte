@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import { Tooltip, ScrollbarContainer, Separator } from '~/lib/components';
-	import { Github, Logo, ArrowRight } from '~/lib/icons';
+	import { Tooltip, ScrollbarContainer, Separator, IconButton } from '~/lib/components';
+	import { GithubIcon, Logo, DoubleArrowIcon } from '~/lib/icons';
 	import { getAppVersion } from '~/lib/helpers';
 	import {
 		filteredNotifications,
@@ -61,9 +61,9 @@
 			<h1 class="hero">GitLight</h1>
 		</div>
 		<Tooltip content="Hide sidebar" position="bottom" hover>
-			<button class="hide-button" on:click={() => ($settings.sidebarHidden = true)}>
-				<ArrowRight />
-			</button>
+			<IconButton on:click={() => ($settings.sidebarHidden = true)}>
+				<DoubleArrowIcon />
+			</IconButton>
 		</Tooltip>
 	</header>
 	<ScrollbarContainer>
@@ -122,7 +122,7 @@
 			target="_blank"
 			rel="noreferrer"
 		>
-			<Github />
+			<GithubIcon />
 			GitHub repository
 		</a>
 	</footer>
@@ -155,29 +155,6 @@
 
 			.hero {
 				@include typography.heading-1;
-			}
-		}
-
-		.hide-button {
-			width: 2.25rem;
-			height: 2.25rem;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			border-radius: variables.$radius;
-			transition: background-color variables.$transition;
-
-			&:hover {
-				background-color: rgba(variables.$white, 0.05);
-			}
-
-			&:active {
-				background-color: rgba(variables.$white, 0.1);
-			}
-
-			:global(svg) {
-				height: 1.25rem;
-				rotate: 180deg;
 			}
 		}
 	}

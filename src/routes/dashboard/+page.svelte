@@ -49,7 +49,11 @@
 				newNotifications = (
 					await Promise.all(
 						notifications.map((notification) =>
-							createNotificationData(notification, $savedNotifications)
+							createNotificationData(
+								notification,
+								$savedNotifications,
+								!$githubNotifications.length
+							)
 						)
 					)
 				).filter((item): item is NotificationData => !!item);
@@ -59,11 +63,8 @@
 				} else {
 					$error = e as string;
 				}
-				synced = true;
 				console.error(e);
 			}
-
-			synced = true;
 
 			if (!newNotifications.length) return;
 
@@ -135,6 +136,8 @@
 				}, [])
 				.sort((a, b) => b.number - a.number);
 		}
+
+		synced = true;
 	}
 
 	$: if (mounted && $githubNotifications.length) {

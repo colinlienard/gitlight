@@ -3,7 +3,6 @@ export * from './debounce';
 export * from './fetchGithub';
 export * from './formatRelativeDate';
 export * from './getAppVersion';
-export * from './getHex';
 export * from './getIcon';
 export * from './lightenColor';
 export * from './removeMarkdownSymbols';

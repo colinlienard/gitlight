@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { sineInOut } from 'svelte/easing';
-	import { Apple, Linux, Windows } from '~/lib/icons';
+	import { LinuxIcon, MacosIcon, WindowsIcon } from '~/lib/icons';
 	import { Button } from '~/lib/components';
 	import type { GithubRelease } from '~/lib/types';
 
@@ -40,15 +40,15 @@
 	{#if show && open}
 		<div class="tooltip {position}" transition:fade={{ duration: 150, easing: sineInOut }}>
 			<Button on:click={handleDownload('mac')}>
-				<Apple />
+				<MacosIcon />
 				Download for Mac
 			</Button>
 			<Button on:click={handleDownload('win')}>
-				<Windows />
+				<WindowsIcon />
 				Download for Windows
 			</Button>
 			<Button on:click={handleDownload('linux')}>
-				<Linux />
+				<LinuxIcon />
 				Download for Linux
 			</Button>
 		</div>

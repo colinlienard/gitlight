@@ -10,7 +10,15 @@
 		Tooltip
 	} from '~/lib/components';
 	import { filteredNotifications, githubNotifications, largeScreen, settings } from '~/lib/stores';
-	import { Check, Github, Gitlab, Logo, Mail, Pin, Refresh } from '~/lib/icons';
+	import {
+		CheckIcon,
+		GithubIcon,
+		GitlabIcon,
+		Logo,
+		UnreadIcon,
+		PinIcon,
+		RefreshIcon
+	} from '~/lib/icons';
 	import { fetchGithub } from '~/lib/helpers';
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
@@ -97,7 +105,7 @@
 		{/if}
 		<h1 class="title">Notifications</h1>
 		<div class="sync-pill" class:loading={!synced}>
-			<Refresh />
+			<RefreshIcon />
 			{#if synced}
 				Synced {syncTime}s ago
 			{:else}
@@ -108,19 +116,19 @@
 	</header>
 	<nav class="nav">
 		<button class="tab selected">
-			<Github />
+			<GithubIcon />
 			<p class="text">GitHub</p>
 			<span class="tag">
-				<Pin />
+				<PinIcon />
 				{pinned.length}
 			</span>
 			<span class="tag">
-				<Mail />
+				<UnreadIcon />
 				{unread.length}
 			</span>
 		</button>
 		<button class="tab">
-			<Gitlab />
+			<GitlabIcon />
 			<p class="text">GitLab</p>
 			<div class="tag soon">Coming soon</div>
 		</button>
@@ -128,7 +136,7 @@
 	<ScrollbarContainer>
 		<section class="columns-container" class:horizontal={!$largeScreen}>
 			<NotificationColumn
-				icon={Pin}
+				icon={PinIcon}
 				title="Pinned"
 				notifications={pinned}
 				placeholder="Click on 📌 to mark an event as pinned."
@@ -136,7 +144,7 @@
 			/>
 			<Separator vertical={$largeScreen} />
 			<NotificationColumn
-				icon={Mail}
+				icon={UnreadIcon}
 				title="Unread"
 				notifications={unread}
 				placeholder="New notifications 🔔 will appear here."
@@ -145,7 +153,7 @@
 				<div slot="header-addon">
 					{#if showReadAll}
 						<button class="read-all" on:click={markAllAsRead}>
-							<Check />
+							<CheckIcon />
 							All
 						</button>
 					{/if}
@@ -153,7 +161,7 @@
 			</NotificationColumn>
 			<Separator vertical={$largeScreen} />
 			<NotificationColumn
-				icon={Check}
+				icon={CheckIcon}
 				title="Read"
 				notifications={read}
 				placeholder="Click on ✅ to mark an event as read."

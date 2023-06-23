@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { cubicInOut } from 'svelte/easing';
-	import { SmallArrow } from '~/lib/icons';
+	import { SmallArrowIcon } from '~/lib/icons';
 
 	let shrinked = false;
 
@@ -24,7 +24,7 @@
 <div class="wrapper">
 	<div class="header" class:shrinked>
 		<button class="arrow-button" on:click={() => (shrinked = !shrinked)}>
-			<SmallArrow />
+			<SmallArrowIcon />
 		</button>
 		<slot name="header" />
 	</div>

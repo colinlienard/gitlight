@@ -2,7 +2,8 @@
 	import { createEventDispatcher } from 'svelte';
 	import { cubicInOut } from 'svelte/easing';
 	import { fade } from 'svelte/transition';
-	import { Cross } from '~/lib/icons';
+	import { CrossIcon } from '~/lib/icons';
+	import { IconButton } from '.';
 
 	export let title: string;
 	export let small = false;
@@ -60,9 +61,9 @@
 		<section class="modal" class:small transition:modalAnimation>
 			<header class="header">
 				<h2 class="title">{title}</h2>
-				<button class="close" on:click={handleToggle}>
-					<Cross />
-				</button>
+				<IconButton on:click={handleToggle}>
+					<CrossIcon />
+				</IconButton>
 			</header>
 			<div class="content">
 				<slot name="content" />
@@ -109,24 +110,6 @@
 
 			.title {
 				@include typography.heading-2;
-			}
-
-			.close {
-				padding: 0.5rem;
-				border-radius: variables.$radius;
-				transition: background-color variables.$transition;
-
-				&:hover {
-					background-color: variables.$grey-2;
-				}
-
-				&:active {
-					background-color: variables.$grey-3;
-				}
-
-				:global(svg) {
-					height: 1rem;
-				}
 			}
 		}
 

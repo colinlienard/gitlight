@@ -1,3 +1,12 @@
+import {
+	ClosedIssueIcon,
+	CommitIcon,
+	DiscussionIcon,
+	ExclamationMarkIcon,
+	ReleaseIcon,
+	WorkflowFailIcon,
+	WorkflowSuccessIcon
+} from '~/lib/icons';
 import type {
 	GithubComment,
 	GithubCommit,
@@ -9,22 +18,14 @@ import type {
 	NotificationData,
 	SavedNotifications
 } from '~/lib/types';
-import {
-	Check,
-	Commit,
-	Cross,
-	Discussion,
-	ExclamationMark,
-	IssueNotPlanned,
-	Release
-} from '../icons';
-import { getIconColor, getIssueIcon, getPullRequestIcon } from './getIcon';
+import { getIssueIcon, getPullRequestIcon } from './getIcon';
 import { fetchGithub } from './fetchGithub';
 import { removeMarkdownSymbols } from './removeMarkdownSymbols';
 
 export async function createNotificationData(
 	{ id, repository, subject, unread: u, updated_at, reason }: GithubNotification,
-	savedNotifications: SavedNotifications
+	savedNotifications: SavedNotifications,
+	firstTime: boolean
 ): Promise<NotificationData | null> {
 	const previous = Array.isArray(savedNotifications)
 		? savedNotifications.find((n) => n.id === id)
@@ -60,8 +61,7 @@ export async function createNotificationData(
 					? { login: author.login, avatar: author.avatar_url, bot: author.type === 'Bot' }
 					: { login: commit.author.name },
 				description: 'made a commit',
-				icon: Commit,
-				iconColor: 'blue',
+				icon: CommitIcon,
 				url: html_url
 			};
 		}
@@ -104,14 +104,13 @@ export async function createNotificationData(
 				}
 			}
 
-			if (previous?.description === description) return null;
+			if (!firstTime && previous?.description === description) return null;
 
 			return {
 				...common,
 				author,
 				description,
 				icon: getIssueIcon(data as GithubIssue),
-				iconColor: getIconColor(data as GithubIssue),
 				opened: state === 'open',
 				number,
 				labels,
@@ -176,14 +175,13 @@ export async function createNotificationData(
 				}
 			}
 
-			if (previous?.description === description) return null;
+			if (!firstTime && previous?.description === description) return null;
 
 			return {
 				...common,
 				author,
 				description,
 				icon: getPullRequestIcon(data as GithubPullRequest),
-				iconColor: getIconColor(data as GithubPullRequest),
 				opened: state === 'open',
 				number,
 				labels,
@@ -199,8 +197,7 @@ export async function createNotificationData(
 				...common,
 				author: { login: author.login, avatar: author.avatar_url, bot: author.type === 'Bot' },
 				description: 'made a release',
-				icon: Release,
-				iconColor: 'blue',
+				icon: ReleaseIcon,
 				labels: [
 					{ name: tag_name, color: 'FFFFFF' },
 					...(prerelease ? [{ name: 'pre-release', color: 'FFA723' }] : [])
@@ -213,8 +210,7 @@ export async function createNotificationData(
 			return {
 				...common,
 				description: 'New activity on discussion',
-				icon: Discussion,
-				iconColor: 'blue'
+				icon: DiscussionIcon
 			};
 
 		case 'CheckSuite': {
@@ -230,14 +226,14 @@ export async function createNotificationData(
 			};
 
 			if (subject.title.includes('succeeded')) {
-				return { ...data, icon: Check, iconColor: 'green' };
+				return { ...data, icon: WorkflowSuccessIcon };
 			}
 
 			if (subject.title.includes('failed')) {
-				return { ...data, icon: Cross, iconColor: 'red' };
+				return { ...data, icon: WorkflowFailIcon };
 			}
 
-			return { ...data, icon: IssueNotPlanned, iconColor: 'grey' };
+			return { ...data, icon: ClosedIssueIcon };
 		}
 
 		default:
@@ -245,8 +241,7 @@ export async function createNotificationData(
 				...common,
 				type: 'CheckSuite',
 				description: `'${subject.type}' notifications are not yet fully supported`,
-				icon: ExclamationMark,
-				iconColor: 'grey'
+				icon: ExclamationMarkIcon
 			};
 	}
 }

@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { Button, DownloadButton, FakeNotifications, Footer } from '~/lib/components';
-	import { ArrowRight, Github, Heart, Lightning, Logo, Sparkles } from '~/lib/icons';
+	import {
+		ArrowRightIcon,
+		GithubIcon,
+		HeartIcon,
+		LightningIcon,
+		Logo,
+		SparklesIcon
+	} from '~/lib/icons';
 </script>
 
 <svelte:head>
@@ -20,7 +27,7 @@
 			rel="noreferrer"
 			class="icon-link"
 		>
-			<Github />
+			<GithubIcon />
 		</a>
 	</header>
 	<main class="main">
@@ -35,7 +42,7 @@
 		<div class="buttons-container" data-slide style="--stagger: 2">
 			<DownloadButton>
 				<Button>
-					<ArrowRight />
+					<ArrowRightIcon />
 					Download the app
 				</Button>
 			</DownloadButton>
@@ -44,17 +51,17 @@
 		<span class="separator" data-slide style="--stagger: 3" />
 		<ul class="features-list" data-slide style="--stagger: 4">
 			<li class="feature">
-				<Sparkles />
+				<SparklesIcon />
 				<h4 class="title">Filter and monitor events</h4>
 				<p class="description"><strong>Kanban</strong> style interface.</p>
 			</li>
 			<li class="feature">
-				<Heart />
+				<HeartIcon />
 				<h4 class="title"><strong>Free</strong> and <strong>open source</strong></h4>
 				<p class="description">Contribute on GitHub!</p>
 			</li>
 			<li class="feature">
-				<Lightning />
+				<LightningIcon />
 				<h4 class="title">Made for performance</h4>
 				<p class="description">Built with <strong>Tauri</strong> and <strong>SvelteKit</strong>.</p>
 			</li>

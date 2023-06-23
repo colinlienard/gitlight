@@ -4,7 +4,7 @@
 	import { flip } from 'svelte/animate';
 	import type { NotificationData } from '~/lib/types';
 	import { debounce } from '~/lib/helpers';
-	import { ArrowUp, Folder } from '~/lib/icons';
+	import { ArrowUpIcon, Folder } from '~/lib/icons';
 	import { Button } from '../common';
 	import SkeletonEvent from './SkeletonEvent.svelte';
 	import { loading, largeScreen } from '~/lib/stores';
@@ -83,7 +83,7 @@
 	{#if scrolled}
 		<div class="scroll-button" transition:fade={{ duration: 150 }}>
 			<Button type="secondary" small on:click={handleScrollToTop}>
-				Scroll to top <ArrowUp />
+				Scroll to top <ArrowUpIcon />
 			</Button>
 		</div>
 	{/if}

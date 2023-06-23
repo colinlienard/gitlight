@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import { fetchGithub, formatRelativeDate, getHex, lightenColor } from '~/lib/helpers';
-	import { Check, ExternalLink, Pin, Mail, Unpin } from '~/lib/icons';
-	import { Button, Tooltip } from '../common';
+	import { Button, Tooltip } from '~/lib/components';
+	import { CheckIcon, ExternalLinkIcon, PinIcon, UnpinIcon, UnreadIcon } from '~/lib/icons';
+	import { fetchGithub, formatRelativeDate, lightenColor } from '~/lib/helpers';
 	import { githubNotifications, settings } from '~/lib/stores';
 	import type { NotificationData } from '~/lib/types';
 
@@ -19,7 +19,6 @@
 		description,
 		time,
 		icon,
-		iconColor,
 		owner,
 		repo,
 		number,
@@ -118,7 +117,7 @@
 			{/if}
 		</p>
 		<div class="main">
-			<span class="icon-container" style:color={getHex(iconColor)}>
+			<span class="icon-container">
 				<svelte:component this={icon} />
 			</span>
 			<h3 class="title">{title}</h3>
@@ -141,31 +140,31 @@
 				<Tooltip content="Mark as {unread ? '' : 'un'}read" position="left" hover>
 					<Button type={unread ? 'primary' : 'secondary'} small on:click={handleToggle('unread')}>
 						{#if unread}
-							<Check />
+							<CheckIcon />
 						{:else}
-							<Mail />
+							<UnreadIcon />
 						{/if}
 					</Button>
 				</Tooltip>
 				{#if url}
 					<Tooltip content="Open in GitHub" position="left" hover>
 						<Button type="secondary" small href={url} external on:click={handleOpenInBrowser}>
-							<ExternalLink />
+							<ExternalLinkIcon />
 						</Button>
 					</Tooltip>
 				{:else}
 					<Tooltip content="Cannot open in GitHub" position="left" hover>
 						<Button type="secondary" small disabled>
-							<ExternalLink />
+							<ExternalLinkIcon />
 						</Button>
 					</Tooltip>
 				{/if}
 				<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left" hover>
 					<Button type="secondary" small on:click={handleToggle('pinned')}>
 						{#if pinned}
-							<Unpin />
+							<UnpinIcon />
 						{:else}
-							<Pin />
+							<PinIcon />
 						{/if}
 					</Button>
 				</Tooltip>
