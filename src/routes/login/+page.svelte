@@ -21,7 +21,7 @@
 	<main class="main">
 		{#if !onTauriApp}
 			<a href="/" class="back-button">
-				<IconButton>
+				<IconButton large>
 					<ArrowRightIcon />
 				</IconButton>
 			</a>

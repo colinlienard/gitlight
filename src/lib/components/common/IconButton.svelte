@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 
+	export let large = false;
+
 	const dispatch = createEventDispatcher();
 </script>
 
-<button class="button" on:click={(event) => dispatch('click', event)}>
+<button class="button" class:large on:click={(event) => dispatch('click', event)}>
 	<slot />
 </button>
 
@@ -24,6 +26,10 @@
 
 		:global(svg) {
 			height: 1rem;
+		}
+
+		&.large :global(svg) {
+			height: 1.25rem;
 		}
 	}
 </style>
