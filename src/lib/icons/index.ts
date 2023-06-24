@@ -11,7 +11,6 @@ export { default as DoubleArrowIcon } from './DoubleArrowIcon.svelte';
 export { default as DraftPullRequestIcon } from './DraftPullRequestIcon.svelte';
 export { default as ExclamationMarkIcon } from './ExclamationMarkIcon.svelte';
 export { default as ExternalLinkIcon } from './ExternalLinkIcon.svelte';
-export { default as Folder } from './Folder.svelte';
 export { default as GearIcon } from './GearIcon.svelte';
 export { default as GithubIcon } from './GithubIcon.svelte';
 export { default as GitlabIcon } from './GitlabIcon.svelte';

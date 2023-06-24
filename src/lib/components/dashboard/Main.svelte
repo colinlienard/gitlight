@@ -139,7 +139,10 @@
 				icon={PinIcon}
 				title="Pinned"
 				notifications={pinned}
-				placeholder="Click on 📌 to mark an event as pinned."
+				placeholder={{
+					icon: PinIcon,
+					text: 'Click on the pin icon to mark a notification as pinned.'
+				}}
 				{transitions}
 			/>
 			<Separator vertical={$largeScreen} />
@@ -147,7 +150,7 @@
 				icon={UnreadIcon}
 				title="Unread"
 				notifications={unread}
-				placeholder="New notifications 🔔 will appear here."
+				placeholder={{ icon: UnreadIcon, text: 'New and unread notifications will appear here.' }}
 				{transitions}
 			>
 				<div slot="header-addon">
@@ -164,7 +167,10 @@
 				icon={CheckIcon}
 				title="Read"
 				notifications={read}
-				placeholder="Click on ✅ to mark an event as read."
+				placeholder={{
+					icon: CheckIcon,
+					text: 'Click on the check icon to mark a notification as read.'
+				}}
 				{transitions}
 			/>
 		</section>

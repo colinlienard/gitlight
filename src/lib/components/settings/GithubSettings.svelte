@@ -43,8 +43,8 @@
 <style lang="scss">
 	.text,
 	.list-item {
+		@include typography.base;
 		color: variables.$grey-4;
-		line-height: 1.3em;
 	}
 
 	.list-item {

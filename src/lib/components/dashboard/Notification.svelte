@@ -328,9 +328,9 @@
 	}
 
 	.description {
+		@include typography.base;
 		width: 100%;
 		color: variables.$grey-4;
-		line-height: 1.3em;
 		display: -webkit-box;
 		overflow: hidden;
 		-webkit-line-clamp: 2;
