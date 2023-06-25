@@ -13,11 +13,11 @@ env:
   TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
 jobs:
   release:
-    if: contains(github.event.head_commit.message, 'release')
+    # if: contains(github.event.head_commit.message, 'release')
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-20.04, windows-latest]
+        platform: [macos-latest, macos-12, ubuntu-20.04, windows-latest]
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v3
@@ -32,6 +32,10 @@ jobs:
         uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
+      - if: matrix.platform == 'macos-latest'
+        run: rustup target add aarch64-apple-darwin
+      - if: matrix.platform == 'macos-12'
+        run: rustup target add x86_64-apple-darwin
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 8
@@ -52,3 +56,4 @@ jobs:
           releaseBody: 'See the assets to download and install this version.'
           releaseDraft: true
           prerelease: false
+          args: ${{ matrix.platform == 'macos-latest' && '--target aarch64-apple-darwin' || matrix.platform == 'macos-12' && '--target x86_64-apple-darwin' || '' }}
