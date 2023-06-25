@@ -42,99 +42,98 @@
 			});
 		}
 
-		if (notifications.length) {
-			let newNotifications: NotificationData[] = [];
+		if (!notifications.length) return (synced = true);
 
-			try {
-				newNotifications = (
-					await Promise.all(
-						notifications.map((notification) =>
-							createNotificationData(notification, $savedNotifications)
-						)
+		let newNotifications: NotificationData[] = [];
+
+		try {
+			newNotifications = (
+				await Promise.all(
+					notifications.map((notification) =>
+						createNotificationData(notification, $savedNotifications, !$githubNotifications.length)
 					)
-				).filter((item): item is NotificationData => !!item);
-			} catch (e) {
-				if (e && typeof e === 'object' && 'stack' in e) {
-					$error = e.stack as string;
-				} else {
-					$error = e as string;
-				}
-				synced = true;
-				console.error(e);
+				)
+			).filter((item): item is NotificationData => !!item);
+		} catch (e) {
+			if (e && typeof e === 'object' && 'stack' in e) {
+				$error = e.stack as string;
+			} else {
+				$error = e as string;
 			}
-
+			console.error(e);
+		} finally {
 			synced = true;
+		}
 
-			if (!newNotifications.length) return;
+		if (!newNotifications.length) return;
 
-			// Send push notification
-			const pushNotification = newNotifications[0];
-			if (
-				window.__TAURI__ &&
-				$githubNotifications.length &&
-				pushNotification.unread &&
-				$settings.activateNotifications
-			) {
-				const { author, title, description, repo, ownerAvatar } = pushNotification;
-				sendNotification({
-					title: `${repo}: ${author ? `${author.login} ` : ''}${description}`,
-					body: title,
-					icon: ownerAvatar
-				});
+		// Send push notification
+		const pushNotification = newNotifications[0];
+		if (
+			window.__TAURI__ &&
+			$githubNotifications.length &&
+			pushNotification.unread &&
+			$settings.activateNotifications
+		) {
+			const { author, title, description, repo, ownerAvatar } = pushNotification;
+			sendNotification({
+				title: `${repo}: ${author ? `${author.login} ` : ''}${description}`,
+				body: title,
+				icon: ownerAvatar
+			});
+		}
+
+		// Remove duplicates and add new notifications to the store
+		$githubNotifications = [
+			...newNotifications,
+			...$githubNotifications.filter((item) => !newNotifications.find((n) => n.id === item.id))
+		];
+
+		// Update watched repos
+		const savedWatchedRepos = storage.get('github-watched-repos');
+		$watchedRepos = $githubNotifications.reduce<WatchedRepo[]>((previous, current) => {
+			const index = previous.findIndex((repo) => repo.id === current.repoId);
+			if (index > -1) {
+				const repo = previous.splice(index, 1)[0];
+				return [...previous, { ...repo, number: repo.number + 1 }];
 			}
-
-			// Remove duplicates and add new notifications to the store
-			$githubNotifications = [
-				...newNotifications,
-				...$githubNotifications.filter((item) => !newNotifications.find((n) => n.id === item.id))
+			return [
+				...previous,
+				{
+					id: current.repoId,
+					name: current.repo,
+					ownerName: current.owner,
+					ownerAvatar: current.ownerAvatar,
+					number: 1,
+					active: savedWatchedRepos?.find((repo) => repo.id === current.repoId)?.active ?? true
+				}
 			];
+		}, []);
 
-			// Update watched repos
-			const savedWatchedRepos = storage.get('github-watched-repos');
-			$watchedRepos = $githubNotifications.reduce<WatchedRepo[]>((previous, current) => {
-				const index = previous.findIndex((repo) => repo.id === current.repoId);
+		// Update watched persons
+		const savedWatchedPersons = storage.get('github-watched-persons');
+		$watchedPersons = $githubNotifications
+			.reduce<WatchedPerson[]>((previous, current) => {
+				if (!current.author) return previous;
+				const index = previous.findIndex((person) => person.login === current?.author?.login);
 				if (index > -1) {
-					const repo = previous.splice(index, 1)[0];
-					return [...previous, { ...repo, number: repo.number + 1 }];
+					const person = previous.splice(index, 1)[0];
+					return [...previous, { ...person, number: person.number + 1 }];
 				}
 				return [
 					...previous,
 					{
-						id: current.repoId,
-						name: current.repo,
-						ownerName: current.owner,
-						ownerAvatar: current.ownerAvatar,
+						login: current.author?.login ?? '',
+						avatar: current.author?.avatar ?? '',
 						number: 1,
-						active: savedWatchedRepos?.find((repo) => repo.id === current.repoId)?.active ?? true
+						bot: current.author.bot,
+						active:
+							savedWatchedPersons?.find((person) => person.login === current.author?.login)
+								?.active ?? true
 					}
 				];
-			}, []);
-
-			// Update watched persons
-			const savedWatchedPersons = storage.get('github-watched-persons');
-			$watchedPersons = $githubNotifications
-				.reduce<WatchedPerson[]>((previous, current) => {
-					if (!current.author) return previous;
-					const index = previous.findIndex((person) => person.login === current?.author?.login);
-					if (index > -1) {
-						const person = previous.splice(index, 1)[0];
-						return [...previous, { ...person, number: person.number + 1 }];
-					}
-					return [
-						...previous,
-						{
-							login: current.author?.login ?? '',
-							avatar: current.author?.avatar ?? '',
-							number: 1,
-							bot: current.author.bot,
-							active:
-								savedWatchedPersons?.find((person) => person.login === current.author?.login)
-									?.active ?? true
-						}
-					];
-				}, [])
-				.sort((a, b) => b.number - a.number);
-		}
+			}, [])
+			.sort((a, b) => b.number - a.number);
 	}
 
 	$: if (mounted && $githubNotifications.length) {

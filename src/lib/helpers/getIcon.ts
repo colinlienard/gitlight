@@ -1,21 +1,21 @@
 import type { ComponentType } from 'svelte';
+import type { GithubIssue, GithubPullRequest } from '~/lib/types';
 import {
-	IssueClosed,
-	IssueNotPlanned,
-	IssueOpen,
-	PullRequestClosed,
-	PullRequestDraft,
-	PullRequestMerged,
-	PullRequestOpen
-} from '../icons';
-import type { Color, GithubIssue, GithubPullRequest } from '../types';
+	ClosedIssueIcon,
+	ClosedPullRequestIcon,
+	CompletedIssueIcon,
+	DraftPullRequestIcon,
+	MergedPullRequestIcon,
+	OpenIssueIcon,
+	OpenPullRequestIcon
+} from '~/lib/icons';
 
 export function getIssueIcon({ state, state_reason }: GithubIssue): ComponentType {
 	switch (state) {
 		case 'open':
-			return IssueOpen;
+			return OpenIssueIcon;
 		case 'closed':
-			return state_reason === 'completed' ? IssueClosed : IssueNotPlanned;
+			return state_reason === 'completed' ? CompletedIssueIcon : ClosedIssueIcon;
 		default:
 			throw new Error('Invalid state');
 	}
@@ -24,26 +24,10 @@ export function getIssueIcon({ state, state_reason }: GithubIssue): ComponentTyp
 export function getPullRequestIcon({ state, merged, draft }: GithubPullRequest): ComponentType {
 	switch (state) {
 		case 'open':
-			return draft ? PullRequestDraft : PullRequestOpen;
+			return draft ? DraftPullRequestIcon : OpenPullRequestIcon;
 		case 'closed':
-			return merged ? PullRequestMerged : PullRequestClosed;
+			return merged ? MergedPullRequestIcon : ClosedPullRequestIcon;
 		default:
 			throw new Error('Invalid state');
 	}
-}
-
-export function getIconColor(item: GithubPullRequest | GithubIssue): Color {
-	// Pull request
-	if ('draft' in item) {
-		if (item.state === 'open') {
-			return item.draft ? 'grey' : 'green';
-		}
-		return item.merged ? 'purple' : 'red';
-	}
-
-	// Issue
-	if (item.state === 'open') {
-		return 'green';
-	}
-	return item.state_reason === 'completed' ? 'purple' : 'grey';
 }

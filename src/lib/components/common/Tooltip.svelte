@@ -13,7 +13,7 @@
 	import { fade } from 'svelte/transition';
 	import { sineInOut } from 'svelte/easing';
 	import { browser } from '$app/environment';
-	import { Check } from '~/lib/icons';
+	import { CheckIcon } from '~/lib/icons';
 
 	export let content: string | TooltipContent;
 	export let position:
@@ -109,7 +109,7 @@
 							on:click={handleToggleActive(text, onToggle)}
 						>
 							<div class="checkbox" class:active>
-								<Check />
+								<CheckIcon />
 							</div>
 							{text}
 						</button>

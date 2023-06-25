@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { Notification } from '~/lib/components';
-	import { Commit } from '~/lib/icons';
-	import IssueOpen from '~/lib/icons/IssueOpen.svelte';
-	import PullRequestMerged from '~/lib/icons/PullRequestMerged.svelte';
-	import PullRequestOpen from '~/lib/icons/PullRequestOpen.svelte';
+	import {
+		CommitIcon,
+		MergedPullRequestIcon,
+		OpenIssueIcon,
+		OpenPullRequestIcon
+	} from '~/lib/icons';
 	import type { NotificationData } from '~/lib/types';
 
 	const common = {
@@ -34,8 +36,7 @@
 			title: 'feat(back): tauri functionnalities',
 			description: 'made a commit',
 			time: new Date().toString(),
-			icon: Commit,
-			iconColor: 'blue',
+			icon: CommitIcon,
 			owner: 'colinlienard',
 			repo: 'gitlight'
 		},
@@ -50,8 +51,7 @@
 			title: 'feat(astro): write config if not present when building',
 			description: 'merged this pull request',
 			time: new Date().toString(),
-			icon: PullRequestMerged,
-			iconColor: 'purple',
+			icon: MergedPullRequestIcon,
 			owner: 'lagonapp',
 			repo: 'lagon',
 			number: 845,
@@ -71,8 +71,7 @@
 			title: 'feat(cli): add rustls as default Cargo feature',
 			description: 'merged this pull request',
 			time: new Date(new Date().getTime() - 1000000).toString(),
-			icon: PullRequestMerged,
-			iconColor: 'purple',
+			icon: MergedPullRequestIcon,
 			owner: 'tauri-apps',
 			repo: 'tauri',
 			number: 6900
@@ -89,8 +88,7 @@
 			description:
 				'commented: The Svelte repo is currently in the process of heavy restructuring for Svelte 4. After that, work on Svelte 5 will likely change',
 			time: new Date(new Date().getTime() - 10000000).toString(),
-			icon: IssueOpen,
-			iconColor: 'green',
+			icon: OpenIssueIcon,
 			owner: 'sveltejs',
 			repo: 'svelte',
 			number: 8569,
@@ -108,8 +106,7 @@
 			title: 'feat(front): add the landing page',
 			description: 'opened this pull request',
 			time: new Date(new Date().getTime() - 23000).toString(),
-			icon: PullRequestOpen,
-			iconColor: 'green',
+			icon: OpenPullRequestIcon,
 			owner: 'colinlienard',
 			repo: 'gitlight',
 			number: 44,

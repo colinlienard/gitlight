@@ -4,7 +4,7 @@
 	import { flip } from 'svelte/animate';
 	import type { NotificationData } from '~/lib/types';
 	import { debounce } from '~/lib/helpers';
-	import { ArrowUp, Folder } from '~/lib/icons';
+	import { ArrowUpIcon } from '~/lib/icons';
 	import { Button } from '../common';
 	import SkeletonEvent from './SkeletonEvent.svelte';
 	import { loading, largeScreen } from '~/lib/stores';
@@ -20,7 +20,7 @@
 	export let icon: ComponentType;
 	export let title: string;
 	export let notifications: NotificationData[];
-	export let placeholder: string;
+	export let placeholder: { icon: ComponentType; text: string };
 	export let transitions: {
 		receive: SvelteAnimation;
 		send: SvelteAnimation;
@@ -83,7 +83,7 @@
 	{#if scrolled}
 		<div class="scroll-button" transition:fade={{ duration: 150 }}>
 			<Button type="secondary" small on:click={handleScrollToTop}>
-				Scroll to top <ArrowUp />
+				Scroll to top <ArrowUpIcon />
 			</Button>
 		</div>
 	{/if}
@@ -91,23 +91,26 @@
 		{#if $loading}
 			<li><SkeletonEvent /></li>
 			<li><SkeletonEvent /></li>
-		{:else if !empty}
+		{:else}
 			{#each notifications as notification, index (notification)}
 				<li
 					class="item"
 					in:receive={{ key: notification.id }}
 					out:send={{ key: notification.id }}
-					animate:conditionalFlip={index < 5 ? settings : undefined}
+					animate:conditionalFlip={index < 6 ? settings : undefined}
 				>
 					<Notification data={notification} />
 				</li>
 			{/each}
-		{:else}
-			<div class="placeholder">
-				<Folder />
-				<h4 class="title">No events to display</h4>
-				<p>{placeholder}</p>
-			</div>
+			{#if empty}
+				<div class="placeholder" in:fade={{ duration: 300 }}>
+					<div class="icon-container">
+						<svelte:component this={placeholder.icon} />
+					</div>
+					<h4 class="title">No notifications to display</h4>
+					<p class="text">{placeholder.text}</p>
+				</div>
+			{/if}
 		{/if}
 	</ul>
 </div>
@@ -226,12 +229,33 @@
 		text-align: center;
 		padding: 1rem 0;
 
-		:global(svg) {
-			height: 3rem;
+		.icon-container {
+			padding: 0.5rem;
+			border-radius: variables.$radius;
+			border: 1px solid;
+			margin-bottom: 0.5rem;
+			position: relative;
+
+			:global(svg) {
+				height: 1rem;
+			}
+
+			&::before {
+				content: '';
+				position: absolute;
+				inset: -1px;
+				background-image: linear-gradient(transparent, rgba(variables.$grey-1, 0.75));
+			}
 		}
 
 		.title {
-			@include typography.heading-2;
+			@include typography.bold;
+		}
+
+		.text {
+			@include typography.small;
+			@include typography.base;
+			max-width: 12rem;
 		}
 	}
 </style>

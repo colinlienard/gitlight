@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Github, Gitlab } from '~/lib/icons';
+	import { GithubIcon, GitlabIcon } from '~/lib/icons';
 	import { Button, Tooltip } from '~/lib/components';
 	import LogOutButton from './LogOutButton.svelte';
 
@@ -10,7 +10,7 @@
 <ul class="accounts-wrapper">
 	<li class="account">
 		<div class="header">
-			<Github />
+			<GithubIcon />
 			<h4 class="title">GitHub</h4>
 		</div>
 		<div class="content">
@@ -26,7 +26,7 @@
 	</li>
 	<li class="account">
 		<div class="header">
-			<Gitlab />
+			<GitlabIcon />
 			<h4 class="title">GitLab</h4>
 		</div>
 		<div class="content">

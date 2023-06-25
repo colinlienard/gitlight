@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Gear } from '~/lib/icons';
+	import { GearIcon } from '~/lib/icons';
 	import { Tooltip, type TooltipContent } from '~/lib/components';
 
 	export let items: { active: boolean }[];
@@ -34,7 +34,7 @@
 			width="14rem"
 		>
 			<div class="icon-container">
-				<Gear />
+				<GearIcon />
 			</div>
 		</Tooltip>
 	</div>

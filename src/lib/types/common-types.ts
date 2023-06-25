@@ -13,8 +13,6 @@ export type Session = {
 	accessToken: string;
 };
 
-export type Color = 'blue' | 'purple' | 'green' | 'red' | 'grey';
-
 export type NotificationData = {
 	id: string;
 	type: GithubNotificationType;
@@ -26,7 +24,6 @@ export type NotificationData = {
 	description: string;
 	time: string;
 	icon: ComponentType;
-	iconColor: Color;
 	opened?: boolean;
 	owner: string;
 	repo: string;

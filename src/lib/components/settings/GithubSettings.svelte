@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ExternalLink } from '~/lib/icons';
+	import { ExternalLinkIcon } from '~/lib/icons';
 	import { Button } from '~/lib/components';
 </script>
 
@@ -8,7 +8,7 @@
 	In order to receive GitHub notifications in the app, you need to update some settings:
 </p>
 <Button href="https://github.com/settings/notifications" external small>
-	<ExternalLink />
+	<ExternalLinkIcon />
 	Notification settings
 </Button>
 <p class="list-item">
@@ -36,15 +36,15 @@
 	external
 	small
 >
-	<ExternalLink />
+	<ExternalLinkIcon />
 	Organization access
 </Button>
 
 <style lang="scss">
 	.text,
 	.list-item {
+		@include typography.base;
 		color: variables.$grey-4;
-		line-height: 1.3em;
 	}
 
 	.list-item {

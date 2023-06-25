@@ -2,7 +2,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { cubicInOut } from 'svelte/easing';
 	import { page } from '$app/stores';
-	import { Cross } from '~/lib/icons';
+	import { CrossIcon, ExclamationMarkIcon } from '~/lib/icons';
 	import { browser } from '$app/environment';
 	import { DownloadButton } from '../landing';
 
@@ -62,9 +62,12 @@
 {#if show}
 	<DownloadButton show={canDownload} position="bottom">
 		<div class="banner" transition:slide>
-			<button class="content" on:click={handleClick}>✨ Download or open the desktop app</button>
+			<button class="content" on:click={handleClick}>
+				<ExclamationMarkIcon />
+				Download or open the desktop app
+			</button>
 			<button class="close" on:click={handleClose}>
-				<Cross />
+				<CrossIcon />
 			</button>
 		</div>
 	</DownloadButton>
@@ -74,14 +77,14 @@
 	.banner {
 		position: relative;
 		height: 2.5rem;
-		background-color: variables.$blue-2;
-		box-shadow: 0 0 1rem variables.$blue-2;
 		overflow: hidden;
-		transition: filter variables.$transition;
+		border-bottom: 1px solid variables.$grey-3;
+		background-color: variables.$grey-1;
+		transition: background-color variables.$transition;
 		z-index: 1;
 
 		&:hover {
-			filter: brightness(130%);
+			background-color: variables.$grey-2;
 		}
 
 		.content {
@@ -90,15 +93,28 @@
 			inset: 0;
 			width: 100%;
 			height: 2.5rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.5rem;
+
+			:global(svg) {
+				height: 1.25rem;
+			}
 		}
 
 		.close {
 			position: absolute;
 			inset: 0 0 0 auto;
 			padding: 0 0.5rem;
+			transition: color variables.$transition;
+
+			&:not(:hover) {
+				color: variables.$grey-4;
+			}
 
 			:global(svg) {
-				height: 1.25rem;
+				height: 1rem;
 			}
 		}
 	}

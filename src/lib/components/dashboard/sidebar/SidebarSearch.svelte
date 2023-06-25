@@ -2,7 +2,7 @@
 	import { browser } from '$app/environment';
 	import { onDestroy, onMount, type SvelteComponent } from 'svelte';
 	import { Input } from '~/lib/components';
-	import { Search } from '~/lib/icons';
+	import { SearchIcon } from '~/lib/icons';
 
 	export let search = '';
 
@@ -26,7 +26,7 @@
 	});
 </script>
 
-<Input icon={Search} bind:value={search} placeholder="Search" clearable bind:this={input}>
+<Input icon={SearchIcon} bind:value={search} placeholder="Search" clearable bind:this={input}>
 	{#if !search}
 		<span class="key">/</span>
 	{/if}

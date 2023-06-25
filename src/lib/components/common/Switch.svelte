@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { Check, Cross } from '~/lib/icons';
+	import { CheckIcon, CrossIcon } from '~/lib/icons';
 
 	export let label: string | undefined;
 	export let active: boolean;
@@ -20,9 +20,9 @@
 		<input class="input" type="checkbox" bind:checked={active} />
 		<div class="icon-container">
 			{#if active}
-				<Check />
+				<CheckIcon />
 			{:else}
-				<Cross />
+				<CrossIcon />
 			{/if}
 		</div>
 	</span>

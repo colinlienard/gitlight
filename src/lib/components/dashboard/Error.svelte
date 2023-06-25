@@ -57,8 +57,8 @@
 		}
 
 		.text {
+			@include typography.base;
 			color: variables.$grey-4;
-			line-height: 1.3em;
 
 			.link {
 				color: variables.$white;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ComponentType } from 'svelte';
-	import { Cross } from '~/lib/icons';
+	import { CrossIcon } from '~/lib/icons';
 
 	export let label: string | undefined = undefined;
 	export let icon: ComponentType | undefined = undefined;
@@ -27,7 +27,7 @@
 		<slot />
 		{#if clearable && value}
 			<button class="clear" on:click={() => (value = '')}>
-				<Cross />
+				<CrossIcon />
 			</button>
 		{/if}
 	</div>
