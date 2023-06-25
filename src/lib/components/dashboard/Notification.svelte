@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import { invoke } from '@tauri-apps/api/tauri';
 	import { Button, Tooltip } from '~/lib/components';
 	import { CheckIcon, ExternalLinkIcon, PinIcon, UnpinIcon, UnreadIcon } from '~/lib/icons';
 	import { fetchGithub, formatRelativeDate, lightenColor } from '~/lib/helpers';
@@ -83,19 +82,12 @@
 			});
 		}
 	}
-
-	function handleMouseEnter() {
-		isNew = false;
-		if (window.__TAURI__) {
-			invoke('update_tray', { newIcon: false });
-		}
-	}
 </script>
 
 <div class="container" class:unread>
 	<div
 		class="notification"
-		on:mouseenter={isNew && interactive ? handleMouseEnter : undefined}
+		on:mouseenter={isNew && interactive ? () => (isNew = false) : undefined}
 		role="presentation"
 	>
 		{#if isNew && unread}
@@ -243,8 +235,7 @@
 		border-radius: 50%;
 		background-color: variables.$blue-2;
 		position: absolute;
-		inset: 0.25rem 0 0 0.25rem;
-		box-shadow: 0 0 0.5rem variables.$grey-2;
+		inset: 0.25rem 0.25rem auto auto;
 	}
 
 	.top {
