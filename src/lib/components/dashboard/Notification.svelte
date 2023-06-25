@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
+	import { invoke } from '@tauri-apps/api/tauri';
 	import { Button, Tooltip } from '~/lib/components';
 	import { CheckIcon, ExternalLinkIcon, PinIcon, UnpinIcon, UnreadIcon } from '~/lib/icons';
 	import { fetchGithub, formatRelativeDate, lightenColor } from '~/lib/helpers';
@@ -82,12 +83,19 @@
 			});
 		}
 	}
+
+	function handleMouseEnter() {
+		isNew = false;
+		if (window.__TAURI__) {
+			invoke('update_tray', { newIcon: false });
+		}
+	}
 </script>
 
 <div class="container" class:unread>
 	<div
 		class="notification"
-		on:mouseenter={isNew && interactive ? () => (isNew = false) : undefined}
+		on:mouseenter={isNew && interactive ? handleMouseEnter : undefined}
 		role="presentation"
 	>
 		{#if isNew && unread}
