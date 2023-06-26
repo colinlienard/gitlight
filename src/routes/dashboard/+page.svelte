@@ -67,7 +67,7 @@
 
 		if (!newNotifications.length) return;
 
-		// Send push notification
+		// Send push notification and update tray icon
 		const pushNotification = newNotifications[0];
 		if (
 			window.__TAURI__ &&
@@ -75,12 +75,12 @@
 			pushNotification.unread &&
 			$settings.activateNotifications
 		) {
-			const { author, title, description, repo, ownerAvatar } = pushNotification;
+			const { author, title, description, repo } = pushNotification;
 			sendNotification({
 				title: `${repo}: ${author ? `${author.login} ` : ''}${description}`,
-				body: title,
-				icon: ownerAvatar
+				body: title
 			});
+			invoke('update_tray', { newIcon: true });
 		}
 
 		// Remove duplicates and add new notifications to the store

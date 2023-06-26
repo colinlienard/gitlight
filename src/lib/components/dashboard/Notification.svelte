@@ -235,8 +235,7 @@
 		border-radius: 50%;
 		background-color: variables.$blue-2;
 		position: absolute;
-		inset: 0.25rem 0 0 0.25rem;
-		box-shadow: 0 0 0.5rem variables.$grey-2;
+		inset: 0.25rem 0.25rem auto auto;
 	}
 
 	.top {

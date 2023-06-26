@@ -80,8 +80,7 @@
 			}
 		],
 		"systemTray": {
-			"iconPath": "icons/template-icon.png",
-			"iconAsTemplate": true
+			"iconPath": "icons/tray-base.png"
 		}
 	}
 }

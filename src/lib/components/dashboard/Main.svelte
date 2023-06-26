@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { onDestroy, onMount } from 'svelte';
 	import { crossfade, slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
+	import { invoke } from '@tauri-apps/api/tauri';
 	import {
 		NotificationColumn,
 		Settings,
@@ -20,7 +22,6 @@
 		RefreshIcon
 	} from '~/lib/icons';
 	import { fetchGithub } from '~/lib/helpers';
-	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
 
 	export let synced: boolean;
@@ -75,6 +76,10 @@
 		case 'Horizontal':
 			$largeScreen = true;
 			break;
+	}
+
+	$: if (browser && window.__TAURI__ && unread.length === 0) {
+		invoke('update_tray', { newIcon: false });
 	}
 
 	onMount(() => {
