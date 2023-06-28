@@ -83,6 +83,7 @@ export async function createNotificationData(
 
 			let author;
 			let description = 'New activity on issue';
+			let url = html_url;
 			if (
 				state == 'open' &&
 				new Date(common.time).getTime() - new Date(created_at).getTime() < 30000
@@ -102,6 +103,7 @@ export async function createNotificationData(
 				if (comment) {
 					author = comment.author;
 					description = comment.description;
+					if (comment.url) url = comment.url;
 				}
 			}
 
@@ -115,7 +117,7 @@ export async function createNotificationData(
 				opened: state === 'open',
 				number,
 				labels,
-				url: html_url,
+				url,
 				previously:
 					previous?.description !== description ? previous : previous?.previously || undefined
 			};
