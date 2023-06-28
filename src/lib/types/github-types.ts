@@ -67,6 +67,14 @@ export type GithubComment = {
 	created_at: string;
 };
 
+export type GithubReview = {
+	body?: string;
+	html_url: string;
+	user: GithubUser;
+	state: 'APPROVED' | 'CHANGES_REQUESTED' | 'COMMENTED' | 'DISMISSED';
+	submitted_at: string;
+};
+
 export type GithubRelease = {
 	author: GithubUser;
 	tag_name: string;

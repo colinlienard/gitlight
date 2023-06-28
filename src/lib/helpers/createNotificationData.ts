@@ -15,6 +15,7 @@ import type {
 	GithubNotification,
 	GithubPullRequest,
 	GithubRelease,
+	GithubReview,
 	NotificationData,
 	SavedNotifications
 } from '~/lib/types';
@@ -82,6 +83,7 @@ export async function createNotificationData(
 
 			let author;
 			let description = 'New activity on issue';
+			let url = html_url;
 			if (
 				state == 'open' &&
 				new Date(common.time).getTime() - new Date(created_at).getTime() < 30000
@@ -101,6 +103,7 @@ export async function createNotificationData(
 				if (comment) {
 					author = comment.author;
 					description = comment.description;
+					if (comment.url) url = comment.url;
 				}
 			}
 
@@ -114,7 +117,7 @@ export async function createNotificationData(
 				opened: state === 'open',
 				number,
 				labels,
-				url: html_url,
+				url,
 				previously:
 					previous?.description !== description ? previous : previous?.previously || undefined
 			};
@@ -122,6 +125,7 @@ export async function createNotificationData(
 
 		case 'PullRequest': {
 			const {
+				url: apiUrl,
 				user,
 				merged_by,
 				number,
@@ -140,6 +144,7 @@ export async function createNotificationData(
 
 			let author;
 			let description = 'New activity on pull request';
+			let url = html_url;
 			const time = new Date(common.time).getTime();
 			if (state == 'open' && time - new Date(created_at).getTime() < 30000) {
 				author = { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
@@ -156,7 +161,8 @@ export async function createNotificationData(
 				const events = await Promise.all([
 					review_comments ? getLatestComment(review_comments_url) : undefined,
 					comments ? getLatestComment(comments_url) : undefined,
-					commits ? getLatestCommit(commits_url) : undefined
+					commits ? getLatestCommit(commits_url) : undefined,
+					getLatestReview(apiUrl)
 				]);
 				const event = events.reduce<Awaited<ReturnType<typeof getLatestCommit>> | undefined>(
 					(previous, current) => {
@@ -172,6 +178,7 @@ export async function createNotificationData(
 				if (event) {
 					author = event.author;
 					description = event.description;
+					if (event.url) url = event.url;
 				}
 			}
 
@@ -185,7 +192,7 @@ export async function createNotificationData(
 				opened: state === 'open',
 				number,
 				labels,
-				url: html_url,
+				url,
 				previously:
 					previous?.description !== description ? previous : previous?.previously || undefined
 			};
@@ -246,7 +253,18 @@ export async function createNotificationData(
 	}
 }
 
-async function getLatestComment(url: string) {
+type PullRequestEvent = {
+	author: {
+		login: string;
+		avatar?: string;
+		bot?: boolean;
+	};
+	description: string;
+	time: string;
+	url?: string;
+};
+
+async function getLatestComment(url: string): Promise<PullRequestEvent | undefined> {
 	const comments = await fetchGithub<GithubComment[]>(url);
 	if (!comments.length) return undefined;
 	const comment = comments[comments.length - 1];
@@ -256,11 +274,11 @@ async function getLatestComment(url: string) {
 		bot: comment.user.type === 'Bot'
 	};
 	const body = removeMarkdownSymbols(comment.body).slice(0, 100);
-	const description = `commented: ${body}${body.length === 100 ? '...' : ''}`;
-	return { author, description, time: comment.created_at };
+	const description = `commented: ${body}${body.length < 100 ? '...' : ''}`;
+	return { author, description, time: comment.created_at, url: comment.html_url };
 }
 
-async function getLatestCommit(url: string) {
+async function getLatestCommit(url: string): Promise<PullRequestEvent | undefined> {
 	const commits = await fetchGithub<GithubCommit[]>(url);
 	if (!commits.length) return undefined;
 	const commit = commits[commits.length - 1];
@@ -273,4 +291,36 @@ async function getLatestCommit(url: string) {
 		: { login: commit.commit.author.name };
 	const description = `committed: ${commit.commit.message}`;
 	return { author, description, time: commit.commit.author.date };
+}
+
+async function getLatestReview(url: string): Promise<PullRequestEvent | undefined> {
+	const reviews = await fetchGithub<GithubReview[]>(`${url}/reviews`);
+	if (!reviews.length) return undefined;
+	const review = reviews[reviews.length - 1];
+	const author = {
+		login: review.user.login,
+		avatar: review.user.avatar_url
+	};
+	const body = review.body ? removeMarkdownSymbols(review.body).slice(0, 100) : undefined;
+	let description = '';
+	switch (review.state) {
+		case 'APPROVED':
+			description = 'approved';
+			break;
+		case 'CHANGES_REQUESTED':
+			description = `requested changes${body ? '' : ' on'}`;
+			break;
+		case 'COMMENTED':
+			description = 'commented';
+			break;
+		case 'DISMISSED':
+			description = `dismissed review${body ? '' : ' on'}`;
+			break;
+	}
+	if (body) {
+		description += `: ${body}${body.length === 100 ? '...' : ''}`;
+	} else {
+		description += ' this pull request';
+	}
+	return { author, description, time: review.submitted_at, url: review.html_url };
 }
