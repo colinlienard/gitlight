@@ -8,7 +8,7 @@
 	import { Button } from '../common';
 	import SkeletonEvent from './SkeletonEvent.svelte';
 	import { loading, largeScreen } from '~/lib/stores';
-	import Notification from './Notification.svelte';
+	import Notification from './notification';
 
 	type SvelteAnimation = (
 		node: Element,

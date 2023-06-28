@@ -141,6 +141,7 @@
 <style lang="scss">
 	.container {
 		position: relative;
+		z-index: 1;
 	}
 
 	.tooltip {
@@ -154,6 +155,10 @@
 
 		&.no-wrap {
 			white-space: nowrap;
+		}
+
+		&:not(.no-wrap) {
+			@include typography.base;
 		}
 
 		&.left {
@@ -184,6 +189,7 @@
 		&.top {
 			&.left {
 				left: 0;
+				right: unset;
 				translate: 0 0;
 			}
 

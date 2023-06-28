@@ -5,6 +5,7 @@
 	import { fetchGithub, formatRelativeDate, lightenColor } from '~/lib/helpers';
 	import { githubNotifications, settings } from '~/lib/stores';
 	import type { NotificationData } from '~/lib/types';
+	import NotificationTitle from './NotificationTitle.svelte';
 
 	export let data: NotificationData;
 	export let interactive = true;
@@ -120,7 +121,7 @@
 			<span class="icon-container">
 				<svelte:component this={icon} />
 			</span>
-			<h3 class="title">{title}</h3>
+			<NotificationTitle {title} />
 			{#if number}
 				<span class="number">#{number}</span>
 			{/if}
@@ -269,18 +270,10 @@
 				height: 2rem;
 			}
 		}
+	}
 
-		.title {
-			@include typography.bold;
-			flex: 0 1 auto;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
-
-		.number {
-			color: variables.$blue-3;
-		}
+	.number {
+		color: variables.$blue-3;
 	}
 
 	.labels {
