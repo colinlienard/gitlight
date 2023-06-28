@@ -33,9 +33,23 @@
 		let newNotifications: NotificationData[] = [];
 
 		try {
-			let notifications = await fetchGithub<GithubNotification[]>('notifications?all=true', {
-				noCache: true
-			});
+			// Fetch notifications from Github with multiple pages
+			const { notificationNumber } = $settings;
+			const pages = [Math.min(notificationNumber, 50)];
+			if (notificationNumber > 50) {
+				pages.push(notificationNumber - 50);
+			}
+			let [notifications, page2] = await Promise.all(
+				pages.map((page, index) =>
+					fetchGithub<GithubNotification[]>(
+						`notifications?all=true&page=${index + 1}&per_page=${page}`,
+						{ noCache: true }
+					)
+				)
+			);
+			if (page2) {
+				notifications.push(...page2);
+			}
 
 			// Keep only new or modified notifications
 			if ($githubNotifications.length) {

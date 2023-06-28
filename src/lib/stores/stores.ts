@@ -31,8 +31,9 @@ export const loading = writable<boolean>(true);
 
 export const settings = writable<Settings>({
 	activateNotifications: true,
-	readWhenOpenInBrowser: true,
+	readWhenOpenInBrowser: false,
 	readWhenPin: false,
+	notificationNumber: 50,
 	notificationAxis: 'Auto',
 	sidebarHidden: false,
 	showOnlyOpen: false,
