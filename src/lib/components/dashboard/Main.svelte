@@ -30,9 +30,9 @@
 	let interval: ReturnType<typeof setInterval>;
 
 	// Filter events
-	$: pinned = $filteredNotifications.filter((item) => item.pinned);
-	$: unread = $filteredNotifications.filter((item) => !item.pinned && item.unread);
-	$: read = $filteredNotifications.filter((item) => !item.pinned && !item.unread);
+	$: pinned = $filteredNotifications.filter((item) => item.pinned && !item.done);
+	$: unread = $filteredNotifications.filter((item) => !item.pinned && item.unread && !item.done);
+	$: read = $filteredNotifications.filter((item) => !item.pinned && !item.unread && !item.done);
 
 	$: showReadAll = unread.length > 0;
 

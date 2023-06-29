@@ -74,6 +74,7 @@ export async function createNotificationData(
 		id,
 		pinned,
 		unread,
+		done: false,
 		isNew,
 		time: updated_at,
 		title: subject.title,

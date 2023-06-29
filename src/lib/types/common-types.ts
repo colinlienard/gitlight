@@ -18,6 +18,7 @@ export type NotificationData = {
 	type: GithubNotificationType;
 	unread: boolean;
 	pinned: boolean;
+	done: boolean;
 	isNew: boolean;
 	author?: User;
 	title: string;

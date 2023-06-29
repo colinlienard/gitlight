@@ -8,6 +8,7 @@ export { default as CompletedIssueIcon } from './CompletedIssueIcon.svelte';
 export { default as CrossIcon } from './CrossIcon.svelte';
 export { default as DiscussionIcon } from './DiscussionIcon.svelte';
 export { default as DoubleArrowIcon } from './DoubleArrowIcon.svelte';
+export { default as DoubleCheckIcon } from './DoubleCheckIcon.svelte';
 export { default as DraftPullRequestIcon } from './DraftPullRequestIcon.svelte';
 export { default as ExclamationMarkIcon } from './ExclamationMarkIcon.svelte';
 export { default as ExternalLinkIcon } from './ExternalLinkIcon.svelte';
