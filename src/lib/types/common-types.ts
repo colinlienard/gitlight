@@ -84,4 +84,8 @@ export type Settings = {
 	notificationAxis: 'Auto' | 'Vertical' | 'Horizontal';
 	sidebarHidden: boolean;
 	showOnlyOpen: boolean;
+	pats: Array<{
+		owner: string;
+		token: string;
+	}>;
 };
