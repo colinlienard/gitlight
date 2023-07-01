@@ -10,10 +10,12 @@
 	import Preferences from './Preferences.svelte';
 	import Update from './Update.svelte';
 	import type { GithubRelease } from '~/lib/types';
-	import Permissions from './Permissions.svelte';
+	import Permissions from './permissions';
 
 	let mounted = false;
 	let forceOpenSettings = false;
+	let content: HTMLElement;
+
 	$: tabs = [
 		{ name: 'Preferences', component: Preferences },
 		{ name: 'GitHub settings', component: GithubSettings },
@@ -73,6 +75,11 @@
 			}
 		})();
 	}
+
+	$: {
+		$settingsTab;
+		content?.scrollTo(0, 0);
+	}
 </script>
 
 <Modal title="Settings" bind:open={forceOpenSettings}>
@@ -82,7 +89,7 @@
 			<div class="indicator" />
 		{/if}
 	</button>
-	<div class="content" slot="content">
+	<div class="content" slot="content" bind:this={content}>
 		<ul class="tabs">
 			{#each tabs as tab, index}
 				<li class="tab" class:active={$settingsTab === index}>
@@ -189,6 +196,7 @@
 			display: flex;
 			flex-direction: column;
 			gap: 1rem;
+			padding-right: 1rem;
 
 			:global(h3) {
 				@include typography.bold;

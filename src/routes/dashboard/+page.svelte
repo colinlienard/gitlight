@@ -55,11 +55,7 @@
 				)
 			).filter((item): item is NotificationData => !!item);
 		} catch (e) {
-			if (e && typeof e === 'object' && 'stack' in e) {
-				$error = e.stack as string;
-			} else {
-				$error = e as string;
-			}
+			$error = 'An error occurred while fetching notifications.';
 			console.error(e);
 		} finally {
 			synced = true;

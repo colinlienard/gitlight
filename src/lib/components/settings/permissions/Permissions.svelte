@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { ExternalLinkIcon } from '~/lib/icons';
 	import { Button } from '~/lib/components';
+	import { settings } from '~/lib/stores';
+	import PatItem from './PatItem.svelte';
+
+	let editing = false;
 </script>
 
 <h3>GitHub PATs</h3>
@@ -39,12 +43,23 @@
 </p>
 <span />
 <h3>Use PATs in GitLight</h3>
+{#each $settings.pats as pat}
+	<PatItem {pat} editing />
+{/each}
+{#if editing}
+	<PatItem on:save={() => (editing = false)} />
+{/if}
+<Button type="secondary" on:click={() => (editing = true)}>Use a new PAT</Button>
 
 <style lang="scss">
 	.text,
 	.list-item {
 		@include typography.base;
 		color: variables.$grey-4;
+
+		strong {
+			@include typography.bold;
+		}
 	}
 
 	.list-item {
@@ -57,10 +72,6 @@
 			position: absolute;
 			top: 0.5rem;
 			left: 0;
-		}
-
-		strong {
-			@include typography.bold;
 		}
 	}
 

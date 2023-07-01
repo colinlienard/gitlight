@@ -33,5 +33,5 @@ export async function fetchGithub<T = void>(url: string, options?: Options): Pro
 		return data;
 	}
 
-	throw new Error(response.statusText);
+	throw new Error(`${response.status}`);
 }

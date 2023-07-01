@@ -22,7 +22,7 @@ import type {
 import { getIssueIcon, getPullRequestIcon } from './getIcon';
 import { fetchGithub } from './fetchGithub';
 import { removeMarkdownSymbols } from './removeMarkdownSymbols';
-import { settings } from '~/lib/stores';
+import { error, settings } from '~/lib/stores';
 
 type PullRequestEvent = {
 	author: {
@@ -59,7 +59,15 @@ export async function createNotificationData(
 	});
 
 	// Fetch additional data
-	const data = subject.url ? await fetchGithub<GithubItem>(subject.url, fetchOptions) : null;
+	let data: GithubItem | null = null;
+	try {
+		data = subject.url ? await fetchGithub<GithubItem>(subject.url, fetchOptions) : null;
+	} catch (e) {
+		error.set(
+			`At least one notification comes from a private repository (${repository.full_name}) for which you have not configured a Personal Access Token. Please check your Personal Access Tokens in the settings.`
+		);
+		return null;
+	}
 
 	const [owner, repo] = repository.full_name.split('/');
 	const common = {
@@ -118,7 +126,11 @@ export async function createNotificationData(
 				new Date(common.time).getTime() - new Date(closed_at as string).getTime() < 30000
 			) {
 				author = closed_by
-					? { login: closed_by.login, avatar: closed_by.avatar_url, bot: closed_by.type === 'Bot' }
+					? {
+							login: closed_by.login,
+							avatar: closed_by.avatar_url,
+							bot: closed_by.type === 'Bot'
+					  }
 					: undefined;
 				description = 'closed this issue';
 			} else if (comments) {
@@ -174,7 +186,11 @@ export async function createNotificationData(
 				description = 'opened this pull request';
 			} else if (state === 'closed' && time - new Date(closed_at as string).getTime() < 30000) {
 				author = merged_by
-					? { login: merged_by.login, avatar: merged_by.avatar_url, bot: merged_by.type === 'Bot' }
+					? {
+							login: merged_by.login,
+							avatar: merged_by.avatar_url,
+							bot: merged_by.type === 'Bot'
+					  }
 					: { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
 				description = `${merged_by ? 'merged' : 'closed'} this pull request`;
 			} else if (reason === 'review_requested') {

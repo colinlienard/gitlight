@@ -94,7 +94,7 @@
 		border: 1px solid variables.$grey-3;
 		border-radius: variables.$radius;
 		width: min(50rem, calc(100vw - 4rem));
-		height: min(40rem, calc(100vh - 4rem));
+		height: min(42rem, calc(100vh - 4rem));
 		z-index: 999;
 
 		&.small {
