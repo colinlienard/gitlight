@@ -1,93 +1,65 @@
 <script lang="ts">
+	import { cubicInOut } from 'svelte/easing';
+	import { CrossIcon } from '~/lib/icons';
 	import { error } from '~/lib/stores';
-	import { Button } from '../common';
 
-	let showError = false;
+	let dontShowAgain = false;
 
-	function copyError() {
-		navigator.clipboard.writeText($error || '');
+	function appear(_: HTMLElement) {
+		return {
+			delay: 0,
+			duration: 300,
+			css: (t: number) => {
+				const eased = cubicInOut(t);
+				return `
+          translate: 0 ${(1 - eased) * 50}%;
+          opacity: ${eased};
+        `;
+			}
+		};
 	}
 </script>
 
-<div class="background">
-	<section class="modal">
-		<h2 class="title">An error occured 🫠</h2>
-		<p class="text">
-			Please
-			<a href="https://twitter.com/colinlienard" class="link" target="_blank">
-				contact the developer
-			</a>
-			or
-			<a href="https://github.com/colinlienard/gitlight/issues" class="link" target="_blank">
-				create an issue on GitHub
-			</a>.
-		</p>
-		{#if !showError}
-			<Button type="secondary" on:click={() => (showError = true)}>Show the error</Button>
-		{:else}
-			<div class="error">
-				{$error}
-				<Button type="secondary" small on:click={copyError}>Copy</Button>
-			</div>
-		{/if}
+{#if $error && !dontShowAgain}
+	<section class="snackbar" transition:appear>
+		<p class="text">{$error}</p>
+		<button class="button" on:click={() => (dontShowAgain = true)}>Don't show again</button>
+		<button class="close" on:click={() => ($error = '')}>
+			<CrossIcon />
+		</button>
 	</section>
-</div>
+{/if}
 
 <style lang="scss">
-	.background {
-		@include mixins.blurred-background;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.modal {
+	.snackbar {
 		@include mixins.modal-shadow;
-		width: 40rem;
-		padding: 4rem;
-		background-color: variables.$grey-1;
+		@include typography.base;
+		background-color: variables.$yellow;
+		color: variables.$grey-1;
 		border-radius: variables.$radius;
-		border: 1px solid variables.$red;
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
+		padding: 1rem;
+		max-width: 24rem;
+		position: absolute;
+		inset: auto auto 1rem 1rem;
+		z-index: 998;
 
-		.title {
-			@include typography.heading-2;
-		}
+		.button {
+			@include typography.bold;
+			margin-top: 0.5em;
 
-		.text {
-			@include typography.base;
-			color: variables.$grey-4;
-
-			.link {
-				color: variables.$white;
-
-				&:hover {
-					text-decoration: underline;
-				}
+			&:hover {
+				text-decoration: underline;
 			}
 		}
 
-		.error {
-			color: variables.$grey-4;
-			padding: 1rem;
-			border-radius: variables.$radius;
-			background-color: variables.$grey-2;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			position: relative;
+		.close {
+			position: absolute;
+			inset: 0 0 auto auto;
+			padding: 0.25rem;
 
-			:global(button) {
-				position: absolute;
-				inset: 0.5rem 0.5rem auto auto;
-				color: variables.$white;
+			:global(svg) {
+				height: 1rem;
 			}
-		}
-
-		* ~ :global(button) {
-			width: fit-content;
 		}
 	}
 </style>

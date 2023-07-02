@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { Modal, ScrollbarContainer, Separator } from '~/lib/components';
-	import { onDestroy, onMount, type ComponentType } from 'svelte';
+	import { onDestroy, onMount, type ComponentType, SvelteComponent } from 'svelte';
 	import { settings, settingsTab, updateAvailable } from '~/lib/stores';
 	import { fetchGithub, getAppVersion, storage } from '~/lib/helpers';
 	import { browser } from '$app/environment';
@@ -14,7 +14,7 @@
 
 	let mounted = false;
 	let forceOpenSettings = false;
-	let content: HTMLElement;
+	let scrollContainer: SvelteComponent;
 
 	$: tabs = [
 		{ name: 'Preferences', component: Preferences },
@@ -78,7 +78,7 @@
 
 	$: {
 		$settingsTab;
-		content?.scrollTo(0, 0);
+		scrollContainer?.scrollTo(0, 0);
 	}
 </script>
 
@@ -89,7 +89,7 @@
 			<div class="indicator" />
 		{/if}
 	</button>
-	<div class="content" slot="content" bind:this={content}>
+	<div class="content" slot="content">
 		<ul class="tabs">
 			{#each tabs as tab, index}
 				<li class="tab" class:active={$settingsTab === index}>
@@ -103,7 +103,7 @@
 			{/each}
 		</ul>
 		<Separator vertical />
-		<ScrollbarContainer>
+		<ScrollbarContainer bind:this={scrollContainer}>
 			<div class="tab-content">
 				<svelte:component this={tabs[$settingsTab].component} />
 			</div>

@@ -52,7 +52,7 @@ export async function createNotificationData(
 	// Get Personal Access Tokens
 	let fetchOptions: FetchOptions = {};
 	settings.subscribe(({ pats }) => {
-		if (!pats.length) return;
+		if (!repository.private || !pats.length) return;
 		const pat = pats.find((pat) => pat.owner === repository.owner.login);
 		if (!pat) return;
 		fetchOptions = { pat: pat.token };
@@ -64,7 +64,7 @@ export async function createNotificationData(
 		data = subject.url ? await fetchGithub<GithubItem>(subject.url, fetchOptions) : null;
 	} catch (e) {
 		error.set(
-			`At least one notification comes from a private repository (${repository.full_name}) for which you have not configured a Personal Access Token. Please check your Personal Access Tokens in the settings.`
+			`At least one notification comes from a private repository (${repository.full_name}) for which you have not configured a Personal Access Token. Please go to Settings > Permissions.`
 		);
 		return null;
 	}

@@ -28,7 +28,12 @@
 		}
 		$settings.pats.push(pat);
 		$settings.pats = $settings.pats;
-		dispatch('save');
+		dispatch('exit');
+	}
+
+	function handleCancel(event: Event) {
+		event.preventDefault();
+		dispatch('exit');
 	}
 
 	onMount(() => {
@@ -53,36 +58,35 @@
 		</div>
 		<button class="delete-button" on:click={handleDelete}><TrashIcon /></button>
 	{:else}
-		<div class="inputs-container">
+		<form class="inputs-container" on:submit|preventDefault={handleSave}>
 			<Input
 				label="Repositories owner"
 				placeholder="The user or organization login"
-				{editing}
 				bind:value={pat.owner}
 				bind:this={firstInput}
 			/>
 			<Input
 				label="Personal Access Token"
 				placeholder="Copy here the PAT with correct permissions"
-				{editing}
 				bind:value={pat.token}
 			/>
 			{#if error}
 				<p class="error">{error}</p>
 			{/if}
-			<Button small on:click={handleSave}>
-				<CheckIcon />
-				Save
-			</Button>
-		</div>
+			<div class="buttons">
+				<Button small>
+					<CheckIcon />
+					Save
+				</Button>
+				<Button type="secondary" small on:click={handleCancel}>Cancel</Button>
+			</div>
+		</form>
 	{/if}
 </div>
 
 <style lang="scss">
 	.pat-wrapper {
-		background-color: variables.$grey-2;
-		border-radius: variables.$radius;
-		border: 1px solid variables.$grey-3;
+		@include mixins.box;
 		display: flex;
 
 		.content {
@@ -132,7 +136,6 @@
 		.inputs-container {
 			display: flex;
 			flex-direction: column;
-			align-items: end;
 			gap: 1rem;
 			padding: 1rem;
 			width: 100%;
@@ -140,6 +143,13 @@
 			.error {
 				color: variables.$red;
 				width: 100%;
+			}
+
+			.buttons {
+				display: flex;
+				flex-direction: row-reverse;
+				gap: 0.5rem;
+				align-items: center;
 			}
 		}
 	}

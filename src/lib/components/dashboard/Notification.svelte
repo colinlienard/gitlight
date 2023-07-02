@@ -219,9 +219,7 @@
 	}
 
 	.notification {
-		background-color: variables.$grey-2;
-		border: 1px solid variables.$grey-3;
-		border-radius: variables.$radius;
+		@include mixins.box;
 		padding: 1rem;
 		position: relative;
 		display: flex;

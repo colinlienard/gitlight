@@ -16,6 +16,7 @@ export type GithubRepository = {
 	id: number;
 	full_name: string;
 	owner: GithubUser;
+	private: boolean;
 };
 
 export type GithubIssue = {

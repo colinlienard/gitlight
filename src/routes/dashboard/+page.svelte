@@ -55,7 +55,8 @@
 				)
 			).filter((item): item is NotificationData => !!item);
 		} catch (e) {
-			$error = 'An error occurred while fetching notifications.';
+			$error =
+				'An error occurred while fetching notifications. Please try to reload the page or log out and log in again.';
 			console.error(e);
 		} finally {
 			synced = true;
@@ -180,9 +181,7 @@
 <div class="container" class:sidebar-hidden={$settings.sidebarHidden}>
 	<Sidebar />
 	<Main {synced} />
-	{#if $error}
-		<Error />
-	{/if}
+	<Error />
 </div>
 
 <style lang="scss">

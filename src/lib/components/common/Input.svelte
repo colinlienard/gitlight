@@ -62,9 +62,7 @@
 	}
 
 	.input-wrapper {
-		background-color: variables.$grey-2;
-		border-radius: variables.$radius;
-		border: 1px solid variables.$grey-3;
+		@include mixins.box;
 		position: relative;
 		display: flex;
 		align-items: center;
@@ -78,7 +76,8 @@
 		}
 
 		&.focused {
-			border-color: variables.$blue-3;
+			outline: variables.$blue-3 3px solid;
+			outline-offset: -3px;
 		}
 
 		:global(svg) {

@@ -39,7 +39,6 @@ export const settings = writable<Settings>({
 	pats: []
 });
 
-// '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'
 export const updateAvailable = writable<string | false>(false);
 
 export const largeScreen = writable<boolean>(true);

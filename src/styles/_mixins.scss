@@ -25,6 +25,12 @@
 	}
 }
 
+@mixin box() {
+	background-color: variables.$grey-2;
+	border: 1px solid variables.$grey-3;
+	border-radius: variables.$radius;
+}
+
 @mixin shadow {
 	box-shadow: 0 2px 0.25rem rgba(black, 0.1);
 }
