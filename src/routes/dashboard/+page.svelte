@@ -30,23 +30,23 @@
 	async function setNotifications() {
 		synced = false;
 
-		let notifications = await fetchGithub<GithubNotification[]>('notifications?all=true', {
-			noCache: true
-		});
-
-		// Keep only new or modified notifications
-		if ($githubNotifications.length) {
-			notifications = notifications.filter(({ id, updated_at }) => {
-				const current = $githubNotifications.find((item) => item.id === id);
-				return current ? updated_at !== current.time : true;
-			});
-		}
-
-		if (!notifications.length) return (synced = true);
-
 		let newNotifications: NotificationData[] = [];
 
 		try {
+			let notifications = await fetchGithub<GithubNotification[]>('notifications?all=true', {
+				noCache: true
+			});
+
+			// Keep only new or modified notifications
+			if ($githubNotifications.length) {
+				notifications = notifications.filter(({ id, updated_at }) => {
+					const current = $githubNotifications.find((item) => item.id === id);
+					return current ? updated_at !== current.time : true;
+				});
+			}
+
+			if (!notifications.length) return;
+
 			newNotifications = (
 				await Promise.all(
 					notifications.map((notification) =>
