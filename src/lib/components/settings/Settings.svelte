@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { Modal, ScrollbarContainer, Separator } from '~/lib/components';
-	import { onDestroy, onMount, type ComponentType } from 'svelte';
-	import { settings, updateAvailable } from '~/lib/stores';
+	import { onDestroy, onMount, type ComponentType, SvelteComponent } from 'svelte';
+	import { settings, settingsTab, updateAvailable } from '~/lib/stores';
 	import { fetchGithub, getAppVersion, storage } from '~/lib/helpers';
 	import { browser } from '$app/environment';
 	import Accounts from './Accounts.svelte';
@@ -10,13 +10,16 @@
 	import Preferences from './Preferences.svelte';
 	import Update from './Update.svelte';
 	import type { GithubRelease } from '~/lib/types';
+	import Permissions from './permissions';
 
 	let mounted = false;
 	let forceOpenSettings = false;
-	let currentTab = 0;
+	let scrollContainer: SvelteComponent;
+
 	$: tabs = [
 		{ name: 'Preferences', component: Preferences },
 		{ name: 'GitHub settings', component: GithubSettings },
+		{ name: 'Permissions', component: Permissions },
 		{ name: 'Accounts', component: Accounts },
 		{ name: 'Update', indicator: !!$updateAvailable, component: Update }
 	] satisfies Array<{ name: string; indicator?: boolean; component: ComponentType }>;
@@ -37,10 +40,10 @@
 	onMount(async () => {
 		const saved = storage.get('settings');
 		if (saved) {
-			$settings = saved;
+			$settings = { ...$settings, ...saved };
 		} else {
 			forceOpenSettings = true;
-			currentTab = 1;
+			$settingsTab = 1;
 		}
 		mounted = true;
 
@@ -58,7 +61,7 @@
 	}
 
 	$: if (forceOpenSettings) {
-		currentTab = storage.has('settings') ? 0 : 1;
+		$settingsTab = storage.has('settings') ? 0 : 1;
 
 		(async () => {
 			if (!window.__TAURI__) return;
@@ -72,6 +75,11 @@
 			}
 		})();
 	}
+
+	$: {
+		$settingsTab;
+		scrollContainer?.scrollTo(0, 0);
+	}
 </script>
 
 <Modal title="Settings" bind:open={forceOpenSettings}>
@@ -84,8 +92,8 @@
 	<div class="content" slot="content">
 		<ul class="tabs">
 			{#each tabs as tab, index}
-				<li class="tab" class:active={currentTab === index}>
-					<button on:click={() => (currentTab = index)}>
+				<li class="tab" class:active={$settingsTab === index}>
+					<button on:click={() => ($settingsTab = index)}>
 						{tab.name}
 						{#if tab.indicator}
 							<div class="indicator">1</div>
@@ -95,9 +103,9 @@
 			{/each}
 		</ul>
 		<Separator vertical />
-		<ScrollbarContainer>
+		<ScrollbarContainer bind:this={scrollContainer}>
 			<div class="tab-content">
-				<svelte:component this={tabs[currentTab].component} />
+				<svelte:component this={tabs[$settingsTab].component} />
 			</div>
 		</ScrollbarContainer>
 	</div>
@@ -188,6 +196,7 @@
 			display: flex;
 			flex-direction: column;
 			gap: 1rem;
+			padding-right: 1rem;
 
 			:global(h3) {
 				@include typography.bold;

@@ -5,6 +5,7 @@ type Options = {
 	accessToken?: string;
 	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	body?: Record<string, unknown>;
+	pat?: string;
 };
 
 export async function fetchGithub<T = void>(url: string, options?: Options): Promise<T> {
@@ -18,7 +19,7 @@ export async function fetchGithub<T = void>(url: string, options?: Options): Pro
 	const response = await fetch(`${url.startsWith('http') ? '' : 'https://api.github.com/'}${url}`, {
 		headers: {
 			Accept: 'application/vnd.github+json',
-			Authorization: `Bearer ${accessToken}`
+			Authorization: options?.pat ? `token ${options.pat}` : `Bearer ${accessToken}`
 		},
 		method: options?.method || 'GET',
 		body: options?.body ? JSON.stringify(options.body) : undefined,
@@ -32,5 +33,5 @@ export async function fetchGithub<T = void>(url: string, options?: Options): Pro
 		return data;
 	}
 
-	throw new Error(response.statusText);
+	throw new Error(`${response.status}`);
 }

@@ -35,7 +35,8 @@ export const settings = writable<Settings>({
 	readWhenPin: false,
 	notificationAxis: 'Auto',
 	sidebarHidden: false,
-	showOnlyOpen: false
+	showOnlyOpen: false,
+	pats: []
 });
 
 export const updateAvailable = writable<string | false>(false);
@@ -43,3 +44,5 @@ export const updateAvailable = writable<string | false>(false);
 export const largeScreen = writable<boolean>(true);
 
 export const error = writable<string | null>(null);
+
+export const settingsTab = writable<number>(0);

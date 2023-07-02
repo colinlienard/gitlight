@@ -2,7 +2,7 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { SmallArrowIcon } from '~/lib/icons';
 
-	let shrinked = false;
+	export let shrinked = false;
 
 	function shrink(node: HTMLElement) {
 		const { scrollHeight } = node;

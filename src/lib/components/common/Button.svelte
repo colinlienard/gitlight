@@ -56,10 +56,20 @@
 		&:not(.small) {
 			@include typography.bold;
 			padding: 0.75em 1em;
+			--svg-size: 1.25rem;
+
+			.content {
+				gap: 0.5em;
+			}
 		}
 
 		&.small {
 			padding: 0.5rem;
+			--svg-size: 1rem;
+
+			.content {
+				gap: 0.25em;
+			}
 		}
 
 		&.loading,
@@ -82,13 +92,12 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			gap: 0.5rem;
 			white-space: nowrap;
 			transition: scale 0.05s ease-in-out;
 
 			:global(svg) {
-				flex: 0 0 1.25rem;
-				height: 1.25rem;
+				flex: 0 0 var(--svg-size);
+				height: var(--svg-size);
 			}
 		}
 

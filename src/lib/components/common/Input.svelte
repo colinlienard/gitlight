@@ -7,23 +7,34 @@
 	export let value: string;
 	export let placeholder: string;
 	export let clearable = false;
+	export let disabled = false;
 
 	let input: HTMLInputElement;
+	let focused = false;
 
 	export function focus() {
 		input.focus();
 	}
 </script>
 
-<label class="container">
+<label class="container" class:disabled>
 	{#if label}
 		<p class="label">{label}</p>
 	{/if}
-	<div class="input-wrapper" class:empty={!value}>
+	<div class="input-wrapper" class:empty={!value} class:focused>
 		{#if icon}
 			<svelte:component this={icon} />
 		{/if}
-		<input class="input" type="text" bind:value {placeholder} bind:this={input} />
+		<input
+			class="input"
+			type="text"
+			bind:value
+			{placeholder}
+			{disabled}
+			bind:this={input}
+			on:focus={() => (focused = true)}
+			on:blur={() => (focused = false)}
+		/>
 		<slot />
 		{#if clearable && value}
 			<button class="clear" on:click={() => (value = '')}>
@@ -39,11 +50,20 @@
 		flex-direction: column;
 		gap: 0.5rem;
 		flex: 1;
+		width: 100%;
+
+		&.disabled {
+			opacity: 0.5;
+
+			* {
+				cursor: not-allowed !important;
+			}
+		}
 	}
 
 	.input-wrapper {
-		@include mixins.shiny(variables.$grey-2);
-		@include mixins.shadow;
+		@include mixins.box;
+		position: relative;
 		display: flex;
 		align-items: center;
 		gap: 0.5em;
@@ -53,6 +73,11 @@
 
 		&.empty :global(svg) {
 			color: variables.$grey-4;
+		}
+
+		&.focused {
+			outline: variables.$blue-3 3px solid;
+			outline-offset: -3px;
 		}
 
 		:global(svg) {

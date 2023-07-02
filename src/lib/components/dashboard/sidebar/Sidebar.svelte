@@ -66,7 +66,7 @@
 			</IconButton>
 		</Tooltip>
 	</header>
-	<ScrollbarContainer>
+	<ScrollbarContainer margin="0.25rem">
 		<div class="scrollable">
 			{#if !$loading}
 				<div class="wrapper">

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { ExternalLinkIcon } from '~/lib/icons';
 	import { Button } from '~/lib/components';
+	import { settingsTab } from '~/lib/stores';
 </script>
 
 <h3>Notification settings</h3>
@@ -20,16 +21,23 @@
 	<strong>Notify me: on GitHub</strong>.
 </p>
 <p class="list-item">
-	If you want to receive Dependabot related notifications, set <strong
-		>Dependabot alerts: New vulnerabilities</strong
-	>
+	If you want to receive Dependabot related notifications, set <strong>
+		Dependabot alerts: New vulnerabilities
+	</strong>
 	to <strong>Notify me: on GitHub</strong>.
 </p>
 <span />
+<h3>Private repositories</h3>
+<p class="text">
+	To access data in private repositories, you need to grant access to GitLight. You can do so by
+	creating a Personal Access Token (PAT) on GitHub.
+</p>
+<Button small on:click={() => ($settingsTab = 2)}>How to use PATs for GitLight</Button>
+<span />
 <h3>Organization access</h3>
 <p class="text">
-	For private repositories, the GitHub organization that owns these repositories must grant access
-	to GitLight:
+	For private repositories, the GitHub organization that owns these repositories must create a
+	Personal Access Token (see above), and grant GitLight access to notifications:
 </p>
 <Button
 	href="https://github.com/settings/connections/applications/3db3813c5828d8bbe530"
@@ -64,7 +72,8 @@
 		}
 	}
 
-	* ~ :global(a) {
+	* ~ :global(a),
+	* ~ :global(button) {
 		width: fit-content;
 	}
 </style>

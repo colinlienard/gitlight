@@ -22,6 +22,20 @@ import type {
 import { getIssueIcon, getPullRequestIcon } from './getIcon';
 import { fetchGithub } from './fetchGithub';
 import { removeMarkdownSymbols } from './removeMarkdownSymbols';
+import { error, settings } from '~/lib/stores';
+
+type PullRequestEvent = {
+	author: {
+		login: string;
+		avatar?: string;
+		bot?: boolean;
+	};
+	description: string;
+	time: string;
+	url?: string;
+};
+
+type FetchOptions = Parameters<typeof fetchGithub>[1];
 
 export async function createNotificationData(
 	{ id, repository, subject, unread: u, updated_at, reason }: GithubNotification,
@@ -35,8 +49,25 @@ export async function createNotificationData(
 	const unread = u || previous?.unread || false;
 	const isNew = (u && !previous?.unread) || false;
 
+	// Get Personal Access Tokens
+	let fetchOptions: FetchOptions = {};
+	settings.subscribe(({ pats }) => {
+		if (!repository.private || !pats.length) return;
+		const pat = pats.find((pat) => pat.owner === repository.owner.login);
+		if (!pat) return;
+		fetchOptions = { pat: pat.token };
+	});
+
 	// Fetch additional data
-	const data = subject.url ? await fetchGithub<GithubItem>(subject.url) : null;
+	let data: GithubItem | null = null;
+	try {
+		data = subject.url ? await fetchGithub<GithubItem>(subject.url, fetchOptions) : null;
+	} catch (e) {
+		error.set(
+			`At least one notification comes from a private repository (${repository.full_name}) for which you have not configured a Personal Access Token. Please go to Settings > Permissions.`
+		);
+		return null;
+	}
 
 	const [owner, repo] = repository.full_name.split('/');
 	const common = {
@@ -95,11 +126,15 @@ export async function createNotificationData(
 				new Date(common.time).getTime() - new Date(closed_at as string).getTime() < 30000
 			) {
 				author = closed_by
-					? { login: closed_by.login, avatar: closed_by.avatar_url, bot: closed_by.type === 'Bot' }
+					? {
+							login: closed_by.login,
+							avatar: closed_by.avatar_url,
+							bot: closed_by.type === 'Bot'
+					  }
 					: undefined;
 				description = 'closed this issue';
 			} else if (comments) {
-				const comment = await getLatestComment(comments_url);
+				const comment = await getLatestComment(comments_url, fetchOptions);
 				if (comment) {
 					author = comment.author;
 					description = comment.description;
@@ -151,7 +186,11 @@ export async function createNotificationData(
 				description = 'opened this pull request';
 			} else if (state === 'closed' && time - new Date(closed_at as string).getTime() < 30000) {
 				author = merged_by
-					? { login: merged_by.login, avatar: merged_by.avatar_url, bot: merged_by.type === 'Bot' }
+					? {
+							login: merged_by.login,
+							avatar: merged_by.avatar_url,
+							bot: merged_by.type === 'Bot'
+					  }
 					: { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
 				description = `${merged_by ? 'merged' : 'closed'} this pull request`;
 			} else if (reason === 'review_requested') {
@@ -159,10 +198,10 @@ export async function createNotificationData(
 				description = 'requested your review';
 			} else if (review_comments || comments || commits) {
 				const events = await Promise.all([
-					review_comments ? getLatestComment(review_comments_url) : undefined,
-					comments ? getLatestComment(comments_url) : undefined,
-					commits ? getLatestCommit(commits_url) : undefined,
-					getLatestReview(apiUrl)
+					review_comments ? getLatestComment(review_comments_url, fetchOptions) : undefined,
+					comments ? getLatestComment(comments_url, fetchOptions) : undefined,
+					commits ? getLatestCommit(commits_url, fetchOptions) : undefined,
+					getLatestReview(apiUrl, fetchOptions)
 				]);
 				const event = events.reduce<Awaited<ReturnType<typeof getLatestCommit>> | undefined>(
 					(previous, current) => {
@@ -253,19 +292,11 @@ export async function createNotificationData(
 	}
 }
 
-type PullRequestEvent = {
-	author: {
-		login: string;
-		avatar?: string;
-		bot?: boolean;
-	};
-	description: string;
-	time: string;
-	url?: string;
-};
-
-async function getLatestComment(url: string): Promise<PullRequestEvent | undefined> {
-	const comments = await fetchGithub<GithubComment[]>(url);
+async function getLatestComment(
+	url: string,
+	fetchOptions: FetchOptions
+): Promise<PullRequestEvent | undefined> {
+	const comments = await fetchGithub<GithubComment[]>(url, fetchOptions);
 	if (!comments.length) return undefined;
 	const comment = comments[comments.length - 1];
 	const author = {
@@ -278,8 +309,11 @@ async function getLatestComment(url: string): Promise<PullRequestEvent | undefin
 	return { author, description, time: comment.created_at, url: comment.html_url };
 }
 
-async function getLatestCommit(url: string): Promise<PullRequestEvent | undefined> {
-	const commits = await fetchGithub<GithubCommit[]>(url);
+async function getLatestCommit(
+	url: string,
+	fetchOptions: FetchOptions
+): Promise<PullRequestEvent | undefined> {
+	const commits = await fetchGithub<GithubCommit[]>(url, fetchOptions);
 	if (!commits.length) return undefined;
 	const commit = commits[commits.length - 1];
 	const author = commit.author
@@ -293,8 +327,11 @@ async function getLatestCommit(url: string): Promise<PullRequestEvent | undefine
 	return { author, description, time: commit.commit.author.date };
 }
 
-async function getLatestReview(url: string): Promise<PullRequestEvent | undefined> {
-	const reviews = await fetchGithub<GithubReview[]>(`${url}/reviews`);
+async function getLatestReview(
+	url: string,
+	fetchOptions: FetchOptions
+): Promise<PullRequestEvent | undefined> {
+	const reviews = await fetchGithub<GithubReview[]>(`${url}/reviews`, fetchOptions);
 	if (!reviews.length) return undefined;
 	const review = reviews[reviews.length - 1];
 	const author = {
