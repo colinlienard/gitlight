@@ -37,7 +37,7 @@
 <h3>Organization access</h3>
 <p class="text">
 	For private repositories, the GitHub organization that owns these repositories must create a
-	Personal Access Token and grant access to GitLight:
+	Personal Access Token (see above), and grant GitLight access to notifications:
 </p>
 <Button
 	href="https://github.com/settings/connections/applications/3db3813c5828d8bbe530"

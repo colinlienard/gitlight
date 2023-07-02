@@ -52,6 +52,7 @@
 	Generate the token. If you want others to get notifications from your private repos, share this
 	token.
 </p>
+<p class="list-item">Finally, add the token below. You can add as many tokens as you want.</p>
 <span />
 <h3>Use PATs in GitLight</h3>
 {#each $settings.pats as pat}
