@@ -4,7 +4,7 @@
 	import type { Settings } from '~/lib/types';
 
 	const axisOptions: Array<Settings['notificationAxis']> = ['Auto', 'Vertical', 'Horizontal'];
-	const numberOptions: Array<Settings['notificationNumber']> = [25, 50, 100];
+	const numberOptions: Array<Settings['notificationNumber']> = [25, 50, 75, 100];
 </script>
 
 <h3>General</h3>

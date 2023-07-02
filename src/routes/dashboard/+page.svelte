@@ -35,20 +35,18 @@
 		try {
 			// Fetch notifications from Github with multiple pages
 			const { notificationNumber } = $settings;
-			const pages = [Math.min(notificationNumber, 50)];
-			if (notificationNumber > 50) {
-				pages.push(notificationNumber - 50);
-			}
-			let [notifications, page2] = await Promise.all(
-				pages.map((page, index) =>
-					fetchGithub<GithubNotification[]>(
-						`notifications?all=true&page=${index + 1}&per_page=${page}`,
-						{ noCache: true }
-					)
-				)
-			);
-			if (page2) {
-				notifications.push(...page2);
+			const exceed: number | false = notificationNumber > 50 ? notificationNumber - 50 : false;
+			let [notifications, page2] = await Promise.all([
+				fetchGithub<GithubNotification[]>(
+					`notifications?all=true&page=1&per_page=${Math.min(notificationNumber, 50)}`,
+					{ noCache: true }
+				),
+				exceed
+					? fetchGithub<GithubNotification[]>(`notifications?all=true&page=2`, { noCache: true })
+					: undefined
+			]);
+			if (page2 && exceed) {
+				notifications.push(...page2.slice(0, exceed));
 			}
 
 			// Keep only new or modified notifications
