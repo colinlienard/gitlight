@@ -3,7 +3,8 @@
 	import { settings } from '~/lib/stores';
 	import type { Settings } from '~/lib/types';
 
-	const options: Array<Settings['notificationAxis']> = ['Auto', 'Vertical', 'Horizontal'];
+	const axisOptions: Array<Settings['notificationAxis']> = ['Auto', 'Vertical', 'Horizontal'];
+	const numberOptions: Array<Settings['notificationNumber']> = [25, 50, 75, 100];
 </script>
 
 <h3>General</h3>
@@ -17,7 +18,16 @@
 />
 <Switch label="Mark an event as read when pinned" bind:active={$settings.readWhenPin} />
 <Switch label="Hide closed PRs and issues" bind:active={$settings.showOnlyOpen} />
+<InlineSelect
+	label="Notification number"
+	options={numberOptions}
+	bind:value={$settings.notificationNumber}
+/>
 <span />
 <h3>Interface</h3>
 <Switch label="Hide sidebar" bind:active={$settings.sidebarHidden} />
-<InlineSelect label="Notification axis" {options} bind:value={$settings.notificationAxis} />
+<InlineSelect
+	label="Notification axis"
+	options={axisOptions}
+	bind:value={$settings.notificationAxis}
+/>

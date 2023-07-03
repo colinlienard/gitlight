@@ -81,6 +81,7 @@ export type Settings = {
 	activateNotifications: boolean;
 	readWhenOpenInBrowser: boolean;
 	readWhenPin: boolean;
+	notificationNumber: number;
 	notificationAxis: 'Auto' | 'Vertical' | 'Horizontal';
 	sidebarHidden: boolean;
 	showOnlyOpen: boolean;

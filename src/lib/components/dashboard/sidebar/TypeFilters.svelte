@@ -3,11 +3,12 @@
 	import { githubNotifications, loading, settings, typeFilters } from '~/lib/stores';
 	import { storage } from '~/lib/helpers';
 	import { Switch } from '~/lib/components';
-	import { browser } from '$app/environment';
 	import SidebarSection from './SidebarSection.svelte';
 
+	let mounted = false;
+
 	// Save type filters to storage
-	$: if (browser && !$loading) {
+	$: if (mounted && !$loading) {
 		storage.set(
 			'type-filters',
 			$typeFilters.map((filter) => filter.active)
@@ -30,13 +31,14 @@
 		};
 	}
 
-	onMount(async () => {
+	onMount(() => {
 		// Get type filters from storage
 		const savedTypeFilters = storage.get('type-filters');
 		$typeFilters = $typeFilters.map((filter, index) => ({
 			...filter,
 			active: savedTypeFilters ? savedTypeFilters[index] : true
 		}));
+		mounted = true;
 	});
 </script>
 

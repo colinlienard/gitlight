@@ -22,10 +22,27 @@
 
 	let synced = false;
 	let mounted = false;
+	let fetched = false;
 
-	const interval = setInterval(() => {
+	let interval = setInterval(() => {
 		setNotifications();
 	}, 60000);
+
+	// Clear notifications and refetch when notification number changes
+	$: notificationNumber = $settings.notificationNumber;
+	$: if (mounted) {
+		notificationNumber;
+		if (!fetched) {
+			fetched = true;
+		} else {
+			$githubNotifications = [];
+			setNotifications();
+			clearInterval(interval);
+			interval = setInterval(() => {
+				setNotifications();
+			}, 60000);
+		}
+	}
 
 	async function setNotifications() {
 		synced = false;
@@ -33,9 +50,21 @@
 		let newNotifications: NotificationData[] = [];
 
 		try {
-			let notifications = await fetchGithub<GithubNotification[]>('notifications?all=true', {
-				noCache: true
-			});
+			// Fetch notifications from Github with multiple pages
+			const { notificationNumber } = $settings;
+			const exceed: number | false = notificationNumber > 50 ? notificationNumber - 50 : false;
+			let [notifications, page2] = await Promise.all([
+				fetchGithub<GithubNotification[]>(
+					`notifications?all=true&page=1&per_page=${Math.min(notificationNumber, 50)}`,
+					{ noCache: true }
+				),
+				exceed
+					? fetchGithub<GithubNotification[]>(`notifications?all=true&page=2`, { noCache: true })
+					: undefined
+			]);
+			if (page2 && exceed) {
+				notifications.push(...page2.slice(0, exceed));
+			}
 
 			// Keep only new or modified notifications
 			if ($githubNotifications.length) {
@@ -166,7 +195,7 @@
 		mounted = true;
 
 		await setNotifications();
-		loading.set(false);
+		$loading = false;
 	});
 
 	onDestroy(() => {

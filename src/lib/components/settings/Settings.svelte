@@ -21,7 +21,9 @@
 		{ name: 'GitHub settings', component: GithubSettings },
 		{ name: 'Permissions', component: Permissions },
 		{ name: 'Accounts', component: Accounts },
-		{ name: 'Update', indicator: !!$updateAvailable, component: Update }
+		...(browser && window.__TAURI__
+			? [{ name: 'Update', indicator: !!$updateAvailable, component: Update }]
+			: [])
 	] satisfies Array<{ name: string; indicator?: boolean; component: ComponentType }>;
 
 	const user = $page.data.session?.user;
@@ -67,7 +69,7 @@
 			if (!window.__TAURI__) return;
 
 			const release = await fetchGithub<GithubRelease>(
-				'https://api.github.com/repos/colinlienard/gitlight/releases/latest'
+				'repos/colinlienard/gitlight/releases/latest'
 			);
 			const latest = release.tag_name.split('v')[1];
 			if (latest !== getAppVersion()) {

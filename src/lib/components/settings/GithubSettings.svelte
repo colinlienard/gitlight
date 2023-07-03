@@ -27,17 +27,10 @@
 	to <strong>Notify me: on GitHub</strong>.
 </p>
 <span />
-<h3>Private repositories</h3>
-<p class="text">
-	To access data in private repositories, you need to grant access to GitLight. You can do so by
-	creating a Personal Access Token (PAT) on GitHub.
-</p>
-<Button small on:click={() => ($settingsTab = 2)}>How to use PATs for GitLight</Button>
-<span />
 <h3>Organization access</h3>
 <p class="text">
-	For private repositories, the GitHub organization that owns these repositories must create a
-	Personal Access Token (see above), and grant GitLight access to notifications:
+	For private repositories, the GitHub organization that owns these repositories must grant GitLight
+	access to notifications:
 </p>
 <Button
 	href="https://github.com/settings/connections/applications/3db3813c5828d8bbe530"
@@ -47,6 +40,13 @@
 	<ExternalLinkIcon />
 	Organization access
 </Button>
+<span />
+<h3>Private repositories</h3>
+<p class="text">
+	To access data in private repositories, you need to create fine-grained Personal Access Tokens
+	(PAT) on GitHub.
+</p>
+<Button small on:click={() => ($settingsTab = 2)}>How to use PATs for GitLight</Button>
 
 <style lang="scss">
 	.text,
@@ -56,14 +56,12 @@
 	}
 
 	.list-item {
-		list-style: disc;
 		padding-left: 1rem;
 		position: relative;
 
 		&::before {
 			content: '-';
 			position: absolute;
-			top: 0.5rem;
 			left: 0;
 		}
 

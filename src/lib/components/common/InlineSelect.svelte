@@ -1,7 +1,8 @@
 <script lang="ts">
+	type T = $$Generic<string | number>;
 	export let label: string;
-	export let options: string[];
-	export let value: string;
+	export let options: T[];
+	export let value: T;
 
 	const width = 100 / options.length;
 	$: index = options.findIndex((option) => option === value);
