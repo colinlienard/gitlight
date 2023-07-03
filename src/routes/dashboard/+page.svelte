@@ -22,10 +22,27 @@
 
 	let synced = false;
 	let mounted = false;
+	let fetched = false;
 
-	const interval = setInterval(() => {
+	let interval = setInterval(() => {
 		setNotifications();
 	}, 60000);
+
+	// Clear notifications and refetch when notification number changes
+	$: notificationNumber = $settings.notificationNumber;
+	$: if (mounted) {
+		notificationNumber;
+		if (!fetched) {
+			fetched = true;
+		} else {
+			$githubNotifications = [];
+			setNotifications();
+			clearInterval(interval);
+			interval = setInterval(() => {
+				setNotifications();
+			}, 60000);
+		}
+	}
 
 	async function setNotifications() {
 		synced = false;
@@ -178,7 +195,7 @@
 		mounted = true;
 
 		await setNotifications();
-		loading.set(false);
+		$loading = false;
 	});
 
 	onDestroy(() => {

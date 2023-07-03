@@ -46,7 +46,7 @@
 <div class="pat-wrapper">
 	{#if editing}
 		<div class="content">
-			<p class="text">Repository owner: <strong>{pat.owner}</strong></p>
+			<p class="text">Resource owner: <strong>{pat.owner}</strong></p>
 			<p class="text">
 				Personal Access Token:
 				{#if showToken}
@@ -60,7 +60,7 @@
 	{:else}
 		<form class="inputs-container" on:submit|preventDefault={handleSave}>
 			<Input
-				label="Repositories owner"
+				label="Resource owner"
 				placeholder="The user or organization login"
 				bind:value={pat.owner}
 				bind:this={firstInput}
