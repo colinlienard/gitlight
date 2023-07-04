@@ -6,6 +6,7 @@
 		DoubleCheckIcon,
 		ExternalLinkIcon,
 		PinIcon,
+		RestoreIcon,
 		UnpinIcon,
 		UnreadIcon
 	} from '~/lib/icons';
@@ -20,6 +21,7 @@
 		id,
 		unread,
 		pinned,
+		done,
 		isNew,
 		author,
 		title,
@@ -57,9 +59,7 @@
 	function handleToggle(key: 'unread' | 'pinned' | 'done') {
 		return () => {
 			$githubNotifications = $githubNotifications.map((notification) => {
-				if (notification.id !== id) {
-					return notification;
-				}
+				if (notification.id !== id) return notification;
 				if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
 					return { ...notification, pinned: !notification.pinned, unread: false, isNew: false };
 				}
@@ -91,7 +91,7 @@
 	}
 </script>
 
-<div class="container" class:unread>
+<div class="container" class:transparent={!unread && !done}>
 	<div
 		class="notification"
 		on:mouseenter={isNew && interactive ? () => (isNew = false) : undefined}
@@ -146,41 +146,49 @@
 		{/if}
 		{#if interactive}
 			<div class="over">
-				<Tooltip content="Mark as {unread ? '' : 'un'}read" position="left" hover>
-					<Button type={unread ? 'primary' : 'secondary'} small on:click={handleToggle('unread')}>
-						{#if unread}
-							<CheckIcon />
-						{:else}
-							<UnreadIcon />
-						{/if}
-					</Button>
-				</Tooltip>
-				{#if unread || pinned}
-					<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left" hover>
-						<Button type="secondary" small on:click={handleToggle('pinned')}>
-							{#if pinned}
-								<UnpinIcon />
+				{#if !done}
+					<Tooltip content="Mark as {unread ? '' : 'un'}read" position="left" hover>
+						<Button type={unread ? 'primary' : 'secondary'} icon on:click={handleToggle('unread')}>
+							{#if unread}
+								<CheckIcon />
 							{:else}
-								<PinIcon />
+								<UnreadIcon />
 							{/if}
 						</Button>
 					</Tooltip>
+					{#if unread || pinned}
+						<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left" hover>
+							<Button type="secondary" icon on:click={handleToggle('pinned')}>
+								{#if pinned}
+									<UnpinIcon />
+								{:else}
+									<PinIcon />
+								{/if}
+							</Button>
+						</Tooltip>
+					{:else}
+						<Tooltip content="Mark as done" position="left" hover>
+							<Button type="secondary" icon on:click={handleToggle('done')}>
+								<DoubleCheckIcon />
+							</Button>
+						</Tooltip>
+					{/if}
 				{:else}
-					<Tooltip content="Mark as done" position="left" hover>
-						<Button type="secondary" small on:click={handleToggle('done')}>
-							<DoubleCheckIcon />
+					<Tooltip content="Restore" position="left" hover>
+						<Button type="secondary" icon on:click={handleToggle('done')}>
+							<RestoreIcon />
 						</Button>
 					</Tooltip>
 				{/if}
 				{#if url}
 					<Tooltip content="Open in GitHub" position="left" hover>
-						<Button type="secondary" small href={url} external on:click={handleOpenInBrowser}>
+						<Button type="secondary" icon href={url} external on:click={handleOpenInBrowser}>
 							<ExternalLinkIcon />
 						</Button>
 					</Tooltip>
 				{:else}
 					<Tooltip content="Cannot open in GitHub" position="left" hover>
-						<Button type="secondary" small disabled>
+						<Button type="secondary" icon disabled>
 							<ExternalLinkIcon />
 						</Button>
 					</Tooltip>
@@ -225,7 +233,7 @@
 			}
 		}
 
-		&:not(.unread) {
+		&.transparent {
 			opacity: 0.65;
 			transition: opacity variables.$transition;
 

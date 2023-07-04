@@ -12,6 +12,7 @@
 		id: '',
 		unread: true,
 		pinned: false,
+		done: false,
 		isNew: false,
 		repoId: '',
 		ownerAvatar: '',

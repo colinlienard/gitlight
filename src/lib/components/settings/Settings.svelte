@@ -157,6 +157,7 @@
 		display: flex;
 		gap: 2rem;
 		height: 100%;
+		padding: 2rem;
 
 		.tabs {
 			display: flex;

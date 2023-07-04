@@ -47,6 +47,7 @@ export async function createNotificationData(
 		: undefined;
 	const pinned = previous?.pinned || false;
 	const unread = u || previous?.unread || false;
+	const done = previous?.done || false;
 	const isNew = (u && !previous?.unread) || false;
 
 	// Get Personal Access Tokens
@@ -74,7 +75,7 @@ export async function createNotificationData(
 		id,
 		pinned,
 		unread,
-		done: false,
+		done,
 		isNew,
 		time: updated_at,
 		title: subject.title,

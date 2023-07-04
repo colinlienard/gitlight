@@ -27,6 +27,7 @@ export { default as PinIcon } from './PinIcon.svelte';
 export { default as RefreshIcon } from './RefreshIcon.svelte';
 export { default as ReleaseIcon } from './ReleaseIcon.svelte';
 export { default as RepositoryIcon } from './RepositoryIcon.svelte';
+export { default as RestoreIcon } from './RestoreIcon.svelte';
 export { default as SearchIcon } from './SearchIcon.svelte';
 export { default as SmallArrowIcon } from './SmallArrowIcon.svelte';
 export { default as SparklesIcon } from './SparklesIcon.svelte';
