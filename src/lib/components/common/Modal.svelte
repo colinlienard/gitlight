@@ -20,7 +20,7 @@
 	function portal(node: HTMLElement, _: boolean) {
 		return {
 			update() {
-				document.body.appendChild(node);
+				document.querySelector('#id')?.appendChild(node);
 			},
 			destroy() {
 				node.parentNode?.removeChild(node);

@@ -11,6 +11,7 @@
 	import Update from './Update.svelte';
 	import type { GithubRelease } from '~/lib/types';
 	import Permissions from './permissions';
+	import { GearIcon } from '~/lib/icons';
 
 	let mounted = false;
 	let forceOpenSettings = false;
@@ -21,10 +22,11 @@
 		{ name: 'GitHub settings', component: GithubSettings },
 		{ name: 'Permissions', component: Permissions },
 		{ name: 'Accounts', component: Accounts },
-		...(browser && window.__TAURI__
-			? [{ name: 'Update', indicator: !!$updateAvailable, component: Update }]
-			: [])
-	] satisfies Array<{ name: string; indicator?: boolean; component: ComponentType }>;
+		{ name: 'Update', strong: !!$updateAvailable, component: Update }
+		// ...(browser && window.__TAURI__
+		// 	? [{ name: 'Update', strong: !!$updateAvailable, component: Update }]
+		// 	: [])
+	] satisfies Array<{ name: string; strong?: boolean; component: ComponentType }>;
 
 	const user = $page.data.session?.user;
 
@@ -63,8 +65,6 @@
 	}
 
 	$: if (forceOpenSettings) {
-		$settingsTab = storage.has('settings') ? 0 : 1;
-
 		(async () => {
 			if (!window.__TAURI__) return;
 
@@ -80,26 +80,28 @@
 
 	$: {
 		$settingsTab;
-		scrollContainer?.scrollTo(0, 0);
+		scrollContainer?.scrollTo && scrollContainer?.scrollTo(0, 0);
 	}
 </script>
 
 <Modal title="Settings" bind:open={forceOpenSettings}>
-	<button class="trigger" slot="trigger">
-		<img class="image" src={user?.avatar} alt="" />
-		{#if $updateAvailable}
-			<div class="indicator" />
-		{/if}
-	</button>
+	<div slot="trigger" class="triggers">
+		<button class="preferences-trigger" on:click={() => ($settingsTab = 0)}>
+			<GearIcon />
+			{#if $updateAvailable}
+				<div class="indicator" />
+			{/if}
+		</button>
+		<button class="account-trigger" on:click={() => ($settingsTab = 3)}>
+			<img class="image" src={user?.avatar} alt="" />
+		</button>
+	</div>
 	<div class="content" slot="content">
 		<ul class="tabs">
 			{#each tabs as tab, index}
-				<li class="tab" class:active={$settingsTab === index}>
+				<li class="tab" class:strong={tab.strong} class:active={$settingsTab === index}>
 					<button on:click={() => ($settingsTab = index)}>
 						{tab.name}
-						{#if tab.indicator}
-							<div class="indicator">1</div>
-						{/if}
 					</button>
 				</li>
 			{/each}
@@ -114,41 +116,50 @@
 </Modal>
 
 <style lang="scss">
-	.trigger {
-		position: relative;
-		transition: opacity variables.$transition;
+	.triggers {
+		display: flex;
+		gap: 1rem;
 
-		&:hover {
-			opacity: 0.75;
-		}
-
-		.image {
+		.preferences-trigger {
+			position: relative;
 			width: 2rem;
 			height: 2rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 			border-radius: 50%;
-			background-color: variables.$grey-2;
+			transition: background-color variables.$transition;
+
+			&:hover {
+				background-color: variables.$grey-3;
+			}
+
+			:global(svg) {
+				height: 1.25rem;
+			}
+
+			.indicator {
+				width: 0.75rem;
+				height: 0.75rem;
+				border-radius: 50%;
+				background-color: variables.$blue-2;
+				position: absolute;
+				inset: 0 auto auto 0;
+			}
 		}
 
-		.indicator {
-			width: 1rem;
-			height: 1rem;
-			border-radius: 50%;
-			background-color: variables.$blue-2;
-			position: absolute;
-			inset: -0.25rem auto auto -0.25rem;
-			box-shadow: 0 0 0.5rem variables.$grey-2;
-			animation: pulse 1s infinite ease-in-out;
+		.account-trigger {
+			transition: opacity variables.$transition;
 
-			@keyframes pulse {
-				0% {
-					scale: 0.75;
-				}
-				50% {
-					scale: 1;
-				}
-				100% {
-					scale: 0.75;
-				}
+			&:hover {
+				opacity: 0.75;
+			}
+
+			.image {
+				width: 2rem;
+				height: 2rem;
+				border-radius: 50%;
+				background-color: variables.$grey-2;
 			}
 		}
 	}
@@ -172,25 +183,14 @@
 					color: variables.$grey-4;
 				}
 
+				&.strong button {
+					@include mixins.link;
+				}
+
 				button {
 					width: 100%;
 					text-align: left;
 					position: relative;
-
-					.indicator {
-						@include typography.small;
-						@include typography.bold;
-						width: 1.5rem;
-						height: 1.5rem;
-						border-radius: 50%;
-						background-color: variables.$blue-2;
-						display: flex;
-						align-items: center;
-						justify-content: center;
-						color: variables.$white;
-						position: absolute;
-						inset: -0.2rem auto auto calc(100% + 0.5rem);
-					}
 				}
 			}
 		}

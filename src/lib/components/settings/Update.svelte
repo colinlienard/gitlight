@@ -3,7 +3,10 @@
 	import { Button } from '~/lib/components';
 	import { updateAvailable } from '~/lib/stores';
 
+	let loading = false;
+
 	async function update() {
+		loading = true;
 		await emit('tauri://update');
 	}
 </script>
@@ -11,7 +14,7 @@
 {#if $updateAvailable}
 	<div class="card">
 		<p>Version {$updateAvailable} is available!</p>
-		<Button on:click={update}>Install it now</Button>
+		<Button on:click={update} {loading}>Install it now</Button>
 	</div>
 {:else}
 	<p>GitLight is up to date.</p>

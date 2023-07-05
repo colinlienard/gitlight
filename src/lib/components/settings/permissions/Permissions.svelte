@@ -86,11 +86,7 @@
 		}
 
 		a {
-			color: variables.$blue-3;
-
-			&:hover {
-				text-decoration: underline;
-			}
+			@include mixins.link;
 		}
 	}
 

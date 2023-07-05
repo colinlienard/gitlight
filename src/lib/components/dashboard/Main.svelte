@@ -335,17 +335,12 @@
 
 		.read-all {
 			@include typography.small;
-			@include typography.bold;
+			@include mixins.link;
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			gap: 0.25rem;
-			color: variables.$blue-3;
 			z-index: 1;
-
-			&:hover {
-				filter: brightness(130%);
-			}
 
 			:global(svg) {
 				height: 1rem;

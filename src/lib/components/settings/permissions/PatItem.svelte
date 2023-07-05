@@ -104,12 +104,7 @@
 			}
 
 			.show-token {
-				@include typography.bold;
-				color: variables.$blue-3;
-
-				&:hover {
-					filter: brightness(130%);
-				}
+				@include mixins.link;
 			}
 		}
 
