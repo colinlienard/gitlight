@@ -99,6 +99,7 @@
 
 		&.small {
 			width: 32rem;
+			height: 32rem;
 		}
 
 		.header {
@@ -114,7 +115,6 @@
 		}
 
 		.content {
-			padding: 2rem;
 			height: 100%;
 			overflow: hidden;
 		}

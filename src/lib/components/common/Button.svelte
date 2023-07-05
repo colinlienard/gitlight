@@ -3,6 +3,7 @@
 
 	export let type: 'primary' | 'secondary' = 'primary';
 	export let small = false;
+	export let icon = false;
 	export let href: string | undefined = undefined;
 	export let external = false;
 	export let loading = false;
@@ -21,6 +22,7 @@
 	<a
 		class="button {type}"
 		class:small
+		class:icon
 		class:loading
 		class:disabled
 		{href}
@@ -33,7 +35,14 @@
 		</span>
 	</a>
 {:else}
-	<button class="button {type}" class:small class:loading class:disabled on:click={handleClick}>
+	<button
+		class="button {type}"
+		class:small
+		class:icon
+		class:loading
+		class:disabled
+		on:click={handleClick}
+	>
 		<span class="content">
 			<slot />
 		</span>
@@ -48,6 +57,7 @@
 		@include mixins.shiny(variables.$blue-2);
 		@include mixins.shadow;
 		display: block;
+		--svg-size: 1.25rem;
 
 		&.secondary {
 			@include mixins.shiny(variables.$grey-3);
@@ -56,20 +66,23 @@
 		&:not(.small) {
 			@include typography.bold;
 			padding: 0.75em 1em;
-			--svg-size: 1.25rem;
 
 			.content {
 				gap: 0.5em;
 			}
 		}
 
-		&.small {
+		&.small,
+		&.icon {
 			padding: 0.5rem;
-			--svg-size: 1rem;
 
 			.content {
 				gap: 0.25em;
 			}
+		}
+
+		&.small {
+			--svg-size: 1rem;
 		}
 
 		&.loading,

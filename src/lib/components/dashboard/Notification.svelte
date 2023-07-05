@@ -1,7 +1,15 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { Button, Tooltip } from '~/lib/components';
-	import { CheckIcon, ExternalLinkIcon, PinIcon, UnpinIcon, UnreadIcon } from '~/lib/icons';
+	import {
+		CheckIcon,
+		DoubleCheckIcon,
+		ExternalLinkIcon,
+		PinIcon,
+		RestoreIcon,
+		UnpinIcon,
+		UnreadIcon
+	} from '~/lib/icons';
 	import { fetchGithub, formatRelativeDate, lightenColor } from '~/lib/helpers';
 	import { githubNotifications, settings } from '~/lib/stores';
 	import type { NotificationData } from '~/lib/types';
@@ -13,6 +21,7 @@
 		id,
 		unread,
 		pinned,
+		done,
 		isNew,
 		author,
 		title,
@@ -47,12 +56,10 @@
 		fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
 	}
 
-	function handleToggle(key: 'unread' | 'pinned') {
+	function handleToggle(key: 'unread' | 'pinned' | 'done') {
 		return () => {
 			$githubNotifications = $githubNotifications.map((notification) => {
-				if (notification.id !== id) {
-					return notification;
-				}
+				if (notification.id !== id) return notification;
 				if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
 					return { ...notification, pinned: !notification.pinned, unread: false, isNew: false };
 				}
@@ -63,7 +70,7 @@
 				unread = !unread;
 			}
 
-			if (unread) {
+			if (key === 'unread' && unread) {
 				markAsReadInGitHub();
 			}
 		};
@@ -84,7 +91,7 @@
 	}
 </script>
 
-<div class="container" class:unread>
+<div class="container" class:transparent={!unread && !done}>
 	<div
 		class="notification"
 		on:mouseenter={isNew && interactive ? () => (isNew = false) : undefined}
@@ -116,15 +123,17 @@
 				<span class="strong">{description}</span>
 			{/if}
 		</p>
-		<div class="main">
-			<span class="icon-container">
-				<svelte:component this={icon} />
-			</span>
-			<h3 class="title">{title}</h3>
-			{#if number}
-				<span class="number">#{number}</span>
-			{/if}
-		</div>
+		<Tooltip content={title} position="bottom left" width="calc(100% - 2.5rem)" hover>
+			<div class="main">
+				<span class="icon-container">
+					<svelte:component this={icon} />
+				</span>
+				<h3 class="title">{title}</h3>
+				{#if number}
+					<span class="number">#{number}</span>
+				{/if}
+			</div>
+		</Tooltip>
 		{#if labels && labels.length}
 			<ul class="labels">
 				{#each labels as label}
@@ -137,37 +146,58 @@
 		{/if}
 		{#if interactive}
 			<div class="over">
-				<Tooltip content="Mark as {unread ? '' : 'un'}read" position="left" hover>
-					<Button type={unread ? 'primary' : 'secondary'} small on:click={handleToggle('unread')}>
-						{#if unread}
-							<CheckIcon />
-						{:else}
-							<UnreadIcon />
-						{/if}
-					</Button>
-				</Tooltip>
+				{#if !done}
+					{#if !unread && !pinned}
+						<Tooltip content="Mark as done" position="left" hover>
+							<Button icon on:click={handleToggle('done')}>
+								<DoubleCheckIcon />
+							</Button>
+						</Tooltip>
+					{/if}
+					{#if unread}
+						<Tooltip content="Mark as read" position="left" hover>
+							<Button type={'primary'} icon on:click={handleToggle('unread')}>
+								<CheckIcon />
+							</Button>
+						</Tooltip>
+					{:else}
+						<Tooltip content="Mark as unread" position="left" hover>
+							<Button type={'secondary'} icon on:click={handleToggle('unread')}>
+								<UnreadIcon />
+							</Button>
+						</Tooltip>
+					{/if}
+					{#if unread || pinned}
+						<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left" hover>
+							<Button type="secondary" icon on:click={handleToggle('pinned')}>
+								{#if pinned}
+									<UnpinIcon />
+								{:else}
+									<PinIcon />
+								{/if}
+							</Button>
+						</Tooltip>
+					{/if}
+				{:else}
+					<Tooltip content="Restore" position="left" hover>
+						<Button icon on:click={handleToggle('done')}>
+							<RestoreIcon />
+						</Button>
+					</Tooltip>
+				{/if}
 				{#if url}
 					<Tooltip content="Open in GitHub" position="left" hover>
-						<Button type="secondary" small href={url} external on:click={handleOpenInBrowser}>
+						<Button type="secondary" icon href={url} external on:click={handleOpenInBrowser}>
 							<ExternalLinkIcon />
 						</Button>
 					</Tooltip>
 				{:else}
 					<Tooltip content="Cannot open in GitHub" position="left" hover>
-						<Button type="secondary" small disabled>
+						<Button type="secondary" icon disabled>
 							<ExternalLinkIcon />
 						</Button>
 					</Tooltip>
 				{/if}
-				<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left" hover>
-					<Button type="secondary" small on:click={handleToggle('pinned')}>
-						{#if pinned}
-							<UnpinIcon />
-						{:else}
-							<PinIcon />
-						{/if}
-					</Button>
-				</Tooltip>
 			</div>
 		{/if}
 	</div>
@@ -208,7 +238,7 @@
 			}
 		}
 
-		&:not(.unread) {
+		&.transparent {
 			opacity: 0.65;
 			transition: opacity variables.$transition;
 

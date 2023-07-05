@@ -89,6 +89,7 @@
 		<div
 			class="tooltip {position}"
 			class:no-wrap={width === 'auto'}
+			class:fit-content={typeof content === 'string'}
 			transition:fade={{ duration: 150, easing: sineInOut }}
 			style:width
 		>
@@ -141,6 +142,7 @@
 <style lang="scss">
 	.container {
 		position: relative;
+		z-index: 1;
 	}
 
 	.tooltip {
@@ -152,8 +154,16 @@
 		display: flex;
 		flex-direction: column;
 
+		&.fit-content {
+			max-width: fit-content;
+		}
+
 		&.no-wrap {
 			white-space: nowrap;
+		}
+
+		&:not(.no-wrap) {
+			@include typography.base;
 		}
 
 		&.left {
@@ -184,6 +194,7 @@
 		&.top {
 			&.left {
 				left: 0;
+				right: unset;
 				translate: 0 0;
 			}
 

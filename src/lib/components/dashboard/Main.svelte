@@ -19,10 +19,12 @@
 		Logo,
 		UnreadIcon,
 		PinIcon,
-		RefreshIcon
+		RefreshIcon,
+		DoubleCheckIcon
 	} from '~/lib/icons';
 	import { fetchGithub } from '~/lib/helpers';
 	import { browser } from '$app/environment';
+	import DoneModal from './DoneModal.svelte';
 
 	export let synced: boolean;
 
@@ -30,11 +32,9 @@
 	let interval: ReturnType<typeof setInterval>;
 
 	// Filter events
-	$: pinned = $filteredNotifications.filter((item) => item.pinned);
-	$: unread = $filteredNotifications.filter((item) => !item.pinned && item.unread);
-	$: read = $filteredNotifications.filter((item) => !item.pinned && !item.unread);
-
-	$: showReadAll = unread.length > 0;
+	$: pinned = $filteredNotifications.filter((item) => item.pinned && !item.done);
+	$: unread = $filteredNotifications.filter((item) => !item.pinned && item.unread && !item.done);
+	$: read = $filteredNotifications.filter((item) => !item.pinned && !item.unread && !item.done);
 
 	$: if (synced && !syncTime) {
 		interval = setInterval(() => {
@@ -53,6 +53,12 @@
 			method: 'PUT',
 			body: { read: true }
 		});
+	}
+
+	function markAllAsDone() {
+		$githubNotifications = $githubNotifications.map((notifications) =>
+			read.includes(notifications) ? { ...notifications, done: true } : notifications
+		);
 	}
 
 	// Animations settings
@@ -137,6 +143,7 @@
 			<p class="text">GitLab</p>
 			<div class="tag soon">Coming soon</div>
 		</button>
+		<DoneModal />
 	</nav>
 	<ScrollbarContainer>
 		<section class="columns-container" class:horizontal={!$largeScreen}>
@@ -159,7 +166,7 @@
 				{transitions}
 			>
 				<div slot="header-addon">
-					{#if showReadAll}
+					{#if unread.length}
 						<button class="read-all" on:click={markAllAsRead}>
 							<CheckIcon />
 							All
@@ -177,7 +184,16 @@
 					text: 'Click on the check icon to mark a notification as read.'
 				}}
 				{transitions}
-			/>
+			>
+				<div slot="header-addon">
+					{#if read.length}
+						<button class="read-all" on:click={markAllAsDone}>
+							<DoubleCheckIcon />
+							All
+						</button>
+					{/if}
+				</div>
+			</NotificationColumn>
 		</section>
 	</ScrollbarContainer>
 </main>

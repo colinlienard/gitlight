@@ -18,6 +18,7 @@ export type NotificationData = {
 	type: GithubNotificationType;
 	unread: boolean;
 	pinned: boolean;
+	done: boolean;
 	isNew: boolean;
 	author?: User;
 	title: string;
@@ -56,6 +57,7 @@ export type SavedNotifications = Array<{
 	description: string;
 	pinned: boolean;
 	unread: boolean;
+	done: boolean;
 	time: string;
 	previously?: NotificationData['previously'];
 }>;
