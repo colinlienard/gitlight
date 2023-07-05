@@ -147,15 +147,26 @@
 		{#if interactive}
 			<div class="over">
 				{#if !done}
-					<Tooltip content="Mark as {unread ? '' : 'un'}read" position="left" hover>
-						<Button type={unread ? 'primary' : 'secondary'} icon on:click={handleToggle('unread')}>
-							{#if unread}
+					{#if !unread && !pinned}
+						<Tooltip content="Mark as done" position="left" hover>
+							<Button icon on:click={handleToggle('done')}>
+								<DoubleCheckIcon />
+							</Button>
+						</Tooltip>
+					{/if}
+					{#if unread}
+						<Tooltip content="Mark as read" position="left" hover>
+							<Button type={'primary'} icon on:click={handleToggle('unread')}>
 								<CheckIcon />
-							{:else}
+							</Button>
+						</Tooltip>
+					{:else}
+						<Tooltip content="Mark as unread" position="left" hover>
+							<Button type={'secondary'} icon on:click={handleToggle('unread')}>
 								<UnreadIcon />
-							{/if}
-						</Button>
-					</Tooltip>
+							</Button>
+						</Tooltip>
+					{/if}
 					{#if unread || pinned}
 						<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left" hover>
 							<Button type="secondary" icon on:click={handleToggle('pinned')}>
@@ -166,16 +177,10 @@
 								{/if}
 							</Button>
 						</Tooltip>
-					{:else}
-						<Tooltip content="Mark as done" position="left" hover>
-							<Button type="secondary" icon on:click={handleToggle('done')}>
-								<DoubleCheckIcon />
-							</Button>
-						</Tooltip>
 					{/if}
 				{:else}
 					<Tooltip content="Restore" position="left" hover>
-						<Button type="secondary" icon on:click={handleToggle('done')}>
+						<Button icon on:click={handleToggle('done')}>
 							<RestoreIcon />
 						</Button>
 					</Tooltip>

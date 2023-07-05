@@ -19,7 +19,8 @@
 		Logo,
 		UnreadIcon,
 		PinIcon,
-		RefreshIcon
+		RefreshIcon,
+		DoubleCheckIcon
 	} from '~/lib/icons';
 	import { fetchGithub } from '~/lib/helpers';
 	import { browser } from '$app/environment';
@@ -187,7 +188,7 @@
 				<div slot="header-addon">
 					{#if read.length}
 						<button class="read-all" on:click={markAllAsDone}>
-							<CheckIcon />
+							<DoubleCheckIcon />
 							All
 						</button>
 					{/if}
