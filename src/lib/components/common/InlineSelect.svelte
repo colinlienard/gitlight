@@ -33,11 +33,11 @@
 		gap: 0.5rem;
 
 		.list {
+			position: relative;
 			display: flex;
 			align-items: center;
 			border-radius: variables.$radius;
 			background-color: variables.$grey-2;
-			position: relative;
 			isolation: isolate;
 
 			.item {
@@ -62,12 +62,13 @@
 
 			.indicator {
 				@include mixins.shiny(variables.$grey-3);
+
 				position: absolute;
+				z-index: -1;
 				height: calc(100% - 0.5rem);
 				pointer-events: none;
-				z-index: -1;
-				translate: 0.25rem 0;
 				transition: left 0.3s ease-in-out;
+				translate: 0.25rem 0;
 			}
 		}
 	}

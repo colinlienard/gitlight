@@ -29,19 +29,19 @@
 
 <style lang="scss">
 	.log-out {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		color: variables.$red;
-		position: relative;
 
 		.progress {
 			position: absolute;
-			inset: 0;
-			clip-path: inset(0 100% 0 0);
-			background-color: currentColor;
-			opacity: 0.25;
-			border-radius: variables.$radius;
 			z-index: 1;
+			border-radius: variables.$radius;
+			background-color: currentcolor;
+			clip-path: inset(0 100% 0 0);
+			inset: 0;
+			opacity: 0.25;
 			pointer-events: none;
 			transition: clip-path 1s linear;
 

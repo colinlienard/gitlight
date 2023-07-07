@@ -40,6 +40,7 @@
 		"sass": "^1.63.6",
 		"stylelint": "^15.10.1",
 		"stylelint-config-html": "^1.1.0",
+		"stylelint-config-idiomatic-order": "^9.0.0",
 		"stylelint-config-standard-scss": "^10.0.0",
 		"stylelint-prettier": "^3.0.0",
 		"svelte": "^4.0.4",

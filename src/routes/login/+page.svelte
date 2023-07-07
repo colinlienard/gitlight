@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import { PUBLIC_SITE_URL } from '$env/static/public';
 	import { Button, Footer, IconButton, Tooltip } from '~/lib/components';
 	import { ArrowRightIcon, GithubIcon, GitlabIcon } from '~/lib/icons';
-	import { page } from '$app/stores';
 
 	let onTauriApp = true;
 
@@ -45,20 +45,20 @@
 
 <style lang="scss">
 	.wrapper {
+		position: relative;
 		display: flex;
+		overflow: hidden;
+		height: 100vh;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		height: 100vh;
-		overflow: hidden;
 		padding: 0 2rem;
-		position: relative;
 	}
 
 	.background-image {
 		position: absolute;
-		top: 0;
 		z-index: -1;
+		top: 0;
 
 		@include screens.mobile {
 			width: 40rem;
@@ -68,11 +68,11 @@
 	}
 
 	.main {
+		position: relative;
 		display: flex;
+		width: 20rem;
 		flex-direction: column;
 		gap: 1rem;
-		width: 20rem;
-		position: relative;
 
 		.back-button {
 			position: absolute;

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { GearIcon } from '~/lib/icons';
 	import { Tooltip, type TooltipContent } from '~/lib/components';
+	import { GearIcon } from '~/lib/icons';
 
 	export let items: { active: boolean }[];
 	export let title: string;
@@ -51,11 +51,11 @@
 	}
 
 	.row {
+		z-index: 1;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
-		z-index: 1;
 
 		.title {
 			@include typography.bold;

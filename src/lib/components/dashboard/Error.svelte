@@ -34,17 +34,19 @@
 	.snackbar {
 		@include mixins.modal-shadow;
 		@include typography.base;
+
+		position: absolute;
+		z-index: 998;
+		max-width: 24rem;
+		padding: 1rem;
+		border-radius: variables.$radius;
 		background-color: variables.$yellow;
 		color: variables.$grey-1;
-		border-radius: variables.$radius;
-		padding: 1rem;
-		max-width: 24rem;
-		position: absolute;
 		inset: auto auto 1rem 1rem;
-		z-index: 998;
 
 		.button {
 			@include typography.bold;
+
 			margin-top: 0.5em;
 
 			&:hover {
@@ -54,8 +56,8 @@
 
 		.close {
 			position: absolute;
-			inset: 0 0 auto auto;
 			padding: 0.25rem;
+			inset: 0 0 auto auto;
 
 			:global(svg) {
 				height: 1rem;

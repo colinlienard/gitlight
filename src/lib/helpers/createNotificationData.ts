@@ -7,6 +7,7 @@ import {
 	WorkflowFailIcon,
 	WorkflowSuccessIcon
 } from '~/lib/icons';
+import { error, settings } from '~/lib/stores';
 import type {
 	GithubComment,
 	GithubCommit,
@@ -19,10 +20,9 @@ import type {
 	NotificationData,
 	SavedNotifications
 } from '~/lib/types';
-import { getIssueIcon, getPullRequestIcon } from './getIcon';
 import { fetchGithub } from './fetchGithub';
+import { getIssueIcon, getPullRequestIcon } from './getIcon';
 import { removeMarkdownSymbols } from './removeMarkdownSymbols';
-import { error, settings } from '~/lib/stores';
 
 type PullRequestEvent = {
 	author: {

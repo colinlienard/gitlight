@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { ExternalLinkIcon } from '~/lib/icons';
 	import { Button, ShrinkableWrapper } from '~/lib/components';
+	import { ExternalLinkIcon } from '~/lib/icons';
 	import { settings } from '~/lib/stores';
 	import PatItem from './PatItem.svelte';
 
@@ -68,6 +68,7 @@
 	.text,
 	.list-item {
 		@include typography.base;
+
 		color: variables.$grey-4;
 
 		strong {
@@ -76,13 +77,13 @@
 	}
 
 	.list-item {
-		padding-left: 1rem;
 		position: relative;
+		padding-left: 1rem;
 
 		&::before {
-			content: '-';
 			position: absolute;
-			left: 0rem;
+			left: 0;
+			content: '-';
 		}
 
 		a {
@@ -91,17 +92,17 @@
 	}
 
 	code {
-		font: inherit;
-		padding: 0 0.1em;
 		position: relative;
+		padding: 0 0.1em;
+		font: inherit;
 
 		&::before {
-			content: ' ';
 			position: absolute;
-			inset: -0.1em;
+			z-index: -1;
 			border-radius: 4px;
 			background-color: variables.$grey-3;
-			z-index: -1;
+			content: ' ';
+			inset: -0.1em;
 		}
 	}
 

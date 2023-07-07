@@ -129,18 +129,18 @@
 
 <style lang="scss">
 	.container {
+		position: relative;
 		margin-top: 4rem;
 		margin-bottom: auto;
-		position: relative;
 
 		@include screens.mobile {
 			display: none;
 		}
 
 		.notification-container {
-			background-color: variables.$grey-1;
-			border-radius: variables.$radius;
 			width: 23rem;
+			border-radius: variables.$radius;
+			background-color: variables.$grey-1;
 			transition: translate variables.$transition;
 
 			&:not(:nth-child(5)) {
@@ -154,21 +154,22 @@
 			@keyframes slide {
 				from {
 					opacity: 0;
-					translate: 0 4rem;
 					transform: perspective(500px) rotate3d(1, 0, 0, -45deg);
+					translate: 0 4rem;
 				}
+
 				to {
 					opacity: 1;
-					translate: 0;
 					transform: perspective(500px) rotate3d(1, 0, 0, 0deg);
+					translate: 0;
 				}
 			}
 
 			@mixin notification($top, $left, $rotate, $opacity, $animation-stagger) {
 				top: $top;
 				left: $left;
-				rotate: $rotate;
 				animation: slide 0.5s calc(#{$animation-stagger} * 0.2s + 0.6s) ease-in-out backwards;
+				rotate: $rotate;
 
 				& > :global(div) {
 					opacity: $opacity;

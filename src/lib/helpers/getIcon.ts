@@ -1,5 +1,4 @@
 import type { ComponentType } from 'svelte';
-import type { GithubIssue, GithubPullRequest } from '~/lib/types';
 import {
 	ClosedIssueIcon,
 	ClosedPullRequestIcon,
@@ -9,6 +8,7 @@ import {
 	OpenIssueIcon,
 	OpenPullRequestIcon
 } from '~/lib/icons';
+import type { GithubIssue, GithubPullRequest } from '~/lib/types';
 
 export function getIssueIcon({ state, state_reason }: GithubIssue): ComponentType {
 	switch (state) {

@@ -43,15 +43,15 @@
 	}
 
 	.content {
-		gap: 0.5rem;
 		padding-left: 1.5rem;
+		gap: 0.5rem;
 	}
 
 	.header {
 		display: flex;
+		width: 100%;
 		align-items: center;
 		gap: 0.25rem;
-		width: 100%;
 		transition: margin variables.$transition;
 
 		&.shrinked :global(svg) {

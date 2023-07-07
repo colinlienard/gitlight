@@ -35,7 +35,7 @@
 	.list {
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
 		padding: 2rem;
+		gap: 1rem;
 	}
 </style>

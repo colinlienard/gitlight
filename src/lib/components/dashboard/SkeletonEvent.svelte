@@ -9,12 +9,12 @@
 
 <style lang="scss">
 	.event {
-		background-color: variables.$grey-2;
-		border: 1px solid variables.$grey-3;
-		border-radius: variables.$radius;
-		padding: 1rem;
 		display: flex;
 		flex-direction: column;
+		padding: 1rem;
+		border: 1px solid variables.$grey-3;
+		border-radius: variables.$radius;
+		background-color: variables.$grey-2;
 		gap: 1rem;
 	}
 

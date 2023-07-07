@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { loading, watchedPersons } from '~/lib/stores';
 	import { browser } from '$app/environment';
 	import { storage } from '~/lib/helpers';
+	import { loading, watchedPersons } from '~/lib/stores';
 	import SidebarSection from './SidebarSection.svelte';
 
 	// Save watched persons to storage
@@ -53,11 +53,11 @@
 
 <style lang="scss">
 	.wrapper {
+		position: relative;
 		display: flex;
+		width: 100%;
 		align-items: center;
 		gap: 0.5rem;
-		width: 100%;
-		position: relative;
 		transition: opacity variables.$transition;
 
 		&:not(.active) {
@@ -69,12 +69,12 @@
 		}
 
 		&::before {
-			content: '';
 			position: absolute;
-			inset: -0.25rem -0.5rem;
-			background-color: variables.$grey-2;
-			border-radius: variables.$radius;
 			z-index: -1;
+			border-radius: variables.$radius;
+			background-color: variables.$grey-2;
+			content: '';
+			inset: -0.25rem -0.5rem;
 			opacity: 0;
 		}
 
@@ -83,26 +83,26 @@
 		}
 
 		.name {
+			position: relative;
 			overflow: hidden;
+			max-width: 100%;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-			max-width: 100%;
-			position: relative;
 
 			&::before {
-				content: '';
 				position: absolute;
-				inset: 50% 0 auto 0;
-				height: 1px;
 				width: 0;
-				background-color: currentColor;
+				height: 1px;
+				background-color: currentcolor;
+				content: '';
+				inset: 50% 0 auto;
 				transition: width variables.$transition;
 			}
 		}
 
 		.image {
-			flex: 0 0 1.5rem;
 			height: 1.5rem;
+			flex: 0 0 1.5rem;
 			border-radius: 50%;
 		}
 

@@ -9,8 +9,8 @@
 <style lang="scss">
 	.footer {
 		position: absolute;
+		color: variables.$grey-4;
 		inset: auto auto 2rem;
 		text-align: center;
-		color: variables.$grey-4;
 	}
 </style>

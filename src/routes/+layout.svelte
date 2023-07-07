@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { listen } from '@tauri-apps/api/event';
+	import { onMount } from 'svelte';
 	import { enable, isEnabled } from 'tauri-plugin-autostart-api';
 	import { goto } from '$app/navigation';
 	import { storage } from '~/lib/helpers';
@@ -42,8 +42,8 @@
 <style lang="scss">
 	div[data-tauri-drag-region] {
 		position: fixed;
-		inset: 0 0 auto 0;
-		height: 28px;
 		z-index: 9999;
+		height: 28px;
+		inset: 0 0 auto;
 	}
 </style>

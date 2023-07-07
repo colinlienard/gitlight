@@ -1,8 +1,8 @@
 * {
-	margin: 0;
 	padding: 0;
-	user-select: none;
+	margin: 0;
 	-webkit-user-select: none;
+	user-select: none;
 }
 
 *,
@@ -18,9 +18,9 @@ html {
 body {
 	min-height: 100vh;
 	font-size: 100%;
-	line-height: 1;
-	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
+	line-height: 1;
+	text-rendering: optimizelegibility;
 }
 
 h1,
@@ -29,8 +29,8 @@ h3,
 h4,
 h5,
 h6 {
-	font-weight: normal;
 	font-size: initial;
+	font-weight: normal;
 }
 
 a {
@@ -42,9 +42,9 @@ button,
 input,
 select,
 textarea {
-	background-color: transparent;
 	border: none;
 	border-radius: 0;
+	background-color: transparent;
 	color: inherit;
 	font-family: inherit;
 	font-size: inherit;

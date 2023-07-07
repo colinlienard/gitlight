@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { githubNotifications, loading, settings, typeFilters } from '~/lib/stores';
-	import { storage } from '~/lib/helpers';
 	import { Switch } from '~/lib/components';
+	import { storage } from '~/lib/helpers';
+	import { githubNotifications, loading, settings, typeFilters } from '~/lib/stores';
 	import SidebarSection from './SidebarSection.svelte';
 
 	let mounted = false;

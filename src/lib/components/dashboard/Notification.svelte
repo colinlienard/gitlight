@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { Button, Tooltip } from '~/lib/components';
+	import { fetchGithub, formatRelativeDate, lightenColor } from '~/lib/helpers';
 	import {
 		CheckIcon,
 		DoubleCheckIcon,
@@ -10,7 +11,6 @@
 		UnpinIcon,
 		UnreadIcon
 	} from '~/lib/icons';
-	import { fetchGithub, formatRelativeDate, lightenColor } from '~/lib/helpers';
 	import { githubNotifications, settings } from '~/lib/stores';
 	import type { NotificationData } from '~/lib/types';
 
@@ -250,24 +250,26 @@
 
 	.notification {
 		@include mixins.box;
-		padding: 1rem;
+
 		position: relative;
 		display: flex;
 		flex-direction: column;
+		padding: 1rem;
 		gap: 0.75rem;
 	}
 
 	.new {
+		position: absolute;
 		width: 0.5rem;
 		height: 0.5rem;
 		border-radius: 50%;
 		background-color: variables.$blue-2;
-		position: absolute;
 		inset: 0.25rem 0.25rem auto auto;
 	}
 
 	.top {
 		@include typography.small;
+
 		display: flex;
 		justify-content: space-between;
 		color: variables.$grey-4;
@@ -285,9 +287,9 @@
 
 	.main {
 		display: flex;
+		width: 100%;
 		align-items: center;
 		gap: 0.5rem;
-		width: 100%;
 
 		.icon-container {
 			flex: 0 0 2rem;
@@ -300,10 +302,11 @@
 
 		.title {
 			@include typography.bold;
-			flex: 0 1 auto;
-			white-space: nowrap;
+
 			overflow: hidden;
+			flex: 0 1 auto;
 			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 
 		.number {
@@ -318,15 +321,16 @@
 
 		.label {
 			@include typography.small;
-			padding: 0.25rem 0.5rem;
-			border-radius: variables.$radius;
-			border: 1px solid;
+
 			position: relative;
+			padding: 0.25rem 0.5rem;
+			border: 1px solid;
+			border-radius: variables.$radius;
 
 			.label-background {
 				position: absolute;
-				inset: 0;
 				border-radius: variables.$radius;
+				inset: 0;
 				opacity: 0.1;
 			}
 		}
@@ -334,34 +338,35 @@
 
 	.over {
 		position: absolute;
-		inset: 0 0 0 auto;
 		display: flex;
 		flex-direction: column;
-		padding: 0.5rem;
 		align-items: end;
 		justify-content: start;
+		padding: 0.5rem;
 		gap: 0.5rem;
+		inset: 0 0 0 auto;
 		transition: opacity variables.$transition;
 
 		&::before {
-			content: '';
 			position: absolute;
-			inset: 0 0 0 auto;
 			width: 12rem;
-			background-image: linear-gradient(to right, transparent, variables.$grey-1);
 			border-radius: 0 calc(variables.$radius - 1px) calc(variables.$radius - 1px) 0;
+			background-image: linear-gradient(to right, transparent, variables.$grey-1);
+			content: '';
+			inset: 0 0 0 auto;
 			pointer-events: none;
 		}
 	}
 
 	.description {
 		@include typography.base;
-		width: 100%;
-		color: variables.$grey-4;
+
 		display: -webkit-box;
 		overflow: hidden;
-		-webkit-line-clamp: 2;
+		width: 100%;
 		-webkit-box-orient: vertical;
+		color: variables.$grey-4;
+		-webkit-line-clamp: 2;
 		word-wrap: break-word;
 
 		.strong {
@@ -374,27 +379,27 @@
 
 		.image {
 			display: inline;
-			vertical-align: sub;
 			border-radius: 50%;
+			vertical-align: sub;
 		}
 	}
 
 	.previously {
-		padding: 0.75rem 1rem;
 		position: relative;
+		padding: 0.75rem 1rem;
 
 		&::before,
 		&::after {
-			content: '';
 			position: absolute;
-			inset: -0.5rem 0 0;
 			z-index: -1;
+			content: '';
+			inset: -0.5rem 0 0;
 		}
 
 		&::before {
-			background-color: variables.$grey-2;
 			border: 1px solid variables.$grey-3;
 			border-radius: 0 0 variables.$radius variables.$radius;
+			background-color: variables.$grey-2;
 		}
 
 		&::after {

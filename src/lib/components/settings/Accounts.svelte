@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { GithubIcon, GitlabIcon } from '~/lib/icons';
 	import { Button, Tooltip } from '~/lib/components';
+	import { GithubIcon, GitlabIcon } from '~/lib/icons';
 	import LogOutButton from './LogOutButton.svelte';
 
 	const user = $page.data.session?.user;
@@ -41,21 +41,22 @@
 <style lang="scss">
 	.accounts-wrapper {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
 		gap: 1rem;
+		grid-template-columns: 1fr 1fr;
 	}
 
 	.account {
 		@include mixins.shiny(variables.$grey-2, false);
+
 		display: flex;
 		flex-direction: column;
 
 		.header {
-			padding: 1rem;
 			display: flex;
 			align-items: center;
-			gap: 0.5rem;
+			padding: 1rem;
 			border-bottom: 1px solid variables.$grey-3;
+			gap: 0.5rem;
 
 			:global(svg) {
 				height: 1.25rem;
@@ -64,11 +65,11 @@
 
 		.content {
 			display: flex;
-			flex-direction: column;
-			gap: 1rem;
-			padding: 1rem;
-			justify-content: space-between;
 			height: 100%;
+			flex-direction: column;
+			justify-content: space-between;
+			padding: 1rem;
+			gap: 1rem;
 		}
 
 		.user {

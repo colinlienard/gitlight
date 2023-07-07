@@ -23,12 +23,13 @@
 <style lang="scss">
 	.card {
 		@include mixins.shiny(variables.$grey-3, false);
+
 		display: flex;
+		width: fit-content;
 		flex-direction: column;
 		align-items: center;
-		gap: 1rem;
 		padding: 1rem;
-		width: fit-content;
+		gap: 1rem;
 
 		:global(button) {
 			width: 100%;

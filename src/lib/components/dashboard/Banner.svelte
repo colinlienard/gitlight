@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { cubicInOut } from 'svelte/easing';
+	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { CrossIcon, ExclamationMarkIcon } from '~/lib/icons';
-	import { browser } from '$app/environment';
 	import { DownloadButton } from '../landing';
 
 	let show = false;
@@ -76,12 +76,12 @@
 <style lang="scss">
 	.banner {
 		position: relative;
-		height: 2.5rem;
+		z-index: 1;
 		overflow: hidden;
+		height: 2.5rem;
 		border-bottom: 1px solid variables.$grey-3;
 		background-color: variables.$grey-1;
 		transition: background-color variables.$transition;
-		z-index: 1;
 
 		&:hover {
 			background-color: variables.$grey-2;
@@ -89,14 +89,15 @@
 
 		.content {
 			@include typography.bold;
+
 			position: absolute;
-			inset: 0;
+			display: flex;
 			width: 100%;
 			height: 2.5rem;
-			display: flex;
 			align-items: center;
 			justify-content: center;
 			gap: 0.5rem;
+			inset: 0;
 
 			:global(svg) {
 				height: 1.25rem;
@@ -105,8 +106,8 @@
 
 		.close {
 			position: absolute;
-			inset: 0 0 0 auto;
 			padding: 0 0.5rem;
+			inset: 0 0 0 auto;
 			transition: color variables.$transition;
 
 			&:not(:hover) {

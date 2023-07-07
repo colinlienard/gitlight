@@ -1,5 +1,6 @@
 {
-	"extends": ["stylelint-config-standard-scss", "stylelint-prettier"],
+	"extends": ["stylelint-config-standard-scss", "stylelint-config-idiomatic-order"],
+	"plugins": ["stylelint-prettier"],
 	"overrides": [
 		{
 			"files": ["*.svelte"],

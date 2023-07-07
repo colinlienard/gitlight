@@ -84,19 +84,19 @@
 				translate: 0;
 			}
 		}
-
 		--stagger: 1;
+
 		animation: slide 0.3s calc(var(--stagger) * 0.1s) ease-in-out backwards;
 	}
 
 	.wrapper {
+		position: relative;
 		display: flex;
+		min-height: 100vh;
 		flex-direction: column;
 		align-items: center;
-		overflow-x: hidden;
 		padding: 0 2rem;
-		position: relative;
-		min-height: 100vh;
+		overflow-x: hidden;
 
 		@include screens.mobile {
 			padding-bottom: 6rem;
@@ -105,8 +105,8 @@
 
 	.background-image {
 		position: absolute;
-		max-width: unset;
 		z-index: -1;
+		max-width: unset;
 
 		@include screens.mobile {
 			width: 40rem;
@@ -115,11 +115,11 @@
 	}
 
 	.header {
-		width: min(64rem, 100%);
-		padding-top: 2rem;
 		display: flex;
+		width: min(64rem, 100%);
 		align-items: center;
 		justify-content: space-between;
+		padding-top: 2rem;
 
 		.title-container {
 			display: flex;
@@ -171,26 +171,27 @@
 
 			.hero {
 				@include typography.bold;
-				font-size: 2.5rem;
-				text-align: center;
+
 				padding-bottom: 1rem;
-				background-image: linear-gradient(variables.$white, rgba(variables.$white, 0.5));
-				background-clip: text;
 				-webkit-background-clip: text;
 				-moz-background-clip: text;
+				background-clip: text;
+				background-image: linear-gradient(variables.$white, rgba(variables.$white, 0.5));
+				font-size: 2.5rem;
+				text-align: center;
 				-webkit-text-fill-color: transparent;
 				-moz-text-fill-color: transparent;
 
 				@include screens.desktop {
-					font-size: 3rem;
 					max-width: 45rem;
+					font-size: 3rem;
 				}
 			}
 
 			.subhero {
+				color: variables.$grey-4;
 				font-size: 1.25rem;
 				text-align: center;
-				color: variables.$grey-4;
 			}
 		}
 
@@ -217,8 +218,8 @@
 			}
 
 			.feature {
-				width: 16rem;
 				display: flex;
+				width: 16rem;
 				flex-direction: column;
 				align-items: center;
 				gap: 0.5rem;

@@ -8,11 +8,13 @@
 
 @mixin heading-1 {
 	@include bold;
+
 	font-size: 1.5rem;
 }
 
 @mixin heading-2 {
 	@include bold;
+
 	font-size: 1.25rem;
 }
 

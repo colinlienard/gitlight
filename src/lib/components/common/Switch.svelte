@@ -32,12 +32,12 @@
 <style lang="scss">
 	.switch-container {
 		display: flex;
-		align-items: center;
-		gap: 0.75em;
+		overflow: hidden;
 		width: fit-content;
 		max-width: 100%;
+		align-items: center;
 		cursor: pointer;
-		overflow: hidden;
+		gap: 0.75em;
 	}
 
 	.input {
@@ -46,18 +46,20 @@
 
 	.switch {
 		@include mixins.shadow;
+
 		width: 2.25rem;
-		padding: 2px;
 		flex: 0 0 2.25rem;
+		padding: 2px;
 
 		.icon-container {
 			@include mixins.shadow;
+
+			display: flex;
 			width: 1.25rem;
 			height: 1.25rem;
-			border-radius: 50%;
-			display: flex;
 			align-items: center;
 			justify-content: center;
+			border-radius: 50%;
 			transition: variables.$transition;
 
 			:global(svg) {
@@ -93,8 +95,8 @@
 	}
 
 	.label {
+		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		overflow: hidden;
 	}
 </style>

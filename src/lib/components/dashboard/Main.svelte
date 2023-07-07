@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
-	import { crossfade, slide } from 'svelte/transition';
-	import { cubicInOut } from 'svelte/easing';
 	import { invoke } from '@tauri-apps/api/tauri';
+	import { onDestroy, onMount } from 'svelte';
+	import { cubicInOut } from 'svelte/easing';
+	import { crossfade, slide } from 'svelte/transition';
+	import { browser } from '$app/environment';
 	import {
 		NotificationColumn,
 		Settings,
@@ -11,7 +12,7 @@
 		ScrollbarContainer,
 		Tooltip
 	} from '~/lib/components';
-	import { filteredNotifications, githubNotifications, largeScreen, settings } from '~/lib/stores';
+	import { fetchGithub } from '~/lib/helpers';
 	import {
 		CheckIcon,
 		GithubIcon,
@@ -22,8 +23,7 @@
 		RefreshIcon,
 		DoubleCheckIcon
 	} from '~/lib/icons';
-	import { fetchGithub } from '~/lib/helpers';
-	import { browser } from '$app/environment';
+	import { filteredNotifications, githubNotifications, largeScreen, settings } from '~/lib/stores';
 	import DoneModal from './DoneModal.svelte';
 
 	export let synced: boolean;
@@ -200,17 +200,17 @@
 
 <style lang="scss">
 	.main {
+		display: flex;
 		width: calc(100% - 20rem);
 		height: 100vh;
-		display: flex;
 		flex-direction: column;
 	}
 
 	.header {
-		padding: 3rem 2rem 2rem;
+		z-index: 1;
 		display: flex;
 		align-items: center;
-		z-index: 1;
+		padding: 3rem 2rem 2rem;
 
 		.logo-button {
 			margin-right: 1rem;
@@ -221,14 +221,14 @@
 		}
 
 		.sync-pill {
-			background-color: variables.$grey-3;
-			border-radius: variables.$radius;
-			padding: 0.25rem 0.5rem;
-			color: variables.$grey-4;
 			display: flex;
 			align-items: center;
-			gap: 0.25rem;
+			padding: 0.25rem 0.5rem;
+			border-radius: variables.$radius;
 			margin: 0 auto 0 1rem;
+			background-color: variables.$grey-3;
+			color: variables.$grey-4;
+			gap: 0.25rem;
 
 			:global(svg) {
 				height: 1.25rem;
@@ -239,8 +239,8 @@
 				color: variables.$yellow;
 
 				:global(svg) {
-					color: variables.$yellow;
 					animation: loading 1s linear infinite;
+					color: variables.$yellow;
 
 					@keyframes loading {
 						0% {
@@ -257,15 +257,15 @@
 	}
 
 	.nav {
+		display: flex;
 		padding: 0 2rem;
 		border-bottom: 1px solid variables.$grey-3;
-		display: flex;
 
 		.tab {
-			padding: 0.75em 1em;
-			border-radius: variables.$radius variables.$radius 0 0;
 			display: flex;
 			align-items: center;
+			padding: 0.75em 1em;
+			border-radius: variables.$radius variables.$radius 0 0;
 			gap: 0.5rem;
 			transition: opacity variables.$transition;
 
@@ -274,20 +274,20 @@
 			}
 
 			&.selected {
+				position: relative;
 				border: 1px solid variables.$grey-3;
 				border-bottom: none;
-				position: relative;
 
 				&::before {
-					content: '';
 					position: absolute;
-					inset: auto 0 -1px 0;
 					height: 1px;
 					background-color: variables.$grey-1;
+					content: '';
+					inset: auto 0 -1px;
 				}
 			}
 
-			&:not(.selected):not(:hover) {
+			&:not(.selected, :hover) {
 				opacity: 0.5;
 			}
 
@@ -297,17 +297,18 @@
 
 			.tag {
 				@include typography.small;
+
+				display: flex;
+				align-items: center;
 				padding: 0.25rem 0.5rem;
 				border-radius: variables.$radius;
 				background-color: variables.$grey-3;
 				color: variables.$white;
-				display: flex;
-				align-items: center;
 				gap: 0.25rem;
 
 				&.soon {
-					color: variables.$blue-3;
 					background-color: variables.$blue-1;
+					color: variables.$blue-3;
 				}
 
 				:global(svg) {
@@ -319,17 +320,17 @@
 	}
 
 	.columns-container {
-		height: 100%;
-		display: grid;
-		grid-template-columns: 1fr 1px 1fr 1px 1fr;
-		padding: 2rem 0.5rem;
-		overflow: hidden;
 		position: relative;
+		display: grid;
+		overflow: hidden;
+		height: 100%;
+		padding: 2rem 0.5rem;
+		grid-template-columns: 1fr 1px 1fr 1px 1fr;
 
 		&.horizontal {
 			display: flex;
-			flex-direction: column;
 			overflow: visible;
+			flex-direction: column;
 			gap: 2rem;
 		}
 
