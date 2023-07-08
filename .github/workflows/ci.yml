@@ -62,7 +62,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Typecheck
-        run: pnpm check
+        run: pnpm typecheck
   build-front:
     runs-on: ubuntu-latest
     steps:

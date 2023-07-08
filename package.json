@@ -7,17 +7,14 @@
 		"build": "vite build",
 		"build:tauri": "APP_ENV=tauri tauri build",
 		"build:vercel": "APP_ENV=vercel vite build",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"dev": "vite dev",
 		"dev:tauri": "APP_ENV=tauri tauri dev",
-		"format": "prettier --plugin-search-dir . --write .",
-		"lint": "pnpm lint:ts && pnpm lint:scss && pnpm lint:rs",
+		"lint-fix": "prettier --write . && eslint --fix . && stylelint --fix \"src/**/*.{scss,svelte}\"",
 		"lint:rs": "mkdir build && cd src-tauri && cargo clippy -- -Dwarnings --no-deps; cargo fmt -- --check",
-		"lint:scss": "stylelint \"src/**/*.{scss,svelte}\" --max-warnings=0",
-		"lint:ts": "prettier --plugin-search-dir . --check . && eslint --max-warnings=0 .",
+		"lint:ts": "prettier --check . && eslint --max-warnings=0 . && stylelint --max-warnings=0 \"src/**/*.{scss,svelte}\"",
 		"prepare": "svelte-kit sync",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"typecheck": "svelte-check --tsconfig ./tsconfig.json"
 	},
 	"dependencies": {
 		"@tauri-apps/api": "^1.4.0",
