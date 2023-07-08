@@ -1,4 +1,5 @@
 @use 'sass:color';
+@use './typography';
 @use './variables';
 
 @mixin shiny($color, $hover: true, $radius: variables.$radius) {
@@ -29,6 +30,16 @@
 	background-color: variables.$grey-2;
 	border: 1px solid variables.$grey-3;
 	border-radius: variables.$radius;
+}
+
+@mixin link() {
+	@include typography.bold;
+	color: variables.$blue-3;
+	transition: filter variables.$transition;
+
+	&:hover {
+		filter: brightness(130%);
+	}
 }
 
 @mixin shadow {
