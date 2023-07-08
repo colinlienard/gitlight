@@ -7,9 +7,14 @@
 	import { flip } from 'svelte/animate';
 	import { writable } from 'svelte/store';
 	import { fade, type CrossfadeParams, type TransitionConfig } from 'svelte/transition';
-	import { debounce, drag, drop } from '~/lib/helpers';
+	import { debounce, drag, drop, fetchGithub } from '~/lib/helpers';
 	import { ArrowUpIcon } from '~/lib/icons';
-	import { loading, largeScreen, githubNotifications } from '~/lib/stores';
+	import {
+		loading,
+		largeScreen,
+		githubNotifications,
+		settings as settingsStore
+	} from '~/lib/stores';
 	import type { NotificationData } from '~/lib/types';
 	import Notification from './Notification.svelte';
 	import SkeletonEvent from './SkeletonEvent.svelte';
@@ -80,11 +85,17 @@
 		$githubNotifications = $githubNotifications.map((notification) => {
 			if (notification.id !== id) return notification;
 			if (title === 'Pinned') {
-				return { ...notification, pinned: true, isNew: false };
+				return {
+					...notification,
+					pinned: true,
+					unread: notification.unread || (!notification.pinned && $settingsStore.readWhenPin),
+					isNew: false
+				};
 			}
 			if (title === 'Read') {
 				return { ...notification, unread: false, pinned: false, isNew: false };
 			}
+			fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
 			return { ...notification, unread: true, pinned: false, isNew: false };
 		});
 	}

@@ -233,6 +233,7 @@
 
 <style lang="scss">
 	.container {
+		border-radius: variables.$radius;
 		background-color: variables.$grey-1;
 		isolation: isolate;
 
