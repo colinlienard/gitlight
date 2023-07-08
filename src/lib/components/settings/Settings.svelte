@@ -16,19 +16,30 @@
 	let mounted = false;
 	let forceOpenSettings = false;
 	let scrollContainer: SvelteComponent;
+	let imageLoaded = false;
 
 	$: tabs = [
 		{ name: 'Preferences', component: Preferences },
 		{ name: 'GitHub settings', component: GithubSettings },
 		{ name: 'Permissions', component: Permissions },
 		{ name: 'Accounts', component: Accounts },
-		{ name: 'Update', strong: !!$updateAvailable, component: Update }
-		// ...(browser && window.__TAURI__
-		// 	? [{ name: 'Update', strong: !!$updateAvailable, component: Update }]
-		// 	: [])
+		...(browser && window.__TAURI__
+			? [{ name: 'Update', strong: !!$updateAvailable, component: Update }]
+			: [])
 	] satisfies Array<{ name: string; strong?: boolean; component: ComponentType }>;
 
 	const user = $page.data.session?.user;
+
+	// Check if an update is available every hour
+	const interval = setInterval(async () => {
+		if (!window.__TAURI__) return;
+
+		const release = await fetchGithub<GithubRelease>('repos/colinlienard/gitlight/releases/latest');
+		const latest = release.tag_name.split('v')[1];
+		if (latest !== getAppVersion()) {
+			$updateAvailable = latest;
+		}
+	}, 3600000);
 
 	function handleKeyDown(event: KeyboardEvent) {
 		if (!browser) return;
@@ -39,6 +50,13 @@
 			event.preventDefault();
 			forceOpenSettings = false;
 		}
+	}
+
+	function handleTrigger(tab: number) {
+		return () => {
+			$settingsTab = tab;
+			forceOpenSettings = true;
+		};
 	}
 
 	onMount(async () => {
@@ -55,6 +73,7 @@
 	});
 
 	onDestroy(() => {
+		clearInterval(interval);
 		if (browser) {
 			window.removeEventListener('keydown', handleKeyDown);
 		}
@@ -64,38 +83,34 @@
 		storage.set('settings', $settings);
 	}
 
-	$: if (forceOpenSettings) {
-		(async () => {
-			if (!window.__TAURI__) return;
-
-			const release = await fetchGithub<GithubRelease>(
-				'repos/colinlienard/gitlight/releases/latest'
-			);
-			const latest = release.tag_name.split('v')[1];
-			if (latest !== getAppVersion()) {
-				$updateAvailable = latest;
-			}
-		})();
-	}
-
 	$: {
 		$settingsTab;
 		scrollContainer?.scrollTo && scrollContainer?.scrollTo(0, 0);
 	}
 </script>
 
+<div class="triggers">
+	<button
+		class="preferences-trigger"
+		on:click={handleTrigger(($settingsTab = $updateAvailable ? 4 : 0))}
+	>
+		<GearIcon />
+		{#if $updateAvailable}
+			<div class="indicator" />
+		{/if}
+	</button>
+	<button class="account-trigger" on:click={handleTrigger(($settingsTab = 3))}>
+		<img
+			class="image"
+			class:loaded={imageLoaded}
+			src={user?.avatar}
+			alt=""
+			on:load={() => (imageLoaded = true)}
+		/>
+	</button>
+</div>
+
 <Modal title="Settings" bind:open={forceOpenSettings}>
-	<div slot="trigger" class="triggers">
-		<button class="preferences-trigger" on:click={() => ($settingsTab = 0)}>
-			<GearIcon />
-			{#if $updateAvailable}
-				<div class="indicator" />
-			{/if}
-		</button>
-		<button class="account-trigger" on:click={() => ($settingsTab = 3)}>
-			<img class="image" src={user?.avatar} alt="" />
-		</button>
-	</div>
 	<div class="content" slot="content">
 		<ul class="tabs">
 			{#each tabs as tab, index}
@@ -159,7 +174,11 @@
 				width: 2rem;
 				height: 2rem;
 				border-radius: 50%;
-				background-color: variables.$grey-2;
+				transition: opacity variables.$transition;
+
+				&:not(.loaded) {
+					opacity: 0;
+				}
 			}
 		}
 	}

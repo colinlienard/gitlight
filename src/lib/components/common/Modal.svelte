@@ -20,7 +20,7 @@
 	function portal(node: HTMLElement, _: boolean) {
 		return {
 			update() {
-				document.querySelector('#id')?.appendChild(node);
+				document.querySelector('#root')?.appendChild(node);
 			},
 			destroy() {
 				node.parentNode?.removeChild(node);
@@ -47,9 +47,11 @@
 	}
 </script>
 
-<button class="trigger" on:click={handleToggle}>
-	<slot name="trigger" />
-</button>
+{#if $$slots.trigger}
+	<button class="trigger" on:click={handleToggle}>
+		<slot name="trigger" />
+	</button>
+{/if}
 
 <div use:portal={open}>
 	{#if open}
