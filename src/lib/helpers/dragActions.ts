@@ -1,42 +1,58 @@
-const lists: HTMLElement[] = [];
+const lists: Array<{ node: HTMLElement; key: string }> = [];
 let itemId: string;
 let dropzone: number;
+let dragging = false;
 
-export function drag(node: HTMLElement, id: string) {
+export function drag(
+	node: HTMLElement,
+	{ id, onStartDrag }: { id: string; onStartDrag: () => void }
+) {
 	let x: number;
 	let y: number;
 
 	function handleMouseDown(e: MouseEvent) {
-		itemId = id;
 		window.addEventListener('mousemove', handleMouseMove);
 		window.addEventListener('mouseup', handleMouseUp);
+
+		itemId = id;
 		x = e.clientX;
 		y = e.clientY;
-		e.currentTarget?.parentNode.setAttribute('style', 'overflow: visible; z-index: 1000;');
 	}
 
-	function handleMouseMove(e: MouseEvent) {
-		const dx = e.clientX - x;
-		const dy = e.clientY - y;
-		node.setAttribute('style', `transform: translate(${dx}px, ${dy}px);`);
-		// TODO: use for loop instead of forEach
-		lists.forEach((list, index) => {
-			const listRect = list.getBoundingClientRect();
-			if (e.clientX > listRect.left && e.clientX < listRect.right) {
-				dropzone = index;
+	function handleMouseMove({ clientX, clientY }: MouseEvent) {
+		if (!dragging) {
+			onStartDrag();
+			dragging = true;
+		}
+
+		node.setAttribute(
+			'style',
+			`
+        transform: translate(${clientX - x}px, ${clientY - y}px);
+        z-index: 10;
+        cursor: grabbing;
+      `
+		);
+
+		for (const list of lists) {
+			const listRect = list.node.getBoundingClientRect();
+			if (clientX > listRect.left && clientX < listRect.right) {
+				dropzone = lists.indexOf(list);
+				return;
 			}
-		});
+		}
 	}
 
-	function handleMouseUp(e: MouseEvent) {
+	function handleMouseUp() {
 		window.removeEventListener('mousemove', handleMouseMove);
 		window.removeEventListener('mouseup', handleMouseUp);
+
+		dragging = false;
 	}
 
 	node.addEventListener('mousedown', handleMouseDown);
 
 	return {
-		update() {},
 		destroy() {
 			node.removeEventListener('mousedown', handleMouseDown);
 			window.removeEventListener('mousemove', handleMouseMove);
@@ -45,21 +61,22 @@ export function drag(node: HTMLElement, id: string) {
 	};
 }
 
-export function drop(node: HTMLElement, callback: (id: string) => void) {
+export function drop(
+	node: HTMLElement,
+	{ key, onDrop }: { key: string; onDrop: (id: string) => void }
+) {
 	const index = lists.length;
-	lists.push(node);
-	console.log(lists, index);
+	lists.push({ node, key });
 
-	function handleMouseUp(e: MouseEvent) {
-		if (index === dropzone) {
-			callback(itemId);
+	function handleMouseUp() {
+		if (dragging && index === dropzone) {
+			onDrop(itemId);
 		}
 	}
 
 	window.addEventListener('mouseup', handleMouseUp);
 
 	return {
-		update() {},
 		destroy() {
 			window.removeEventListener('mouseup', handleMouseUp);
 		}

@@ -1,6 +1,11 @@
+<script lang="ts" context="module">
+	const dragging = writable<string | false>(false);
+</script>
+
 <script lang="ts">
 	import { onDestroy, onMount, type ComponentType } from 'svelte';
 	import { flip } from 'svelte/animate';
+	import { writable } from 'svelte/store';
 	import { fade, type CrossfadeParams, type TransitionConfig } from 'svelte/transition';
 	import { debounce, drag, drop } from '~/lib/helpers';
 	import { ArrowUpIcon } from '~/lib/icons';
@@ -18,7 +23,7 @@
 	) => () => TransitionConfig;
 
 	export let icon: ComponentType;
-	export let title: string;
+	export let title: 'Pinned' | 'Unread' | 'Read';
 	export let notifications: NotificationData[];
 	export let placeholder: { icon: ComponentType; text: string };
 	export let transitions: {
@@ -71,19 +76,25 @@
 	}
 
 	function handleDrop(id: string) {
+		$dragging = false;
 		$githubNotifications = $githubNotifications.map((notification) => {
-			if (notification.id === id) {
-				return {
-					...notification,
-					pinned: !notification.pinned
-				};
+			if (notification.id !== id) return notification;
+			if (title === 'Pinned') {
+				return { ...notification, pinned: true, isNew: false };
 			}
-			return notification;
+			if (title === 'Read') {
+				return { ...notification, unread: false, pinned: false, isNew: false };
+			}
+			return { ...notification, unread: true, pinned: false, isNew: false };
 		});
 	}
 </script>
 
-<div class="column" class:vertical={$largeScreen}>
+<div
+	class="column"
+	class:dropzone={$dragging ? $dragging !== title : false}
+	class:vertical={$largeScreen}
+>
 	<div class="column-header">
 		<svelte:component this={icon} />
 		<h3 class="title">{title}</h3>
@@ -101,8 +112,8 @@
 	{/if}
 	<ul
 		class="list"
-		class:no-scroll={noScroll || empty || !$largeScreen}
-		use:drop={handleDrop}
+		class:no-scroll={noScroll || empty || !$largeScreen || !!$dragging}
+		use:drop={{ key: title, onDrop: handleDrop }}
 		bind:this={list}
 	>
 		{#if $loading}
@@ -115,7 +126,10 @@
 					in:receive={{ key: notification.id }}
 					out:send={{ key: notification.id }}
 					animate:conditionalFlip={index < 6 ? settings : undefined}
-					use:drag={notification.id}
+					use:drag={{
+						id: notification.id,
+						onStartDrag: () => ($dragging = title)
+					}}
 				>
 					<Notification data={notification} />
 				</li>
@@ -141,6 +155,14 @@
 		min-width: 0;
 		flex-direction: column;
 		padding: 0 0.5rem 0 1.5rem;
+
+		&.dropzone {
+			background-color: red;
+		}
+
+		&:not(.dropzone) {
+			z-index: 10;
+		}
 
 		&.vertical {
 			min-height: 0;

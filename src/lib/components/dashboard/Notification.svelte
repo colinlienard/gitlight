@@ -91,9 +91,10 @@
 	}
 </script>
 
-<div class="container" class:transparent={!unread && !done}>
+<div class="container">
 	<div
 		class="notification"
+		class:transparent={!unread && !done}
 		on:mouseenter={isNew && interactive ? () => (isNew = false) : undefined}
 		role="presentation"
 	>
@@ -232,18 +233,12 @@
 
 <style lang="scss">
 	.container {
+		background-color: variables.$grey-1;
+		isolation: isolate;
+
 		&:not(:hover) {
 			.over {
 				opacity: 0;
-			}
-		}
-
-		&.transparent {
-			opacity: 0.65;
-			transition: opacity variables.$transition;
-
-			&:hover {
-				opacity: 1;
 			}
 		}
 	}
@@ -256,6 +251,15 @@
 		flex-direction: column;
 		padding: 1rem;
 		gap: 0.75rem;
+
+		&.transparent {
+			opacity: 0.65;
+			transition: opacity variables.$transition;
+
+			&:hover {
+				opacity: 1;
+			}
+		}
 	}
 
 	.new {
