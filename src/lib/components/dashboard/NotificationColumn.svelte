@@ -2,9 +2,9 @@
 	import { onDestroy, onMount, type ComponentType } from 'svelte';
 	import { flip } from 'svelte/animate';
 	import { fade, type CrossfadeParams, type TransitionConfig } from 'svelte/transition';
-	import { debounce } from '~/lib/helpers';
+	import { debounce, drag, drop } from '~/lib/helpers';
 	import { ArrowUpIcon } from '~/lib/icons';
-	import { loading, largeScreen } from '~/lib/stores';
+	import { loading, largeScreen, githubNotifications } from '~/lib/stores';
 	import type { NotificationData } from '~/lib/types';
 	import Notification from './Notification.svelte';
 	import SkeletonEvent from './SkeletonEvent.svelte';
@@ -69,6 +69,18 @@
 	function conditionalFlip(...args: Parameters<typeof flip>) {
 		return args[2] ? flip(...args) : { duration: 0, easing: () => 0 };
 	}
+
+	function handleDrop(id: string) {
+		$githubNotifications = $githubNotifications.map((notification) => {
+			if (notification.id === id) {
+				return {
+					...notification,
+					pinned: !notification.pinned
+				};
+			}
+			return notification;
+		});
+	}
 </script>
 
 <div class="column" class:vertical={$largeScreen}>
@@ -87,7 +99,12 @@
 			</Button>
 		</div>
 	{/if}
-	<ul class="list" class:no-scroll={noScroll || empty || !$largeScreen} bind:this={list}>
+	<ul
+		class="list"
+		class:no-scroll={noScroll || empty || !$largeScreen}
+		use:drop={handleDrop}
+		bind:this={list}
+	>
 		{#if $loading}
 			<li><SkeletonEvent /></li>
 			<li><SkeletonEvent /></li>
@@ -98,6 +115,7 @@
 					in:receive={{ key: notification.id }}
 					out:send={{ key: notification.id }}
 					animate:conditionalFlip={index < 6 ? settings : undefined}
+					use:drag={notification.id}
 				>
 					<Notification data={notification} />
 				</li>
