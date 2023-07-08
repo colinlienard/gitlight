@@ -87,19 +87,21 @@
 <style lang="scss">
 	.pat-wrapper {
 		@include mixins.box;
+
 		display: flex;
 
 		.content {
 			display: flex;
-			flex-direction: column;
-			gap: 0.5rem;
-			padding: 1rem;
-			word-break: break-all;
 			width: 100%;
+			flex-direction: column;
+			padding: 1rem;
+			gap: 0.5rem;
+			word-break: break-all;
 
 			strong {
 				@include typography.base;
 				@include typography.bold;
+
 				user-select: text;
 			}
 
@@ -109,18 +111,18 @@
 		}
 
 		.delete-button {
-			padding: 0.5rem;
 			display: flex;
-			align-items: center;
-			border-left: inherit;
 			flex: 0 0 auto;
+			align-items: center;
+			padding: 0.5rem;
+			border-left: inherit;
 
 			&:hover {
-				background-color: lighten(variables.$grey-2, 1%);
+				background-color: color.adjust(variables.$grey-2, $lightness: 1%);
 			}
 
 			&:active {
-				background-color: lighten(variables.$grey-2, 2%);
+				background-color: color.adjust(variables.$grey-2, $lightness: 2%);
 			}
 
 			:global(svg) {
@@ -130,21 +132,21 @@
 
 		.inputs-container {
 			display: flex;
-			flex-direction: column;
-			gap: 1rem;
-			padding: 1rem;
 			width: 100%;
+			flex-direction: column;
+			padding: 1rem;
+			gap: 1rem;
 
 			.error {
-				color: variables.$red;
 				width: 100%;
+				color: variables.$red;
 			}
 
 			.buttons {
 				display: flex;
 				flex-direction: row-reverse;
-				gap: 0.5rem;
 				align-items: center;
+				gap: 0.5rem;
 			}
 		}
 	}

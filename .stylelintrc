@@ -1,0 +1,22 @@
+{
+	"extends": ["stylelint-config-standard-scss", "stylelint-config-idiomatic-order"],
+	"plugins": ["stylelint-prettier"],
+	"overrides": [
+		{
+			"files": ["*.svelte"],
+			"extends": "stylelint-config-html/svelte"
+		}
+	],
+	"rules": {
+		"color-function-notation": "legacy",
+		"custom-property-empty-line-before": "never",
+		"no-descending-specificity": null,
+		"property-no-vendor-prefix": null,
+		"selector-pseudo-class-no-unknown": [
+			true,
+			{
+				"ignorePseudoClasses": ["global"]
+			}
+		]
+	}
+}

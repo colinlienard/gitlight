@@ -3,19 +3,19 @@
 @use './variables';
 
 @mixin shiny($color, $hover: true, $radius: variables.$radius) {
-	background-image: linear-gradient(lighten($color, 10%), $color);
-	isolation: isolate;
 	position: relative;
 	border-radius: $radius;
+	background-image: linear-gradient(color.adjust($color, $lightness: 10%), $color);
+	isolation: isolate;
 	transition: filter variables.$transition;
 
 	&::before {
-		content: '';
-		z-index: -1;
 		position: absolute;
-		inset: 1px;
-		background-color: $color;
+		z-index: -1;
 		border-radius: calc($radius - 1px);
+		background-color: $color;
+		content: '';
+		inset: 1px;
 	}
 
 	@if $hover {
@@ -27,13 +27,14 @@
 }
 
 @mixin box() {
-	background-color: variables.$grey-2;
 	border: 1px solid variables.$grey-3;
 	border-radius: variables.$radius;
+	background-color: variables.$grey-2;
 }
 
 @mixin link() {
 	@include typography.bold;
+
 	color: variables.$blue-3;
 	transition: filter variables.$transition;
 
@@ -51,21 +52,21 @@
 }
 
 @mixin skeleton($width: 100%, $height: 100%) {
+	position: relative;
+	overflow: hidden;
 	width: $width;
 	height: $height;
 	flex: 0 0 auto;
 	border-radius: variables.$radius;
 	background-color: variables.$grey-3;
-	position: relative;
-	overflow: hidden;
 
 	&::before {
-		content: '';
 		position: absolute;
-		inset: 0 auto;
 		width: max(50%, 2rem);
-		background-image: linear-gradient(to right, transparent, rgba(white, 0.05), transparent);
 		animation: skeleton 0.8s ease-in-out infinite;
+		background-image: linear-gradient(to right, transparent, rgba(white, 0.05), transparent);
+		content: '';
+		inset: 0 auto;
 
 		@keyframes skeleton {
 			from {
@@ -81,9 +82,9 @@
 
 @mixin blurred-background() {
 	position: fixed;
-	inset: 0;
-	backdrop-filter: blur(0.25rem);
-	-webkit-backdrop-filter: blur(0.25rem);
-	background-color: rgba(black, 0.5);
 	z-index: 998;
+	-webkit-backdrop-filter: blur(0.25rem);
+	backdrop-filter: blur(0.25rem);
+	background-color: rgba(black, 0.5);
+	inset: 0;
 }

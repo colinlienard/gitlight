@@ -81,23 +81,25 @@
 
 	.background {
 		@include mixins.blurred-background;
+
 		cursor: not-allowed;
 	}
 
 	.modal {
 		@include mixins.modal-shadow;
+
 		position: fixed;
+		z-index: 999;
 		top: 50%;
 		left: 50%;
-		translate: -50% -50%;
 		display: flex;
-		flex-direction: column;
-		background-color: variables.$grey-1;
-		border: 1px solid variables.$grey-3;
-		border-radius: variables.$radius;
 		width: min(50rem, calc(100vw - 4rem));
 		height: min(42rem, calc(100vh - 4rem));
-		z-index: 999;
+		flex-direction: column;
+		border: 1px solid variables.$grey-3;
+		border-radius: variables.$radius;
+		background-color: variables.$grey-1;
+		translate: -50% -50%;
 
 		&.small {
 			width: 32rem;
@@ -105,10 +107,10 @@
 		}
 
 		.header {
-			padding: 2rem;
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
+			padding: 2rem;
 			border-bottom: inherit;
 
 			.title {
@@ -117,8 +119,8 @@
 		}
 
 		.content {
-			height: 100%;
 			overflow: hidden;
+			height: 100%;
 		}
 	}
 </style>

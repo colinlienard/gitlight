@@ -10,8 +10,8 @@
 
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import { fade } from 'svelte/transition';
 	import { sineInOut } from 'svelte/easing';
+	import { fade } from 'svelte/transition';
 	import { browser } from '$app/environment';
 	import { CheckIcon } from '~/lib/icons';
 
@@ -147,12 +147,13 @@
 
 	.tooltip {
 		@include mixins.modal-shadow;
-		background-color: variables.$grey-1;
-		border: 1px solid variables.$grey-3;
-		border-radius: variables.$radius;
+
 		position: absolute;
 		display: flex;
 		flex-direction: column;
+		border: 1px solid variables.$grey-3;
+		border-radius: variables.$radius;
+		background-color: variables.$grey-1;
 
 		&.fit-content {
 			max-width: fit-content;
@@ -193,8 +194,8 @@
 		&.bottom,
 		&.top {
 			&.left {
-				left: 0;
 				right: unset;
+				left: 0;
 				translate: 0 0;
 			}
 
@@ -221,11 +222,12 @@
 
 		.tooltip-button {
 			@include typography.bold;
-			text-align: left;
-			transition: background-color variables.$transition;
+
 			display: flex;
 			align-items: center;
 			gap: 0.5rem;
+			text-align: left;
+			transition: background-color variables.$transition;
 
 			&:hover {
 				background-color: variables.$grey-3;
@@ -233,9 +235,10 @@
 
 			.checkbox {
 				@include mixins.shiny(variables.$blue-2, true, 0.25rem);
-				flex: 0 0 1rem;
-				height: 1rem;
+
 				display: flex;
+				height: 1rem;
+				flex: 0 0 1rem;
 				align-items: center;
 				justify-content: center;
 

@@ -50,7 +50,8 @@
 		--os-handle-bg: #262626;
 		--os-handle-bg-hover: #343434;
 		--os-handle-bg-active: #424242;
-		margin: var(--margin);
+
 		z-index: 10;
+		margin: var(--margin);
 	}
 </style>

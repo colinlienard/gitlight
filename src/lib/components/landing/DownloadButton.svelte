@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
 	import { sineInOut } from 'svelte/easing';
-	import { LinuxIcon, MacosIcon, WindowsIcon } from '~/lib/icons';
+	import { fade } from 'svelte/transition';
 	import { Button } from '~/lib/components';
+	import { LinuxIcon, MacosIcon, WindowsIcon } from '~/lib/icons';
 	import type { GithubRelease } from '~/lib/types';
 
 	type OS = 'mac' | 'win' | 'linux';
@@ -63,23 +63,24 @@
 
 	.tooltip {
 		@include mixins.shadow;
-		background-color: variables.$grey-1;
-		padding: 0.5rem;
-		border: 1px solid variables.$grey-3;
-		border-radius: variables.$radius;
-		white-space: nowrap;
+
 		position: absolute;
 		top: 50%;
 		left: 50%;
-		translate: -50% -50%;
 		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
 		width: max-content;
+		flex-direction: column;
+		padding: 0.5rem;
+		border: 1px solid variables.$grey-3;
+		border-radius: variables.$radius;
+		background-color: variables.$grey-1;
+		gap: 0.5rem;
+		translate: -50% -50%;
+		white-space: nowrap;
 
 		&::before {
-			content: '';
 			position: absolute;
+			content: '';
 			inset: -0.5rem;
 		}
 

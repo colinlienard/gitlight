@@ -54,10 +54,12 @@
 
 <style lang="scss">
 	.button {
+		--svg-size: 1.25rem;
+
+		display: block;
+
 		@include mixins.shiny(variables.$blue-2);
 		@include mixins.shadow;
-		display: block;
-		--svg-size: 1.25rem;
 
 		&.secondary {
 			@include mixins.shiny(variables.$grey-3);
@@ -65,6 +67,7 @@
 
 		&:not(.small) {
 			@include typography.bold;
+
 			padding: 0.75em 1em;
 
 			.content {
@@ -87,8 +90,8 @@
 
 		&.loading,
 		&.disabled {
-			opacity: 0.5;
 			cursor: not-allowed;
+			opacity: 0.5;
 		}
 
 		&.loading .content {
@@ -100,34 +103,35 @@
 		}
 
 		.content {
+			display: flex;
 			width: 100%;
 			height: 100%;
-			display: flex;
 			align-items: center;
 			justify-content: center;
-			white-space: nowrap;
 			transition: scale 0.05s ease-in-out;
+			white-space: nowrap;
 
 			:global(svg) {
-				flex: 0 0 var(--svg-size);
 				height: var(--svg-size);
+				flex: 0 0 var(--svg-size);
 			}
 		}
 
 		.spinner {
 			position: absolute;
-			inset: 50%;
 			width: 1.5rem;
 			height: 1.5rem;
+			border-radius: 50%;
 			border-top: 2px solid;
 			border-left: 2px solid;
-			border-radius: 50%;
 			animation: spin 1s linear infinite;
+			inset: 50%;
 
 			@keyframes spin {
 				0% {
 					transform: translate(-50%, -50%) rotate(0deg);
 				}
+
 				100% {
 					transform: translate(-50%, -50%) rotate(360deg);
 				}

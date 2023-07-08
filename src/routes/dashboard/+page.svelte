@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
-	import { invoke } from '@tauri-apps/api/tauri';
 	import { sendNotification } from '@tauri-apps/api/notification';
+	import { invoke } from '@tauri-apps/api/tauri';
+	import { onDestroy, onMount } from 'svelte';
 	import { Error, Main, Sidebar } from '~/lib/components';
 	import { createNotificationData, fetchGithub, storage } from '~/lib/helpers';
 	import {

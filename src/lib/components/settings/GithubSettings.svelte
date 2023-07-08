@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { ExternalLinkIcon } from '~/lib/icons';
 	import { Button } from '~/lib/components';
+	import { ExternalLinkIcon } from '~/lib/icons';
 	import { settingsTab } from '~/lib/stores';
 </script>
 
@@ -52,17 +52,18 @@
 	.text,
 	.list-item {
 		@include typography.base;
+
 		color: variables.$grey-4;
 	}
 
 	.list-item {
-		padding-left: 1rem;
 		position: relative;
+		padding-left: 1rem;
 
 		&::before {
-			content: '-';
 			position: absolute;
 			left: 0;
+			content: '-';
 		}
 
 		strong {

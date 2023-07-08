@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { onDestroy, onMount, type ComponentType } from 'svelte';
-	import { fade, type CrossfadeParams, type TransitionConfig } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
-	import type { NotificationData } from '~/lib/types';
+	import { fade, type CrossfadeParams, type TransitionConfig } from 'svelte/transition';
 	import { debounce } from '~/lib/helpers';
 	import { ArrowUpIcon } from '~/lib/icons';
-	import { Button } from '../common';
-	import SkeletonEvent from './SkeletonEvent.svelte';
 	import { loading, largeScreen } from '~/lib/stores';
+	import type { NotificationData } from '~/lib/types';
 	import Notification from './Notification.svelte';
+	import SkeletonEvent from './SkeletonEvent.svelte';
+	import { Button } from '../common';
 
 	type SvelteAnimation = (
 		node: Element,
@@ -117,12 +117,12 @@
 
 <style lang="scss">
 	.column {
-		display: flex;
-		flex-direction: column;
 		position: relative;
-		min-width: 0;
-		padding: 0 0.5rem 0 1.5rem;
 		z-index: 1;
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		padding: 0 0.5rem 0 1.5rem;
 
 		&.vertical {
 			min-height: 0;
@@ -144,33 +144,33 @@
 		}
 
 		&::after {
-			content: '';
 			position: absolute;
-			inset: calc(100% - 1rem) 0 -2rem 0;
-			background-image: linear-gradient(transparent, variables.$grey-1 1rem);
 			z-index: 1;
+			background-image: linear-gradient(transparent, variables.$grey-1 1rem);
+			content: '';
+			inset: calc(100% - 1rem) 0 -2rem 0;
 		}
 	}
 
 	.column-header {
+		z-index: 1;
 		display: flex;
 		align-items: center;
-		gap: 0.5rem;
 		margin-right: 1rem;
-		z-index: 1;
+		gap: 0.5rem;
 
 		&::before {
-			content: '';
 			position: absolute;
-			inset: -1rem 0 auto;
+			z-index: 1;
 			height: 3.5rem;
 			background-image: linear-gradient(variables.$grey-1 2.5rem, transparent);
-			z-index: 1;
+			content: '';
+			inset: -1rem 0 auto;
 		}
 
 		:global(svg) {
-			height: 1.25rem;
 			z-index: 2;
+			height: 1.25rem;
 		}
 
 		* {
@@ -192,18 +192,18 @@
 
 	.scroll-button {
 		position: absolute;
+		z-index: 10;
 		inset: 2rem auto auto 50%;
 		translate: -50% 0;
-		z-index: 10;
 	}
 
 	.list {
 		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		padding: 1rem 1rem 1rem 0;
 		overflow: scroll;
 		height: 100%;
+		flex-direction: column;
+		padding: 1rem 1rem 1rem 0;
+		gap: 1rem;
 
 		&.no-scroll {
 			overflow: visible;
@@ -219,32 +219,32 @@
 	}
 
 	.placeholder {
-		height: 100%;
 		display: flex;
+		height: 100%;
 		flex-direction: column;
-		gap: 0.5rem;
 		align-items: center;
 		justify-content: center;
-		color: variables.$grey-4;
-		text-align: center;
 		padding: 1rem 0;
+		color: variables.$grey-4;
+		gap: 0.5rem;
+		text-align: center;
 
 		.icon-container {
-			padding: 0.5rem;
-			border-radius: variables.$radius;
-			border: 1px solid;
-			margin-bottom: 0.5rem;
 			position: relative;
+			padding: 0.5rem;
+			border: 1px solid;
+			border-radius: variables.$radius;
+			margin-bottom: 0.5rem;
 
 			:global(svg) {
 				height: 1rem;
 			}
 
 			&::before {
-				content: '';
 				position: absolute;
-				inset: -1px;
 				background-image: linear-gradient(transparent, rgba(variables.$grey-1, 0.75));
+				content: '';
+				inset: -1px;
 			}
 		}
 
@@ -255,6 +255,7 @@
 		.text {
 			@include typography.small;
 			@include typography.base;
+
 			max-width: 12rem;
 		}
 	}

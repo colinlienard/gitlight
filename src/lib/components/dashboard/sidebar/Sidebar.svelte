@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
+	import { browser } from '$app/environment';
 	import { Tooltip, ScrollbarContainer, Separator, IconButton } from '~/lib/components';
-	import { GithubIcon, Logo, DoubleArrowIcon } from '~/lib/icons';
 	import { getAppVersion } from '~/lib/helpers';
+	import { GithubIcon, Logo, DoubleArrowIcon } from '~/lib/icons';
 	import {
 		filteredNotifications,
 		githubNotifications,
@@ -13,10 +14,9 @@
 		typeFilters
 	} from '~/lib/stores';
 	import SidebarSearch from './SidebarSearch.svelte';
-	import WatchedRepos from './WatchedRepos.svelte';
-	import WatchedPersons from './WatchedPersons.svelte';
 	import TypeFilters from './TypeFilters.svelte';
-	import { browser } from '$app/environment';
+	import WatchedPersons from './WatchedPersons.svelte';
+	import WatchedRepos from './WatchedRepos.svelte';
 
 	let search = '';
 
@@ -130,19 +130,19 @@
 
 <style lang="scss">
 	.sidebar {
-		flex: 0 0 20rem;
-		height: 100vh;
-		border-right: 1px solid variables.$grey-3;
 		display: flex;
+		height: 100vh;
+		flex: 0 0 20rem;
 		flex-direction: column;
+		border-right: 1px solid variables.$grey-3;
 	}
 
 	.header {
-		padding: 3rem 2rem 2rem;
+		z-index: 1;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		z-index: 1;
+		padding: 3rem 2rem 2rem;
 
 		.logo-container {
 			display: flex;
@@ -160,18 +160,18 @@
 	}
 
 	.scrollable {
-		width: 20rem;
-		padding: 0 2rem 2rem;
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
 		position: relative;
+		display: flex;
+		width: 20rem;
+		flex-direction: column;
+		padding: 0 2rem 2rem;
+		gap: 1.5rem;
 	}
 
 	.gradient {
 		position: absolute;
-		inset: 0;
 		z-index: -1;
+		inset: 0;
 	}
 
 	.wrapper {
@@ -193,34 +193,35 @@
 			@include mixins.skeleton(100%, 2rem);
 
 			&:nth-child(1) {
-				height: 1.5rem;
 				width: 70%;
+				height: 1.5rem;
 			}
 		}
 	}
 
 	.double-button {
 		@include mixins.shiny(variables.$grey-3, false);
+
 		display: flex;
 		justify-content: space-evenly;
 
 		a {
 			width: 100%;
 			padding: 0.5rem;
-			margin: 1px;
 			border-radius: inherit;
-			text-align: center;
+			margin: 1px;
 			background-color: variables.$grey-3;
+			text-align: center;
 			transition: filter variables.$transition;
 
 			&:nth-of-type(1) {
-				border-top-right-radius: 0;
 				border-bottom-right-radius: 0;
+				border-top-right-radius: 0;
 			}
 
 			&:nth-of-type(2) {
-				border-top-left-radius: 0;
 				border-bottom-left-radius: 0;
+				border-top-left-radius: 0;
 			}
 
 			&:hover {
@@ -229,10 +230,10 @@
 		}
 
 		div {
+			z-index: 1;
 			flex: 0 0 1px;
 			margin: 0.5rem 0;
 			background-color: rgba(white, 0.1);
-			z-index: 1;
 		}
 	}
 
@@ -240,13 +241,13 @@
 		position: sticky;
 		bottom: 0;
 		left: 0;
-		padding: 2rem;
-		border-top: 1px solid variables.$grey-3;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		color: variables.$grey-4;
+		padding: 2rem;
+		border-top: 1px solid variables.$grey-3;
 		margin-top: auto;
+		color: variables.$grey-4;
 
 		.link {
 			display: flex;

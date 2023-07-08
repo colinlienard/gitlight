@@ -1,17 +1,17 @@
 <script lang="ts">
+	import { onDestroy, onMount, type ComponentType, SvelteComponent } from 'svelte';
+	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { Modal, ScrollbarContainer, Separator } from '~/lib/components';
-	import { onDestroy, onMount, type ComponentType, SvelteComponent } from 'svelte';
-	import { settings, settingsTab, updateAvailable } from '~/lib/stores';
 	import { fetchGithub, getAppVersion, storage } from '~/lib/helpers';
-	import { browser } from '$app/environment';
+	import { GearIcon } from '~/lib/icons';
+	import { settings, settingsTab, updateAvailable } from '~/lib/stores';
+	import type { GithubRelease } from '~/lib/types';
 	import Accounts from './Accounts.svelte';
 	import GithubSettings from './GithubSettings.svelte';
+	import Permissions from './permissions';
 	import Preferences from './Preferences.svelte';
 	import Update from './Update.svelte';
-	import type { GithubRelease } from '~/lib/types';
-	import Permissions from './permissions';
-	import { GearIcon } from '~/lib/icons';
 
 	let mounted = false;
 	let forceOpenSettings = false;
@@ -137,9 +137,9 @@
 
 		.preferences-trigger {
 			position: relative;
+			display: flex;
 			width: 2rem;
 			height: 2rem;
-			display: flex;
 			align-items: center;
 			justify-content: center;
 			border-radius: 50%;
@@ -154,11 +154,11 @@
 			}
 
 			.indicator {
+				position: absolute;
 				width: 0.75rem;
 				height: 0.75rem;
 				border-radius: 50%;
 				background-color: variables.$blue-2;
-				position: absolute;
 				inset: 0 auto auto 0;
 			}
 		}
@@ -185,15 +185,15 @@
 
 	.content {
 		display: flex;
-		gap: 2rem;
 		height: 100%;
 		padding: 2rem;
+		gap: 2rem;
 
 		.tabs {
 			display: flex;
+			width: 10rem;
 			flex-direction: column;
 			gap: 1.5rem;
-			width: 10rem;
 
 			.tab {
 				transition: color variables.$transition;
@@ -207,9 +207,9 @@
 				}
 
 				button {
+					position: relative;
 					width: 100%;
 					text-align: left;
-					position: relative;
 				}
 			}
 		}
@@ -217,8 +217,8 @@
 		.tab-content {
 			display: flex;
 			flex-direction: column;
-			gap: 1rem;
 			padding-right: 1rem;
+			gap: 1rem;
 
 			:global(h3) {
 				@include typography.bold;

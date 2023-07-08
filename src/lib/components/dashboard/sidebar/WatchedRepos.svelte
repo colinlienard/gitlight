@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { WatchedRepo } from '~/lib/types';
+	import { browser } from '$app/environment';
 	import { ShrinkableWrapper } from '~/lib/components';
+	import { storage } from '~/lib/helpers';
 	import { RepositoryIcon } from '~/lib/icons';
 	import { loading, watchedRepos } from '~/lib/stores';
-	import { browser } from '$app/environment';
-	import { storage } from '~/lib/helpers';
+	import type { WatchedRepo } from '~/lib/types';
 	import SidebarSection from './SidebarSection.svelte';
 
 	type WatchedReposByOwner = {
@@ -145,11 +145,11 @@
 
 <style lang="scss">
 	.wrapper {
+		position: relative;
 		display: flex;
+		width: 100%;
 		align-items: center;
 		gap: 0.5rem;
-		width: 100%;
-		position: relative;
 		transition: opacity variables.$transition;
 
 		&.smaller {
@@ -165,12 +165,12 @@
 		}
 
 		&::before {
-			content: '';
 			position: absolute;
-			inset: -0.25rem -0.5rem;
-			background-color: variables.$grey-2;
-			border-radius: variables.$radius;
 			z-index: -1;
+			border-radius: variables.$radius;
+			background-color: variables.$grey-2;
+			content: '';
+			inset: -0.25rem -0.5rem;
 			opacity: 0;
 		}
 
@@ -179,35 +179,35 @@
 		}
 
 		.name {
+			position: relative;
 			overflow: hidden;
+			max-width: 100%;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-			max-width: 100%;
-			position: relative;
 
 			&::before {
-				content: '';
 				position: absolute;
-				inset: 50% 0 auto 0;
-				height: 1px;
 				width: 0;
-				background-color: currentColor;
+				height: 1px;
+				background-color: currentcolor;
+				content: '';
+				inset: 50% 0 auto;
 				transition: width variables.$transition;
 			}
 		}
 
 		.image,
 		.repo-icon {
-			flex: 0 0 1.5rem;
 			height: 1.5rem;
+			flex: 0 0 1.5rem;
 			border-radius: 0.5rem;
 		}
 
 		.repo-icon {
-			background-color: variables.$grey-3;
 			display: flex;
 			align-items: center;
 			justify-content: center;
+			background-color: variables.$grey-3;
 
 			:global(svg) {
 				height: 1rem;

@@ -47,10 +47,10 @@
 <style lang="scss">
 	.container {
 		display: flex;
+		width: 100%;
+		flex: 1;
 		flex-direction: column;
 		gap: 0.5rem;
-		flex: 1;
-		width: 100%;
 
 		&.disabled {
 			opacity: 0.5;
@@ -63,13 +63,14 @@
 
 	.input-wrapper {
 		@include mixins.box;
+
 		position: relative;
 		display: flex;
 		align-items: center;
-		gap: 0.5em;
 		padding: 0.75em 1em;
 		border-radius: 0.5rem;
 		cursor: text;
+		gap: 0.5em;
 
 		&.empty :global(svg) {
 			color: variables.$grey-4;
@@ -81,8 +82,8 @@
 		}
 
 		:global(svg) {
-			flex: 0 0 1.25rem;
 			height: 1.25rem;
+			flex: 0 0 1.25rem;
 		}
 
 		.input {
