@@ -337,11 +337,12 @@
 		.read-all {
 			@include typography.small;
 			@include mixins.link;
+
+			z-index: 1;
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			gap: 0.25rem;
-			z-index: 1;
 
 			:global(svg) {
 				height: 1rem;
