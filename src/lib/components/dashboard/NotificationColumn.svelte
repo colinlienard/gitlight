@@ -43,6 +43,7 @@
 	let empty = !notifications.length;
 	let dragId: string | null = null;
 	let scrollPosition = 0;
+	let hovering = false;
 
 	const handleScroll = debounce((e: Event) => {
 		scrolled = (e.target as HTMLElement).scrollTop > 100;
@@ -114,6 +115,7 @@
 
 <div
 	class="column"
+	class:hovering
 	class:dropzone={$dragging ? $dragging !== title : false}
 	class:vertical={$largeScreen}
 >
@@ -136,14 +138,17 @@
 		class="list"
 		class:scroll-visible={empty || !$largeScreen || !!$dragging}
 		style="--scroll-position: -{scrollPosition}px"
-		use:drop={{ key: title, onDrop: handleDrop }}
+		use:drop={{
+			onDrop: handleDrop,
+			onHoverChange: (value) => (hovering = value)
+		}}
 		bind:this={list}
 	>
 		{#if $loading}
 			<li><SkeletonEvent /></li>
 			<li><SkeletonEvent /></li>
 		{:else}
-			{#each notifications as notification, index (notification)}
+			{#each notifications as notification (notification)}
 				<li
 					class="item"
 					in:receive={{ key: notification.id }}
@@ -196,7 +201,13 @@
 			z-index: -1;
 
 			&::before {
-				opacity: 1;
+				opacity: 0.5;
+			}
+
+			&.hovering {
+				&::before {
+					opacity: 1;
+				}
 			}
 		}
 
@@ -243,10 +254,10 @@
 		&::before {
 			position: absolute;
 			z-index: 1;
-			height: 3.5rem;
-			background-image: linear-gradient(variables.$grey-1 2.5rem, transparent);
+			height: 5.5rem;
+			background-image: linear-gradient(variables.$grey-1 4.5rem, transparent);
 			content: '';
-			inset: -1rem 0 auto;
+			inset: -3rem 0 auto;
 		}
 
 		:global(svg) {
@@ -289,6 +300,10 @@
 		&.scroll-visible {
 			overflow: visible;
 			transform: translateY(var(--scroll-position));
+		}
+
+		&:global(.hover) {
+			background-color: red;
 		}
 
 		&::-webkit-scrollbar {

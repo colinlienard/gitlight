@@ -1,4 +1,8 @@
-const lists: Array<{ node: HTMLElement; key: string }> = [];
+const lists: Array<{
+	node: HTMLElement;
+	hovering: boolean;
+	onHoverChange: (value: boolean) => void;
+}> = [];
 let itemId: string;
 let dropzone: number;
 let dragging = false;
@@ -25,6 +29,8 @@ export function drag(
 			dragging = true;
 		}
 
+		const parentTop = node.parentElement?.getBoundingClientRect().top;
+		clientY = Math.max(clientY, (parentTop || 0) + 30);
 		node.setAttribute(
 			'style',
 			`
@@ -37,8 +43,15 @@ export function drag(
 		for (const list of lists) {
 			const listRect = list.node.getBoundingClientRect();
 			if (clientX > listRect.left && clientX < listRect.right) {
-				dropzone = lists.indexOf(list);
-				return;
+				const newDropzone = lists.indexOf(list);
+				if (dropzone !== newDropzone) {
+					dropzone = newDropzone;
+					list.hovering = true;
+					list.onHoverChange(true);
+				}
+			} else if (list.hovering) {
+				list.hovering = false;
+				list.onHoverChange(false);
 			}
 		}
 	}
@@ -63,16 +76,23 @@ export function drag(
 
 export function drop(
 	node: HTMLElement,
-	{ key, onDrop }: { key: string; onDrop: (id: string) => void }
+	{
+		onDrop,
+		onHoverChange
+	}: {
+		onDrop: (id: string) => void;
+		onHoverChange: (value: boolean) => void;
+	}
 ) {
 	const index = lists.length;
-	lists.push({ node, key });
+	lists.push({ node, hovering: false, onHoverChange });
 
 	function handleMouseUp() {
 		if (dragging && index === dropzone) {
 			onDrop(itemId);
 		}
 	}
+
 	window.addEventListener('mouseup', handleMouseUp);
 
 	return {
