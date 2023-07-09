@@ -41,7 +41,8 @@
 	let list: HTMLUListElement;
 	let scrolled = false;
 	let empty = !notifications.length;
-	let noScroll = false;
+	let dragId: string | null = null;
+	let scrollPosition = 0;
 
 	const handleScroll = debounce((e: Event) => {
 		scrolled = (e.target as HTMLElement).scrollTop > 100;
@@ -68,20 +69,30 @@
 		}, settings.duration as number);
 	}
 
-	$: {
-		notifications;
-		noScroll = true;
+	$: if ($dragging) {
+		scrollPosition = list?.scrollTop;
+	} else {
 		setTimeout(() => {
-			noScroll = false;
-		}, settings.duration as number);
+			scrollPosition = 0;
+		}, (settings.duration as number) + 10);
 	}
 
-	function conditionalFlip(...args: Parameters<typeof flip>) {
-		return args[2] ? flip(...args) : { duration: 0, easing: () => 0 };
+	function flipIfVisible(...args: Parameters<typeof flip>) {
+		const node = args[0].getBoundingClientRect();
+		const parent = args[0].parentElement?.getBoundingClientRect();
+		const isVisible = parent && node.top >= parent.top - 200 && node.bottom <= parent.bottom + 200;
+		return isVisible ? flip(...args) : { duration: 0, easing: () => 0 };
+	}
+
+	function handleDragStart(id: string) {
+		dragId = id;
+		$dragging = title;
 	}
 
 	function handleDrop(id: string) {
+		dragId = null;
 		$dragging = false;
+
 		$githubNotifications = $githubNotifications.map((notification) => {
 			if (notification.id !== id) return notification;
 			if (title === 'Pinned') {
@@ -123,7 +134,8 @@
 	{/if}
 	<ul
 		class="list"
-		class:no-scroll={noScroll || empty || !$largeScreen || !!$dragging}
+		class:scroll-visible={empty || !$largeScreen || !!$dragging}
+		style="--scroll-position: -{scrollPosition}px"
 		use:drop={{ key: title, onDrop: handleDrop }}
 		bind:this={list}
 	>
@@ -136,13 +148,13 @@
 					class="item"
 					in:receive={{ key: notification.id }}
 					out:send={{ key: notification.id }}
-					animate:conditionalFlip={index < 6 ? settings : undefined}
+					animate:flipIfVisible={settings}
 					use:drag={{
 						id: notification.id,
-						onStartDrag: () => ($dragging = title)
+						onDragStart: handleDragStart
 					}}
 				>
-					<Notification data={notification} />
+					<Notification data={notification} dragged={!!$dragging && notification.id === dragId} />
 				</li>
 			{/each}
 			{#if empty}
@@ -167,12 +179,30 @@
 		flex-direction: column;
 		padding: 0 0.5rem 0 1.5rem;
 
+		&::before {
+			position: absolute;
+			z-index: 2;
+			border-radius: variables.$radius;
+			background-color: rgba(variables.$blue-2, 0.1);
+			content: '';
+			inset: 2.25rem 1.5rem 0;
+			opacity: 0;
+			outline: 6px dashed variables.$blue-3;
+			pointer-events: none;
+			transition: opacity variables.$transition;
+		}
+
 		&.dropzone {
-			background-color: red;
+			z-index: -1;
+
+			&::before {
+				opacity: 1;
+			}
 		}
 
 		&:not(.dropzone) {
 			z-index: 10;
+			transition: z-index 0.3s;
 		}
 
 		&.vertical {
@@ -256,8 +286,9 @@
 		padding: 1rem 1rem 1rem 0;
 		gap: 1rem;
 
-		&.no-scroll {
+		&.scroll-visible {
 			overflow: visible;
+			transform: translateY(var(--scroll-position));
 		}
 
 		&::-webkit-scrollbar {

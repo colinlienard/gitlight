@@ -5,7 +5,7 @@ let dragging = false;
 
 export function drag(
 	node: HTMLElement,
-	{ id, onStartDrag }: { id: string; onStartDrag: () => void }
+	{ id, onDragStart }: { id: string; onDragStart: (id: string) => void }
 ) {
 	let x: number;
 	let y: number;
@@ -20,8 +20,8 @@ export function drag(
 	}
 
 	function handleMouseMove({ clientX, clientY }: MouseEvent) {
-		if (!dragging) {
-			onStartDrag();
+		if (!dragging && (Math.abs(clientX - x) > 5 || Math.abs(clientY - y) > 5)) {
+			onDragStart(itemId);
 			dragging = true;
 		}
 
@@ -73,7 +73,6 @@ export function drop(
 			onDrop(itemId);
 		}
 	}
-
 	window.addEventListener('mouseup', handleMouseUp);
 
 	return {

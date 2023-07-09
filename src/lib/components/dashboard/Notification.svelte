@@ -15,6 +15,7 @@
 	import type { NotificationData } from '~/lib/types';
 
 	export let data: NotificationData;
+	export let dragged = false;
 	export let interactive = true;
 
 	let {
@@ -91,7 +92,7 @@
 	}
 </script>
 
-<div class="container">
+<div class="container" class:dragged>
 	<div
 		class="notification"
 		class:transparent={!unread && !done}
@@ -145,7 +146,7 @@
 				{/each}
 			</ul>
 		{/if}
-		{#if interactive}
+		{#if !dragged && interactive}
 			<div class="over">
 				{#if !done}
 					{#if !unread && !pinned}
@@ -241,6 +242,13 @@
 			.over {
 				opacity: 0;
 			}
+		}
+
+		&.dragged {
+			@include mixins.modal-shadow;
+
+			rotate: -4deg;
+			transition: variables.$transition;
 		}
 	}
 
