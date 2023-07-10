@@ -51,8 +51,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: gitlight-v__VERSION__
-          releaseName: 'GitLight v__VERSION__'
+          tagName: gitlight-test
+          releaseName: 'GitLight test'
           releaseBody: 'See the assets to download and install this version.'
           releaseDraft: true
           prerelease: false
