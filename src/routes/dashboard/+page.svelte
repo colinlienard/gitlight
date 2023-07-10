@@ -118,6 +118,7 @@
 		// Update watched repos
 		const savedWatchedRepos = storage.get('github-watched-repos');
 		$watchedRepos = $githubNotifications.reduce<WatchedRepo[]>((previous, current) => {
+			if (current.done) return previous;
 			const index = previous.findIndex((repo) => repo.id === current.repoId);
 			if (index > -1) {
 				const repo = previous.splice(index, 1)[0];
@@ -140,7 +141,7 @@
 		const savedWatchedPersons = storage.get('github-watched-persons');
 		$watchedPersons = $githubNotifications
 			.reduce<WatchedPerson[]>((previous, current) => {
-				if (!current.author) return previous;
+				if (!current.author || current.done) return previous;
 				const index = previous.findIndex((person) => person.login === current?.author?.login);
 				if (index > -1) {
 					const person = previous.splice(index, 1)[0];

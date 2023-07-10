@@ -15,6 +15,7 @@
 	import type { NotificationData } from '~/lib/types';
 
 	export let data: NotificationData;
+	export let dragged = false;
 	export let interactive = true;
 
 	let {
@@ -91,9 +92,10 @@
 	}
 </script>
 
-<div class="container" class:transparent={!unread && !done}>
+<div class="container" class:dragged>
 	<div
 		class="notification"
+		class:transparent={!unread && !done}
 		on:mouseenter={isNew && interactive ? () => (isNew = false) : undefined}
 		role="presentation"
 	>
@@ -144,7 +146,7 @@
 				{/each}
 			</ul>
 		{/if}
-		{#if interactive}
+		{#if !dragged && interactive}
 			<div class="over">
 				{#if !done}
 					{#if !unread && !pinned}
@@ -232,19 +234,21 @@
 
 <style lang="scss">
 	.container {
+		border-radius: variables.$radius;
+		background-color: variables.$grey-1;
+		isolation: isolate;
+
 		&:not(:hover) {
 			.over {
 				opacity: 0;
 			}
 		}
 
-		&.transparent {
-			opacity: 0.65;
-			transition: opacity variables.$transition;
+		&.dragged {
+			@include mixins.modal-shadow;
 
-			&:hover {
-				opacity: 1;
-			}
+			rotate: -4deg;
+			transition: variables.$transition;
 		}
 	}
 
@@ -256,6 +260,15 @@
 		flex-direction: column;
 		padding: 1rem;
 		gap: 0.75rem;
+
+		&.transparent {
+			opacity: 0.65;
+			transition: opacity variables.$transition;
+
+			&:hover {
+				opacity: 1;
+			}
+		}
 	}
 
 	.new {

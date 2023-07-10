@@ -13,10 +13,10 @@
 	bind:active={$settings.activateNotifications}
 />
 <Switch
-	label="Mark an event as read when opening in the browser"
+	label="Mark a notification as read when opening in the browser"
 	bind:active={$settings.readWhenOpenInBrowser}
 />
-<Switch label="Mark an event as read when pinned" bind:active={$settings.readWhenPin} />
+<Switch label="Mark a notification as read when pinned" bind:active={$settings.readWhenPin} />
 <Switch label="Hide closed PRs and issues" bind:active={$settings.showOnlyOpen} />
 <InlineSelect
 	label="Notification number"

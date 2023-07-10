@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { emit } from '@tauri-apps/api/event';
 	import { Button } from '~/lib/components';
-	import { updateAvailable } from '~/lib/stores';
+
+	export let updateAvailable: string | false;
 
 	let loading = false;
 
@@ -11,9 +12,9 @@
 	}
 </script>
 
-{#if $updateAvailable}
+{#if updateAvailable}
 	<div class="card">
-		<p>Version {$updateAvailable} is available!</p>
+		<p>Version {updateAvailable} is available!</p>
 		<Button on:click={update} {loading}>Install it now</Button>
 	</div>
 {:else}

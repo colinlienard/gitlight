@@ -40,10 +40,6 @@ export const settings = writable<Settings>({
 	pats: []
 });
 
-export const updateAvailable = writable<string | false>(false);
-
 export const largeScreen = writable<boolean>(true);
 
 export const error = writable<string | null>(null);
-
-export const settingsTab = writable<number>(0);

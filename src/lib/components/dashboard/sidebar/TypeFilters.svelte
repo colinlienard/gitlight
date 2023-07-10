@@ -18,7 +18,7 @@
 	// Set notification numbers for each type
 	$: {
 		$typeFilters = $typeFilters.map((filter) => {
-			filter.number = $githubNotifications.filter((n) => n.type === filter.type).length;
+			filter.number = $githubNotifications.filter((n) => n.type === filter.type && !n.done).length;
 			return filter;
 		});
 	}

@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Button } from '~/lib/components';
 	import { ExternalLinkIcon } from '~/lib/icons';
-	import { settingsTab } from '~/lib/stores';
+
+	export let onSetTab: (tab: number) => void;
 </script>
 
 <h3>Notification settings</h3>
@@ -46,7 +47,7 @@
 	To access data in private repositories, you need to create fine-grained Personal Access Tokens
 	(PAT) on GitHub.
 </p>
-<Button small on:click={() => ($settingsTab = 2)}>How to use PATs for GitLight</Button>
+<Button small on:click={() => onSetTab(2)}>How to use PATs for GitLight</Button>
 
 <style lang="scss">
 	.text,

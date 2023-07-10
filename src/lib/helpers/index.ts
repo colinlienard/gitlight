@@ -1,5 +1,6 @@
 export * from './createNotificationData';
 export * from './debounce';
+export * from './drag-actions';
 export * from './fetchGithub';
 export * from './formatRelativeDate';
 export * from './getAppVersion';

@@ -22,6 +22,7 @@
 
 	// Apply filters and search
 	$: $filteredNotifications = $githubNotifications.filter((notification) => {
+		if (notification.done) return;
 		const repo = $watchedRepos.find((item) => item.id === notification.repoId);
 		const person = $watchedPersons.find((item) => item.login === notification.author?.login);
 		const searched = notification.title.toLowerCase().includes(search.toLowerCase());
