@@ -2,7 +2,7 @@
 	import { onDestroy, onMount, type ComponentType, SvelteComponent } from 'svelte';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { Modal, ScrollbarContainer, Separator } from '~/lib/components';
+	import { IconButton, Modal, ScrollbarContainer, Separator } from '~/lib/components';
 	import { fetchGithub, getAppVersion, storage } from '~/lib/helpers';
 	import { GearIcon } from '~/lib/icons';
 	import { settings } from '~/lib/stores';
@@ -107,15 +107,14 @@
 </script>
 
 <div class="triggers">
-	<button
-		class="preferences-trigger"
+	<IconButton
+		large
+		rounded
+		indicator={!!updateAvailable}
 		on:click={handleTrigger((tabIndex = updateAvailable ? 4 : 0))}
 	>
 		<GearIcon />
-		{#if updateAvailable}
-			<div class="indicator" />
-		{/if}
-	</button>
+	</IconButton>
 	<button class="account-trigger" on:click={handleTrigger((tabIndex = 3))}>
 		<img
 			class="image"
@@ -152,34 +151,6 @@
 	.triggers {
 		display: flex;
 		gap: 1rem;
-
-		.preferences-trigger {
-			position: relative;
-			display: flex;
-			width: 2rem;
-			height: 2rem;
-			align-items: center;
-			justify-content: center;
-			border-radius: 50%;
-			transition: background-color variables.$transition;
-
-			&:hover {
-				background-color: variables.$grey-3;
-			}
-
-			:global(svg) {
-				height: 1.25rem;
-			}
-
-			.indicator {
-				position: absolute;
-				width: 0.75rem;
-				height: 0.75rem;
-				border-radius: 50%;
-				background-color: variables.$blue-2;
-				inset: 0 auto auto 0;
-			}
-		}
 
 		.account-trigger {
 			transition: opacity variables.$transition;

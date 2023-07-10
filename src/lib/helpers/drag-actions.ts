@@ -29,8 +29,6 @@ export function drag(
 			dragging = true;
 		}
 
-		const parentTop = node.parentElement?.getBoundingClientRect().top;
-		clientY = Math.max(clientY, (parentTop || 0) + 30);
 		node.setAttribute(
 			'style',
 			`

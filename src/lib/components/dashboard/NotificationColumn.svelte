@@ -43,6 +43,7 @@
 	let empty = !notifications.length;
 	let dragId: string | null = null;
 	let scrollPosition = 0;
+	let transitioning = false;
 	let hovering = false;
 
 	const handleScroll = debounce((e: Event) => {
@@ -70,6 +71,16 @@
 		}, settings.duration as number);
 	}
 
+	$: {
+		notifications;
+		if ($dragging) {
+			transitioning = true;
+			setTimeout(() => {
+				transitioning = false;
+			}, settings.duration as number);
+		}
+	}
+
 	$: if ($dragging) {
 		scrollPosition = list?.scrollTop;
 	} else {
@@ -78,10 +89,12 @@
 		}, (settings.duration as number) + 10);
 	}
 
+	$: showDropzone = $dragging ? $dragging !== title : false;
+
 	function flipIfVisible(...args: Parameters<typeof flip>) {
 		const node = args[0].getBoundingClientRect();
 		const parent = args[0].parentElement?.getBoundingClientRect();
-		const isVisible = parent && node.top >= parent.top - 200 && node.bottom <= parent.bottom + 200;
+		const isVisible = parent && node.top >= parent.top - 300 && node.bottom <= parent.bottom + 300;
 		return isVisible ? flip(...args) : { duration: 0, easing: () => 0 };
 	}
 
@@ -115,8 +128,8 @@
 
 <div
 	class="column"
-	class:hovering
-	class:dropzone={$dragging ? $dragging !== title : false}
+	class:has-dropzone={showDropzone}
+	class:dragging={!!$dragging}
 	class:vertical={$largeScreen}
 >
 	<div class="column-header">
@@ -127,6 +140,9 @@
 			<slot name="header-addon" />
 		</div>
 	</div>
+	{#if showDropzone}
+		<div class="dropzone" class:hovering transition:fade={{ duration: 150 }} />
+	{/if}
 	{#if scrolled}
 		<div class="scroll-button" transition:fade={{ duration: 150 }}>
 			<Button type="secondary" small on:click={handleScrollToTop}>
@@ -136,7 +152,7 @@
 	{/if}
 	<ul
 		class="list"
-		class:scroll-visible={empty || !$largeScreen || !!$dragging}
+		class:scroll-visible={transitioning || empty || !$largeScreen || !!$dragging}
 		style="--scroll-position: -{scrollPosition}px"
 		use:drop={{
 			onDrop: handleDrop,
@@ -184,34 +200,11 @@
 		flex-direction: column;
 		padding: 0 0.5rem 0 1.5rem;
 
-		&::before {
-			position: absolute;
-			z-index: 2;
-			border-radius: variables.$radius;
-			background-color: rgba(variables.$blue-2, 0.1);
-			content: '';
-			inset: 2.25rem 1.5rem 0;
-			opacity: 0;
-			outline: 6px dashed variables.$blue-3;
-			pointer-events: none;
-			transition: opacity variables.$transition;
-		}
-
-		&.dropzone {
+		&.has-dropzone {
 			z-index: -1;
-
-			&::before {
-				opacity: 0.5;
-			}
-
-			&.hovering {
-				&::before {
-					opacity: 1;
-				}
-			}
 		}
 
-		&:not(.dropzone) {
+		&:not(.has-dropzone) {
 			z-index: 10;
 			transition: z-index 0.3s;
 		}
@@ -235,12 +228,29 @@
 			}
 		}
 
+		&::before {
+			position: absolute;
+			z-index: 1;
+			height: 5.5rem;
+			background-image: linear-gradient(variables.$grey-1 4.5rem, transparent);
+			content: '';
+			inset: -3rem 0 auto;
+		}
+
 		&::after {
 			position: absolute;
 			z-index: 1;
 			background-image: linear-gradient(transparent, variables.$grey-1 1rem);
 			content: '';
 			inset: calc(100% - 1rem) 0 -2rem 0;
+		}
+
+		&.dragging {
+			&::before,
+			&::after,
+			.column-header {
+				z-index: -1;
+			}
 		}
 	}
 
@@ -250,15 +260,6 @@
 		align-items: center;
 		margin-right: 1rem;
 		gap: 0.5rem;
-
-		&::before {
-			position: absolute;
-			z-index: 1;
-			height: 5.5rem;
-			background-image: linear-gradient(variables.$grey-1 4.5rem, transparent);
-			content: '';
-			inset: -3rem 0 auto;
-		}
 
 		:global(svg) {
 			z-index: 2;
@@ -282,6 +283,23 @@
 		}
 	}
 
+	.dropzone {
+		position: absolute;
+		z-index: 2;
+		border-radius: variables.$radius;
+		background-color: rgba(variables.$blue-2, 0.1);
+		content: '';
+		inset: 2.25rem 1.5rem 0;
+		opacity: 0.5;
+		outline: 6px dashed variables.$blue-3;
+		pointer-events: none;
+		transition: opacity variables.$transition;
+
+		&.hovering {
+			opacity: 1;
+		}
+	}
+
 	.scroll-button {
 		position: absolute;
 		z-index: 10;
@@ -300,10 +318,6 @@
 		&.scroll-visible {
 			overflow: visible;
 			transform: translateY(var(--scroll-position));
-		}
-
-		&:global(.hover) {
-			background-color: red;
 		}
 
 		&::-webkit-scrollbar {
