@@ -99,4 +99,5 @@ export type Settings = {
 		owner: string;
 		token: string;
 	}>;
+	prioritySorting: boolean;
 };

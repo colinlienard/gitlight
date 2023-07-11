@@ -48,12 +48,12 @@
 </script>
 
 {#if $$slots.trigger}
-	<button class="trigger" on:click={handleToggle}>
+	<div class="trigger" on:click={handleToggle} role="presentation">
 		<slot name="trigger" />
-	</button>
+	</div>
 {/if}
 
-<div use:portal={open}>
+<div class="portal" use:portal={open}>
 	{#if open}
 		<button
 			class="background"
@@ -77,6 +77,10 @@
 <style lang="scss">
 	.trigger {
 		display: grid;
+	}
+
+	.portal {
+		position: absolute;
 	}
 
 	.background {

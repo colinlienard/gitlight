@@ -2,7 +2,7 @@
 	import { onDestroy, onMount, type ComponentType, SvelteComponent } from 'svelte';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { IconButton, Modal, ScrollbarContainer, Separator } from '~/lib/components';
+	import { IconButton, Modal, ScrollbarContainer, Separator, Tooltip } from '~/lib/components';
 	import { fetchGithub, getAppVersion, storage } from '~/lib/helpers';
 	import { GearIcon } from '~/lib/icons';
 	import { settings } from '~/lib/stores';
@@ -106,7 +106,7 @@
 	}
 </script>
 
-<div class="triggers">
+<Tooltip content="Settings" hover position="bottom">
 	<IconButton
 		large
 		rounded
@@ -115,6 +115,8 @@
 	>
 		<GearIcon />
 	</IconButton>
+</Tooltip>
+<Tooltip content="Accounts" hover position="bottom">
 	<button class="account-trigger" on:click={handleTrigger((tabIndex = 3))}>
 		<img
 			class="image"
@@ -124,7 +126,7 @@
 			on:load={() => (imageLoaded = true)}
 		/>
 	</button>
-</div>
+</Tooltip>
 
 <Modal title="Settings" bind:open={forceOpenSettings}>
 	<div class="content" slot="content">
@@ -148,26 +150,21 @@
 </Modal>
 
 <style lang="scss">
-	.triggers {
-		display: flex;
-		gap: 1rem;
+	.account-trigger {
+		transition: opacity variables.$transition;
 
-		.account-trigger {
+		&:hover {
+			opacity: 0.75;
+		}
+
+		.image {
+			width: 2rem;
+			height: 2rem;
+			border-radius: 50%;
 			transition: opacity variables.$transition;
 
-			&:hover {
-				opacity: 0.75;
-			}
-
-			.image {
-				width: 2rem;
-				height: 2rem;
-				border-radius: 50%;
-				transition: opacity variables.$transition;
-
-				&:not(.loaded) {
-					opacity: 0;
-				}
+			&:not(.loaded) {
+				opacity: 0;
 			}
 		}
 	}

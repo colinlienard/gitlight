@@ -4,14 +4,7 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { crossfade, slide } from 'svelte/transition';
 	import { browser } from '$app/environment';
-	import {
-		NotificationColumn,
-		Settings,
-		Separator,
-		Banner,
-		ScrollbarContainer,
-		Tooltip
-	} from '~/lib/components';
+	import { Settings, Separator, ScrollbarContainer, Tooltip } from '~/lib/components';
 	import { fetchGithub } from '~/lib/helpers';
 	import {
 		CheckIcon,
@@ -24,7 +17,9 @@
 		DoubleCheckIcon
 	} from '~/lib/icons';
 	import { filteredNotifications, githubNotifications, largeScreen, settings } from '~/lib/stores';
-	import DoneModal from './DoneModal.svelte';
+	import Banner from './Banner.svelte';
+	import { DoneModal, NotificationColumn } from './notifications';
+	import { Priorities } from './priorities';
 
 	export let synced: boolean;
 
@@ -127,7 +122,10 @@
 				</div>
 			{/if}
 		</div>
-		<Settings />
+		<div class="settings-wrapper">
+			<Priorities />
+			<Settings />
+		</div>
 	</header>
 	<nav class="nav">
 		<button class="tab selected">
@@ -262,6 +260,11 @@
 					}
 				}
 			}
+		}
+
+		.settings-wrapper {
+			display: flex;
+			gap: 1rem;
 		}
 	}
 

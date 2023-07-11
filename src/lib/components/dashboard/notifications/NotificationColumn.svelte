@@ -7,6 +7,7 @@
 	import { flip } from 'svelte/animate';
 	import { writable } from 'svelte/store';
 	import { fade, type CrossfadeParams, type TransitionConfig } from 'svelte/transition';
+	import { Button } from '~/lib/components';
 	import { debounce, drag, drop, fetchGithub } from '~/lib/helpers';
 	import { ArrowUpIcon } from '~/lib/icons';
 	import {
@@ -18,7 +19,6 @@
 	import type { NotificationData } from '~/lib/types';
 	import Notification from './Notification.svelte';
 	import SkeletonEvent from './SkeletonEvent.svelte';
-	import { Button } from '../common';
 
 	type SvelteAnimation = (
 		node: Element,

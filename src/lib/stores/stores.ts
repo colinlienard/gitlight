@@ -52,7 +52,8 @@ export const settings = writable<Settings>({
 	notificationAxis: 'Auto',
 	sidebarHidden: false,
 	showOnlyOpen: false,
-	pats: []
+	pats: [],
+	prioritySorting: true
 });
 
 export const largeScreen = writable<boolean>(true);
