@@ -5,6 +5,7 @@ export * from './fetchGithub';
 export * from './formatRelativeDate';
 export * from './getAppVersion';
 export * from './getIcon';
+export * from './priorityLabels';
 export * from './lightenColor';
 export * from './removeMarkdownSymbols';
 export * from './storage';

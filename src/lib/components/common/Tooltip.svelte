@@ -26,8 +26,8 @@
 	export let hover = false;
 	export let width = 'auto';
 	export let height = 'auto';
+	export let open = false;
 
-	let open = false;
 	let timeout: ReturnType<typeof setTimeout>;
 	let container: HTMLDivElement;
 
@@ -140,9 +140,9 @@
 			<slot />
 		</div>
 	{:else}
-		<button class="trigger" on:click={handleClick}>
+		<div class="trigger" on:click={handleClick} role="presentation">
 			<slot />
-		</button>
+		</div>
 	{/if}
 </div>
 
@@ -240,7 +240,7 @@
 			transition: background-color variables.$transition;
 
 			&:hover {
-				background-color: variables.$grey-3;
+				background-color: variables.$grey-2;
 			}
 
 			.checkbox {

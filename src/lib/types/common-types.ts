@@ -101,3 +101,19 @@ export type Settings = {
 	}>;
 	prioritySorting: boolean;
 };
+
+export type Priority = {
+	value: number;
+} & (
+	| {
+			criteria: 'many-comments' | 'many-reactions' | 'assigned' | 'mentionned' | 'review-request';
+	  }
+	| {
+			criteria: 'label';
+			specifier: string;
+	  }
+	| {
+			criteria: 'state';
+			specifier: string;
+	  }
+);

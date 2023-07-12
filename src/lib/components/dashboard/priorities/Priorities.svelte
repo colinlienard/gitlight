@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import {
 		Button,
 		IconButton,
@@ -10,6 +10,22 @@
 	} from '~/lib/components';
 	import { PlusIcon, PriorityIcon } from '~/lib/icons';
 	import { settings } from '~/lib/stores';
+	import type { Priority } from '~/lib/types';
+	import PriorityItem from './PriorityItem.svelte';
+
+	let editing = false;
+	let priorities: Priority[] = [
+		{ criteria: 'assigned', value: 1 },
+		{ criteria: 'review-request', value: 2 },
+		{ criteria: 'mentionned', value: -1 }
+	];
+
+	function handleSave(e) {
+		console.log(e);
+		editing = false;
+	}
+
+	function handleDelete() {}
 </script>
 
 <Modal title="Priorities">
@@ -31,7 +47,13 @@
 				<Button type="secondary" small>Clear</Button>
 			</div>
 			<Separator marginY={1} />
-			<Button type="secondary">
+			{#each priorities as priority}
+				<PriorityItem item={priority} on:delete={handleDelete} />
+			{/each}
+			{#if editing}
+				<PriorityItem editing on:save={handleSave} on:exit={() => (editing = false)} />
+			{/if}
+			<Button type="secondary" on:click={() => (editing = true)}>
 				<PlusIcon />
 				Add a new priority criteria
 			</Button>

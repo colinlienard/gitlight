@@ -57,10 +57,10 @@
 <span />
 <h3>Use PATs in GitLight</h3>
 {#each $settings.pats as pat}
-	<PatItem {pat} editing />
+	<PatItem {pat} />
 {/each}
 {#if editing}
-	<PatItem on:exit={() => (editing = false)} />
+	<PatItem editing on:exit={() => (editing = false)} />
 {/if}
 <Button type="secondary" on:click={() => (editing = true)}>Use a new PAT</Button>
 
