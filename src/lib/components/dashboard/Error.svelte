@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { cubicInOut } from 'svelte/easing';
 	import { CrossIcon } from '~/lib/icons';
-	import { error } from '~/lib/stores';
+	import { error, settings } from '~/lib/stores';
 
 	let dontShowAgain = false;
 
@@ -21,7 +21,7 @@
 </script>
 
 {#if $error && !dontShowAgain}
-	<section class="snackbar" transition:appear>
+	<section class="snackbar" class:translated={$settings.sidebarHidden} transition:appear>
 		<p class="text">{$error}</p>
 		<button class="button" on:click={() => (dontShowAgain = true)}>Don't show again</button>
 		<button class="close" on:click={() => ($error = '')}>
@@ -43,6 +43,11 @@
 		background-color: variables.$yellow;
 		color: variables.$grey-1;
 		inset: auto auto 1rem 1rem;
+		transition: translate 0.3s ease-in-out;
+
+		&.translated {
+			translate: 20rem;
+		}
 
 		.button {
 			@include typography.bold;
