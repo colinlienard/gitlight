@@ -77,6 +77,7 @@ export async function createNotificationData(
 		unread,
 		done,
 		isNew,
+		reason,
 		time: updated_at,
 		title: subject.title,
 		type: subject.type,

@@ -38,7 +38,21 @@ export const settings = writable<Settings>({
 	notificationAxis: 'Auto',
 	sidebarHidden: false,
 	showOnlyOpen: false,
-	pats: []
+	pats: [],
+	notificationReasons: {
+		assign: true,
+		author: true,
+		comment: true,
+		ci_activity: true,
+		invitation: true,
+		manual: true,
+		mention: true,
+		review_requested: true,
+		security_alert: true,
+		state_change: true,
+		subscribed: true,
+		team_mention: true
+	}
 });
 
 export const largeScreen = writable<boolean>(true);
