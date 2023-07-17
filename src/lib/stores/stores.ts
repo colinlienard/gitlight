@@ -31,6 +31,7 @@ export const loading = writable<boolean>(true);
 
 export const settings = writable<Settings>({
 	activateNotifications: true,
+	showNotificationsSyncTimer:true,
 	readWhenOpenInBrowser: false,
 	readWhenPin: false,
 	notificationNumber: 50,

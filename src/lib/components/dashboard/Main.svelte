@@ -103,24 +103,28 @@
 <main class="main">
 	<Banner />
 	<header class="header">
-		{#if $settings.sidebarHidden}
-			<Tooltip content="Show sidebar" position="bottom" hover>
-				<button
-					class="logo-button"
-					on:click={() => ($settings.sidebarHidden = false)}
-					transition:slide={{ axis: 'x', duration: 300, easing: cubicInOut }}
-				>
-					<Logo />
-				</button>
-			</Tooltip>
-		{/if}
-		<h1 class="title">Notifications</h1>
-		<div class="sync-pill" class:loading={!synced}>
-			<RefreshIcon />
-			{#if synced}
-				Synced {syncTime}s ago
-			{:else}
-				Syncing...
+		<div class="wrapper">
+			{#if $settings.sidebarHidden}
+				<Tooltip content="Show sidebar" position="bottom" hover>
+					<button
+						class="logo-button"
+						on:click={() => ($settings.sidebarHidden = false)}
+						transition:slide={{ axis: 'x', duration: 300, easing: cubicInOut }}
+					>
+						<Logo />
+					</button>
+				</Tooltip>
+			{/if}
+			<h1 class="title">Notifications</h1>
+			{#if $settings.showNotificationsSyncTimer}
+				<div class="sync-pill" class:loading={!synced}>
+					<RefreshIcon />
+					{#if synced}
+						Synced {syncTime}s ago
+					{:else}
+						Syncing...
+					{/if}
+				</div>
 			{/if}
 		</div>
 		<Settings />
@@ -210,7 +214,12 @@
 		z-index: 1;
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
 		padding: 3rem 2rem 2rem;
+
+		.wrapper {
+			display: flex;
+		}
 
 		.logo-button {
 			margin-right: 1rem;
@@ -225,7 +234,7 @@
 			align-items: center;
 			padding: 0.25rem 0.5rem;
 			border-radius: variables.$radius;
-			margin: 0 auto 0 1rem;
+			margin: 0 1rem;
 			background-color: variables.$grey-3;
 			color: variables.$grey-4;
 			gap: 0.25rem;
