@@ -16,8 +16,9 @@
 		isNew: false,
 		repoId: '',
 		ownerAvatar: '',
-		url: ''
-	};
+		url: '',
+		reason: 'author'
+	} as const;
 
 	const commonAuthor = {
 		display_login: '',
