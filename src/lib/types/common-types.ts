@@ -87,6 +87,7 @@ export type WatchedPerson = {
 
 export type Settings = {
 	activateNotifications: boolean;
+	pushNotificationReasons: Record<GithubNotificationReason, boolean>;
 	showNotificationsSyncTimer: boolean;
 	readWhenOpenInBrowser: boolean;
 	readWhenPin: boolean;
@@ -98,5 +99,4 @@ export type Settings = {
 		owner: string;
 		token: string;
 	}>;
-	notificationReasons: Record<GithubNotificationReason, boolean>;
 };

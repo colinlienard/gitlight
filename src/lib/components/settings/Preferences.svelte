@@ -7,8 +7,8 @@
 	const numberOptions: Array<Settings['notificationNumber']> = [25, 50, 75, 100];
 
 	$: reasons = (
-		Object.entries($settings.notificationReasons) as ObjectEntries<
-			typeof $settings.notificationReasons
+		Object.entries($settings.pushNotificationReasons) as ObjectEntries<
+			typeof $settings.pushNotificationReasons
 		>
 	).map(([key, active]) => {
 		let text: string;
@@ -17,7 +17,7 @@
 				text = 'Assigned';
 				break;
 			case 'author':
-				text = 'Created';
+				text = 'Author';
 				break;
 			case 'comment':
 				text = 'Commented';
@@ -46,6 +46,9 @@
 			case 'team_mention':
 				text = 'Team mentioned';
 				break;
+			case 'ci_activity':
+				text = 'CI activity';
+				break;
 			default:
 				text = 'Unknown';
 				break;
@@ -54,7 +57,7 @@
 			text,
 			active,
 			onToggle(active) {
-				$settings.notificationReasons[key] = active;
+				$settings.pushNotificationReasons[key] = active;
 			}
 		};
 	}) satisfies TooltipContent;
@@ -65,9 +68,11 @@
 	label="Activate push notifications (only on desktop app)"
 	bind:active={$settings.activateNotifications}
 />
-<Tooltip content={reasons} position="bottom left">
-	<Button small>Push notification reasons</Button>
-</Tooltip>
+<div class="select-container">
+	<Tooltip content={reasons} position="bottom left" width="100%" height="16rem">
+		<Button small>Push notification reasons</Button>
+	</Tooltip>
+</div>
 <Switch label="Show Notifications Sync Timer" bind:active={$settings.showNotificationsSyncTimer} />
 <Switch
 	label="Mark a notification as read when opening in the browser"
@@ -88,3 +93,9 @@
 	options={axisOptions}
 	bind:value={$settings.notificationAxis}
 />
+
+<style lang="scss">
+	.select-container {
+		width: fit-content;
+	}
+</style>
