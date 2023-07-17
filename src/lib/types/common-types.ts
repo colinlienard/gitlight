@@ -81,6 +81,7 @@ export type WatchedPerson = {
 
 export type Settings = {
 	activateNotifications: boolean;
+	showNotificationsSyncTimer: boolean;
 	readWhenOpenInBrowser: boolean;
 	readWhenPin: boolean;
 	notificationNumber: number;
