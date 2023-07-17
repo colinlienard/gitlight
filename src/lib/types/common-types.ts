@@ -1,5 +1,10 @@
 import type { ComponentType } from 'svelte';
-import type { GithubLabel, GithubNotificationType, GithubRepository } from './github-types';
+import type {
+	GithubLabel,
+	GithubNotificationReason,
+	GithubNotificationType,
+	GithubRepository
+} from './github-types';
 
 export type User = {
 	name?: string;
@@ -20,6 +25,7 @@ export type NotificationData = {
 	pinned: boolean;
 	done: boolean;
 	isNew: boolean;
+	reason: GithubNotificationReason;
 	author?: User;
 	title: string;
 	description: string;
@@ -81,6 +87,7 @@ export type WatchedPerson = {
 
 export type Settings = {
 	activateNotifications: boolean;
+	pushNotificationReasons: Record<GithubNotificationReason, boolean>;
 	showNotificationsSyncTimer: boolean;
 	readWhenOpenInBrowser: boolean;
 	readWhenPin: boolean;

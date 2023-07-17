@@ -14,6 +14,7 @@
 	import { fade } from 'svelte/transition';
 	import { browser } from '$app/environment';
 	import { CheckIcon } from '~/lib/icons';
+	import ScrollbarContainer from './ScrollbarContainer.svelte';
 
 	export let content: string | TooltipContent;
 	export let position:
@@ -24,6 +25,7 @@
 		| `${'top' | 'bottom'} ${'left' | 'right'}` = 'top';
 	export let hover = false;
 	export let width = 'auto';
+	export let height = 'auto';
 
 	let open = false;
 	let timeout: ReturnType<typeof setTimeout>;
@@ -92,35 +94,40 @@
 			class:fit-content={typeof content === 'string'}
 			transition:fade={{ duration: 150, easing: sineInOut }}
 			style:width
+			style:height
 		>
-			{#if typeof content === 'string'}
-				<div class="tooltip-item">
-					{content}
-				</div>
-			{:else}
-				{#each content as { text, disabled, active, onClick, onToggle }}
-					{#if onClick}
-						<button class="tooltip-button" class:disabled on:click={onClick}>
-							{text}
-						</button>
-					{:else if onToggle}
-						<button
-							class="tooltip-button"
-							class:disabled
-							on:click={handleToggleActive(text, onToggle)}
-						>
-							<div class="checkbox" class:active>
-								<CheckIcon />
-							</div>
-							{text}
-						</button>
-					{:else}
-						<div class="tooltip-item" class:disabled>
-							{text}
+			<ScrollbarContainer>
+				<div class="content">
+					{#if typeof content === 'string'}
+						<div class="tooltip-item">
+							{content}
 						</div>
+					{:else}
+						{#each content as { text, disabled, active, onClick, onToggle }}
+							{#if onClick}
+								<button class="tooltip-button" class:disabled on:click={onClick}>
+									{text}
+								</button>
+							{:else if onToggle}
+								<button
+									class="tooltip-button"
+									class:disabled
+									on:click={handleToggleActive(text, onToggle)}
+								>
+									<div class="checkbox" class:active>
+										<CheckIcon />
+									</div>
+									{text}
+								</button>
+							{:else}
+								<div class="tooltip-item" class:disabled>
+									{text}
+								</div>
+							{/if}
+						{/each}
 					{/if}
-				{/each}
-			{/if}
+				</div>
+			</ScrollbarContainer>
 		</div>
 	{/if}
 	{#if hover}
@@ -149,8 +156,6 @@
 		@include mixins.modal-shadow;
 
 		position: absolute;
-		display: flex;
-		flex-direction: column;
 		border: 1px solid variables.$grey-3;
 		border-radius: variables.$radius;
 		background-color: variables.$grey-1;
@@ -206,12 +211,17 @@
 			}
 		}
 
+		.content {
+			display: flex;
+			flex-direction: column;
+		}
+
 		.tooltip-item,
 		.tooltip-button {
 			padding: 0.5rem;
 
 			&:not(:last-child) {
-				border-bottom: inherit;
+				border-bottom: 1px solid variables.$grey-3;
 			}
 
 			&.disabled {

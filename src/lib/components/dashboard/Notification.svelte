@@ -90,13 +90,19 @@
 			});
 		}
 	}
+
+	function handleMouseEnter() {
+		$githubNotifications = $githubNotifications.map((event) =>
+			event.id === id ? { ...event, isNew: false } : event
+		);
+	}
 </script>
 
 <div class="container" class:dragged>
 	<div
 		class="notification"
 		class:transparent={!unread && !done}
-		on:mouseenter={isNew && interactive ? () => (isNew = false) : undefined}
+		on:mouseenter={isNew && interactive ? handleMouseEnter : undefined}
 		role="presentation"
 	>
 		{#if isNew && unread}

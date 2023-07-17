@@ -99,7 +99,8 @@
 			window.__TAURI__ &&
 			$githubNotifications.length &&
 			pushNotification.unread &&
-			$settings.activateNotifications
+			$settings.activateNotifications &&
+			$settings.pushNotificationReasons[pushNotification.reason]
 		) {
 			const { author, title, description, repo } = pushNotification;
 			sendNotification({

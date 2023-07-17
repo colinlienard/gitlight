@@ -38,7 +38,7 @@ type PullRequestEvent = {
 type FetchOptions = Parameters<typeof fetchGithub>[1];
 
 export async function createNotificationData(
-	{ id, repository, subject, unread: u, updated_at, reason }: GithubNotification,
+	{ id, repository, subject, unread: isUnread, updated_at, reason }: GithubNotification,
 	savedNotifications: SavedNotifications,
 	firstTime: boolean
 ): Promise<NotificationData | null> {
@@ -46,9 +46,8 @@ export async function createNotificationData(
 		? savedNotifications.find((n) => n.id === id)
 		: undefined;
 	const pinned = previous?.pinned || false;
-	const unread = u || previous?.unread || false;
+	const unread = isUnread || previous?.unread || false;
 	const done = previous?.done || false;
-	const isNew = (u && !previous?.unread) || false;
 
 	// Get Personal Access Tokens
 	let fetchOptions: FetchOptions = {};
@@ -76,7 +75,8 @@ export async function createNotificationData(
 		pinned,
 		unread,
 		done,
-		isNew,
+		isNew: isUnread,
+		reason,
 		time: updated_at,
 		title: subject.title,
 		type: subject.type,
