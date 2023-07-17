@@ -12,10 +12,7 @@
 	label="Activate push notifications (only on desktop app)"
 	bind:active={$settings.activateNotifications}
 />
-<Switch
-	label="Show Notifications Sync Timer"
-	bind:active={$settings.showNotificationsSyncTimer}
-/>
+<Switch label="Show Notifications Sync Timer" bind:active={$settings.showNotificationsSyncTimer} />
 <Switch
 	label="Mark a notification as read when opening in the browser"
 	bind:active={$settings.readWhenOpenInBrowser}
