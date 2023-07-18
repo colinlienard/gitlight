@@ -105,13 +105,14 @@
 					{:else}
 						{#each content as { text, disabled, active, onClick, onToggle }}
 							{#if onClick}
-								<button class="tooltip-button" class:disabled on:click={onClick}>
+								<button class="tooltip-button" class:disabled on:click={onClick} type="button">
 									{text}
 								</button>
 							{:else if onToggle}
 								<button
 									class="tooltip-button"
 									class:disabled
+									type="button"
 									on:click={handleToggleActive(text, onToggle)}
 								>
 									<div class="checkbox" class:active>

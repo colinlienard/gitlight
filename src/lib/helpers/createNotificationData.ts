@@ -71,6 +71,10 @@ export async function createNotificationData(
 
 	const [owner, repo] = repository.full_name.split('/');
 	const common = {
+		priority: {
+			criteria: 'assigned',
+			value: 3
+		},
 		id,
 		pinned,
 		unread,

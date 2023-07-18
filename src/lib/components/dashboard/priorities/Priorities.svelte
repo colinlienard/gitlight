@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import {
 		Button,
 		IconButton,
@@ -8,27 +9,44 @@
 		Switch,
 		Tooltip
 	} from '~/lib/components';
+	import { storage } from '~/lib/helpers';
 	import { PlusIcon, PriorityIcon } from '~/lib/icons';
 	import { settings } from '~/lib/stores';
 	import type { Priority } from '~/lib/types';
 	import PriorityItem from './PriorityItem.svelte';
 
 	let editing = false;
+	let mounted = false;
 	let priorities: Priority[] = [
 		{ criteria: 'assigned', value: 1 },
 		{ criteria: 'review-request', value: 2 },
 		{ criteria: 'mentionned', value: -1 }
 	];
 
-	function handleSave(e) {
-		console.log(e);
+	function handleSave(e: CustomEvent<Priority>) {
+		priorities.push(e.detail);
+		priorities.sort((a, b) => b.value - a.value);
+		priorities = priorities;
+
 		editing = false;
 	}
 
-	function handleDelete() {}
+	function handleDelete(criteria: Priority['criteria']) {
+		priorities = priorities.filter((priority) => priority.criteria !== criteria);
+	}
+
+	onMount(() => {
+		priorities = storage.get('priorities') || [];
+
+		mounted = true;
+	});
+
+	$: if (mounted) {
+		storage.set('priorities', priorities);
+	}
 </script>
 
-<Modal title="Priorities">
+<Modal title="Priorities" on:close={() => (editing = false)}>
 	<Tooltip slot="trigger" content="Priorities" hover position="bottom">
 		<IconButton large rounded>
 			<PriorityIcon />
@@ -44,16 +62,20 @@
 			</p>
 			<div class="buttons">
 				<Button small>Reset to default</Button>
-				<Button type="secondary" small>Clear</Button>
+				<Button secondary small>Clear</Button>
 			</div>
 			<Separator marginY={1} />
 			{#each priorities as priority}
-				<PriorityItem item={priority} on:delete={handleDelete} />
+				<PriorityItem
+					{priorities}
+					item={priority}
+					on:delete={() => handleDelete(priority.criteria)}
+				/>
 			{/each}
 			{#if editing}
-				<PriorityItem editing on:save={handleSave} on:exit={() => (editing = false)} />
+				<PriorityItem {priorities} editing on:save={handleSave} on:exit={() => (editing = false)} />
 			{/if}
-			<Button type="secondary" on:click={() => (editing = true)}>
+			<Button secondary on:click={() => (editing = true)}>
 				<PlusIcon />
 				Add a new priority criteria
 			</Button>

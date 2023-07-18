@@ -3,10 +3,16 @@
 	import { Button, Input, Select } from '~/lib/components';
 	import { priorityLabels } from '~/lib/helpers';
 	import { CheckIcon, PriorityDownIcon, PriorityUpIcon, TrashIcon } from '~/lib/icons';
-	import type { Priority } from '~/lib/types';
+	import type { GithubIssue, Priority } from '~/lib/types';
+
+	type StateOptions = Array<{
+		text: string;
+		value: GithubIssue['state'];
+	}>;
 
 	export let item: Priority | { criteria: null; value: number } = { criteria: null, value: 1 };
 	export let editing = false;
+	export let priorities: Priority[];
 
 	const dispatch = createEventDispatcher();
 	const criterias: Priority['criteria'][] = [
@@ -21,8 +27,24 @@
 
 	let error = '';
 
-	$: options = criterias.map((value) => ({ text: priorityLabels[value], value }));
+	$: options = criterias
+		.filter((value) => !priorities.find((priority) => priority.criteria === value))
+		.map((value) => ({ text: priorityLabels[value], value }));
 	$: displayValue = `${item.value > 0 ? '+' : ''}${item.value}`;
+	$: displayText = (() => {
+		if (!item.criteria) return '';
+		const label = priorityLabels[item.criteria];
+		if ('specifier' in item) {
+			return `${label.replace('...', '')} ${item.specifier}`;
+		} else {
+			return label;
+		}
+	})();
+
+	const stateOptions: StateOptions = [
+		{ text: 'Open', value: 'open' },
+		{ text: 'Closed', value: 'closed' }
+	];
 
 	function handleDelete() {
 		dispatch('delete');
@@ -31,6 +53,15 @@
 	function handleSave() {
 		if (!item.criteria) {
 			error = 'Please fill all the fields.';
+			return;
+		}
+		if (priorities.find((p) => p.criteria === item.criteria)) {
+			error = 'This criteria already exists.';
+			return;
+		}
+		const value = parseInt(item.value as unknown as string);
+		if (value < -10 || value > 10 || value === 0) {
+			error = 'Value must be superior to -10, inferior to 10 and different than 0.';
 			return;
 		}
 		dispatch('save', item);
@@ -53,6 +84,17 @@
 					bind:value={item.criteria}
 					{options}
 				/>
+				{#if item.criteria === 'label'}
+					<Input label="Label name" placeholder="Enter a label name" bind:value={item.specifier} />
+				{:else if item.criteria === 'state'}
+					<Select
+						label="State"
+						placeholder="Issue/pr state"
+						position="top"
+						options={stateOptions}
+						bind:value={item.specifier}
+					/>
+				{/if}
 				<Input
 					label="Value (positive or negative)"
 					placeholder="Enter a priority value"
@@ -64,11 +106,11 @@
 				<p class="error">{error}</p>
 			{/if}
 			<div class="buttons">
-				<Button small>
+				<Button small type="submit">
 					<CheckIcon />
 					Save
 				</Button>
-				<Button type="secondary" small on:click={handleCancel}>Cancel</Button>
+				<Button secondary small on:click={handleCancel}>Cancel</Button>
 			</div>
 		</form>
 	{:else}
@@ -81,7 +123,7 @@
 				{/if}
 				<p class="value">{displayValue}</p>
 			</div>
-			<p class="text">{item.criteria && priorityLabels[item.criteria]}</p>
+			<p class="text">{displayText}</p>
 		</div>
 		<button class="delete-button" on:click={handleDelete}><TrashIcon /></button>
 	{/if}

@@ -62,7 +62,7 @@
 {#if editing}
 	<PatItem editing on:exit={() => (editing = false)} />
 {/if}
-<Button type="secondary" on:click={() => (editing = true)}>Use a new PAT</Button>
+<Button secondary on:click={() => (editing = true)}>Use a new PAT</Button>
 
 <style lang="scss">
 	.text,

@@ -38,7 +38,7 @@
 		/>
 		<slot />
 		{#if clearable && value}
-			<button class="clear" on:click={() => (value = '')}>
+			<button class="clear" on:click={() => (value = '')} type="button">
 				<CrossIcon />
 			</button>
 		{/if}

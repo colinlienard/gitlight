@@ -57,6 +57,7 @@
 	{#if open}
 		<button
 			class="background"
+			type="button"
 			on:click={handleToggle}
 			transition:fade={{ duration: 150, easing: cubicInOut }}
 		/>

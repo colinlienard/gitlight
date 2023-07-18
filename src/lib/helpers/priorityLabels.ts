@@ -6,6 +6,6 @@ export const priorityLabels: Record<Priority['criteria'], string> = {
 	assigned: 'You are assigned',
 	mentionned: 'You were mentionned',
 	'review-request': 'You have a pending review request',
-	label: 'Has the label',
-	state: 'Is'
+	label: 'Has the label...',
+	state: 'Is...'
 };

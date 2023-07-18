@@ -145,7 +145,7 @@
 	{/if}
 	{#if scrolled}
 		<div class="scroll-button" transition:fade={{ duration: 150 }}>
-			<Button type="secondary" small on:click={handleScrollToTop}>
+			<Button secondary small on:click={handleScrollToTop}>
 				Scroll to top <ArrowUpIcon />
 			</Button>
 		</div>

@@ -10,7 +10,7 @@
 {#if dones.length}
 	<div class="wrapper">
 		<Modal title="Done" small>
-			<Button slot="trigger" type="secondary" small>
+			<Button slot="trigger" secondary small>
 				<DoubleCheckIcon />
 				Done
 			</Button>

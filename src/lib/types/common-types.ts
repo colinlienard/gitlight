@@ -29,6 +29,7 @@ export type NotificationData = {
 	author?: User;
 	title: string;
 	description: string;
+	priority?: Priority;
 	time: string;
 	icon: ComponentType;
 	opened?: boolean;

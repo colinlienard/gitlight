@@ -27,7 +27,7 @@
 		<p class="label">{label}</p>
 	{/if}
 	<Tooltip content={tooltipOptions} width="100%" {position} bind:open>
-		<button class="input" class:empty={!value} class:focused={false}>
+		<button class="input" class:empty={!value} class:focused={false} type="button">
 			{#if value}
 				{displayValue}
 			{:else}

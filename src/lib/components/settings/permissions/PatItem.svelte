@@ -61,11 +61,11 @@
 				<p class="error">{error}</p>
 			{/if}
 			<div class="buttons">
-				<Button small>
+				<Button small type="submit">
 					<CheckIcon />
 					Save
 				</Button>
-				<Button type="secondary" small on:click={handleCancel}>Cancel</Button>
+				<Button secondary small on:click={handleCancel}>Cancel</Button>
 			</div>
 		</form>
 	{:else}
