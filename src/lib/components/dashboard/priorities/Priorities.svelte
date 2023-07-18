@@ -9,7 +9,7 @@
 		Switch,
 		Tooltip
 	} from '~/lib/components';
-	import { storage } from '~/lib/helpers';
+	import { defaultPriorities, storage } from '~/lib/helpers';
 	import { PlusIcon, PriorityIcon } from '~/lib/icons';
 	import { settings } from '~/lib/stores';
 	import type { Priority } from '~/lib/types';
@@ -36,7 +36,7 @@
 	}
 
 	onMount(() => {
-		priorities = storage.get('priorities') || [];
+		priorities = storage.get('priorities') || defaultPriorities;
 
 		mounted = true;
 	});
@@ -61,8 +61,8 @@
 				importance of notifications and manage them in your own way.
 			</p>
 			<div class="buttons">
-				<Button small>Reset to default</Button>
-				<Button secondary small>Clear</Button>
+				<Button small on:click={() => (priorities = defaultPriorities)}>Reset to default</Button>
+				<Button secondary small on:click={() => (priorities = [])}>Clear</Button>
 			</div>
 			<Separator marginY={1} />
 			{#each priorities as priority}

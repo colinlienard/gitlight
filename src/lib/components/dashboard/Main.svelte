@@ -26,10 +26,15 @@
 	let syncTime = 0;
 	let interval: ReturnType<typeof setInterval>;
 
+	// Sort by priority
+	$: notifications = $settings.prioritySorting
+		? $filteredNotifications.sort((a, b) => b.priority?.value || 0 - (a.priority?.value || 0))
+		: $filteredNotifications;
+
 	// Filter events
-	$: pinned = $filteredNotifications.filter((item) => item.pinned && !item.done);
-	$: unread = $filteredNotifications.filter((item) => !item.pinned && item.unread && !item.done);
-	$: read = $filteredNotifications.filter((item) => !item.pinned && !item.unread && !item.done);
+	$: pinned = notifications.filter((item) => item.pinned && !item.done);
+	$: unread = notifications.filter((item) => !item.pinned && item.unread && !item.done);
+	$: read = notifications.filter((item) => !item.pinned && !item.unread && !item.done);
 
 	$: if (synced && !syncTime) {
 		interval = setInterval(() => {

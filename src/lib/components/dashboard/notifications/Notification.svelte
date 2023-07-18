@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { Button, Tooltip } from '~/lib/components';
-	import { fetchGithub, formatRelativeDate, lightenColor, priorityLabels } from '~/lib/helpers';
+	import { fetchGithub, formatRelativeDate, lightenColor } from '~/lib/helpers';
 	import {
 		CheckIcon,
 		DoubleCheckIcon,
@@ -153,7 +153,7 @@
 							{:else}
 								<PriorityDownIcon />
 							{/if}
-							<span>{priorityLabels[priority.criteria]}</span>
+							<span>{priority.label}</span>
 						</div>
 					{/if}
 				</div>

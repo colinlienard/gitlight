@@ -28,14 +28,22 @@
 	let error = '';
 
 	$: options = criterias
-		.filter((value) => !priorities.find((priority) => priority.criteria === value))
-		.map((value) => ({ text: priorityLabels[value], value }));
+		.filter(
+			(value) =>
+				!priorities.some((priority) =>
+					'specifier' in priority ? false : priority.criteria === value
+				)
+		)
+		.map((value) => ({
+			text: `${priorityLabels[value]}${value === 'label' || value === 'state' ? '...' : ''}`,
+			value
+		}));
 	$: displayValue = `${item.value > 0 ? '+' : ''}${item.value}`;
 	$: displayText = (() => {
 		if (!item.criteria) return '';
 		const label = priorityLabels[item.criteria];
 		if ('specifier' in item) {
-			return `${label.replace('...', '')} ${item.specifier}`;
+			return `${label} "${item.specifier}"`;
 		} else {
 			return label;
 		}
@@ -51,11 +59,22 @@
 	}
 
 	function handleSave() {
-		if (!item.criteria) {
+		if (
+			!item.criteria ||
+			((item.criteria === 'label' || item.criteria === 'state') && !item.specifier)
+		) {
 			error = 'Please fill all the fields.';
 			return;
 		}
-		if (priorities.find((p) => p.criteria === item.criteria)) {
+		if (
+			priorities.some(
+				(p) =>
+					p.criteria === item.criteria &&
+					'specifier' in p &&
+					'specifier' in item &&
+					p.specifier === item.specifier
+			)
+		) {
 			error = 'This criteria already exists.';
 			return;
 		}
@@ -64,12 +83,17 @@
 			error = 'Value must be superior to -10, inferior to 10 and different than 0.';
 			return;
 		}
-		dispatch('save', item);
+		dispatch('save', { ...item, value });
 	}
 
 	function handleCancel(event: Event) {
 		event.preventDefault();
 		dispatch('exit');
+	}
+
+	// Remove specifier if not needed
+	$: if (item.criteria !== 'label' && item.criteria !== 'state') {
+		item = { criteria: item.criteria, value: item.value };
 	}
 </script>
 

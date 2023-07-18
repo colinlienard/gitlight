@@ -29,7 +29,10 @@ export type NotificationData = {
 	author?: User;
 	title: string;
 	description: string;
-	priority?: Priority;
+	priority?: {
+		label: string;
+		value: number;
+	};
 	time: string;
 	icon: ComponentType;
 	opened?: boolean;
@@ -115,6 +118,6 @@ export type Priority = {
 	  }
 	| {
 			criteria: 'state';
-			specifier: string;
+			specifier: 'open' | 'closed';
 	  }
 );
