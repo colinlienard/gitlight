@@ -28,7 +28,7 @@
 
 	// Sort by priority
 	$: notifications = $settings.prioritySorting
-		? $filteredNotifications.sort((a, b) => b.priority?.value || 0 - (a.priority?.value || 0))
+		? $filteredNotifications.sort((a, b) => (b.priority?.value || 0) - (a.priority?.value || 0))
 		: $filteredNotifications;
 
 	// Filter events

@@ -33,6 +33,9 @@ export type GithubIssue = {
 	html_url: string;
 	comments: number;
 	comments_url: string;
+	reactions: {
+		total_count: number;
+	};
 };
 
 export type GithubPullRequest = GithubIssue & {

@@ -1,13 +1,18 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import { Button, Input, Select } from '~/lib/components';
-	import { priorityLabels } from '~/lib/helpers';
+	import { prioritiesLabel } from '~/lib/helpers';
 	import { CheckIcon, PriorityDownIcon, PriorityUpIcon, TrashIcon } from '~/lib/icons';
-	import type { GithubIssue, Priority } from '~/lib/types';
+	import type { GithubIssue, GithubNotificationType, Priority } from '~/lib/types';
 
 	type StateOptions = Array<{
 		text: string;
 		value: GithubIssue['state'];
+	}>;
+
+	type TypeOptions = Array<{
+		text: string;
+		value: GithubNotificationType;
 	}>;
 
 	export let item: Priority | { criteria: null; value: number } = { criteria: null, value: 1 };
@@ -22,7 +27,8 @@
 		'many-reactions',
 		'mentionned',
 		'review-request',
-		'state'
+		'state',
+		'type'
 	];
 
 	let error = '';
@@ -34,16 +40,13 @@
 					'specifier' in priority ? false : priority.criteria === value
 				)
 		)
-		.map((value) => ({
-			text: `${priorityLabels[value]}${value === 'label' || value === 'state' ? '...' : ''}`,
-			value
-		}));
+		.map((value) => ({ text: prioritiesLabel[value], value }));
 	$: displayValue = `${item.value > 0 ? '+' : ''}${item.value}`;
 	$: displayText = (() => {
 		if (!item.criteria) return '';
-		const label = priorityLabels[item.criteria];
+		const label = prioritiesLabel[item.criteria];
 		if ('specifier' in item) {
-			return `${label} "${item.specifier}"`;
+			return `${label.replace('...', '')} "${item.specifier}"`;
 		} else {
 			return label;
 		}
@@ -52,6 +55,15 @@
 	const stateOptions: StateOptions = [
 		{ text: 'Open', value: 'open' },
 		{ text: 'Closed', value: 'closed' }
+	];
+
+	const typeOptions: TypeOptions = [
+		{ text: 'Pull request', value: 'PullRequest' },
+		{ text: 'Issue', value: 'Issue' },
+		{ text: 'Commit', value: 'Commit' },
+		{ text: 'Release', value: 'Release' },
+		{ text: 'Discussion', value: 'Discussion' },
+		{ text: 'Workflow', value: 'CheckSuite' }
 	];
 
 	function handleDelete() {
@@ -92,7 +104,7 @@
 	}
 
 	// Remove specifier if not needed
-	$: if (item.criteria !== 'label' && item.criteria !== 'state') {
+	$: if (item.criteria !== 'label' && item.criteria !== 'state' && item.criteria !== 'type') {
 		item = { criteria: item.criteria, value: item.value };
 	}
 </script>
@@ -116,6 +128,14 @@
 						placeholder="Issue/pr state"
 						position="top"
 						options={stateOptions}
+						bind:value={item.specifier}
+					/>
+				{:else if item.criteria === 'type'}
+					<Select
+						label="Type"
+						placeholder="Issue, pr, commit..."
+						position="top"
+						options={typeOptions}
 						bind:value={item.specifier}
 					/>
 				{/if}

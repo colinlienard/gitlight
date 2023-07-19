@@ -53,7 +53,8 @@ export const settings = writable<Settings>({
 	sidebarHidden: false,
 	showOnlyOpen: false,
 	pats: [],
-	prioritySorting: true
+	prioritySorting: true,
+	showPriority: true
 });
 
 export const largeScreen = writable<boolean>(true);

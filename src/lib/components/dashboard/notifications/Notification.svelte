@@ -146,7 +146,7 @@
 							<span class="number">#{number}</span>
 						{/if}
 					</div>
-					{#if $settings.prioritySorting && priority}
+					{#if priority && $settings.showPriority}
 						<div class="priority {priority.value > 0 ? 'up' : 'down'}">
 							{#if priority.value > 0}
 								<PriorityUpIcon />

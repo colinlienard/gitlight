@@ -23,7 +23,7 @@ import type {
 } from '~/lib/types';
 import { fetchGithub } from './fetchGithub';
 import { getIssueIcon, getPullRequestIcon } from './getIcon';
-import { priorityLabels } from './priorities';
+import { prioritiesLabel } from './priorities';
 import { removeMarkdownSymbols } from './removeMarkdownSymbols';
 import { storage } from './storage';
 
@@ -311,7 +311,7 @@ export async function createNotificationData(
 	const valuedPriorities = priorities.map<[Priority['criteria'], number, string | undefined]>(
 		(priority) => [
 			priority.criteria,
-			getPriorityValue(priority, value),
+			getPriorityValue(priority, value, data, reason) ? priority.value : 0,
 			'specifier' in priority ? priority.specifier : undefined
 		]
 	);
@@ -330,12 +330,12 @@ export async function createNotificationData(
 	);
 
 	const priorityLabel = mostValuedCriteria[2]
-		? `${priorityLabels[mostValuedCriteria[0]]} "${mostValuedCriteria[2]}"`
-		: mostValuedCriteria[0];
+		? `${prioritiesLabel[mostValuedCriteria[0]]} "${mostValuedCriteria[2]}"`
+		: prioritiesLabel[mostValuedCriteria[0]];
 	return {
 		...value,
 		priority: {
-			label: priorityLabel,
+			label: priorityLabel.replace('...', ''),
 			value: accumulatedValues
 		}
 	};
@@ -411,24 +411,35 @@ async function getLatestReview(
 	return { author, description, time: review.submitted_at, url: review.html_url };
 }
 
-function getPriorityValue(priority: Priority, notification: NotificationData): number {
+function getPriorityValue(
+	priority: Priority,
+	notification: NotificationData,
+	data: GithubItem | null,
+	reason: GithubNotification['reason']
+): boolean | null | undefined {
 	switch (priority.criteria) {
 		case 'assigned':
-			return 0;
+			return reason === 'assign';
+
 		case 'many-comments':
-			return 0;
+			return data && 'comments' in data && data.comments > 5;
+
 		case 'many-reactions':
-			return 0;
+			return data && 'reactions' in data && data.reactions.total_count > 5;
+
 		case 'mentionned':
-			return 0;
+			return reason === 'mention' || reason === 'team_mention';
+
 		case 'review-request':
-			return 0;
+			return reason === 'review_requested';
+
 		case 'label':
-			if (notification.labels?.some((label) => label.name === priority.specifier)) {
-				return priority.value;
-			}
-			return 0;
+			return notification.labels?.some((label) => label.name === priority.specifier);
+
 		case 'state':
-			return 0;
+			return data && 'state' in data && data.state === priority.specifier;
+
+		case 'type':
+			return notification.type === priority.specifier;
 	}
 }

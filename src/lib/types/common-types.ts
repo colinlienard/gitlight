@@ -104,6 +104,7 @@ export type Settings = {
 		token: string;
 	}>;
 	prioritySorting: boolean;
+	showPriority: boolean;
 };
 
 export type Priority = {
@@ -119,5 +120,9 @@ export type Priority = {
 	| {
 			criteria: 'state';
 			specifier: 'open' | 'closed';
+	  }
+	| {
+			criteria: 'type';
+			specifier: GithubNotificationType;
 	  }
 );

@@ -60,6 +60,7 @@
 				By enabling priority sorting and specifying priority criteria, you can customize the
 				importance of notifications and manage them in your own way.
 			</p>
+			<Switch label="Show priorities on notifications" bind:active={$settings.showPriority} />
 			<div class="buttons">
 				<Button small on:click={() => (priorities = defaultPriorities)}>Reset to default</Button>
 				<Button secondary small on:click={() => (priorities = [])}>Clear</Button>
