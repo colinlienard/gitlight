@@ -31,7 +31,17 @@
 			component: GithubSettings,
 			props: { onSetTab: (number: number) => (tabIndex = number) }
 		},
-		{ name: 'Permissions', component: Permissions },
+		{
+			name: 'Permissions',
+			component: Permissions,
+			props: {
+				onExpand: () => {
+					setTimeout(() => {
+						scrollContainer?.scrollTo({ top: 999, behavior: 'smooth' });
+					}, 10);
+				}
+			}
+		},
 		{ name: 'Accounts', component: Accounts },
 		...(browser && window.__TAURI__
 			? [
@@ -102,7 +112,7 @@
 
 	$: {
 		tabIndex;
-		scrollContainer?.scrollTo && scrollContainer?.scrollTo(0, 0);
+		scrollContainer?.scrollTo && scrollContainer?.scrollTo({ top: 0 });
 	}
 </script>
 

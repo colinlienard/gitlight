@@ -2,6 +2,7 @@
 	import { sendNotification } from '@tauri-apps/api/notification';
 	import { invoke } from '@tauri-apps/api/tauri';
 	import { onDestroy, onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import { Error, Main, Sidebar } from '~/lib/components';
 	import { createNotificationData, fetchGithub, storage } from '~/lib/helpers';
 	import {
@@ -20,31 +21,16 @@
 		WatchedRepo
 	} from '~/lib/types';
 
+	const user = $page.data.session?.user;
+
 	let synced = false;
 	let mounted = false;
-	let fetched = false;
 
 	let interval = setInterval(() => {
-		setNotifications();
+		fetchNotifications();
 	}, 60000);
 
-	// Clear notifications and refetch when notification number changes
-	$: notificationNumber = $settings.notificationNumber;
-	$: if (mounted) {
-		notificationNumber;
-		if (!fetched) {
-			fetched = true;
-		} else {
-			$githubNotifications = [];
-			setNotifications();
-			clearInterval(interval);
-			interval = setInterval(() => {
-				setNotifications();
-			}, 60000);
-		}
-	}
-
-	async function setNotifications() {
+	async function fetchNotifications() {
 		synced = false;
 
 		let newNotifications: NotificationData[] = [];
@@ -100,7 +86,7 @@
 			$githubNotifications.length &&
 			pushNotification.unread &&
 			$settings.activateNotifications &&
-			$settings.pushNotificationReasons[pushNotification.reason]
+			($settings.pushNotificationFromUser || pushNotification.author?.login !== user?.login)
 		) {
 			const { author, title, description, repo } = pushNotification;
 			sendNotification({
@@ -164,6 +150,18 @@
 			.sort((a, b) => b.number - a.number);
 	}
 
+	function refetch() {
+		// Clear and refetch notifications
+		$githubNotifications = [];
+		fetchNotifications();
+
+		// Reset interval
+		clearInterval(interval);
+		interval = setInterval(() => {
+			fetchNotifications();
+		}, 60000);
+	}
+
 	$: if (mounted && $githubNotifications.length) {
 		// Save events ids to storage
 		const toSave = $githubNotifications.map(
@@ -193,15 +191,21 @@
 	}
 
 	onMount(async () => {
+		window.addEventListener('refetch', refetch);
+
 		$savedNotifications = storage.get('github-notifications') || [];
 
 		mounted = true;
 
-		await setNotifications();
+		await fetchNotifications();
 		$loading = false;
 	});
 
 	onDestroy(() => {
+		if (mounted) {
+			window.removeEventListener('refetch', refetch);
+		}
+
 		clearInterval(interval);
 	});
 </script>

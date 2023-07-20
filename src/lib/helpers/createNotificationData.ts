@@ -23,7 +23,7 @@ import type {
 } from '~/lib/types';
 import { fetchGithub } from './fetchGithub';
 import { getIssueIcon, getPullRequestIcon } from './getIcon';
-import { prioritiesLabel } from './priorities';
+import { cleanSpecifier, prioritiesLabel } from './priorities';
 import { removeMarkdownSymbols } from './removeMarkdownSymbols';
 import { storage } from './storage';
 
@@ -330,7 +330,7 @@ export async function createNotificationData(
 	);
 
 	const priorityLabel = mostValuedCriteria[2]
-		? `${prioritiesLabel[mostValuedCriteria[0]]} "${mostValuedCriteria[2]}"`
+		? `${prioritiesLabel[mostValuedCriteria[0]]} "${cleanSpecifier(mostValuedCriteria[2])}"`
 		: prioritiesLabel[mostValuedCriteria[0]];
 	return {
 		...value,

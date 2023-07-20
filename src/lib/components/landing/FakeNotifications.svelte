@@ -16,8 +16,7 @@
 		isNew: false,
 		repoId: '',
 		ownerAvatar: '',
-		url: '',
-		reason: 'author'
+		url: ''
 	} as const;
 
 	const commonAuthor = {

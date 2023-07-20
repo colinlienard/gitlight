@@ -19,3 +19,12 @@ export const defaultPriorities: Priority[] = [
 	{ criteria: 'type', value: -2, specifier: 'Commit' },
 	{ criteria: 'state', value: -8, specifier: 'closed' }
 ];
+
+export function cleanSpecifier(string: string) {
+	const regex = /([A-Z][a-z]+)/g;
+	const words = string.match(regex);
+
+	if (!words) return string;
+
+	return words.join(' ').toLowerCase();
+}

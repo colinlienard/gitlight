@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import { Button, Input, Select } from '~/lib/components';
-	import { prioritiesLabel } from '~/lib/helpers';
+	import { cleanSpecifier, prioritiesLabel } from '~/lib/helpers';
 	import { CheckIcon, PriorityDownIcon, PriorityUpIcon, TrashIcon } from '~/lib/icons';
 	import type { GithubIssue, GithubNotificationType, Priority } from '~/lib/types';
 
@@ -46,7 +46,7 @@
 		if (!item.criteria) return '';
 		const label = prioritiesLabel[item.criteria];
 		if ('specifier' in item) {
-			return `${label.replace('...', '')} "${item.specifier}"`;
+			return `${label.replace('...', '')} "${cleanSpecifier(item.specifier)}"`;
 		} else {
 			return label;
 		}
@@ -188,6 +188,7 @@
 
 			.value-wrapper {
 				display: flex;
+				width: 3.5rem;
 				align-items: center;
 				gap: 0.25rem;
 

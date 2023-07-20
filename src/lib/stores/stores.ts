@@ -31,20 +31,7 @@ export const loading = writable<boolean>(true);
 
 export const settings = writable<Settings>({
 	activateNotifications: true,
-	pushNotificationReasons: {
-		assign: true,
-		author: true,
-		comment: true,
-		manual: true,
-		mention: true,
-		team_mention: true,
-		review_requested: true,
-		subscribed: true,
-		ci_activity: true,
-		invitation: true,
-		security_alert: true,
-		state_change: true
-	},
+	pushNotificationFromUser: true,
 	showNotificationsSyncTimer: true,
 	readWhenOpenInBrowser: false,
 	readWhenPin: false,

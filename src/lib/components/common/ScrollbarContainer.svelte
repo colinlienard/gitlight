@@ -8,11 +8,8 @@
 	let component: HTMLDivElement;
 	let osInstance: OverlayScrollbars;
 
-	export function scrollTo(x: number, y: number) {
-		osInstance.elements().viewport.scroll({
-			top: y,
-			left: x
-		});
+	export function scrollTo(options: { left?: number; top?: number; behavior?: 'auto' | 'smooth' }) {
+		osInstance.elements().viewport.scroll(options);
 	}
 
 	onMount(() => {

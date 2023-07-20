@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { SvelteComponent, onMount } from 'svelte';
 	import {
 		Button,
 		IconButton,
@@ -17,11 +17,8 @@
 
 	let editing = false;
 	let mounted = false;
-	let priorities: Priority[] = [
-		{ criteria: 'assigned', value: 1 },
-		{ criteria: 'review-request', value: 2 },
-		{ criteria: 'mentionned', value: -1 }
-	];
+	let priorities: Priority[] = [];
+	let scrollContainer: SvelteComponent;
 
 	function handleSave(e: CustomEvent<Priority>) {
 		priorities.push(e.detail);
@@ -37,12 +34,19 @@
 
 	onMount(() => {
 		priorities = storage.get('priorities') || defaultPriorities;
-
-		mounted = true;
 	});
 
 	$: if (mounted) {
 		storage.set('priorities', priorities);
+		dispatchEvent(new CustomEvent('refetch'));
+	} else if (priorities.length) {
+		mounted = true;
+	}
+
+	$: if (editing) {
+		setTimeout(() => {
+			scrollContainer?.scrollTo({ top: 999, behavior: 'smooth' });
+		}, 10);
 	}
 </script>
 
@@ -53,7 +57,7 @@
 		</IconButton>
 	</Tooltip>
 
-	<ScrollbarContainer slot="content" margin="2rem 1rem">
+	<ScrollbarContainer slot="content" margin="2rem 1rem" bind:this={scrollContainer}>
 		<div class="content">
 			<Switch label="Enable priority sorting" bind:active={$settings.prioritySorting} />
 			<p class="paragraph">
@@ -75,6 +79,9 @@
 			{/each}
 			{#if editing}
 				<PriorityItem {priorities} editing on:save={handleSave} on:exit={() => (editing = false)} />
+			{/if}
+			{#if !priorities.length && !editing}
+				<p class="paragraph">No priority criterias yet.</p>
 			{/if}
 			<Button secondary on:click={() => (editing = true)}>
 				<PlusIcon />
