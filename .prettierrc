@@ -7,6 +7,6 @@
 	"pluginSearchDirs": ["."],
 	"overrides": [
 		{ "files": "*.svelte", "options": { "parser": "svelte" } },
-		{ "files": "*Icon.svelte", "options": { "htmlWhitespaceSensitivity": "ignore" } }
+		{ "files": "./src/lib/icons/*.svelte", "options": { "htmlWhitespaceSensitivity": "ignore" } }
 	]
 }

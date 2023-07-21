@@ -8,8 +8,9 @@
 
 	let mounted = false;
 
+	$: notificationNumber = $settings.notificationNumber;
 	$: if (mounted) {
-		$settings.notificationNumber;
+		notificationNumber;
 		dispatchEvent(new CustomEvent('refetch'));
 	} else {
 		mounted = true;

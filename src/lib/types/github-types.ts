@@ -23,6 +23,7 @@ export type GithubIssue = {
 	number: number;
 	title: string;
 	url: string;
+	assignees: GithubUser[];
 	state: 'open' | 'closed';
 	state_reason: 'completed' | 'not_planned' | 'reopened' | null;
 	created_at: string;

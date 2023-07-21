@@ -22,13 +22,13 @@
 	const dispatch = createEventDispatcher();
 	const criterias: Priority['criteria'][] = [
 		'assigned',
-		'label',
-		'many-comments',
-		'many-reactions',
 		'mentionned',
 		'review-request',
+		'type',
 		'state',
-		'type'
+		'label',
+		'many-comments',
+		'many-reactions'
 	];
 
 	let error = '';
@@ -73,7 +73,8 @@
 	function handleSave() {
 		if (
 			!item.criteria ||
-			((item.criteria === 'label' || item.criteria === 'state') && !item.specifier)
+			((item.criteria === 'label' || item.criteria === 'state' || item.criteria === 'type') &&
+				!item.specifier)
 		) {
 			error = 'Please fill all the fields.';
 			return;

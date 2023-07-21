@@ -1,3 +1,4 @@
+import { page } from '$app/stores';
 import {
 	ClosedIssueIcon,
 	CommitIcon,
@@ -19,7 +20,8 @@ import type {
 	GithubReview,
 	NotificationData,
 	Priority,
-	SavedNotifications
+	SavedNotifications,
+	User
 } from '~/lib/types';
 import { fetchGithub } from './fetchGithub';
 import { getIssueIcon, getPullRequestIcon } from './getIcon';
@@ -418,8 +420,17 @@ function getPriorityValue(
 	reason: GithubNotification['reason']
 ): boolean | null | undefined {
 	switch (priority.criteria) {
-		case 'assigned':
-			return reason === 'assign';
+		case 'assigned': {
+			let user: User | undefined;
+			page.subscribe((page) => {
+				user = page.data.session?.user;
+			});
+			return (
+				data &&
+				'assignees' in data &&
+				data.assignees.some((assignee) => assignee.login === user?.login)
+			);
+		}
 
 		case 'many-comments':
 			return data && 'comments' in data && data.comments > 5;
