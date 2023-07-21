@@ -23,7 +23,7 @@
 
 <div class="wrapper">
 	<div class="header" class:shrinked>
-		<button class="arrow-button" on:click={() => (shrinked = !shrinked)}>
+		<button class="arrow-button" on:click={() => (shrinked = !shrinked)} type="button">
 			<SmallArrowIcon />
 		</button>
 		<slot name="header" />

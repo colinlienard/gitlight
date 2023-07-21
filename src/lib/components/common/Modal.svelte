@@ -48,15 +48,16 @@
 </script>
 
 {#if $$slots.trigger}
-	<button class="trigger" on:click={handleToggle}>
+	<div class="trigger" on:click={handleToggle} role="presentation">
 		<slot name="trigger" />
-	</button>
+	</div>
 {/if}
 
-<div use:portal={open}>
+<div class="portal" use:portal={open}>
 	{#if open}
 		<button
 			class="background"
+			type="button"
 			on:click={handleToggle}
 			transition:fade={{ duration: 150, easing: cubicInOut }}
 		/>
@@ -77,6 +78,10 @@
 <style lang="scss">
 	.trigger {
 		display: grid;
+	}
+
+	.portal {
+		position: absolute;
 	}
 
 	.background {

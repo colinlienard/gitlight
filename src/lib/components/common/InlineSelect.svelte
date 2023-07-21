@@ -13,7 +13,12 @@
 	<ul class="list">
 		{#each options as option}
 			<li class="item">
-				<button class="button" class:selected={value === option} on:click={() => (value = option)}>
+				<button
+					class="button"
+					class:selected={value === option}
+					on:click={() => (value = option)}
+					type="button"
+				>
 					{option}
 				</button>
 			</li>

@@ -4,7 +4,13 @@
 	import { settings } from '~/lib/stores';
 	import PatItem from './PatItem.svelte';
 
+	export let onExpand: () => void;
+
 	let editing = false;
+
+	$: if (editing) {
+		onExpand();
+	}
 </script>
 
 <h3>GitHub PATs</h3>
@@ -57,12 +63,15 @@
 <span />
 <h3>Use PATs in GitLight</h3>
 {#each $settings.pats as pat}
-	<PatItem {pat} editing />
+	<PatItem {pat} />
 {/each}
 {#if editing}
-	<PatItem on:exit={() => (editing = false)} />
+	<PatItem editing on:exit={() => (editing = false)} />
 {/if}
-<Button type="secondary" on:click={() => (editing = true)}>Use a new PAT</Button>
+{#if !$settings.pats.length && !editing}
+	<p class="text">No PATs yet.</p>
+{/if}
+<Button secondary on:click={() => (editing = true)}>Use a new PAT</Button>
 
 <style lang="scss">
 	.text,

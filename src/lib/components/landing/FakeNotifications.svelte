@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Notification } from '~/lib/components';
 	import {
 		CommitIcon,
 		MergedPullRequestIcon,
@@ -7,6 +6,7 @@
 		OpenPullRequestIcon
 	} from '~/lib/icons';
 	import type { NotificationData } from '~/lib/types';
+	import Notification from '../dashboard/notifications/Notification.svelte';
 
 	const common = {
 		id: '',
@@ -16,8 +16,7 @@
 		isNew: false,
 		repoId: '',
 		ownerAvatar: '',
-		url: '',
-		reason: 'author'
+		url: ''
 	} as const;
 
 	const commonAuthor = {

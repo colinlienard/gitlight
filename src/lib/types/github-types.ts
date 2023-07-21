@@ -23,6 +23,7 @@ export type GithubIssue = {
 	number: number;
 	title: string;
 	url: string;
+	assignees: GithubUser[];
 	state: 'open' | 'closed';
 	state_reason: 'completed' | 'not_planned' | 'reopened' | null;
 	created_at: string;
@@ -33,6 +34,9 @@ export type GithubIssue = {
 	html_url: string;
 	comments: number;
 	comments_url: string;
+	reactions: {
+		total_count: number;
+	};
 };
 
 export type GithubPullRequest = GithubIssue & {

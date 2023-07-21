@@ -1,3 +1,4 @@
+import { page } from '$app/stores';
 import {
 	ClosedIssueIcon,
 	CommitIcon,
@@ -18,11 +19,15 @@ import type {
 	GithubRelease,
 	GithubReview,
 	NotificationData,
-	SavedNotifications
+	Priority,
+	SavedNotifications,
+	User
 } from '~/lib/types';
 import { fetchGithub } from './fetchGithub';
 import { getIssueIcon, getPullRequestIcon } from './getIcon';
+import { cleanSpecifier, prioritiesLabel } from './priorities';
 import { removeMarkdownSymbols } from './removeMarkdownSymbols';
+import { storage } from './storage';
 
 type PullRequestEvent = {
 	author: {
@@ -48,6 +53,7 @@ export async function createNotificationData(
 	const pinned = previous?.pinned || false;
 	const unread = isUnread || previous?.unread || false;
 	const done = previous?.done || false;
+	const [owner, repo] = repository.full_name.split('/');
 
 	// Get Personal Access Tokens
 	let fetchOptions: FetchOptions = {};
@@ -69,7 +75,6 @@ export async function createNotificationData(
 		return null;
 	}
 
-	const [owner, repo] = repository.full_name.split('/');
 	const common = {
 		id,
 		pinned,
@@ -84,12 +89,13 @@ export async function createNotificationData(
 		repo,
 		repoId: `${repository.id}`,
 		ownerAvatar: repository.owner.avatar_url
-	} satisfies Partial<NotificationData>;
+	} as const;
+	let value: NotificationData;
 
 	switch (subject.type) {
 		case 'Commit': {
 			const { author, html_url, commit } = data as GithubCommit;
-			return {
+			value = {
 				...common,
 				author: author
 					? { login: author.login, avatar: author.avatar_url, bot: author.type === 'Bot' }
@@ -98,6 +104,7 @@ export async function createNotificationData(
 				icon: CommitIcon,
 				url: html_url
 			};
+			break;
 		}
 
 		case 'Issue': {
@@ -146,7 +153,7 @@ export async function createNotificationData(
 
 			if (!firstTime && previous?.description === description) return null;
 
-			return {
+			value = {
 				...common,
 				author,
 				description,
@@ -158,6 +165,7 @@ export async function createNotificationData(
 				previously:
 					previous?.description !== description ? previous : previous?.previously || undefined
 			};
+			break;
 		}
 
 		case 'PullRequest': {
@@ -225,7 +233,7 @@ export async function createNotificationData(
 
 			if (!firstTime && previous?.description === description) return null;
 
-			return {
+			value = {
 				...common,
 				author,
 				description,
@@ -237,11 +245,12 @@ export async function createNotificationData(
 				previously:
 					previous?.description !== description ? previous : previous?.previously || undefined
 			};
+			break;
 		}
 
 		case 'Release': {
 			const { author, tag_name, prerelease, html_url } = data as GithubRelease;
-			return {
+			value = {
 				...common,
 				author: { login: author.login, avatar: author.avatar_url, bot: author.type === 'Bot' },
 				description: 'made a release',
@@ -252,14 +261,16 @@ export async function createNotificationData(
 				],
 				url: html_url
 			};
+			break;
 		}
 
 		case 'Discussion':
-			return {
+			value = {
 				...common,
 				description: 'New activity on discussion',
 				icon: DiscussionIcon
 			};
+			break;
 
 		case 'CheckSuite': {
 			const splited = subject.title.split(' ');
@@ -274,24 +285,62 @@ export async function createNotificationData(
 			};
 
 			if (subject.title.includes('succeeded')) {
-				return { ...data, icon: WorkflowSuccessIcon };
+				value = { ...data, icon: WorkflowSuccessIcon };
 			}
 
 			if (subject.title.includes('failed')) {
-				return { ...data, icon: WorkflowFailIcon };
+				value = { ...data, icon: WorkflowFailIcon };
 			}
 
-			return { ...data, icon: ClosedIssueIcon };
+			value = { ...data, icon: ClosedIssueIcon };
+			break;
 		}
 
 		default:
-			return {
+			value = {
 				...common,
 				type: 'CheckSuite',
 				description: `'${subject.type}' notifications are not yet fully supported`,
 				icon: ExclamationMarkIcon
 			};
+			break;
 	}
+
+	const priorities = storage.get('priorities');
+	if (!priorities || priorities.length === 0) return value;
+
+	// Get value for each priority
+	const valuedPriorities = priorities.map<[Priority['criteria'], number, string | undefined]>(
+		(priority) => [
+			priority.criteria,
+			getPriorityValue(priority, value, data, reason) ? priority.value : 0,
+			'specifier' in priority ? priority.specifier : undefined
+		]
+	);
+
+	// Get the accumulated value of all priorities
+	const accumulatedValues = valuedPriorities.reduce<number>(
+		(previous, current) => previous + current[1],
+		0
+	);
+	if (accumulatedValues === 0) return value;
+
+	// Get the most valued criteria
+	const mostValuedCriteria = valuedPriorities.reduce<(typeof valuedPriorities)[number]>(
+		(previous, current) => (Math.abs(previous[1]) > Math.abs(current[1]) ? previous : current),
+		valuedPriorities[0]
+	);
+
+	const priorityLabel = mostValuedCriteria[2]
+		? `${prioritiesLabel[mostValuedCriteria[0]]} "${cleanSpecifier(mostValuedCriteria[2])}"`
+		: prioritiesLabel[mostValuedCriteria[0]];
+	return {
+		...value,
+		priority: {
+			label: priorityLabel.replace('...', ''),
+			value: accumulatedValues
+		}
+	};
 }
 
 async function getLatestComment(
@@ -362,4 +411,46 @@ async function getLatestReview(
 		description += ' this pull request';
 	}
 	return { author, description, time: review.submitted_at, url: review.html_url };
+}
+
+function getPriorityValue(
+	priority: Priority,
+	notification: NotificationData,
+	data: GithubItem | null,
+	reason: GithubNotification['reason']
+): boolean | null | undefined {
+	switch (priority.criteria) {
+		case 'assigned': {
+			let user: User | undefined;
+			page.subscribe((page) => {
+				user = page.data.session?.user;
+			});
+			return (
+				data &&
+				'assignees' in data &&
+				data.assignees.some((assignee) => assignee.login === user?.login)
+			);
+		}
+
+		case 'many-comments':
+			return data && 'comments' in data && data.comments > 5;
+
+		case 'many-reactions':
+			return data && 'reactions' in data && data.reactions.total_count > 5;
+
+		case 'mentionned':
+			return reason === 'mention' || reason === 'team_mention';
+
+		case 'review-request':
+			return reason === 'review_requested';
+
+		case 'label':
+			return notification.labels?.some((label) => label.name === priority.specifier);
+
+		case 'state':
+			return data && 'state' in data && data.state === priority.specifier;
+
+		case 'type':
+			return notification.type === priority.specifier;
+	}
 }

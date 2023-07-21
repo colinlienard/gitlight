@@ -4,14 +4,7 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { crossfade, slide } from 'svelte/transition';
 	import { browser } from '$app/environment';
-	import {
-		NotificationColumn,
-		Settings,
-		Separator,
-		Banner,
-		ScrollbarContainer,
-		Tooltip
-	} from '~/lib/components';
+	import { Settings, Separator, ScrollbarContainer, Tooltip } from '~/lib/components';
 	import { fetchGithub } from '~/lib/helpers';
 	import {
 		CheckIcon,
@@ -24,17 +17,24 @@
 		DoubleCheckIcon
 	} from '~/lib/icons';
 	import { filteredNotifications, githubNotifications, largeScreen, settings } from '~/lib/stores';
-	import DoneModal from './DoneModal.svelte';
+	import Banner from './Banner.svelte';
+	import { DoneModal, NotificationColumn } from './notifications';
+	import { Priorities } from './priorities';
 
 	export let synced: boolean;
 
 	let syncTime = 0;
 	let interval: ReturnType<typeof setInterval>;
 
+	// Sort by priority
+	$: notifications = $settings.prioritySorting
+		? $filteredNotifications.sort((a, b) => (b.priority?.value || 0) - (a.priority?.value || 0))
+		: $filteredNotifications;
+
 	// Filter events
-	$: pinned = $filteredNotifications.filter((item) => item.pinned && !item.done);
-	$: unread = $filteredNotifications.filter((item) => !item.pinned && item.unread && !item.done);
-	$: read = $filteredNotifications.filter((item) => !item.pinned && !item.unread && !item.done);
+	$: pinned = notifications.filter((item) => item.pinned && !item.done);
+	$: unread = notifications.filter((item) => !item.pinned && item.unread && !item.done);
+	$: read = notifications.filter((item) => !item.pinned && !item.unread && !item.done);
 
 	$: if (synced && !syncTime) {
 		interval = setInterval(() => {
@@ -127,7 +127,10 @@
 				</div>
 			{/if}
 		</div>
-		<Settings />
+		<div class="settings-wrapper">
+			<Priorities />
+			<Settings />
+		</div>
 	</header>
 	<nav class="nav">
 		<button class="tab selected">
@@ -262,6 +265,11 @@
 					}
 				}
 			}
+		}
+
+		.settings-wrapper {
+			display: flex;
+			gap: 1rem;
 		}
 	}
 

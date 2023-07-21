@@ -4,7 +4,8 @@
 
 	export let label: string | undefined = undefined;
 	export let icon: ComponentType | undefined = undefined;
-	export let value: string;
+	export let value: string | number;
+	export let type: 'text' | 'number' | 'password' = 'text';
 	export let placeholder: string;
 	export let clearable = false;
 	export let disabled = false;
@@ -27,7 +28,7 @@
 		{/if}
 		<input
 			class="input"
-			type="text"
+			{...{ type }}
 			bind:value
 			{placeholder}
 			{disabled}
@@ -37,7 +38,7 @@
 		/>
 		<slot />
 		{#if clearable && value}
-			<button class="clear" on:click={() => (value = '')}>
+			<button class="clear" on:click={() => (value = '')} type="button">
 				<CrossIcon />
 			</button>
 		{/if}
@@ -62,23 +63,24 @@
 	}
 
 	.input-wrapper {
-		@include mixins.box;
+		@include mixins.box(true);
 
 		position: relative;
 		display: flex;
 		align-items: center;
 		padding: 0.75em 1em;
-		border-radius: 0.5rem;
 		cursor: text;
 		gap: 0.5em;
+		outline: solid 3px transparent;
+		outline-offset: -3px;
+		transition: outline variables.$transition;
 
 		&.empty :global(svg) {
 			color: variables.$grey-4;
 		}
 
 		&.focused {
-			outline: variables.$blue-3 3px solid;
-			outline-offset: -3px;
+			outline-color: variables.$blue-3;
 		}
 
 		:global(svg) {

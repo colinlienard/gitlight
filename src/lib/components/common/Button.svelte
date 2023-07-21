@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 
-	export let type: 'primary' | 'secondary' = 'primary';
+	export let secondary = false;
 	export let small = false;
 	export let icon = false;
 	export let href: string | undefined = undefined;
 	export let external = false;
 	export let loading = false;
 	export let disabled = false;
+	export let type: HTMLButtonElement['type'] = 'button';
 
 	const dispatch = createEventDispatcher();
 
@@ -20,7 +21,8 @@
 
 {#if href}
 	<a
-		class="button {type}"
+		class="button"
+		class:secondary
 		class:small
 		class:icon
 		class:loading
@@ -36,11 +38,13 @@
 	</a>
 {:else}
 	<button
-		class="button {type}"
+		class="button"
+		class:secondary
 		class:small
 		class:icon
 		class:loading
 		class:disabled
+		{type}
 		on:click={handleClick}
 	>
 		<span class="content">

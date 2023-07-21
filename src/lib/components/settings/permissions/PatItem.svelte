@@ -45,19 +45,6 @@
 
 <div class="pat-wrapper">
 	{#if editing}
-		<div class="content">
-			<p class="text">Resource owner: <strong>{pat.owner}</strong></p>
-			<p class="text">
-				Personal Access Token:
-				{#if showToken}
-					<strong>{pat.token}</strong>
-				{:else}
-					<button class="show-token" on:click={() => (showToken = true)}>Show</button>
-				{/if}
-			</p>
-		</div>
-		<button class="delete-button" on:click={handleDelete}><TrashIcon /></button>
-	{:else}
 		<form class="inputs-container" on:submit|preventDefault={handleSave}>
 			<Input
 				label="Resource owner"
@@ -74,13 +61,26 @@
 				<p class="error">{error}</p>
 			{/if}
 			<div class="buttons">
-				<Button small>
+				<Button small type="submit">
 					<CheckIcon />
 					Save
 				</Button>
-				<Button type="secondary" small on:click={handleCancel}>Cancel</Button>
+				<Button secondary small on:click={handleCancel}>Cancel</Button>
 			</div>
 		</form>
+	{:else}
+		<div class="content">
+			<p class="text">Resource owner: <strong>{pat.owner}</strong></p>
+			<p class="text">
+				Personal Access Token:
+				{#if showToken}
+					<strong>{pat.token}</strong>
+				{:else}
+					<button class="show-token" on:click={() => (showToken = true)}>Show</button>
+				{/if}
+			</p>
+		</div>
+		<button class="delete-button" on:click={handleDelete}><TrashIcon /></button>
 	{/if}
 </div>
 
@@ -112,9 +112,9 @@
 
 		.delete-button {
 			display: flex;
-			flex: 0 0 auto;
+			flex: 0 0 3rem;
 			align-items: center;
-			padding: 0.5rem;
+			justify-content: center;
 			border-left: inherit;
 
 			&:hover {

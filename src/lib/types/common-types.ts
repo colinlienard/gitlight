@@ -1,10 +1,5 @@
 import type { ComponentType } from 'svelte';
-import type {
-	GithubLabel,
-	GithubNotificationReason,
-	GithubNotificationType,
-	GithubRepository
-} from './github-types';
+import type { GithubLabel, GithubNotificationType, GithubRepository } from './github-types';
 
 export type User = {
 	name?: string;
@@ -25,10 +20,13 @@ export type NotificationData = {
 	pinned: boolean;
 	done: boolean;
 	isNew: boolean;
-	reason: GithubNotificationReason;
 	author?: User;
 	title: string;
 	description: string;
+	priority?: {
+		label: string;
+		value: number;
+	};
 	time: string;
 	icon: ComponentType;
 	opened?: boolean;
@@ -87,7 +85,7 @@ export type WatchedPerson = {
 
 export type Settings = {
 	activateNotifications: boolean;
-	pushNotificationReasons: Record<GithubNotificationReason, boolean>;
+	pushNotificationFromUser: boolean;
 	showNotificationsSyncTimer: boolean;
 	readWhenOpenInBrowser: boolean;
 	readWhenPin: boolean;
@@ -99,4 +97,26 @@ export type Settings = {
 		owner: string;
 		token: string;
 	}>;
+	prioritySorting: boolean;
+	showPriority: boolean;
 };
+
+export type Priority = {
+	value: number;
+} & (
+	| {
+			criteria: 'many-comments' | 'many-reactions' | 'assigned' | 'mentionned' | 'review-request';
+	  }
+	| {
+			criteria: 'label';
+			specifier: string;
+	  }
+	| {
+			criteria: 'state';
+			specifier: 'open' | 'closed';
+	  }
+	| {
+			criteria: 'type';
+			specifier: GithubNotificationType;
+	  }
+);

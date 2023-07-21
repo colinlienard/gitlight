@@ -7,7 +7,6 @@
 	border-radius: $radius;
 	background-image: linear-gradient(color.adjust($color, $lightness: 10%), $color);
 	isolation: isolate;
-	transition: filter variables.$transition;
 
 	&::before {
 		position: absolute;
@@ -19,6 +18,8 @@
 	}
 
 	@if $hover {
+		transition: filter variables.$transition;
+
 		&:hover,
 		&:focus-within {
 			filter: brightness(130%);
@@ -26,10 +27,17 @@
 	}
 }
 
-@mixin box() {
+@mixin box($hover: false) {
 	border: 1px solid variables.$grey-3;
 	border-radius: variables.$radius;
 	background-color: variables.$grey-2;
+	transition: border-color variables.$transition;
+
+	@if $hover {
+		&:hover {
+			border-color: color.adjust(variables.$grey-3, $lightness: 10%);
+		}
+	}
 }
 
 @mixin link() {

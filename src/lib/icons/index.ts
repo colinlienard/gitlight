@@ -24,6 +24,10 @@ export { default as MergedPullRequestIcon } from './MergedPullRequestIcon.svelte
 export { default as OpenIssueIcon } from './OpenIssueIcon.svelte';
 export { default as OpenPullRequestIcon } from './OpenPullRequestIcon.svelte';
 export { default as PinIcon } from './PinIcon.svelte';
+export { default as PlusIcon } from './PlusIcon.svelte';
+export { default as PriorityDownIcon } from './PriorityDownIcon.svelte';
+export { default as PriorityIcon } from './PriorityIcon.svelte';
+export { default as PriorityUpIcon } from './PriorityUpIcon.svelte';
 export { default as RefreshIcon } from './RefreshIcon.svelte';
 export { default as ReleaseIcon } from './ReleaseIcon.svelte';
 export { default as RepositoryIcon } from './RepositoryIcon.svelte';

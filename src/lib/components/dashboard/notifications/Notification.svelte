@@ -7,6 +7,8 @@
 		DoubleCheckIcon,
 		ExternalLinkIcon,
 		PinIcon,
+		PriorityDownIcon,
+		PriorityUpIcon,
 		RestoreIcon,
 		UnpinIcon,
 		UnreadIcon
@@ -27,6 +29,7 @@
 		author,
 		title,
 		description,
+		priority,
 		time,
 		icon,
 		owner,
@@ -136,10 +139,24 @@
 				<span class="icon-container">
 					<svelte:component this={icon} />
 				</span>
-				<h3 class="title">{title}</h3>
-				{#if number}
-					<span class="number">#{number}</span>
-				{/if}
+				<div class="texts">
+					<div class="title-container">
+						<h3 class="title">{title}</h3>
+						{#if number}
+							<span class="number">#{number}</span>
+						{/if}
+					</div>
+					{#if priority && $settings.showPriority}
+						<div class="priority {priority.value > 0 ? 'up' : 'down'}">
+							{#if priority.value > 0}
+								<PriorityUpIcon />
+							{:else}
+								<PriorityDownIcon />
+							{/if}
+							<span>{priority.label}</span>
+						</div>
+					{/if}
+				</div>
 			</div>
 		</Tooltip>
 		{#if labels && labels.length}
@@ -164,20 +181,20 @@
 					{/if}
 					{#if unread}
 						<Tooltip content="Mark as read" position="left" hover>
-							<Button type={'primary'} icon on:click={handleToggle('unread')}>
+							<Button icon on:click={handleToggle('unread')}>
 								<CheckIcon />
 							</Button>
 						</Tooltip>
 					{:else}
 						<Tooltip content="Mark as unread" position="left" hover>
-							<Button type={'secondary'} icon on:click={handleToggle('unread')}>
+							<Button secondary icon on:click={handleToggle('unread')}>
 								<UnreadIcon />
 							</Button>
 						</Tooltip>
 					{/if}
 					{#if unread || pinned}
 						<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left" hover>
-							<Button type="secondary" icon on:click={handleToggle('pinned')}>
+							<Button secondary icon on:click={handleToggle('pinned')}>
 								{#if pinned}
 									<UnpinIcon />
 								{:else}
@@ -195,13 +212,13 @@
 				{/if}
 				{#if url}
 					<Tooltip content="Open in GitHub" position="left" hover>
-						<Button type="secondary" icon href={url} external on:click={handleOpenInBrowser}>
+						<Button secondary icon href={url} external on:click={handleOpenInBrowser}>
 							<ExternalLinkIcon />
 						</Button>
 					</Tooltip>
 				{:else}
 					<Tooltip content="Cannot open in GitHub" position="left" hover>
-						<Button type="secondary" icon disabled>
+						<Button secondary icon disabled>
 							<ExternalLinkIcon />
 						</Button>
 					</Tooltip>
@@ -319,17 +336,50 @@
 			}
 		}
 
-		.title {
-			@include typography.bold;
-
+		.texts {
+			display: flex;
 			overflow: hidden;
-			flex: 0 1 auto;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
+			flex-direction: column;
+			gap: 0.25rem;
 
-		.number {
-			color: variables.$blue-3;
+			.title-container {
+				display: flex;
+				overflow: hidden;
+				gap: 0.5ch;
+
+				.title {
+					@include typography.bold;
+
+					overflow: hidden;
+					flex: 0 1 auto;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+				}
+
+				.number {
+					color: variables.$blue-3;
+				}
+			}
+
+			.priority {
+				@include typography.small;
+
+				display: flex;
+				align-items: center;
+				gap: 0.25rem;
+
+				&.up {
+					color: variables.$yellow;
+				}
+
+				&.down {
+					color: variables.$red;
+				}
+
+				:global(svg) {
+					height: 1rem;
+				}
+			}
 		}
 	}
 

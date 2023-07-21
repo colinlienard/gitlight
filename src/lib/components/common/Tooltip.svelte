@@ -26,8 +26,8 @@
 	export let hover = false;
 	export let width = 'auto';
 	export let height = 'auto';
+	export let open = false;
 
-	let open = false;
 	let timeout: ReturnType<typeof setTimeout>;
 	let container: HTMLDivElement;
 
@@ -105,13 +105,14 @@
 					{:else}
 						{#each content as { text, disabled, active, onClick, onToggle }}
 							{#if onClick}
-								<button class="tooltip-button" class:disabled on:click={onClick}>
+								<button class="tooltip-button" class:disabled on:click={onClick} type="button">
 									{text}
 								</button>
 							{:else if onToggle}
 								<button
 									class="tooltip-button"
 									class:disabled
+									type="button"
 									on:click={handleToggleActive(text, onToggle)}
 								>
 									<div class="checkbox" class:active>
@@ -140,9 +141,9 @@
 			<slot />
 		</div>
 	{:else}
-		<button class="trigger" on:click={handleClick}>
+		<div class="trigger" on:click={handleClick} role="presentation">
 			<slot />
-		</button>
+		</div>
 	{/if}
 </div>
 
@@ -240,7 +241,7 @@
 			transition: background-color variables.$transition;
 
 			&:hover {
-				background-color: variables.$grey-3;
+				background-color: variables.$grey-2;
 			}
 
 			.checkbox {

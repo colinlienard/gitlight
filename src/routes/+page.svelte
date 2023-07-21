@@ -46,7 +46,7 @@
 					Download the app
 				</Button>
 			</DownloadButton>
-			<Button type="secondary" href="/login">or use in the browser</Button>
+			<Button secondary href="/login">or use in the browser</Button>
 		</div>
 		<span class="separator" data-slide style="--stagger: 3" />
 		<ul class="features-list" data-slide style="--stagger: 4">
