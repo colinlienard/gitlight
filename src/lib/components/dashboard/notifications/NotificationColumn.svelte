@@ -40,7 +40,6 @@
 
 	let list: HTMLUListElement;
 	let scrolled = false;
-	let empty = !notifications.length;
 	let dragId: string | null = null;
 	let scrollPosition = 0;
 	let transitioning = false;
@@ -63,13 +62,7 @@
 		list?.removeEventListener('scroll', handleScroll);
 	});
 
-	$: if (notifications.length) {
-		empty = false;
-	} else {
-		setTimeout(() => {
-			empty = true;
-		}, settings.duration as number);
-	}
+	$: empty = !notifications.length;
 
 	$: {
 		notifications;
@@ -118,9 +111,9 @@
 				};
 			}
 			if (title === 'Read') {
+				fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
 				return { ...notification, unread: false, pinned: false, isNew: false };
 			}
-			fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
 			return { ...notification, unread: true, pinned: false, isNew: false };
 		});
 	}
@@ -327,6 +320,10 @@
 		.item {
 			cursor: grab;
 			opacity: 1 !important;
+
+			&:hover {
+				z-index: 1;
+			}
 		}
 	}
 
