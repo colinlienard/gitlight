@@ -33,9 +33,9 @@
 			position="bottom right"
 			width="14rem"
 		>
-			<div class="icon-container">
+			<button class="icon-container">
 				<GearIcon />
-			</div>
+			</button>
 		</Tooltip>
 	</div>
 	<div class="wrapper">

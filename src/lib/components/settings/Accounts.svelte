@@ -46,7 +46,7 @@
 	}
 
 	.account {
-		@include mixins.shiny(variables.$grey-2, false);
+		@include mixins.box;
 
 		display: flex;
 		flex-direction: column;

@@ -325,6 +325,7 @@
 		}
 
 		.item {
+			cursor: grab;
 			opacity: 1 !important;
 		}
 	}

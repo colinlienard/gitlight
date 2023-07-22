@@ -105,22 +105,20 @@
 	<header class="header">
 		<div class="wrapper">
 			{#if $settings.sidebarHidden}
-				<Tooltip content="Show sidebar" position="bottom" hover>
-					<button
-						class="logo-button"
-						on:click={() => ($settings.sidebarHidden = false)}
-						transition:slide={{ axis: 'x', duration: 300, easing: cubicInOut }}
-					>
-						<Logo />
-					</button>
-				</Tooltip>
+				<div transition:slide={{ axis: 'x', duration: 300, easing: cubicInOut }}>
+					<Tooltip content="Show sidebar" position="bottom" hover>
+						<button class="logo-button" on:click={() => ($settings.sidebarHidden = false)}>
+							<Logo />
+						</button>
+					</Tooltip>
+				</div>
 			{/if}
 			<h1 class="title">Notifications</h1>
 			{#if $settings.showNotificationsSyncTimer}
 				<div class="sync-pill" class:loading={!synced}>
 					<RefreshIcon />
 					{#if synced}
-						Synced {syncTime}s ago
+						Synced <span class="time">{syncTime}s ago</span>
 					{:else}
 						Syncing...
 					{/if}
@@ -222,6 +220,7 @@
 
 		.wrapper {
 			display: flex;
+			align-items: center;
 		}
 
 		.logo-button {
@@ -241,6 +240,10 @@
 			background-color: variables.$grey-3;
 			color: variables.$grey-4;
 			gap: 0.25rem;
+
+			&:not(:hover) .time {
+				display: none;
+			}
 
 			:global(svg) {
 				height: 1.25rem;

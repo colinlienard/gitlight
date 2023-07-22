@@ -72,7 +72,7 @@
 
 			.icon-container {
 				background-color: variables.$white;
-				translate: 0.75rem 0;
+				translate: 0.65rem 0;
 
 				:global(svg) {
 					color: variables.$blue-2;
@@ -95,6 +95,8 @@
 	}
 
 	.label {
+		@include typography.base;
+
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;

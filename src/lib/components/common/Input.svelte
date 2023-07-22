@@ -73,7 +73,6 @@
 		gap: 0.5em;
 		outline: solid 3px transparent;
 		outline-offset: -3px;
-		transition: outline variables.$transition;
 
 		&.empty :global(svg) {
 			color: variables.$grey-4;
