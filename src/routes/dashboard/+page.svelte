@@ -182,7 +182,9 @@
 		// Update menu bar
 		if (window.__TAURI__) {
 			const pinned = $githubNotifications.filter(({ pinned }) => pinned);
-			const unread = $githubNotifications.filter(({ pinned, unread }) => !pinned && unread);
+			const unread = $githubNotifications.filter(
+				({ pinned, unread, done }) => !pinned && unread && !done
+			);
 			invoke('update_tray', {
 				title: `${unread.length}`,
 				description: `${unread.length} unread • ${pinned.length} pinned`

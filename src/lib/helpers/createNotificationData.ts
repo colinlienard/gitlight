@@ -52,7 +52,7 @@ export async function createNotificationData(
 		: undefined;
 	const pinned = previous?.pinned || false;
 	const unread = isUnread || previous?.unread || false;
-	const done = previous?.done || false;
+	const done = !isUnread ? previous?.done || false : false;
 	const [owner, repo] = repository.full_name.split('/');
 
 	// Get Personal Access Tokens

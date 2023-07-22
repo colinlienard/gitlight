@@ -40,7 +40,12 @@ export function drag(
 
 		for (const list of lists) {
 			const listRect = list.node.getBoundingClientRect();
-			if (clientX > listRect.left && clientX < listRect.right) {
+			if (
+				clientX > listRect.left &&
+				clientX < listRect.right &&
+				clientY > listRect.top &&
+				clientY < listRect.bottom
+			) {
 				const newDropzone = lists.indexOf(list);
 				if (dropzone !== newDropzone) {
 					dropzone = newDropzone;

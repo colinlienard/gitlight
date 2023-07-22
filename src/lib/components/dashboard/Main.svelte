@@ -162,7 +162,7 @@
 				}}
 				{transitions}
 			/>
-			<Separator vertical={$largeScreen} />
+			<Separator vertical={$largeScreen} marginX={$largeScreen ? 0 : 1.5} />
 			<NotificationColumn
 				icon={UnreadIcon}
 				title="Unread"
@@ -179,7 +179,7 @@
 					{/if}
 				</div>
 			</NotificationColumn>
-			<Separator vertical={$largeScreen} />
+			<Separator vertical={$largeScreen} marginX={$largeScreen ? 0 : 1.5} />
 			<NotificationColumn
 				icon={CheckIcon}
 				title="Read"
