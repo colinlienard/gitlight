@@ -238,7 +238,6 @@
 			align-items: center;
 			gap: 0.5rem;
 			text-align: left;
-			transition: background-color variables.$transition;
 
 			&:hover {
 				background-color: variables.$grey-2;

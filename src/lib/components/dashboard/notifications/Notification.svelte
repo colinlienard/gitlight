@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { open } from '@tauri-apps/api/shell';
 	import { onDestroy } from 'svelte';
 	import { Button, Tooltip } from '~/lib/components';
 	import { fetchGithub, formatRelativeDate, lightenColor } from '~/lib/helpers';
@@ -92,12 +93,22 @@
 				return event;
 			});
 		}
+		url && openUrl(url);
 	}
 
 	function handleMouseEnter() {
 		$githubNotifications = $githubNotifications.map((event) =>
 			event.id === id ? { ...event, isNew: false } : event
 		);
+	}
+
+	function openUrl(url: string) {
+		if (dragged) return;
+		if (window.__TAURI__) {
+			open(url);
+			return;
+		}
+		window.open(url, '_blank');
 	}
 </script>
 
@@ -112,9 +123,9 @@
 			<div class="new" />
 		{/if}
 		<div class="top">
-			<a class="repo" href={repoUrl} target="_blank" rel="noreferrer">
+			<button class="repo" on:mouseup={() => openUrl(repoUrl)}>
 				{owner}/<span class="bold">{repo}</span>
-			</a>
+			</button>
 			<p class="time">{displayTime}</p>
 		</div>
 		<p class="description">
@@ -123,9 +134,9 @@
 					<img class="image" src={author.avatar} alt="" width="20px" height="20px" loading="lazy" />
 				{/if}
 				{#if authorUrl}
-					<a class="strong clickable" href={authorUrl} target="_blank" rel="noreferrer">
+					<button class="strong clickable" on:mouseup={() => openUrl(authorUrl)}>
 						{author.login}
-					</a>
+					</button>
 				{:else}
 					<span class="strong">{author.login}</span>
 				{/if}
@@ -212,7 +223,7 @@
 				{/if}
 				{#if url}
 					<Tooltip content="Open in GitHub" position="left" hover>
-						<Button secondary icon href={url} external on:click={handleOpenInBrowser}>
+						<Button secondary icon on:click={handleOpenInBrowser}>
 							<ExternalLinkIcon />
 						</Button>
 					</Tooltip>
@@ -242,9 +253,9 @@
 						/>
 					{/if}
 					{#if previousAuthorUrl}
-						<a class="strong clickable" href={previousAuthorUrl} target="_blank" rel="noreferrer">
+						<button class="strong clickable" on:mouseup={() => openUrl(previousAuthorUrl)}>
 							{previously.author.login}
-						</a>
+						</button>
 					{:else}
 						<span class="strong">{previously.author.login}</span>
 					{/if}
@@ -340,9 +351,10 @@
 			display: flex;
 			overflow: hidden;
 			flex-direction: column;
-			gap: 0.25rem;
 
 			.title-container {
+				@include typography.base;
+
 				display: flex;
 				overflow: hidden;
 				gap: 0.5ch;

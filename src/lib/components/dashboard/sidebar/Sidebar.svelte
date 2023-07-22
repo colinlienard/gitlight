@@ -209,9 +209,8 @@
 		a {
 			width: 100%;
 			padding: 0.5rem;
-			border-radius: inherit;
+			border-radius: calc(variables.$radius - 1px);
 			margin: 1px;
-			background-color: variables.$grey-3;
 			text-align: center;
 			transition: filter variables.$transition;
 
@@ -226,7 +225,7 @@
 			}
 
 			&:hover {
-				filter: brightness(130%);
+				background-color: color.adjust(variables.$grey-3, $lightness: -2%);
 			}
 		}
 

@@ -9,10 +9,10 @@
 
 {#if dones.length}
 	<div class="wrapper">
-		<Modal title="Done" small>
+		<Modal title="Done ({dones.length})" small>
 			<Button slot="trigger" secondary small>
 				<DoubleCheckIcon />
-				Done
+				Done ({dones.length})
 			</Button>
 			<ScrollbarContainer slot="content" margin="2rem 1rem">
 				<ul class="list">

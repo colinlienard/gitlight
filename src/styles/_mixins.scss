@@ -4,25 +4,29 @@
 
 @mixin shiny($color, $hover: true, $radius: variables.$radius) {
 	position: relative;
+	border: 1px solid color.adjust($color, $lightness: -5%);
 	border-radius: $radius;
-	background-image: linear-gradient(color.adjust($color, $lightness: 10%), $color);
+	background-image: linear-gradient(
+		color.adjust($color, $lightness: 10%),
+		color.adjust($color, $lightness: -1%)
+	);
 	isolation: isolate;
 
 	&::before {
 		position: absolute;
 		z-index: -1;
 		border-radius: calc($radius - 1px);
-		background-color: $color;
+		background-image: linear-gradient(
+			color.adjust($color, $lightness: 1%),
+			color.adjust($color, $lightness: -1%)
+		);
 		content: '';
 		inset: 1px;
 	}
 
 	@if $hover {
-		transition: filter variables.$transition;
-
-		&:hover,
-		&:focus-within {
-			filter: brightness(130%);
+		&:hover::before {
+			background: color.adjust($color, $lightness: -2%);
 		}
 	}
 }
@@ -31,7 +35,6 @@
 	border: 1px solid variables.$grey-3;
 	border-radius: variables.$radius;
 	background-color: variables.$grey-2;
-	transition: border-color variables.$transition;
 
 	@if $hover {
 		&:hover {
@@ -44,7 +47,6 @@
 	@include typography.bold;
 
 	color: variables.$blue-3;
-	transition: filter variables.$transition;
 
 	&:hover {
 		filter: brightness(130%);

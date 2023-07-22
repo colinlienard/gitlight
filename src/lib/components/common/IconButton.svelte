@@ -24,7 +24,6 @@
 		justify-content: center;
 		border-radius: variables.$radius;
 		aspect-ratio: 1 / 1;
-		transition: background-color variables.$transition;
 
 		&:hover {
 			background-color: rgba(variables.$white, 0.04);
