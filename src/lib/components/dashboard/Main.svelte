@@ -146,7 +146,7 @@
 		<button class="tab">
 			<GitlabIcon />
 			<p class="text">GitLab</p>
-			<div class="tag soon">Coming soon</div>
+			<div class="tag soon">Coming soon!</div>
 		</button>
 		<DoneModal />
 	</nav>
@@ -287,7 +287,6 @@
 			padding: 0.75em 1em;
 			border-radius: variables.$radius variables.$radius 0 0;
 			gap: 0.5rem;
-			transition: opacity variables.$transition;
 
 			:global(svg) {
 				height: 1.25rem;

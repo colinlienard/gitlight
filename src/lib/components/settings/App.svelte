@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { emit } from '@tauri-apps/api/event';
 	import { Button } from '~/lib/components';
+	import { getAppVersion } from '~/lib/helpers';
+	import { GithubIcon } from '~/lib/icons';
 
 	export let updateAvailable: string | false;
 
@@ -12,28 +14,30 @@
 	}
 </script>
 
-{#if updateAvailable}
-	<div class="card">
-		<p>Version {updateAvailable} is available!</p>
+<div class="card">
+	{#if updateAvailable}
+		<p>GitLight v{updateAvailable} is available!</p>
 		<Button on:click={update} {loading}>Install it now</Button>
-	</div>
-{:else}
-	<p>GitLight is up to date.</p>
-{/if}
+	{:else}
+		<p>GitLight v{getAppVersion()}</p>
+	{/if}
+</div>
+<Button secondary href="https://github.com/colinlienard/gitlight" external>
+	<GithubIcon />
+	GitHub repository
+</Button>
 
 <style lang="scss">
 	.card {
-		@include mixins.shiny(variables.$grey-3, false);
+		@include mixins.box;
 
 		display: flex;
-		width: fit-content;
+		width: 100%;
+		height: 10rem;
 		flex-direction: column;
 		align-items: center;
+		justify-content: center;
 		padding: 1rem;
 		gap: 1rem;
-
-		:global(button) {
-			width: 100%;
-		}
 	}
 </style>

@@ -8,10 +8,10 @@
 	import { settings } from '~/lib/stores';
 	import type { GithubRelease } from '~/lib/types';
 	import Accounts from './Accounts.svelte';
+	import App from './App.svelte';
 	import GithubSettings from './GithubSettings.svelte';
 	import Permissions from './permissions';
 	import Preferences from './Preferences.svelte';
-	import Update from './Update.svelte';
 
 	// Cannot use generic type here
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,16 +43,12 @@
 			}
 		},
 		{ name: 'Accounts', component: Accounts },
-		...(browser && window.__TAURI__
-			? [
-					{
-						name: 'Update',
-						strong: !!updateAvailable,
-						component: Update,
-						props: { updateAvailable }
-					}
-			  ]
-			: [])
+		{
+			name: 'App',
+			strong: !!updateAvailable,
+			component: App,
+			props: { updateAvailable }
+		}
 	] as Tabs;
 
 	const user = $page.data.session?.user;

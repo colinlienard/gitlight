@@ -1,3 +1,5 @@
+import { largeScreen } from '../stores';
+
 const lists: Array<{
 	node: HTMLElement;
 	hovering: boolean;
@@ -13,6 +15,7 @@ export function drag(
 ) {
 	let x: number;
 	let y: number;
+	let vertical = false;
 
 	function handleMouseDown(e: MouseEvent) {
 		window.addEventListener('mousemove', handleMouseMove);
@@ -21,6 +24,7 @@ export function drag(
 		itemId = id;
 		x = e.clientX;
 		y = e.clientY;
+		largeScreen.subscribe((value) => (vertical = !value));
 	}
 
 	function handleMouseMove({ clientX, clientY }: MouseEvent) {
@@ -41,10 +45,9 @@ export function drag(
 		for (const list of lists) {
 			const listRect = list.node.getBoundingClientRect();
 			if (
-				clientX > listRect.left &&
-				clientX < listRect.right &&
-				clientY > listRect.top &&
-				clientY < listRect.bottom
+				vertical
+					? clientY > listRect.top && clientY < listRect.bottom
+					: clientX > listRect.left && clientX < listRect.right
 			) {
 				const newDropzone = lists.indexOf(list);
 				if (dropzone !== newDropzone) {
