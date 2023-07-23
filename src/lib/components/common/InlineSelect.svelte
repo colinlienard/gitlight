@@ -52,7 +52,6 @@
 					width: 100%;
 					padding: 0.75rem;
 					color: variables.$grey-4;
-					transition: color variables.$transition;
 
 					&.selected,
 					&:hover {

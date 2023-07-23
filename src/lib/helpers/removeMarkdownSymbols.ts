@@ -1,6 +1,6 @@
 const markdownSymbols: Array<[RegExp, string]> = [
 	[/#+\s/g, ''], // Remove headers (e.g., # Header)
-	[/(\*{1,2})(.*?)\1/g, '$2'], // Remove emphasis and bold (e.g., *emphasis* or **bold**)
+	[/(\*{1,2}|_{1,2})(.*?)\1/g, '$2'], // Remove emphasis and bold (e.g., *emphasis* or **bold**)
 	[/~~(.*?)~~/g, '$1'], // Remove strikethrough (e.g., ~~strikethrough~~)
 	[/\[(.*?)\]\((.*?)\)/g, '$1'], // Remove links (e.g., [link](url))
 	[/\n- (.*)/g, '$1'], // Remove unordered list (e.g., - Item)

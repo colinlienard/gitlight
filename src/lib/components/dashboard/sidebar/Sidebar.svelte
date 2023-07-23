@@ -2,8 +2,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { Tooltip, ScrollbarContainer, Separator, IconButton } from '~/lib/components';
-	import { getAppVersion } from '~/lib/helpers';
-	import { GithubIcon, Logo, DoubleArrowIcon } from '~/lib/icons';
+	import { Logo, DoubleArrowIcon } from '~/lib/icons';
 	import {
 		filteredNotifications,
 		githubNotifications,
@@ -115,27 +114,26 @@
 			{/if}
 		</div>
 	</ScrollbarContainer>
-	<footer class="footer">
-		<p>v{getAppVersion()}</p>
-		<a
-			href="https://github.com/colinlienard/gitlight"
-			class="link"
-			target="_blank"
-			rel="noreferrer"
-		>
-			<GithubIcon />
-			GitHub repository
-		</a>
-	</footer>
 </article>
 
 <style lang="scss">
 	.sidebar {
+		position: relative;
 		display: flex;
 		height: 100vh;
 		flex: 0 0 20rem;
 		flex-direction: column;
 		border-right: 1px solid variables.$grey-3;
+
+		&::before {
+			position: absolute;
+			z-index: 1;
+			height: 2rem;
+			background-image: linear-gradient(transparent, variables.$grey-1 1rem);
+			content: '';
+			inset: auto 0 0;
+			pointer-events: none;
+		}
 	}
 
 	.header {
@@ -234,34 +232,6 @@
 			flex: 0 0 1px;
 			margin: 0.5rem 0;
 			background-color: rgba(white, 0.1);
-		}
-	}
-
-	.footer {
-		position: sticky;
-		bottom: 0;
-		left: 0;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 2rem;
-		border-top: 1px solid variables.$grey-3;
-		margin-top: auto;
-		color: variables.$grey-4;
-
-		.link {
-			display: flex;
-			align-items: center;
-			gap: 0.25rem;
-			transition: color variables.$transition;
-
-			&:hover {
-				color: variables.$white;
-			}
-
-			:global(svg) {
-				height: 1.25rem;
-			}
 		}
 	}
 </style>

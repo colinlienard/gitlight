@@ -12,7 +12,7 @@
 			css: (t: number) => {
 				const eased = cubicInOut(t);
 				return `
-          translate: 0 ${(1 - eased) * 50}%;
+          transform: translateY(${(1 - eased) * 50}%);
           opacity: ${eased};
         `;
 			}

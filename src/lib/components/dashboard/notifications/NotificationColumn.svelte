@@ -40,7 +40,6 @@
 
 	let list: HTMLUListElement;
 	let scrolled = false;
-	let empty = !notifications.length;
 	let dragId: string | null = null;
 	let scrollPosition = 0;
 	let transitioning = false;
@@ -63,13 +62,7 @@
 		list?.removeEventListener('scroll', handleScroll);
 	});
 
-	$: if (notifications.length) {
-		empty = false;
-	} else {
-		setTimeout(() => {
-			empty = true;
-		}, settings.duration as number);
-	}
+	$: empty = !notifications.length;
 
 	$: {
 		notifications;
@@ -118,9 +111,9 @@
 				};
 			}
 			if (title === 'Read') {
+				fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
 				return { ...notification, unread: false, pinned: false, isNew: false };
 			}
-			fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
 			return { ...notification, unread: true, pinned: false, isNew: false };
 		});
 	}
@@ -143,7 +136,7 @@
 	{#if showDropzone}
 		<div class="dropzone" class:hovering transition:fade={{ duration: 150 }} />
 	{/if}
-	{#if scrolled}
+	{#if scrolled && $largeScreen}
 		<div class="scroll-button" transition:fade={{ duration: 150 }}>
 			<Button secondary small on:click={handleScrollToTop}>
 				Scroll to top <ArrowUpIcon />
@@ -228,15 +221,6 @@
 			}
 		}
 
-		&::before {
-			position: absolute;
-			z-index: 1;
-			height: 5.5rem;
-			background-image: linear-gradient(variables.$grey-1 4.5rem, transparent);
-			content: '';
-			inset: -3rem 0 auto;
-		}
-
 		&::after {
 			position: absolute;
 			z-index: 1;
@@ -255,7 +239,7 @@
 	}
 
 	.column-header {
-		z-index: 1;
+		z-index: 2;
 		display: flex;
 		align-items: center;
 		margin-right: 1rem;
@@ -280,6 +264,15 @@
 
 		.addon-container {
 			margin-left: auto;
+		}
+
+		&::before {
+			position: absolute;
+			z-index: 1;
+			height: 4.5rem;
+			background-image: linear-gradient(variables.$grey-1 3.5rem, transparent);
+			content: '';
+			inset: -2rem 0 auto;
 		}
 	}
 
@@ -327,6 +320,10 @@
 		.item {
 			cursor: grab;
 			opacity: 1 !important;
+
+			&:hover {
+				z-index: 1;
+			}
 		}
 	}
 

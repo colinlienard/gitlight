@@ -146,11 +146,11 @@
 		<button class="tab">
 			<GitlabIcon />
 			<p class="text">GitLab</p>
-			<div class="tag soon">Coming soon</div>
+			<div class="tag soon">Coming soon!</div>
 		</button>
 		<DoneModal />
 	</nav>
-	<ScrollbarContainer>
+	<ScrollbarContainer margin="0.25rem">
 		<section class="columns-container" class:horizontal={!$largeScreen}>
 			<NotificationColumn
 				icon={PinIcon}
@@ -162,7 +162,7 @@
 				}}
 				{transitions}
 			/>
-			<Separator vertical={$largeScreen} />
+			<Separator vertical={$largeScreen} marginX={$largeScreen ? 0 : 1.5} />
 			<NotificationColumn
 				icon={UnreadIcon}
 				title="Unread"
@@ -179,7 +179,7 @@
 					{/if}
 				</div>
 			</NotificationColumn>
-			<Separator vertical={$largeScreen} />
+			<Separator vertical={$largeScreen} marginX={$largeScreen ? 0 : 1.5} />
 			<NotificationColumn
 				icon={CheckIcon}
 				title="Read"
@@ -287,7 +287,6 @@
 			padding: 0.75em 1em;
 			border-radius: variables.$radius variables.$radius 0 0;
 			gap: 0.5rem;
-			transition: opacity variables.$transition;
 
 			:global(svg) {
 				height: 1.25rem;
@@ -341,17 +340,20 @@
 
 	.columns-container {
 		position: relative;
-		display: grid;
-		overflow: hidden;
-		height: 100%;
 		padding: 2rem 0.5rem;
-		grid-template-columns: 1fr 1px 1fr 1px 1fr;
 
 		&.horizontal {
 			display: flex;
 			overflow: visible;
 			flex-direction: column;
 			gap: 2rem;
+		}
+
+		&:not(.horizontal) {
+			display: grid;
+			overflow: hidden;
+			height: 100%;
+			grid-template-columns: 1fr 1px 1fr 1px 1fr;
 		}
 
 		.read-all {

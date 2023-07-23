@@ -61,7 +61,7 @@
 		<div class="content">
 			<Switch label="Enable priority sorting" bind:active={$settings.prioritySorting} />
 			<p class="paragraph">
-				By enabling priority sorting and specifying priority criteria, you can customize the
+				By enabling priority sorting and specifying priority criterias, you can customize the
 				importance of notifications and manage them in your own way.
 			</p>
 			<Switch label="Show priorities on notifications" bind:active={$settings.showPriority} />

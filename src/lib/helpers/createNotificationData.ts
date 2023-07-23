@@ -52,7 +52,7 @@ export async function createNotificationData(
 		: undefined;
 	const pinned = previous?.pinned || false;
 	const unread = isUnread || previous?.unread || false;
-	const done = previous?.done || false;
+	const done = !isUnread ? previous?.done || false : false;
 	const [owner, repo] = repository.full_name.split('/');
 
 	// Get Personal Access Tokens
@@ -319,15 +319,18 @@ export async function createNotificationData(
 	);
 
 	// Get the accumulated value of all priorities
-	const accumulatedValues = valuedPriorities.reduce<number>(
+	const accumulatedValue = valuedPriorities.reduce<number>(
 		(previous, current) => previous + current[1],
 		0
 	);
-	if (accumulatedValues === 0) return value;
+	if (accumulatedValue === 0) return value;
 
 	// Get the most valued criteria
 	const mostValuedCriteria = valuedPriorities.reduce<(typeof valuedPriorities)[number]>(
-		(previous, current) => (Math.abs(previous[1]) > Math.abs(current[1]) ? previous : current),
+		(previous, current) =>
+			(accumulatedValue > 0 ? previous[1] > current[1] : previous[1] < current[1])
+				? previous
+				: current,
 		valuedPriorities[0]
 	);
 
@@ -338,7 +341,7 @@ export async function createNotificationData(
 		...value,
 		priority: {
 			label: priorityLabel.replace('...', ''),
-			value: accumulatedValues
+			value: accumulatedValue
 		}
 	};
 }
