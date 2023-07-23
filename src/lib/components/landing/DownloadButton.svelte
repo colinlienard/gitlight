@@ -35,7 +35,12 @@
 	}
 </script>
 
-<button class="container" on:click={() => (open = !open)} on:mouseleave={() => (open = false)}>
+<div
+	class="container"
+	on:click={() => (open = !open)}
+	on:mouseleave={() => (open = false)}
+	role="presentation"
+>
 	<slot />
 	{#if show && open}
 		<div class="tooltip {position}" transition:fade={{ duration: 150, easing: sineInOut }}>
@@ -53,7 +58,7 @@
 			</Button>
 		</div>
 	{/if}
-</button>
+</div>
 
 <style lang="scss">
 	.container {

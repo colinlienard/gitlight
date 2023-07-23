@@ -150,7 +150,7 @@
 		</button>
 		<DoneModal />
 	</nav>
-	<ScrollbarContainer>
+	<ScrollbarContainer margin="0.25rem">
 		<section class="columns-container" class:horizontal={!$largeScreen}>
 			<NotificationColumn
 				icon={PinIcon}
@@ -340,17 +340,20 @@
 
 	.columns-container {
 		position: relative;
-		display: grid;
-		overflow: hidden;
-		height: 100%;
 		padding: 2rem 0.5rem;
-		grid-template-columns: 1fr 1px 1fr 1px 1fr;
 
 		&.horizontal {
 			display: flex;
 			overflow: visible;
 			flex-direction: column;
 			gap: 2rem;
+		}
+
+		&:not(.horizontal) {
+			display: grid;
+			overflow: hidden;
+			height: 100%;
+			grid-template-columns: 1fr 1px 1fr 1px 1fr;
 		}
 
 		.read-all {
