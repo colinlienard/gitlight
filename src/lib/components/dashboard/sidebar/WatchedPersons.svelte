@@ -1,18 +1,47 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { storage } from '~/lib/helpers';
-	import { loading, watchedPersons } from '~/lib/stores';
+	import { githubNotifications, loading, watchedPersons } from '~/lib/stores';
+	import type { WatchedPerson } from '~/lib/types';
 	import SidebarSection from './SidebarSection.svelte';
 
-	// Save watched persons to storage
+	// Update watched persons
 	$: if (browser && !$loading) {
+		const savedWatchedPersons = storage.get('github-watched-persons');
+
+		$watchedPersons = $githubNotifications
+			.reduce<WatchedPerson[]>((previous, current) => {
+				if (!current.author || current.done) return previous;
+				const index = previous.findIndex((person) => person.login === current?.author?.login);
+				if (index > -1) {
+					const person = previous.splice(index, 1)[0];
+					return [...previous, { ...person, number: person.number + 1 }];
+				}
+				return [
+					...previous,
+					{
+						login: current.author?.login ?? '',
+						avatar: current.author?.avatar ?? '',
+						number: 1,
+						bot: current.author.bot,
+						active:
+							savedWatchedPersons?.find((person) => person.login === current.author?.login)
+								?.active ?? true
+					}
+				];
+			}, [])
+			.sort((a, b) => b.number - a.number);
+	}
+
+	$: botsHidden = $watchedPersons.some((person) => person.login.endsWith('[bot]') && person.active);
+
+	// Save watched persons to storage
+	$: if (browser) {
 		storage.set(
 			'github-watched-persons',
 			$watchedPersons.map(({ login, active }) => ({ login, active }))
 		);
 	}
-
-	$: botsHidden = $watchedPersons.some((person) => person.login.endsWith('[bot]') && person.active);
 
 	function handleToggle(login: string) {
 		return (event: MouseEvent) => {
@@ -42,13 +71,17 @@
 	bind:items={$watchedPersons}
 	actions={[{ text: 'Show bots', active: botsHidden, onToggle: handleHideBots }]}
 >
-	{#each $watchedPersons as { login, avatar, active, number }}
-		<button class="wrapper" class:active on:click={null} on:click={handleToggle(login)}>
-			<img class="image" src={avatar} alt="" />
-			<h3 class="name">{login}</h3>
-			<span class="number">{number}</span>
-		</button>
-	{/each}
+	{#if $watchedPersons.length}
+		{#each $watchedPersons as { login, avatar, active, number }}
+			<button class="wrapper" class:active on:click={null} on:click={handleToggle(login)}>
+				<img class="image" src={avatar} alt="" />
+				<h3 class="name">{login}</h3>
+				<span class="number">{number}</span>
+			</button>
+		{/each}
+	{:else}
+		<p class="empty">No persons to display</p>
+	{/if}
 </SidebarSection>
 
 <style lang="scss">
@@ -109,5 +142,9 @@
 		.number {
 			color: variables.$grey-4;
 		}
+	}
+
+	.empty {
+		color: variables.$grey-4;
 	}
 </style>
