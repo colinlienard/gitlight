@@ -16,6 +16,7 @@
 	} from '~/lib/icons';
 	import { githubNotifications, settings } from '~/lib/stores';
 	import type { NotificationData } from '~/lib/types';
+	import NotificationDescription from './NotificationDescription.svelte';
 
 	export let data: NotificationData;
 	export let dragged = false;
@@ -112,10 +113,9 @@
 	}
 </script>
 
-<div class="container" class:dragged>
+<div class="container" class:transparent={!unread && !done} class:dragged>
 	<div
 		class="notification"
-		class:transparent={!unread && !done}
 		on:mouseenter={isNew && interactive ? handleMouseEnter : undefined}
 		role="presentation"
 	>
@@ -123,28 +123,9 @@
 			<div class="new" />
 		{/if}
 		<div class="top">
-			<button class="repo" on:mouseup={() => openUrl(repoUrl)}>
-				{owner}/<span class="bold">{repo}</span>
-			</button>
+			<NotificationDescription {author} {description} {openUrl} />
 			<p class="time">{displayTime}</p>
 		</div>
-		<p class="description">
-			{#if author}
-				{#if author.avatar}
-					<img class="image" src={author.avatar} alt="" width="20px" height="20px" loading="lazy" />
-				{/if}
-				{#if authorUrl}
-					<button class="strong clickable" on:mouseup={() => openUrl(authorUrl)}>
-						{author.login}
-					</button>
-				{:else}
-					<span class="strong">{author.login}</span>
-				{/if}
-				{description}
-			{:else}
-				<span class="strong">{description}</span>
-			{/if}
-		</p>
 		<Tooltip content={title} position="bottom left" width="calc(100% - 2.5rem)" hover>
 			<div class="main">
 				<span class="icon-container">
@@ -239,29 +220,12 @@
 	</div>
 	{#if previously}
 		<div class="previously">
-			<div class="description">
-				<span>Previously: </span>
-				{#if previously.author}
-					{#if previously.author.avatar}
-						<img
-							class="image"
-							src={previously.author.avatar}
-							alt=""
-							width="20px"
-							height="20px"
-							loading="lazy"
-						/>
-					{/if}
-					{#if previousAuthorUrl}
-						<button class="strong clickable" on:mouseup={() => openUrl(previousAuthorUrl)}>
-							{previously.author.login}
-						</button>
-					{:else}
-						<span class="strong">{previously.author.login}</span>
-					{/if}
-				{/if}
-				{previously.description}
-			</div>
+			<NotificationDescription
+				author={previously.author}
+				description={previously.description}
+				prefix="Previously, "
+				{openUrl}
+			/>
 		</div>
 	{/if}
 </div>
@@ -275,6 +239,15 @@
 		&:not(:hover) {
 			.over {
 				opacity: 0;
+			}
+		}
+
+		&.transparent {
+			opacity: 0.65;
+			transition: opacity variables.$transition;
+
+			&:hover {
+				opacity: 1;
 			}
 		}
 
@@ -294,15 +267,6 @@
 		flex-direction: column;
 		padding: 1rem;
 		gap: 0.75rem;
-
-		&.transparent {
-			opacity: 0.65;
-			transition: opacity variables.$transition;
-
-			&:hover {
-				opacity: 1;
-			}
-		}
 	}
 
 	.new {
@@ -315,20 +279,16 @@
 	}
 
 	.top {
-		@include typography.small;
-
 		display: flex;
+		align-items: baseline;
 		justify-content: space-between;
-		color: variables.$grey-4;
+		margin-top: -0.1rem;
+		gap: 0.75rem;
 
-		.repo {
-			&:hover {
-				text-decoration: underline;
-			}
+		.time {
+			@include typography.small;
 
-			.bold {
-				@include typography.bold;
-			}
+			color: variables.$grey-4;
 		}
 	}
 
@@ -360,8 +320,6 @@
 				gap: 0.5ch;
 
 				.title {
-					@include typography.bold;
-
 					overflow: hidden;
 					flex: 0 1 auto;
 					text-overflow: ellipsis;
@@ -436,32 +394,6 @@
 			content: '';
 			inset: 0 0 0 auto;
 			pointer-events: none;
-		}
-	}
-
-	.description {
-		@include typography.base;
-
-		display: -webkit-box;
-		overflow: hidden;
-		width: 100%;
-		-webkit-box-orient: vertical;
-		color: variables.$grey-4;
-		-webkit-line-clamp: 2;
-		word-wrap: break-word;
-
-		.strong {
-			color: variables.$white;
-
-			&.clickable:hover {
-				text-decoration: underline;
-			}
-		}
-
-		.image {
-			display: inline;
-			border-radius: 50%;
-			vertical-align: sub;
 		}
 	}
 

@@ -23,6 +23,13 @@ export type NotificationData = {
 	author?: User;
 	title: string;
 	description: string;
+	// description: Array<
+	// 	| string
+	// 	| {
+	// 			text: string;
+	// 			type: 'bold' | 'italic';
+	// 	  }
+	// >;
 	priority?: {
 		label: string;
 		value: number;
@@ -39,7 +46,7 @@ export type NotificationData = {
 	url?: string;
 	previously?: {
 		author?: User;
-		description: string;
+		description: NotificationData['description'];
 	};
 };
 
