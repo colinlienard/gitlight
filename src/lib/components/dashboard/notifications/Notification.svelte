@@ -126,31 +126,29 @@
 			<NotificationDescription {author} {description} {openUrl} />
 			<p class="time">{displayTime}</p>
 		</div>
-		<Tooltip content={title} position="bottom left" width="calc(100% - 2.5rem)" hover>
-			<div class="main">
-				<span class="icon-container">
-					<svelte:component this={icon} />
-				</span>
-				<div class="texts">
-					<div class="title-container">
-						<h3 class="title">{title}</h3>
-						{#if number}
-							<span class="number">#{number}</span>
-						{/if}
-					</div>
-					{#if priority && $settings.showPriority}
-						<div class="priority {priority.value > 0 ? 'up' : 'down'}">
-							{#if priority.value > 0}
-								<PriorityUpIcon />
-							{:else}
-								<PriorityDownIcon />
-							{/if}
-							<span>{priority.label}</span>
-						</div>
+		<div class="main" class:has-priority={priority && $settings.showPriority}>
+			<span class="icon-container">
+				<svelte:component this={icon} />
+			</span>
+			<div class="texts">
+				<div class="title-container">
+					<h3 class="title" on:mouseup={handleOpenInBrowser} role="presentation">{title}</h3>
+					{#if number}
+						<span class="number">#{number}</span>
 					{/if}
 				</div>
+				{#if priority && $settings.showPriority}
+					<div class="priority {priority.value > 0 ? 'up' : 'down'}">
+						{#if priority.value > 0}
+							<PriorityUpIcon />
+						{:else}
+							<PriorityDownIcon />
+						{/if}
+						<span>{priority.label}</span>
+					</div>
+				{/if}
 			</div>
-		</Tooltip>
+		</div>
 		{#if labels && labels.length}
 			<ul class="labels">
 				{#each labels as label}
@@ -295,7 +293,6 @@
 	.main {
 		display: flex;
 		width: 100%;
-		align-items: center;
 		gap: 0.5rem;
 
 		.icon-container {
@@ -311,6 +308,7 @@
 			display: flex;
 			overflow: hidden;
 			flex-direction: column;
+			margin-top: 0.35rem;
 
 			.title-container {
 				@include typography.base;
@@ -320,14 +318,30 @@
 				gap: 0.5ch;
 
 				.title {
+					display: inline;
 					overflow: hidden;
 					flex: 0 1 auto;
+					cursor: pointer;
 					text-overflow: ellipsis;
 					white-space: nowrap;
 				}
 
 				.number {
 					color: variables.$blue-3;
+				}
+
+				&:hover {
+					display: unset;
+					padding-right: 3rem;
+
+					.title {
+						text-decoration: underline;
+						white-space: unset;
+					}
+
+					.number {
+						text-decoration: underline;
+					}
 				}
 			}
 
@@ -349,6 +363,16 @@
 				:global(svg) {
 					height: 1rem;
 				}
+			}
+		}
+
+		&.has-priority {
+			.icon-container {
+				margin-top: 0.2rem;
+			}
+
+			.texts {
+				margin-top: 0;
 			}
 		}
 	}
