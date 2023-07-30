@@ -34,21 +34,14 @@
 		priority,
 		time,
 		icon,
-		owner,
-		repo,
 		number,
 		labels,
 		url,
 		previously
 	} = data;
 	let displayTime = formatRelativeDate(time);
-
-	$: repoUrl = `https://github.com/${owner}/${repo}`;
-	$: authorUrl = author && !author.bot ? `https://github.com/${author.login}` : '';
-	$: previousAuthorUrl =
-		previously?.author && !previously?.author.bot
-			? `https://github.com/${previously.author.login}`
-			: '';
+	let hoverTitle = false;
+	let hoverTitleTimeout: ReturnType<typeof setTimeout>;
 
 	const interval = setInterval(() => {
 		displayTime = formatRelativeDate(time);
@@ -103,6 +96,18 @@
 		);
 	}
 
+	function handleTitleHover(event: MouseEvent) {
+		if (event.type === 'mouseenter') {
+			hoverTitleTimeout = setTimeout(() => {
+				hoverTitle = true;
+			}, 150);
+			return;
+		}
+
+		hoverTitle = false;
+		clearTimeout(hoverTitleTimeout);
+	}
+
 	function openUrl(url: string) {
 		if (dragged) return;
 		if (window.__TAURI__) {
@@ -131,8 +136,15 @@
 				<svelte:component this={icon} />
 			</span>
 			<div class="texts">
-				<div class="title-container">
-					<h3 class="title" on:mouseup={handleOpenInBrowser} role="presentation">{title}</h3>
+				<div
+					class="title-container"
+					class:no-overflow={hoverTitle}
+					on:mouseenter={handleTitleHover}
+					on:mouseleave={handleTitleHover}
+					on:mouseup={handleOpenInBrowser}
+					role="presentation"
+				>
+					<h3 class="title">{title}</h3>
 					{#if number}
 						<span class="number">#{number}</span>
 					{/if}
@@ -330,12 +342,15 @@
 					color: variables.$blue-3;
 				}
 
-				&:hover {
+				&:hover * {
+					text-decoration: underline;
+				}
+
+				&.no-overflow {
 					display: unset;
 					padding-right: 3rem;
 
 					.title {
-						text-decoration: underline;
 						white-space: unset;
 					}
 
