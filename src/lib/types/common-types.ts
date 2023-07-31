@@ -39,7 +39,7 @@ export type NotificationData = {
 	url?: string;
 	previously?: {
 		author?: User;
-		description: string;
+		description: NotificationData['description'];
 	};
 };
 

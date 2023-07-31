@@ -100,7 +100,7 @@ export async function createNotificationData(
 				author: author
 					? { login: author.login, avatar: author.avatar_url, bot: author.type === 'Bot' }
 					: { login: commit.author.name },
-				description: 'made a commit',
+				description: '*made a commit*',
 				icon: CommitIcon,
 				url: html_url
 			};
@@ -129,7 +129,7 @@ export async function createNotificationData(
 				new Date(common.time).getTime() - new Date(created_at).getTime() < 30000
 			) {
 				author = { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
-				description = 'opened this issue';
+				description = '*opened* this issue';
 			} else if (
 				state === 'closed' &&
 				new Date(common.time).getTime() - new Date(closed_at as string).getTime() < 30000
@@ -141,7 +141,7 @@ export async function createNotificationData(
 							bot: closed_by.type === 'Bot'
 					  }
 					: undefined;
-				description = 'closed this issue';
+				description = '*closed* this issue';
 			} else if (comments) {
 				const comment = await getLatestComment(comments_url, fetchOptions);
 				if (comment) {
@@ -193,7 +193,7 @@ export async function createNotificationData(
 			const time = new Date(common.time).getTime();
 			if (state == 'open' && time - new Date(created_at).getTime() < 30000) {
 				author = { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
-				description = 'opened this pull request';
+				description = '*opened* this pull request';
 			} else if (state === 'closed' && time - new Date(closed_at as string).getTime() < 30000) {
 				author = merged_by
 					? {
@@ -202,10 +202,7 @@ export async function createNotificationData(
 							bot: merged_by.type === 'Bot'
 					  }
 					: { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
-				description = `${merged_by ? 'merged' : 'closed'} this pull request`;
-			} else if (reason === 'review_requested') {
-				author = { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
-				description = 'requested your review';
+				description = `*${merged_by ? 'merged' : 'closed'}* this pull request`;
 			} else if (review_comments || comments || commits) {
 				const events = await Promise.all([
 					review_comments ? getLatestComment(review_comments_url, fetchOptions) : undefined,
@@ -224,11 +221,17 @@ export async function createNotificationData(
 					},
 					undefined
 				);
-				if (event) {
+				if (event && new Date(event.time).getTime() - time < 30000) {
 					author = event.author;
 					description = event.description;
 					if (event.url) url = event.url;
+				} else if (reason === 'review_requested') {
+					author = { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
+					description = '*requested your review*';
 				}
+			} else if (reason === 'review_requested') {
+				author = { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
+				description = '*requested your review*';
 			}
 
 			if (!firstTime && previous?.description === description) return null;
@@ -359,7 +362,7 @@ async function getLatestComment(
 		bot: comment.user.type === 'Bot'
 	};
 	const body = removeMarkdownSymbols(comment.body).slice(0, 100);
-	const description = `commented: ${body}${body.length < 100 ? '...' : ''}`;
+	const description = `*commented*: _${body}${body.length < 100 ? '...' : ''}_`;
 	return { author, description, time: comment.created_at, url: comment.html_url };
 }
 
@@ -377,7 +380,7 @@ async function getLatestCommit(
 				bot: commit.author.type === 'Bot'
 		  }
 		: { login: commit.commit.author.name };
-	const description = `committed: ${commit.commit.message}`;
+	const description = `*committed*: _${commit.commit.message}_`;
 	return { author, description, time: commit.commit.author.date };
 }
 
@@ -396,20 +399,20 @@ async function getLatestReview(
 	let description = '';
 	switch (review.state) {
 		case 'APPROVED':
-			description = 'approved';
+			description = '*approved*';
 			break;
 		case 'CHANGES_REQUESTED':
-			description = `requested changes${body ? '' : ' on'}`;
+			description = `*requested changes*${body ? '' : ' on'}`;
 			break;
 		case 'COMMENTED':
-			description = 'commented';
+			description = '*reviewed*';
 			break;
 		case 'DISMISSED':
-			description = `dismissed review${body ? '' : ' on'}`;
+			description = `*dismissed review*${body ? '' : ' on'}`;
 			break;
 	}
 	if (body) {
-		description += `: ${body}${body.length === 100 ? '...' : ''}`;
+		description += `: _${body}${body.length === 100 ? '...' : ''}_`;
 	} else {
 		description += ' this pull request';
 	}
