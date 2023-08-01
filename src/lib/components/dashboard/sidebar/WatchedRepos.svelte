@@ -3,7 +3,7 @@
 	import { ShrinkableWrapper } from '~/lib/components';
 	import { storage } from '~/lib/helpers';
 	import { RepositoryIcon } from '~/lib/icons';
-	import { loading, watchedRepos } from '~/lib/stores';
+	import { githubNotifications, loading, watchedRepos } from '~/lib/stores';
 	import type { WatchedRepo } from '~/lib/types';
 	import SidebarSection from './SidebarSection.svelte';
 
@@ -14,6 +14,31 @@
 		active: boolean;
 		repos: WatchedRepo[];
 	}[];
+
+	// Update watched repos
+	$: if (browser && !$loading) {
+		const savedWatchedRepos = storage.get('github-watched-repos');
+
+		$watchedRepos = $githubNotifications.reduce<WatchedRepo[]>((previous, current) => {
+			if (current.done) return previous;
+			const index = previous.findIndex((repo) => repo.id === current.repoId);
+			if (index > -1) {
+				const repo = previous.splice(index, 1)[0];
+				return [...previous, { ...repo, number: repo.number + 1 }];
+			}
+			return [
+				...previous,
+				{
+					id: current.repoId,
+					name: current.repo,
+					ownerName: current.owner,
+					ownerAvatar: current.ownerAvatar,
+					number: 1,
+					active: savedWatchedRepos?.find((repo) => repo.id === current.repoId)?.active ?? true
+				}
+			];
+		}, []);
+	}
 
 	$: watchedReposByOwner = $watchedRepos
 		.reduce<WatchedReposByOwner>((previous, current) => {
@@ -69,7 +94,7 @@
 		}));
 
 	// Save watched repos to storage
-	$: if (browser && !$loading) {
+	$: if (browser) {
 		storage.set(
 			'github-watched-repos',
 			$watchedRepos.map(({ id, active }) => ({ id, active }))
@@ -106,41 +131,45 @@
 	description="Repos from where notifications come."
 	bind:items={$watchedRepos}
 >
-	{#each watchedReposByOwner as { name, avatar, number, active, repos }}
-		{#if repos.length === 1}
-			<button
-				class="wrapper"
-				class:active={repos[0].active}
-				on:click={handleToggleRepo(repos[0].id)}
-			>
-				<img class="image" src={avatar} alt="" />
-				<h3 class="name">{name}/{repos[0].name}</h3>
-				<span class="number">{number}</span>
-			</button>
-		{:else}
-			<ShrinkableWrapper>
+	{#if $watchedRepos.length}
+		{#each watchedReposByOwner as { name, avatar, number, active, repos }}
+			{#if repos.length === 1}
 				<button
-					slot="header"
-					class="wrapper smaller"
-					class:active
-					on:click={handleToggleOwner(name, !active)}
+					class="wrapper"
+					class:active={repos[0].active}
+					on:click={handleToggleRepo(repos[0].id)}
 				>
 					<img class="image" src={avatar} alt="" />
-					<h3 class="name">{name}</h3>
+					<h3 class="name">{name}/{repos[0].name}</h3>
 					<span class="number">{number}</span>
 				</button>
-				{#each repos as { id, name, number, active }}
-					<button class="wrapper" class:active on:click={handleToggleRepo(id)}>
-						<div class="repo-icon">
-							<RepositoryIcon />
-						</div>
-						<h4 class="name">{name}</h4>
+			{:else}
+				<ShrinkableWrapper>
+					<button
+						slot="header"
+						class="wrapper smaller"
+						class:active
+						on:click={handleToggleOwner(name, !active)}
+					>
+						<img class="image" src={avatar} alt="" />
+						<h3 class="name">{name}</h3>
 						<span class="number">{number}</span>
 					</button>
-				{/each}
-			</ShrinkableWrapper>
-		{/if}
-	{/each}
+					{#each repos as { id, name, number, active }}
+						<button class="wrapper" class:active on:click={handleToggleRepo(id)}>
+							<div class="repo-icon">
+								<RepositoryIcon />
+							</div>
+							<h4 class="name">{name}</h4>
+							<span class="number">{number}</span>
+						</button>
+					{/each}
+				</ShrinkableWrapper>
+			{/if}
+		{/each}
+	{:else}
+		<p class="empty">No repositories to display</p>
+	{/if}
 </SidebarSection>
 
 <style lang="scss">
@@ -218,5 +247,9 @@
 		.number {
 			color: variables.$grey-4;
 		}
+	}
+
+	.empty {
+		color: variables.$grey-4;
 	}
 </style>
