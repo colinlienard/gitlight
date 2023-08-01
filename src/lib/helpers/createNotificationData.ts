@@ -1,4 +1,5 @@
 import { page } from '$app/stores';
+import { getDiscussionUrl } from "$lib/helpers/searchNotificationHelper";
 import {
 	ClosedIssueIcon,
 	CommitIcon,
@@ -43,10 +44,11 @@ type PullRequestEvent = {
 type FetchOptions = Parameters<typeof fetchGithub>[1];
 
 export async function createNotificationData(
-	{ id, repository, subject, unread: isUnread, updated_at, reason }: GithubNotification,
+	githubNotification: GithubNotification,
 	savedNotifications: SavedNotifications,
 	firstTime: boolean
 ): Promise<NotificationData | null> {
+  const { id, repository, subject, unread: isUnread, updated_at, reason } = githubNotification
 	const previous = Array.isArray(savedNotifications)
 		? savedNotifications.find((n) => n.id === id)
 		: undefined;
@@ -264,14 +266,21 @@ export async function createNotificationData(
 			break;
 		}
 
-		case 'Discussion':
-			value = {
-				...common,
-				description: 'New activity on discussion',
-				icon: DiscussionIcon
-			};
-			break;
-
+		case 'Discussion': {
+      const url = await getDiscussionUrl(githubNotification).then(({url, latestCommentId}) => {
+        if (latestCommentId) {
+          url += '#discussioncomment-' + latestCommentId
+        }
+        return url;
+      });
+      value = {
+        ...common,
+        description: 'New activity on discussion',
+        icon: DiscussionIcon,
+        url: url
+      };
+      break;
+    }
 		case 'CheckSuite': {
 			const splited = subject.title.split(' ');
 			const workflowName = splited[0];

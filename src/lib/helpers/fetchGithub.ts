@@ -26,11 +26,10 @@ export async function fetchGithub<T = void>(url: string, options?: Options): Pro
 		cache: options?.noCache ? 'no-store' : undefined
 	});
 
-	if (options?.method) return undefined as T;
+	if (options?.method === "PATCH") return undefined as T;
 
 	if (response.ok) {
-		const data = await response.json();
-		return data;
+    return await response.json();
 	}
 
 	throw new Error(`${response.status}`);
