@@ -16,11 +16,11 @@ export const getLatestDiscussionCommentId = (comments: DiscussionCommentEdge[]) 
 		.reduce((a, b) => (a.node.createdAt > b.node.createdAt ? a : b))?.node.databaseId;
 
 export interface GraphQLSearch {
-  data: {
-    search: {
-      edges: DiscussionEdge[];
-    };
-  };
+	data: {
+		search: {
+			edges: DiscussionEdge[];
+		};
+	};
 }
 
 export interface DiscussionEdge {

@@ -1,5 +1,5 @@
 import { page } from '$app/stores';
-import { getDiscussionUrl } from "$lib/helpers/searchNotificationHelper";
+import { getDiscussionUrl } from '$lib/helpers/searchNotificationHelper';
 import {
 	ClosedIssueIcon,
 	CommitIcon,
@@ -48,7 +48,7 @@ export async function createNotificationData(
 	savedNotifications: SavedNotifications,
 	firstTime: boolean
 ): Promise<NotificationData | null> {
-  const { id, repository, subject, unread: isUnread, updated_at, reason } = githubNotification
+	const { id, repository, subject, unread: isUnread, updated_at, reason } = githubNotification;
 	const previous = Array.isArray(savedNotifications)
 		? savedNotifications.find((n) => n.id === id)
 		: undefined;
@@ -270,20 +270,20 @@ export async function createNotificationData(
 		}
 
 		case 'Discussion': {
-      const url = await getDiscussionUrl(githubNotification).then(({url, latestCommentId}) => {
-        if (latestCommentId) {
-          url += '#discussioncomment-' + latestCommentId
-        }
-        return url;
-      });
-      value = {
-        ...common,
-        description: 'New activity on discussion',
-        icon: DiscussionIcon,
-        url: url
-      };
-      break;
-    }
+			const url = await getDiscussionUrl(githubNotification).then(({ url, latestCommentId }) => {
+				if (latestCommentId) {
+					url += '#discussioncomment-' + latestCommentId;
+				}
+				return url;
+			});
+			value = {
+				...common,
+				description: 'New activity on discussion',
+				icon: DiscussionIcon,
+				url: url
+			};
+			break;
+		}
 		case 'CheckSuite': {
 			const splited = subject.title.split(' ');
 			const workflowName = splited[0];
