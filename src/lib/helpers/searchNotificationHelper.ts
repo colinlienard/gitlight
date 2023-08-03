@@ -75,7 +75,7 @@ export async function getDiscussionUrl(notification: GithubNotification): Promis
 					notification.repository.full_name,
 					notification.subject.title,
 					notification.updated_at
-				)}",        
+				)}"
 			  type: DISCUSSION
         first: 10
     ) {
