@@ -1,4 +1,5 @@
 import { page } from '$app/stores';
+import { getDiscussionUrl } from '$lib/helpers/searchNotificationHelper';
 import {
 	ClosedIssueIcon,
 	CommitIcon,
@@ -43,10 +44,11 @@ type PullRequestEvent = {
 type FetchOptions = Parameters<typeof fetchGithub>[1];
 
 export async function createNotificationData(
-	{ id, repository, subject, unread: isUnread, updated_at, reason }: GithubNotification,
+	githubNotification: GithubNotification,
 	savedNotifications: SavedNotifications,
 	firstTime: boolean
 ): Promise<NotificationData | null> {
+	const { id, repository, subject, unread: isUnread, updated_at, reason } = githubNotification;
 	const previous = Array.isArray(savedNotifications)
 		? savedNotifications.find((n) => n.id === id)
 		: undefined;
@@ -267,14 +269,32 @@ export async function createNotificationData(
 			break;
 		}
 
-		case 'Discussion':
+		case 'Discussion': {
+			const data = await getDiscussionUrl(githubNotification).then(({ url, latestCommentEdge }) => {
+				if (!latestCommentEdge) {
+					return {
+						description: 'New activity on discussion'
+					};
+				}
+				url += '#discussioncomment-' + latestCommentEdge.node.databaseId;
+				const author = latestCommentEdge.node.author;
+				return {
+					author: {
+						login: author.login,
+						avatar: author.avatarUrl,
+						bot: author.__typename === 'Bot'
+					},
+					description: commentBodyToDescription(latestCommentEdge.node.bodyText),
+					url
+				};
+			});
 			value = {
 				...common,
-				description: 'New activity on discussion',
+				...data,
 				icon: DiscussionIcon
 			};
 			break;
-
+		}
 		case 'CheckSuite': {
 			const splited = subject.title.split(' ');
 			const workflowName = splited[0];
@@ -349,6 +369,10 @@ export async function createNotificationData(
 	};
 }
 
+const commentBodyToDescription = (body: string) => {
+	return `*commented*: _${body.slice(0, 100)}${body.length > 100 ? '...' : ''}_`;
+};
+
 async function getLatestComment(
 	url: string,
 	fetchOptions: FetchOptions
@@ -361,8 +385,8 @@ async function getLatestComment(
 		avatar: comment.user.avatar_url,
 		bot: comment.user.type === 'Bot'
 	};
-	const body = removeMarkdownSymbols(comment.body).slice(0, 100);
-	const description = `*commented*: _${body}${body.length < 100 ? '...' : ''}_`;
+	const body = removeMarkdownSymbols(comment.body);
+	const description = commentBodyToDescription(body);
 	return { author, description, time: comment.created_at, url: comment.html_url };
 }
 
