@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { PUBLIC_SITE_URL } from '$env/static/public';
-	import { Button, Footer, IconButton, Tooltip } from '~/lib/components';
+	import { Button, Footer, IconButton } from '~/lib/components';
 	import { ArrowRightIcon, GithubIcon, GitlabIcon } from '~/lib/icons';
 
 	let onTauriApp = true;
@@ -30,15 +30,23 @@
 		<p class="description">You will be able to log in to the other provider afterward.</p>
 		<span />
 		<Button
-			href={onTauriApp ? `${PUBLIC_SITE_URL}/auth/login?from_app=true` : '/auth/login'}
+			href={onTauriApp
+				? `${PUBLIC_SITE_URL}/auth/github/login?from_app=true`
+				: '/auth/github/login'}
 			external={onTauriApp && import.meta.env.PROD}
 		>
 			<GithubIcon />
 			Log in to GitHub
 		</Button>
-		<Tooltip content="Coming soon!" position="bottom" hover>
-			<Button disabled><GitlabIcon />Log in to GitLab</Button>
-		</Tooltip>
+		<Button
+			href={onTauriApp
+				? `${PUBLIC_SITE_URL}/auth/gitlab/login?from_app=true`
+				: '/auth/gitlab/login'}
+			external={onTauriApp && import.meta.env.PROD}
+		>
+			<GitlabIcon />
+			Log in to GitLab
+		</Button>
 	</main>
 	<Footer />
 </div>

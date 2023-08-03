@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import { AUTH_SECRET, AUTH_GITHUB_ID, AUTH_GITHUB_SECRET } from '$env/static/private';
 
-export async function GET({ url, cookies }) {
+export async function GET({ url }) {
 	const { searchParams, origin } = url;
 
 	if (
@@ -19,18 +19,14 @@ export async function GET({ url, cookies }) {
 			body: JSON.stringify({
 				client_id: AUTH_GITHUB_ID,
 				client_secret: AUTH_GITHUB_SECRET,
-				redirect_uri: `${origin}/auth/callback`,
+				redirect_uri: `${origin}/auth/github/callback`,
 				code
 			})
 		});
 
 		if (response.ok) {
-			const data = await response.json();
-			cookies.set('access_token', data.access_token, {
-				path: '/',
-				expires: new Date('Tue, 19 Jan 2038 04:14:07 GMT')
-			});
-			const url = `/dashboard?access_token=${data.access_token}`;
+			const { access_token } = await response.json();
+			const url = `/dashboard?access_token=${access_token}`;
 			if (searchParams.has('from_app')) {
 				throw redirect(302, `${url}&from_app=true`);
 			}
