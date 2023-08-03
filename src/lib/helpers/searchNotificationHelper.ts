@@ -2,18 +2,7 @@
 import { fetchGithub } from '$lib/helpers/fetchGithub';
 import type { GithubNotification } from '$lib/types';
 
-const addHours = (date: string, hours: number) =>
-	new Date(new Date(date).getTime() + hours * 36e5).toISOString();
-
-const queryString = (repo: string, title: string, lastUpdated: string) =>
-	`${title} in:title repo:${repo} updated:>${addHours(lastUpdated, -2)}`;
 export type ViewerSubscription = 'IGNORED' | 'SUBSCRIBED' | 'UNSUBSCRIBED';
-
-export const getLatestDiscussionCommentId = (comments: DiscussionCommentEdge[]) =>
-	comments
-		.flatMap((comment) => comment.node.replies.edges)
-		.concat([comments.at(-1) || ({} as DiscussionCommentEdge)])
-		.reduce((a, b) => (a.node.createdAt > b.node.createdAt ? a : b))?.node.databaseId;
 
 export interface GraphQLSearch {
 	data: {
@@ -34,10 +23,19 @@ export interface DiscussionEdge {
 	};
 }
 
+// https://docs.github.com/en/graphql/reference/interfaces#actor
+export interface Actor {
+	login: string;
+	avatarUrl: string;
+	__typename: 'Bot' | 'EnterpriseUserAccount' | 'Mannequin' | 'Organization' | 'User';
+}
+
 export interface DiscussionCommentEdge {
 	node: {
 		databaseId: string | number;
 		createdAt: string;
+		author: Actor;
+		bodyText: string;
 		replies: {
 			edges: DiscussionSubCommentEdge[];
 		};
@@ -48,47 +46,76 @@ export interface DiscussionSubCommentEdge {
 	node: {
 		databaseId: string | number;
 		createdAt: string;
+		author: Actor;
+		bodyText: string;
 	};
 }
 
+const addHours = (date: string, hours: number) =>
+	new Date(new Date(date).getTime() + hours * 36e5).toISOString();
+
+const queryString = (repo: string, title: string, lastUpdated: string) =>
+	`${title} in:title repo:${repo} updated:>${addHours(lastUpdated, -2)}`;
+
+export const getLatestDiscussionCommentEdge = (comments: DiscussionCommentEdge[]) =>
+	comments
+		.flatMap((comment) => comment.node.replies.edges)
+		.concat([comments.at(-1) || ({} as DiscussionCommentEdge)])
+		.reduce((a, b) => (a.node.createdAt > b.node.createdAt ? a : b));
+
 export async function getDiscussionUrl(notification: GithubNotification): Promise<{
 	url: string;
-	latestCommentId: string | number | undefined;
+	latestCommentEdge: DiscussionSubCommentEdge | undefined;
 }> {
 	const response: GraphQLSearch = await fetchGithub('graphql', {
 		method: 'POST',
 		body: {
 			query: `{
-      search(query:"${queryString(
-				notification.repository.full_name,
-				notification.subject.title,
-				notification.updated_at
-			)}", type: DISCUSSION, first: 10) {
-          edges {
-              node {
-                  ... on Discussion {
-                      viewerSubscription
-                      title
-                      url
-                      comments(last: 100) {
+        search(query:"${queryString(
+					notification.repository.full_name,
+					notification.subject.title,
+					notification.updated_at
+				)}",        
+			  type: DISCUSSION
+        first: 10
+    ) {
+        edges {
+            node {
+                ... on Discussion {
+                    viewerSubscription
+                    title
+                    url
+                    comments(last: 100) {
                         edges {
-                          node {
-                            databaseId
-                            createdAt
-                            replies(last: 1) {
-                              edges {
-                                node {
-                                  databaseId
-                                  createdAt
+                            node {
+                                author {
+                                    login
+                                    avatarUrl
+                                    __typename
                                 }
-                              }
+                                bodyText
+                                databaseId
+                                createdAt
+                                replies(last: 1) {
+                                    edges {
+                                        node {
+                                            databaseId
+                                            createdAt
+                                            author {
+                                                login
+                                                avatarUrl
+                                                __typename
+                                            }
+                                            bodyText
+                                        }
+                                    }
+                                }
                             }
-                          }
                         }
-                      }
-                  }
-              }
-          }
+                    }
+                }
+            }
+        }
       }
     }`
 		}
@@ -103,13 +130,13 @@ export async function getDiscussionUrl(notification: GithubNotification): Promis
 
 	const comments = edges[0]?.node.comments.edges;
 
-	let latestCommentId: string | number | undefined;
+	let latestCommentEdge: DiscussionSubCommentEdge | undefined;
 	if (comments?.length) {
-		latestCommentId = getLatestDiscussionCommentId(comments);
+		latestCommentEdge = getLatestDiscussionCommentEdge(comments);
 	}
 
 	return {
 		url: edges[0]?.node.url,
-		latestCommentId
+		latestCommentEdge
 	};
 }

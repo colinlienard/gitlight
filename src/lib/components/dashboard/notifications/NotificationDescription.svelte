@@ -72,6 +72,7 @@
 	.description {
 		@include typography.base;
 
+		hyphens: auto;
 		display: -webkit-box;
 		overflow: hidden;
 		width: 100%;

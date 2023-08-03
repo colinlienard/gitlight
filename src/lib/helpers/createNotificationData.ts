@@ -270,17 +270,28 @@ export async function createNotificationData(
 		}
 
 		case 'Discussion': {
-			const url = await getDiscussionUrl(githubNotification).then(({ url, latestCommentId }) => {
-				if (latestCommentId) {
-					url += '#discussioncomment-' + latestCommentId;
+			const data = await getDiscussionUrl(githubNotification).then(({ url, latestCommentEdge }) => {
+				if (!latestCommentEdge) {
+					return {
+						description: 'New activity on discussion'
+					};
 				}
-				return url;
+				url += '#discussioncomment-' + latestCommentEdge.node.databaseId;
+				const author = latestCommentEdge.node.author;
+				return {
+					author: {
+						login: author.login,
+						avatar: author.avatarUrl,
+						bot: author.__typename === 'Bot'
+					},
+					description: commentBodyToDescription(latestCommentEdge.node.bodyText),
+					url
+				};
 			});
 			value = {
 				...common,
-				description: 'New activity on discussion',
-				icon: DiscussionIcon,
-				url: url
+				...data,
+				icon: DiscussionIcon
 			};
 			break;
 		}
@@ -358,6 +369,10 @@ export async function createNotificationData(
 	};
 }
 
+const commentBodyToDescription = (body: string) => {
+	return `*commented*: _${body.slice(0, 100)}${body.length > 100 ? '...' : ''}_`;
+};
+
 async function getLatestComment(
 	url: string,
 	fetchOptions: FetchOptions
@@ -370,8 +385,8 @@ async function getLatestComment(
 		avatar: comment.user.avatar_url,
 		bot: comment.user.type === 'Bot'
 	};
-	const body = removeMarkdownSymbols(comment.body).slice(0, 100);
-	const description = `*commented*: _${body}${body.length < 100 ? '...' : ''}_`;
+	const body = removeMarkdownSymbols(comment.body);
+	const description = commentBodyToDescription(body);
 	return { author, description, time: comment.created_at, url: comment.html_url };
 }
 
