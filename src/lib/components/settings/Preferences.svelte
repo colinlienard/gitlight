@@ -41,6 +41,7 @@
 <h3>Interface</h3>
 <Switch label="Hide sidebar" bind:active={$settings.sidebarHidden} />
 <Switch label="Show notifications sync timer" bind:active={$settings.showNotificationsSyncTimer} />
+<Switch label="Show notifications repo" bind:active={$settings.showNotificationsRepo} />
 <InlineSelect
 	label="Notification axis"
 	options={axisOptions}
