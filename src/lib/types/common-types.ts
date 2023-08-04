@@ -89,6 +89,7 @@ export type Settings = {
 	showNotificationsSyncTimer: boolean;
 	readWhenOpenInBrowser: boolean;
 	readWhenPin: boolean;
+	showNotificationsRepo: boolean;
 	notificationNumber: number;
 	notificationAxis: 'Auto' | 'Vertical' | 'Horizontal';
 	sidebarHidden: boolean;

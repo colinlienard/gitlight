@@ -34,12 +34,15 @@
 		priority,
 		time,
 		icon,
+		owner,
+		repo,
 		number,
 		labels,
 		url,
 		previously
 	} = data;
 	let displayTime = formatRelativeDate(time);
+	let repoUrl = `https://github.com/${owner}/${repo}`;
 	let hoverTitle = false;
 	let hoverTitleTimeout: ReturnType<typeof setTimeout>;
 
@@ -127,9 +130,19 @@
 		{#if isNew && unread}
 			<div class="new" />
 		{/if}
-		<div class="top">
+		{#if $settings.showNotificationsRepo}
+			<div class="top">
+				<button class="repo" on:mouseup={() => openUrl(repoUrl)}>
+					{owner}/<span class="bold">{repo}</span>
+				</button>
+				<p class="time">{displayTime}</p>
+			</div>
+		{/if}
+		<div class="description">
 			<NotificationDescription {author} {description} {openUrl} />
-			<p class="time">{displayTime}</p>
+			{#if !$settings.showNotificationsRepo}
+				<p class="time">{displayTime}</p>
+			{/if}
 		</div>
 		<div class="main" class:has-priority={priority && $settings.showPriority}>
 			<span class="icon-container">
@@ -292,14 +305,38 @@
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
+		gap: 0.5rem;
+
+		.repo {
+			overflow: hidden;
+			width: 100%;
+			text-align: left;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+
+			&:hover {
+				text-decoration: underline;
+			}
+
+			.bold {
+				@include typography.bold;
+			}
+		}
+	}
+
+	.description {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
 		margin-top: -0.1rem;
 		gap: 0.75rem;
+	}
 
-		.time {
-			@include typography.small;
+	.time,
+	.repo {
+		@include typography.small;
 
-			color: variables.$grey-4;
-		}
+		color: variables.$grey-4;
 	}
 
 	.main {
