@@ -75,9 +75,9 @@
 			$settings.activateNotifications &&
 			($settings.pushNotificationFromUser || pushNotification.author?.login !== user?.login)
 		) {
-			const { author, title, description, repo } = pushNotification;
+			const { author, title, description } = pushNotification;
 			sendNotification({
-				title: `${repo}: ${author ? `${author.login} ` : ''}${description}`,
+				title: `${author ? `${author.login} ` : ''}${description.replace(/(\*|_)/g, '')}`,
 				body: title
 			});
 			invoke('update_tray', { newIcon: true });
