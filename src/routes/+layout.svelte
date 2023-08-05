@@ -16,7 +16,7 @@
 				let accessToken = (payload as string).split('=')[1];
 				if (accessToken) {
 					accessToken = accessToken.replace('/', '');
-					storage.set('access-token', accessToken);
+					storage.set('github-access-token', accessToken);
 					goto('/dashboard');
 				}
 			});

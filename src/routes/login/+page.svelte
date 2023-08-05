@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { PUBLIC_SITE_URL } from '$env/static/public';
-	import { Button, Footer, IconButton } from '~/lib/components';
+	import { Footer, GithubLoginButton, GitlabLoginButton, IconButton } from '~/lib/components';
 	import { ArrowRightIcon, GithubIcon, GitlabIcon } from '~/lib/icons';
 
 	let onTauriApp = true;
@@ -29,24 +28,14 @@
 		<h2 class="title">Log in to start monitoring your notifications</h2>
 		<p class="description">You will be able to log in to the other provider afterward.</p>
 		<span />
-		<Button
-			href={onTauriApp
-				? `${PUBLIC_SITE_URL}/auth/github/login?from_app=true`
-				: '/auth/github/login'}
-			external={onTauriApp && import.meta.env.PROD}
-		>
+		<GithubLoginButton>
 			<GithubIcon />
 			Log in to GitHub
-		</Button>
-		<Button
-			href={onTauriApp
-				? `${PUBLIC_SITE_URL}/auth/gitlab/login?from_app=true`
-				: '/auth/gitlab/login'}
-			external={onTauriApp && import.meta.env.PROD}
-		>
+		</GithubLoginButton>
+		<GitlabLoginButton>
 			<GitlabIcon />
 			Log in to GitLab
-		</Button>
+		</GitlabLoginButton>
 	</main>
 	<Footer />
 </div>

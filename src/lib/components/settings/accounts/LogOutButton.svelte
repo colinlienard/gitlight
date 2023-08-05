@@ -3,15 +3,25 @@
 	import { Button } from '~/lib/components';
 	import { storage } from '~/lib/helpers';
 
+	export let provider: 'github' | 'gitlab';
+
 	let timeout: ReturnType<typeof setTimeout> | undefined;
 	let active = false;
 
 	function handleMouseDown() {
 		active = true;
 		timeout = setTimeout(() => {
-			storage.remove('user');
-			storage.remove('access-token');
-			goto(`/login${window.__TAURI__ ? '?desktop=true' : ''}`);
+			storage.remove(`${provider}-user`);
+			storage.remove(`${provider}-access-token`);
+
+			if (
+				(provider === 'github' && storage.has('gitlab-user')) ||
+				(provider === 'gitlab' && storage.has('github-user'))
+			) {
+				window.location.reload();
+			} else {
+				goto(`/login${window.__TAURI__ ? '?desktop=true' : ''}`);
+			}
 		}, 1000);
 	}
 

@@ -1,50 +1,40 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { Button, Tooltip } from '~/lib/components';
-	import { GithubIcon, GitlabIcon } from '~/lib/icons';
+	import { GithubLoginButton, GitlabLoginButton } from '~/lib/components';
+	import type { User } from '~/lib/types';
 	import LogOutButton from './LogOutButton.svelte';
 
-	const user = $page.data.session?.user;
+	export let title: string;
+	export let provider: 'github' | 'gitlab';
+	export let user: User | undefined;
 </script>
 
-<ul class="accounts-wrapper">
-	<li class="account">
-		<div class="header">
-			<GithubIcon />
-			<h4 class="title">GitHub</h4>
-		</div>
-		<div class="content">
+<li class="account">
+	<div class="header">
+		<slot name="icon" />
+		<h4 class="title">{title}</h4>
+	</div>
+	<div class="content">
+		{#if user}
 			<figure class="user">
-				<img class="image" src={user?.avatar} alt="" />
+				<img class="image" src={user.avatar} alt="" />
 				<figcaption class="user-info">
 					<p class="sub">Logged in as</p>
-					<p class="name">{user?.name}</p>
+					<p class="name">{user.name}</p>
 				</figcaption>
 			</figure>
-			<LogOutButton />
-		</div>
-	</li>
-	<li class="account">
-		<div class="header">
-			<GitlabIcon />
-			<h4 class="title">GitLab</h4>
-		</div>
-		<div class="content">
+			<LogOutButton {provider} />
+		{:else}
 			<p class="sub">Not logged in.</p>
-			<Tooltip content="Coming soon!" position="bottom" hover>
-				<Button small disabled>Log in</Button>
-			</Tooltip>
-		</div>
-	</li>
-</ul>
+			{#if provider === 'github'}
+				<GithubLoginButton>Log in</GithubLoginButton>
+			{:else if provider === 'gitlab'}
+				<GitlabLoginButton>Log in</GitlabLoginButton>
+			{/if}
+		{/if}
+	</div>
+</li>
 
 <style lang="scss">
-	.accounts-wrapper {
-		display: grid;
-		gap: 1rem;
-		grid-template-columns: 1fr 1fr;
-	}
-
 	.account {
 		@include mixins.box;
 

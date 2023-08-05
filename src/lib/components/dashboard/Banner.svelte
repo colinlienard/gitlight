@@ -19,7 +19,7 @@
 	}
 
 	function handleClick() {
-		const accessToken = $page.data.session?.accessToken;
+		const accessToken = $page.data.session?.githubAccessToken;
 		if (accessToken) {
 			setTimeout(() => {
 				if (hasFocus) {

@@ -2,6 +2,7 @@ export * from './createNotificationData';
 export * from './debounce';
 export * from './drag-actions';
 export * from './fetchGithub';
+export * from './fetchGitlab';
 export * from './formatRelativeDate';
 export * from './getAppVersion';
 export * from './getIcon';

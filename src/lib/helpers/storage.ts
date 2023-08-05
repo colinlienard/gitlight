@@ -1,8 +1,10 @@
 import type { Priority, SavedNotifications, Settings, User } from '../types';
 
 type StorageMap = {
-	user: User;
-	'access-token': string;
+	'github-user': User;
+	'github-access-token': string;
+	'gitlab-user': User;
+	'gitlab-access-token': string;
 	settings: Settings;
 	'github-notifications': SavedNotifications;
 	'github-watched-repos': { id: string; active: boolean }[];

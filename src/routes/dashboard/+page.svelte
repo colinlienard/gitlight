@@ -8,7 +8,7 @@
 	import { error, githubNotifications, loading, savedNotifications, settings } from '~/lib/stores';
 	import type { GithubNotification, NotificationData } from '~/lib/types';
 
-	const user = $page.data.session?.user;
+	const user = $page.data.session?.githubUser;
 
 	let synced = false;
 	let mounted = false;

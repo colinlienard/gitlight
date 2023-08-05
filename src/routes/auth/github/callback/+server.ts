@@ -26,7 +26,7 @@ export async function GET({ url }) {
 
 		if (response.ok) {
 			const { access_token } = await response.json();
-			const url = `/dashboard?access_token=${access_token}`;
+			const url = `/dashboard?github_access_token=${access_token}`;
 			if (searchParams.has('from_app')) {
 				throw redirect(302, `${url}&from_app=true`);
 			}
