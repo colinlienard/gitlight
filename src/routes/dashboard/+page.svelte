@@ -234,7 +234,7 @@
 				<GitlabIcon />
 				<p class="text">GitLab</p>
 				{#if !gitlabUser}
-					<div class="tag blue">Not logged in</div>
+					<div class="tag blue">Coming soon!</div>
 				{/if}
 			</button>
 			<button
