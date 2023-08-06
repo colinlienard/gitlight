@@ -371,6 +371,7 @@
 					overflow: hidden;
 					flex: 0 1 auto;
 					cursor: pointer;
+					hyphens: auto;
 					text-overflow: ellipsis;
 					white-space: nowrap;
 				}
@@ -464,7 +465,7 @@
 
 		&::before {
 			position: absolute;
-			width: 12rem;
+			width: 8rem;
 			border-radius: 0 calc(variables.$radius - 1px) calc(variables.$radius - 1px) 0;
 			background-image: linear-gradient(to right, transparent, variables.$grey-1);
 			content: '';
