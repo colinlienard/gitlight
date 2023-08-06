@@ -19,7 +19,9 @@ export async function GET({ url }) {
 			body: JSON.stringify({
 				client_id: AUTH_GITLAB_ID,
 				client_secret: AUTH_GITLAB_SECRET,
-				redirect_uri: `${origin}/auth/gitlab/callback`,
+				redirect_uri: `${origin}/auth/gitlab/callback${
+					searchParams.has('from_app') ? '?from_app=true' : ''
+				}`,
 				grant_type: 'authorization_code',
 				code
 			})

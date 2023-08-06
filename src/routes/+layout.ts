@@ -31,29 +31,28 @@ export async function load({ url }) {
 	let gitlabUser = storage.get('gitlab-user');
 	let gitlabAccessToken = storage.get('gitlab-access-token');
 
+	const githubTokenParam = url.searchParams.get('github_access_token');
+	const gitlabTokenParam = url.searchParams.get('gitlab_access_token');
+
 	// Get GitHub access token
-	if (url.searchParams.has('github_access_token')) {
-		githubAccessToken = url.searchParams.get('github_access_token') as string;
+	if (githubTokenParam) {
+		githubAccessToken = githubTokenParam;
 		storage.set('github-access-token', githubAccessToken);
-
-		// Open the app with the access token
-		if (url.searchParams.has('from_app')) {
-			window.location.href = `gitlight://access_token=${githubAccessToken}`;
-		}
-
-		history.replaceState({}, '', '/dashboard');
 	}
 
 	// Get GitLab access token
-	if (url.searchParams.has('gitlab_access_token')) {
-		gitlabAccessToken = url.searchParams.get('gitlab_access_token') as string;
+	if (gitlabTokenParam) {
+		gitlabAccessToken = gitlabTokenParam;
 		storage.set('gitlab-access-token', gitlabAccessToken);
+	}
 
-		// Open the app with the access token
-		if (url.searchParams.has('from_app')) {
-			window.location.href = `gitlight://access_token=${gitlabAccessToken}`;
-		}
+	// Open the app with the access token
+	if (url.searchParams.has('from_app') && (githubAccessToken || gitlabAccessToken)) {
+		window.location.href = `gitlight://github_access_token=${githubAccessToken}&gitlab_access_token=${gitlabAccessToken}`;
+	}
 
+	// Remove access tokens from the URL
+	if (githubTokenParam || gitlabTokenParam) {
 		history.replaceState({}, '', '/dashboard');
 	}
 

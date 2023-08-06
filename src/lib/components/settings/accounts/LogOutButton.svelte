@@ -47,10 +47,10 @@
 		.progress {
 			position: absolute;
 			z-index: 1;
-			border-radius: variables.$radius;
+			border-radius: calc(variables.$radius - 1px);
 			background-color: currentcolor;
 			clip-path: inset(0 100% 0 0);
-			inset: 0;
+			inset: 1px;
 			opacity: 0.25;
 			pointer-events: none;
 			transition: clip-path 1s linear;

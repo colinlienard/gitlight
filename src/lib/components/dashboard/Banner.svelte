@@ -19,8 +19,9 @@
 	}
 
 	function handleClick() {
-		const accessToken = $page.data.session?.githubAccessToken;
-		if (accessToken) {
+		const githubAccessToken = $page.data.session?.githubAccessToken;
+		const gitlabAccessToken = $page.data.session?.gitlabAccessToken;
+		if (githubAccessToken || gitlabAccessToken) {
 			setTimeout(() => {
 				if (hasFocus) {
 					canDownload = true;
@@ -28,7 +29,7 @@
 			}, 500);
 
 			// Open the app with the access token
-			window.location.href = `gitlight://access_token=${accessToken}`;
+			window.location.href = `gitlight://github_access_token=${githubAccessToken}&gitlab_access_token=${gitlabAccessToken}`;
 		}
 	}
 

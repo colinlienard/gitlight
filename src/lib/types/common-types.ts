@@ -102,6 +102,7 @@ export type Settings = {
 	}>;
 	prioritySorting: boolean;
 	showPriority: boolean;
+	providerView: 'github' | 'gitlab' | 'both';
 };
 
 export type Priority = {
