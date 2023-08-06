@@ -35,7 +35,7 @@ export const settings = writable<Settings>({
 	showNotificationsSyncTimer: true,
 	readWhenOpenInBrowser: false,
 	readWhenPin: false,
-	showNotificationsRepo: false,
+	showNotificationsRepo: true,
 	notificationNumber: 50,
 	notificationAxis: 'Auto',
 	sidebarHidden: false,

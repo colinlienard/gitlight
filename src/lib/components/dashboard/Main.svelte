@@ -102,7 +102,7 @@
 
 <main class="main">
 	<Banner />
-	<header class="header">
+	<header class="header" data-tauri-drag-region>
 		<div class="wrapper">
 			{#if $settings.sidebarHidden}
 				<div transition:slide={{ axis: 'x', duration: 300, easing: cubicInOut }}>

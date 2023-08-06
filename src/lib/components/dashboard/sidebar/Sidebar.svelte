@@ -55,7 +55,7 @@
 
 <article class="sidebar">
 	<img src="/images/small-light.webp" alt="" class="gradient" />
-	<header class="header">
+	<header class="header" data-tauri-drag-region>
 		<div class="logo-container">
 			<Logo />
 			<h1 class="hero">GitLight</h1>

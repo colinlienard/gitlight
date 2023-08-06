@@ -53,7 +53,7 @@
 
 	const user = $page.data.session?.user;
 
-	// Check if an update is available every hour
+	// Check if an update is available every 30 min
 	const interval = setInterval(async () => {
 		if (!window.__TAURI__) return;
 
@@ -62,7 +62,7 @@
 		if (latest !== getAppVersion()) {
 			updateAvailable = latest;
 		}
-	}, 3600000);
+	}, 1800000);
 
 	function handleKeyDown(event: KeyboardEvent) {
 		if (!browser) return;
