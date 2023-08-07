@@ -468,7 +468,7 @@ function getPriorityValue(
 		case 'many-reactions':
 			return data && 'reactions' in data && data.reactions.total_count > 5;
 
-		case 'mentionned':
+		case 'mentioned':
 			return reason === 'mention' || reason === 'team_mention';
 
 		case 'review-request':
