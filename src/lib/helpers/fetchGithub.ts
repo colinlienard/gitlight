@@ -12,7 +12,7 @@ export async function fetchGithub<T = void>(url: string, options?: Options): Pro
 	let { accessToken } = options || {};
 	if (!accessToken) {
 		page.subscribe(({ data }) => {
-			accessToken = data.session?.accessToken || '';
+			accessToken = data.session?.githubAccessToken || '';
 		});
 	}
 

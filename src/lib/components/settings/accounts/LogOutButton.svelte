@@ -3,15 +3,25 @@
 	import { Button } from '~/lib/components';
 	import { storage } from '~/lib/helpers';
 
+	export let provider: 'github' | 'gitlab';
+
 	let timeout: ReturnType<typeof setTimeout> | undefined;
 	let active = false;
 
 	function handleMouseDown() {
 		active = true;
 		timeout = setTimeout(() => {
-			storage.remove('user');
-			storage.remove('access-token');
-			goto(`/login${window.__TAURI__ ? '?desktop=true' : ''}`);
+			storage.remove(`${provider}-user`);
+			storage.remove(`${provider}-access-token`);
+
+			if (
+				(provider === 'github' && storage.has('gitlab-user')) ||
+				(provider === 'gitlab' && storage.has('github-user'))
+			) {
+				window.location.reload();
+			} else {
+				goto(`/login${window.__TAURI__ ? '?desktop=true' : ''}`);
+			}
 		}, 1000);
 	}
 
@@ -37,10 +47,10 @@
 		.progress {
 			position: absolute;
 			z-index: 1;
-			border-radius: variables.$radius;
+			border-radius: calc(variables.$radius - 1px);
 			background-color: currentcolor;
 			clip-path: inset(0 100% 0 0);
-			inset: 0;
+			inset: 1px;
 			opacity: 0.25;
 			pointer-events: none;
 			transition: clip-path 1s linear;

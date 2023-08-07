@@ -41,7 +41,7 @@ Just follow the [Tauri prerequisites](https://tauri.app/v1/guides/getting-starte
 
 #### GitHub OAuth app
 
-The app needs to authenticate the user to GitHub, so we need to create a new OAuth GitHub application [here](https://github.com/settings/applications/new). Fill the fields and set the **Authorization callback url** to `http://localhost:5173/auth/callback`.
+The app needs to authenticate the user to GitHub, so we need to create a new OAuth GitHub application [here](https://github.com/settings/applications/new). Fill the fields and set the **Authorization callback url** to `http://localhost:5173/auth/github/callback`.
 
 Also create a unique 32 characters code here: https://generate-secret.vercel.app/32
 

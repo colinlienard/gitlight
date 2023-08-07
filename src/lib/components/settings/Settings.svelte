@@ -7,7 +7,7 @@
 	import { GearIcon } from '~/lib/icons';
 	import { settings } from '~/lib/stores';
 	import type { GithubRelease } from '~/lib/types';
-	import Accounts from './Accounts.svelte';
+	import Accounts from './accounts';
 	import App from './App.svelte';
 	import GithubSettings from './GithubSettings.svelte';
 	import Permissions from './permissions';
@@ -51,7 +51,8 @@
 		}
 	] as Tabs;
 
-	const user = $page.data.session?.user;
+	const githubUser = $page.data.session?.githubUser;
+	const gitlabUser = $page.data.session?.gitlabUser;
 
 	// Check if an update is available every 30 min
 	const interval = setInterval(async () => {
@@ -124,13 +125,25 @@
 </Tooltip>
 <Tooltip content="Accounts" hover position="bottom">
 	<button class="account-trigger" on:click={handleTrigger((tabIndex = 3))}>
-		<img
-			class="image"
-			class:loaded={imageLoaded}
-			src={user?.avatar}
-			alt=""
-			on:load={() => (imageLoaded = true)}
-		/>
+		{#if githubUser}
+			<img
+				class="image"
+				class:first={githubUser && gitlabUser}
+				class:loaded={imageLoaded}
+				src={githubUser?.avatar}
+				alt=""
+				on:load={() => (imageLoaded = true)}
+			/>
+		{/if}
+		{#if gitlabUser}
+			<img
+				class="image"
+				class:loaded={imageLoaded}
+				src={gitlabUser?.avatar}
+				alt=""
+				on:load={() => (imageLoaded = true)}
+			/>
+		{/if}
 	</button>
 </Tooltip>
 
@@ -157,6 +170,7 @@
 
 <style lang="scss">
 	.account-trigger {
+		display: flex;
 		transition: opacity variables.$transition;
 
 		&:hover {
@@ -168,6 +182,12 @@
 			height: 2rem;
 			border-radius: 50%;
 			transition: opacity variables.$transition;
+
+			&.first {
+				z-index: 1;
+				margin-right: -0.25rem;
+				outline: 0.25rem solid variables.$grey-1;
+			}
 
 			&:not(.loaded) {
 				opacity: 0;

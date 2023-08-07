@@ -2,20 +2,46 @@
 	import { sendNotification } from '@tauri-apps/api/notification';
 	import { invoke } from '@tauri-apps/api/tauri';
 	import { onDestroy, onMount } from 'svelte';
+	import { cubicInOut } from 'svelte/easing';
+	import { slide } from 'svelte/transition';
 	import { page } from '$app/stores';
-	import { Error, Main, Sidebar } from '~/lib/components';
+	import {
+		Banner,
+		DoneModal,
+		Error,
+		GithubLoginButton,
+		GitlabLoginButton,
+		Main,
+		Priorities,
+		Settings,
+		Sidebar,
+		Tooltip
+	} from '~/lib/components';
 	import { createNotificationData, fetchGithub, storage } from '~/lib/helpers';
+	import { GithubIcon, GitlabIcon, Logo, RefreshIcon } from '~/lib/icons';
 	import { error, githubNotifications, loading, savedNotifications, settings } from '~/lib/stores';
 	import type { GithubNotification, NotificationData } from '~/lib/types';
 
-	const user = $page.data.session?.user;
+	const githubUser = $page.data.session?.githubUser;
+	const gitlabUser = $page.data.session?.gitlabUser;
 
 	let synced = false;
+	let syncTime = 0;
+	let syncInterval: ReturnType<typeof setInterval>;
 	let mounted = false;
 
 	let interval = setInterval(() => {
 		fetchNotifications();
 	}, 60000);
+
+	$: if (synced && !syncTime) {
+		syncInterval = setInterval(() => {
+			syncTime += 1;
+		}, 1000);
+	} else if (!synced) {
+		syncTime = 0;
+		clearInterval(syncInterval);
+	}
 
 	async function fetchNotifications() {
 		synced = false;
@@ -73,7 +99,7 @@
 			$githubNotifications.length &&
 			pushNotification.unread &&
 			$settings.activateNotifications &&
-			($settings.pushNotificationFromUser || pushNotification.author?.login !== user?.login)
+			($settings.pushNotificationFromUser || pushNotification.author?.login !== githubUser?.login)
 		) {
 			const { author, title, description } = pushNotification;
 			sendNotification({
@@ -158,7 +184,88 @@
 
 <div class="container" class:sidebar-hidden={$settings.sidebarHidden}>
 	<Sidebar />
-	<Main {synced} />
+	<main class="main">
+		<Banner />
+		<header class="header" data-tauri-drag-region>
+			<div class="wrapper">
+				{#if $settings.sidebarHidden}
+					<div transition:slide={{ axis: 'x', duration: 300, easing: cubicInOut }}>
+						<Tooltip content="Show sidebar" position="bottom" hover>
+							<button class="logo-button" on:click={() => ($settings.sidebarHidden = false)}>
+								<Logo />
+							</button>
+						</Tooltip>
+					</div>
+				{/if}
+				<h1 class="title">Notifications</h1>
+				{#if $settings.showNotificationsSyncTimer}
+					<div class="sync-pill" class:loading={!synced}>
+						<RefreshIcon />
+						{#if synced}
+							Synced <span class="time">{syncTime}s ago</span>
+						{:else}
+							Syncing...
+						{/if}
+					</div>
+				{/if}
+			</div>
+			<div class="settings-wrapper">
+				<Priorities />
+				<Settings />
+			</div>
+		</header>
+		<nav class="nav">
+			<button
+				class="tab"
+				class:selected={$settings.providerView === 'github'}
+				on:click={() => ($settings.providerView = 'github')}
+			>
+				<GithubIcon />
+				<p class="text">GitHub</p>
+				{#if !githubUser}
+					<div class="tag blue">Not logged in</div>
+				{/if}
+			</button>
+			<button
+				class="tab"
+				class:selected={$settings.providerView === 'gitlab'}
+				on:click={() => ($settings.providerView = 'gitlab')}
+			>
+				<GitlabIcon />
+				<p class="text">GitLab</p>
+				{#if !gitlabUser}
+					<div class="tag blue">Coming soon!</div>
+				{/if}
+			</button>
+			<button
+				class="tab"
+				class:selected={$settings.providerView === 'both'}
+				on:click={() => ($settings.providerView = 'both')}
+			>
+				<p class="text">Both</p>
+			</button>
+			<DoneModal />
+		</nav>
+		{#if $settings.providerView === 'github' && !githubUser}
+			<div class="login-container">
+				<div class="text">Manage your GitHub and GitLab notifications at the same time.</div>
+				<GithubLoginButton>
+					<GithubIcon />
+					Log in to GitHub
+				</GithubLoginButton>
+			</div>
+		{:else if $settings.providerView === 'gitlab' && !gitlabUser}
+			<div class="login-container">
+				<div class="text">Manage your GitHub and GitLab notifications at the same time.</div>
+				<GitlabLoginButton>
+					<GitlabIcon />
+					Log in to Gitlab
+				</GitlabLoginButton>
+			</div>
+		{:else}
+			<Main />
+		{/if}
+	</main>
 	<Error />
 </div>
 
@@ -175,6 +282,158 @@
 		&.sidebar-hidden {
 			width: calc(100vw + 20rem);
 			translate: -20rem;
+		}
+	}
+
+	.main {
+		display: flex;
+		width: calc(100% - 20rem);
+		height: 100vh;
+		flex-direction: column;
+
+		.header {
+			z-index: 1;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 3rem 2rem 2rem;
+
+			.wrapper {
+				display: flex;
+				align-items: center;
+			}
+
+			.logo-button {
+				margin-right: 1rem;
+			}
+
+			.title {
+				@include typography.heading-1;
+			}
+
+			.sync-pill {
+				display: flex;
+				align-items: center;
+				padding: 0.25rem 0.5rem;
+				border-radius: variables.$radius;
+				margin: 0 1rem;
+				background-color: variables.$grey-3;
+				color: variables.$grey-4;
+				gap: 0.25rem;
+
+				&:not(:hover) .time {
+					display: none;
+				}
+
+				:global(svg) {
+					height: 1.25rem;
+					color: variables.$green;
+				}
+
+				&.loading {
+					color: variables.$yellow;
+
+					:global(svg) {
+						animation: loading 1s linear infinite;
+						color: variables.$yellow;
+
+						@keyframes loading {
+							0% {
+								rotate: 0deg;
+							}
+
+							100% {
+								rotate: 360deg;
+							}
+						}
+					}
+				}
+			}
+
+			.settings-wrapper {
+				display: flex;
+				gap: 1rem;
+			}
+		}
+
+		.nav {
+			display: flex;
+			padding: 0 2rem;
+			border-bottom: 1px solid variables.$grey-3;
+
+			.tab {
+				display: flex;
+				align-items: center;
+				padding: 0.75em 1em;
+				border: 1px solid transparent;
+				border-radius: variables.$radius variables.$radius 0 0;
+				border-bottom: none;
+				gap: 0.5rem;
+
+				:global(svg) {
+					height: 1.25rem;
+				}
+
+				&.selected {
+					position: relative;
+					border-color: variables.$grey-3;
+
+					&::before {
+						position: absolute;
+						height: 1px;
+						background-color: variables.$grey-1;
+						content: '';
+						inset: auto 0 -1px;
+					}
+				}
+
+				&:not(.selected, :hover) {
+					opacity: 0.5;
+				}
+
+				.text {
+					@include typography.bold;
+				}
+
+				.tag {
+					@include typography.small;
+
+					display: flex;
+					align-items: center;
+					padding: 0.25rem 0.5rem;
+					border-radius: variables.$radius;
+					background-color: variables.$grey-3;
+					color: variables.$white;
+					gap: 0.25rem;
+
+					&.blue {
+						background-color: variables.$blue-1;
+						color: variables.$blue-3;
+					}
+
+					:global(svg) {
+						width: 1rem;
+						height: 1rem;
+					}
+				}
+			}
+		}
+
+		.login-container {
+			display: flex;
+			height: 100%;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 1.5rem;
+
+			.text {
+				@include typography.heading-2;
+				@include typography.base;
+
+				max-width: 20rem;
+				text-align: center;
+			}
 		}
 	}
 </style>

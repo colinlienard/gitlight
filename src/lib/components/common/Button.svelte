@@ -13,7 +13,9 @@
 	const dispatch = createEventDispatcher();
 
 	function handleClick(event: MouseEvent) {
-		if (!disabled && !loading) {
+		if (disabled) {
+			event.preventDefault();
+		} else if (!loading) {
 			dispatch('click', { event });
 		}
 	}

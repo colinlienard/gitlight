@@ -9,8 +9,10 @@ export type User = {
 };
 
 export type Session = {
-	user: User;
-	accessToken: string;
+	githubUser?: User;
+	githubAccessToken?: string;
+	gitlabUser?: User;
+	gitlabAccessToken?: string;
 };
 
 export type NotificationData = {
@@ -100,6 +102,7 @@ export type Settings = {
 	}>;
 	prioritySorting: boolean;
 	showPriority: boolean;
+	providerView: 'github' | 'gitlab' | 'both';
 };
 
 export type Priority = {

@@ -453,7 +453,7 @@ function getPriorityValue(
 		case 'assigned': {
 			let user: User | undefined;
 			page.subscribe((page) => {
-				user = page.data.session?.user;
+				user = page.data.session?.githubUser;
 			});
 			return (
 				data &&

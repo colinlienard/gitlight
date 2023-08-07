@@ -13,10 +13,26 @@
 
 			// Listen for scheme request on desktop app
 			listen('scheme-request', ({ payload }) => {
-				let accessToken = (payload as string).split('=')[1];
-				if (accessToken) {
-					accessToken = accessToken.replace('/', '');
-					storage.set('access-token', accessToken);
+				const scheme = (payload as string).split('&');
+
+				let githubAccessToken = scheme[0].split('=')[1];
+				if (githubAccessToken) {
+					githubAccessToken = githubAccessToken.replace('/', '');
+					storage.set('github-access-token', githubAccessToken);
+				}
+
+				let gitlabAccessToken = scheme[1].split('=')[1];
+				if (gitlabAccessToken) {
+					gitlabAccessToken = gitlabAccessToken.replace('/', '');
+					storage.set('gitlab-access-token', gitlabAccessToken);
+				}
+
+				if (
+					(githubAccessToken && storage.has('gitlab-user')) ||
+					(gitlabAccessToken && storage.has('github-user'))
+				) {
+					window.location.reload();
+				} else {
 					goto('/dashboard');
 				}
 			});
