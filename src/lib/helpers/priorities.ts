@@ -4,7 +4,7 @@ export const prioritiesLabel: Record<Priority['criteria'], string> = {
 	'many-comments': 'Has many comments',
 	'many-reactions': 'Has many reactions',
 	assigned: 'You are assigned',
-	mentionned: 'You were mentionned',
+	mentioned: 'You were mentioned',
 	'review-request': 'Review requested',
 	label: 'Has the label...',
 	state: 'State is...',
@@ -12,7 +12,7 @@ export const prioritiesLabel: Record<Priority['criteria'], string> = {
 };
 
 export const defaultPriorities: Priority[] = [
-	{ criteria: 'mentionned', value: 6 },
+	{ criteria: 'mentioned', value: 6 },
 	{ criteria: 'assigned', value: 4 },
 	{ criteria: 'review-request', value: 3 },
 	{ criteria: 'label', value: 2, specifier: 'bug' },

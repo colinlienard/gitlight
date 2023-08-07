@@ -106,7 +106,7 @@ export type Priority = {
 	value: number;
 } & (
 	| {
-			criteria: 'many-comments' | 'many-reactions' | 'assigned' | 'mentionned' | 'review-request';
+			criteria: 'many-comments' | 'many-reactions' | 'assigned' | 'mentioned' | 'review-request';
 	  }
 	| {
 			criteria: 'label';

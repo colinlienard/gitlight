@@ -22,7 +22,7 @@
 	const dispatch = createEventDispatcher();
 	const criterias: Priority['criteria'][] = [
 		'assigned',
-		'mentionned',
+		'mentioned',
 		'review-request',
 		'type',
 		'state',
