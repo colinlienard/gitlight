@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import { browser } from '$app/environment';
-import { fetchGithub, fetchGitlab, storage } from '~/lib/helpers';
+import { fetchGithub, fetchGitlab, openDesktopApp, storage } from '~/lib/helpers';
 import type { GithubUser, GitlabUser } from '~/lib/types';
 
 import '~/styles/_reset.scss';
@@ -48,7 +48,7 @@ export async function load({ url }) {
 
 	// Open the app with the access token
 	if (url.searchParams.has('from_app') && (githubAccessToken || gitlabAccessToken)) {
-		window.location.href = `gitlight://github_access_token=${githubAccessToken}&gitlab_access_token=${gitlabAccessToken}`;
+		openDesktopApp({ githubAccessToken, gitlabAccessToken });
 	}
 
 	// Remove access tokens from the URL

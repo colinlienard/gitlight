@@ -3,6 +3,7 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import { openDesktopApp } from '~/lib/helpers';
 	import { CrossIcon, ExclamationMarkIcon } from '~/lib/icons';
 	import { DownloadButton } from '../landing';
 
@@ -29,7 +30,7 @@
 			}, 500);
 
 			// Open the app with the access token
-			window.location.href = `gitlight://github_access_token=${githubAccessToken}&gitlab_access_token=${gitlabAccessToken}`;
+			openDesktopApp({ githubAccessToken, gitlabAccessToken });
 		}
 	}
 

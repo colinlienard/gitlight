@@ -1,5 +1,5 @@
 import { page } from '$app/stores';
-import { getDiscussionUrl } from '$lib/helpers/searchNotificationHelper';
+import { getDiscussionUrl } from '~/lib/helpers';
 import {
 	ClosedIssueIcon,
 	CommitIcon,

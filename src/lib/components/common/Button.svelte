@@ -29,7 +29,7 @@
 		class:icon
 		class:loading
 		class:disabled
-		{href}
+		href={disabled ? '#' : href}
 		target={external ? '_blank' : undefined}
 		rel={external ? 'noreferrer' : undefined}
 		on:click={handleClick}
