@@ -43,7 +43,8 @@
 	let mounted = false;
 
 	let interval = setInterval(() => {
-		fetchNotifications();
+		fetchGithubNotifications();
+		fetchGitlabNotifications();
 	}, 60000);
 
 	$: if (synced && !syncTime) {
@@ -66,7 +67,9 @@
 		return (currentAuthor ? currentAuthor.muted : currentCreator?.muted) || repo?.muted || muted;
 	}
 
-	async function fetchNotifications() {
+	async function fetchGithubNotifications() {
+		if (!githubUser) return;
+
 		synced = false;
 
 		let newNotifications: NotificationData[] = [];
@@ -156,15 +159,38 @@
 		}
 	}
 
+	async function fetchGitlabNotifications() {
+		if (!gitlabUser) return;
+
+		synced = false;
+
+		let newNotifications: NotificationData[] = [];
+
+		try {
+			console.log('salut');
+
+			const response = await fetchGitlab('events');
+			console.log(response);
+		} catch (e) {
+			$error =
+				'An error occurred while fetching notifications. Please try to reload the page or log out and log in again.';
+			console.error(e);
+		} finally {
+			synced = true;
+		}
+	}
+
 	function refetch() {
 		// Clear and refetch notifications
 		$githubNotifications = [];
-		fetchNotifications();
+		fetchGithubNotifications();
+		fetchGitlabNotifications();
 
 		// Reset interval
 		clearInterval(interval);
 		interval = setInterval(() => {
-			fetchNotifications();
+			fetchGithubNotifications();
+			fetchGitlabNotifications();
 		}, 60000);
 	}
 
@@ -212,7 +238,8 @@
 
 		mounted = true;
 
-		await fetchNotifications();
+		await fetchGitlabNotifications();
+		// await Promise.all([fetchGithubNotifications, fetchGitlabNotifications]);
 		$loading = false;
 	});
 
