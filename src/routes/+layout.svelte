@@ -13,7 +13,7 @@
 
 			// Listen for scheme request on desktop app
 			listen('scheme-request', ({ payload }) => {
-				const scheme = (payload as string).split('&');
+				const scheme = (payload as string).replace('gitlight://', '').split('&');
 
 				let githubAccessToken = scheme[0].split('=')[1];
 				if (githubAccessToken) {
