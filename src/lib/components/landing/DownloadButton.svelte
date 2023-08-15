@@ -6,21 +6,23 @@
 	import { LinuxIcon, MacosIcon, WindowsIcon } from '~/lib/icons';
 	import type { GithubRelease } from '~/lib/types';
 
-	type OS = 'mac' | 'win' | 'linux';
+	type OS = 'appleSilicon' | 'macIntel' | 'windows' | 'linux';
 
 	export let show = true;
 	export let position: 'center' | 'bottom' = 'center';
 
 	let open = false;
-	let releases: Record<OS, string> = { mac: '', win: '', linux: '' };
+	let releases: Record<OS, string> = { appleSilicon: '', macIntel: '', windows: '', linux: '' };
 
 	onMount(async () => {
 		const response = await fetch('https://api.github.com/repos/colinlienard/gitlight/releases');
 		const data = (await response.json()) as GithubRelease[];
 		const { assets } = data[0];
 		releases = {
-			mac: assets.find(({ name }) => name.endsWith('.dmg'))?.browser_download_url as string,
-			win: assets.find(({ name }) => name.endsWith('.msi'))?.browser_download_url as string,
+			appleSilicon: assets.find(({ name }) => name.endsWith('.dmg'))
+				?.browser_download_url as string,
+			macIntel: assets.find(({ name }) => name.endsWith('.dmg'))?.browser_download_url as string,
+			windows: assets.find(({ name }) => name.endsWith('.msi'))?.browser_download_url as string,
 			linux: assets.find(({ name }) => name.endsWith('.AppImage'))?.browser_download_url as string
 		};
 	});
@@ -44,11 +46,15 @@
 	<slot />
 	{#if show && open}
 		<div class="tooltip {position}" transition:fade={{ duration: 150, easing: sineInOut }}>
-			<Button on:click={handleDownload('mac')}>
+			<Button on:click={handleDownload('appleSilicon')}>
 				<MacosIcon />
-				Download for Mac
+				Download for Apple Silicon
 			</Button>
-			<Button on:click={handleDownload('win')}>
+			<Button on:click={handleDownload('macIntel')}>
+				<MacosIcon />
+				Download for Mac Intel
+			</Button>
+			<Button on:click={handleDownload('windows')}>
 				<WindowsIcon />
 				Download for Windows
 			</Button>

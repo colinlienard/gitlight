@@ -2,16 +2,20 @@ import type { GithubRelease } from '~/lib/types/github-types.js';
 
 type Target = 'linux' | 'windows' | 'darwin';
 
+type MacosArch = 'aarch64' | 'x86_64' | undefined;
+
 const targetExtensions: Record<Target, string> = {
 	linux: '.AppImage.tar.gz',
 	windows: '.msi.zip',
 	darwin: '.app.tar.gz'
 };
 
-export async function GET({ params }) {
+export async function GET({ params, url }) {
 	try {
 		const target = params.target as Target;
 		const { version } = params;
+		const arch = url.searchParams.get('arch') as MacosArch;
+		console.log('arch', arch);
 
 		// Get latest release from Github
 		const response = await fetch('https://api.github.com/repos/colinlienard/gitlight/releases');
