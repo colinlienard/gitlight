@@ -1,5 +1,7 @@
 <script lang="ts">
-	type T = $$Generic<string | number>;
+	// todo: silence until support is added
+	// https://github.com/sveltejs/svelte-eslint-parser/issues/306
+	type T = $$Generic<string | number>; // eslint-disable-line no-undef
 	export let label: string;
 	export let options: T[];
 	export let value: T;
