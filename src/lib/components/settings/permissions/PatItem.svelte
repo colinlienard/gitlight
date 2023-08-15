@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { SvelteComponent, createEventDispatcher, onMount } from 'svelte';
 	import { Button, Input } from '~/lib/components';
-	import { CheckIcon, TrashIcon } from '~/lib/icons';
+	import { CheckIcon, CrossIcon, TrashIcon } from '~/lib/icons';
 	import { settings } from '~/lib/stores';
 
 	export let pat: { owner: string; token: string } = { owner: '', token: '' };
@@ -10,10 +10,20 @@
 	const dispatch = createEventDispatcher();
 
 	let showToken = false;
+	let showDeleteConfirm = false;
 	let error = '';
 	let firstInput: SvelteComponent;
 
+	function deleteConfirm() {
+		showDeleteConfirm = true;
+	}
+
+	function cancelDelete() {
+		showDeleteConfirm = false;
+	}
+
 	function handleDelete() {
+		showDeleteConfirm = false;
 		$settings.pats = $settings.pats.filter((p) => p.owner !== pat.owner);
 	}
 
@@ -80,7 +90,12 @@
 				{/if}
 			</p>
 		</div>
-		<button class="delete-button" on:click={handleDelete}><TrashIcon /></button>
+		{#if showDeleteConfirm}
+			<button class="delete-button cancel" on:click={cancelDelete}><CrossIcon /></button>
+			<button class="delete-button confirm" on:click={handleDelete}><CheckIcon /></button>
+		{:else}
+			<button class="delete-button" on:click={deleteConfirm}><TrashIcon /></button>
+		{/if}
 	{/if}
 </div>
 
@@ -127,6 +142,26 @@
 
 			:global(svg) {
 				height: 1.25rem;
+			}
+		}
+
+		.cancel {
+			&:hover {
+				background-color: variables.$red;
+			}
+
+			&:active {
+				background-color: color.adjust(variables.$red, $lightness: 3%);
+			}
+		}
+
+		.confirm {
+			&:hover {
+				background-color: variables.$green;
+			}
+
+			&:active {
+				background-color: color.adjust(variables.$green, $lightness: 16%);
 			}
 		}
 
