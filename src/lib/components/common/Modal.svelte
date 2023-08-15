@@ -1,3 +1,9 @@
+<script lang="ts" context="module">
+	import { writable } from 'svelte/store';
+
+	export const modalOpen = writable(false);
+</script>
+
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import { cubicInOut } from 'svelte/easing';
@@ -11,7 +17,10 @@
 
 	const dispatch = createEventDispatcher();
 
-	$: dispatch(open ? 'open' : 'close');
+	$: {
+		dispatch(open ? 'open' : 'close');
+		$modalOpen = open;
+	}
 
 	function handleToggle() {
 		open = !open;
