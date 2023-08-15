@@ -15,7 +15,6 @@ export async function GET({ params, url }) {
 		const target = params.target as Target;
 		const { version } = params;
 		const arch = url.searchParams.get('arch') as MacosArch;
-		console.log('arch', arch);
 
 		// Get latest release from Github
 		const response = await fetch('https://api.github.com/repos/colinlienard/gitlight/releases');
@@ -25,7 +24,10 @@ export async function GET({ params, url }) {
 
 		if (version === latestVersion) throw new Error();
 
-		const extension = targetExtensions[target];
+		let extension = targetExtensions[target];
+		if (target === 'darwin') {
+			extension = arch === 'aarch64' ? 'aarch64.app.tar.gz' : 'x64.app.tar.gz';
+		}
 
 		if (!extension) throw new Error();
 

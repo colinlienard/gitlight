@@ -5,12 +5,25 @@
 	import { GithubIcon } from '~/lib/icons';
 
 	export let updateAvailable: string | false;
+	export let checkUpdate: () => Promise<boolean>;
 
 	let loading = false;
+	let cannotUpdate = false;
 
 	async function update() {
 		loading = true;
 		await emit('tauri://update');
+	}
+
+	async function check() {
+		loading = true;
+		const canUpdate = await checkUpdate();
+		if (canUpdate) {
+			await emit('tauri://update');
+		} else {
+			cannotUpdate = true;
+			loading = false;
+		}
 	}
 </script>
 
@@ -20,6 +33,11 @@
 		<Button on:click={update} {loading}>Install it now</Button>
 	{:else}
 		<p>GitLight v{getAppVersion()}</p>
+		{#if cannotUpdate}
+			<Button secondary disabled>No update available</Button>
+		{:else}
+			<Button secondary on:click={check} {loading}>Check for update</Button>
+		{/if}
 	{/if}
 </div>
 <Button secondary href="https://github.com/colinlienard/gitlight" external>
@@ -33,7 +51,7 @@
 
 		display: flex;
 		width: 100%;
-		height: 10rem;
+		height: 12rem;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;

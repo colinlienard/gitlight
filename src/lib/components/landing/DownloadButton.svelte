@@ -19,9 +19,9 @@
 		const data = (await response.json()) as GithubRelease[];
 		const { assets } = data[0];
 		releases = {
-			appleSilicon: assets.find(({ name }) => name.endsWith('.dmg'))
+			appleSilicon: assets.find(({ name }) => name.endsWith('aarch64.dmg'))
 				?.browser_download_url as string,
-			macIntel: assets.find(({ name }) => name.endsWith('.dmg'))?.browser_download_url as string,
+			macIntel: assets.find(({ name }) => name.endsWith('x64.dmg'))?.browser_download_url as string,
 			windows: assets.find(({ name }) => name.endsWith('.msi'))?.browser_download_url as string,
 			linux: assets.find(({ name }) => name.endsWith('.AppImage'))?.browser_download_url as string
 		};
