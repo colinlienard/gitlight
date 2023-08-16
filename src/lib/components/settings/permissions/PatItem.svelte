@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { SvelteComponent, createEventDispatcher, onMount } from 'svelte';
 	import { Button, Input } from '~/lib/components';
-	import { CheckIcon, TrashIcon } from '~/lib/icons';
+	import { CheckIcon, CrossIcon, TrashIcon } from '~/lib/icons';
 	import { settings } from '~/lib/stores';
 
 	export let pat: { owner: string; token: string } = { owner: '', token: '' };
@@ -10,10 +10,20 @@
 	const dispatch = createEventDispatcher();
 
 	let showToken = false;
+	let showDeleteConfirm = false;
 	let error = '';
 	let firstInput: SvelteComponent;
 
+	function deleteConfirm() {
+		showDeleteConfirm = true;
+	}
+
+	function cancelDelete() {
+		showDeleteConfirm = false;
+	}
+
 	function handleDelete() {
+		showDeleteConfirm = false;
 		$settings.pats = $settings.pats.filter((p) => p.owner !== pat.owner);
 	}
 
@@ -80,7 +90,20 @@
 				{/if}
 			</p>
 		</div>
-		<button class="delete-button" on:click={handleDelete}><TrashIcon /></button>
+		<div class="delete-wrapper">
+			{#if showDeleteConfirm}
+				<button class="delete-button" on:click={cancelDelete}>
+					<CrossIcon />
+					Cancel
+				</button>
+				<button class="delete-button confirm" on:click={handleDelete}>
+					<TrashIcon />
+					Confirm
+				</button>
+			{:else}
+				<button class="delete-button" on:click={deleteConfirm}><TrashIcon /></button>
+			{/if}
+		</div>
 	{/if}
 </div>
 
@@ -89,6 +112,7 @@
 		@include mixins.box;
 
 		display: flex;
+		overflow: hidden;
 
 		.content {
 			display: flex;
@@ -110,23 +134,39 @@
 			}
 		}
 
-		.delete-button {
+		.delete-wrapper {
 			display: flex;
-			flex: 0 0 3rem;
-			align-items: center;
-			justify-content: center;
+			flex: 1 0 auto;
+			flex-direction: column;
 			border-left: inherit;
 
-			&:hover {
-				background-color: color.adjust(variables.$grey-2, $lightness: 1%);
-			}
+			.delete-button {
+				@include typography.small;
 
-			&:active {
-				background-color: color.adjust(variables.$grey-2, $lightness: 2%);
-			}
+				display: flex;
+				min-width: 3rem;
+				height: 100%;
+				align-items: center;
+				justify-content: center;
+				padding: 0 0.5rem;
+				gap: 0.5rem;
 
-			:global(svg) {
-				height: 1.25rem;
+				&:hover {
+					background-color: color.adjust(variables.$grey-2, $lightness: 1%);
+				}
+
+				&:active {
+					background-color: color.adjust(variables.$grey-2, $lightness: 2%);
+				}
+
+				:global(svg) {
+					height: 1.25rem;
+				}
+
+				&.confirm {
+					border-top: 1px solid variables.$grey-3;
+					color: variables.$red;
+				}
 			}
 		}
 
