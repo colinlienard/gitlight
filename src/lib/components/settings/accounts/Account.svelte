@@ -19,7 +19,7 @@
 				<img class="image" src={user.avatar} alt="" />
 				<figcaption class="user-info">
 					<p class="sub">Logged in as</p>
-					<p class="name">{user.name}</p>
+					<p class="name">{user.name ?? user.login}</p>
 				</figcaption>
 			</figure>
 			<LogOutButton {provider} />
