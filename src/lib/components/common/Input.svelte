@@ -35,6 +35,8 @@
 			bind:this={input}
 			on:focus={() => (focused = true)}
 			on:blur={() => (focused = false)}
+			autocorrect="off"
+			spellcheck={false}
 		/>
 		<slot />
 		{#if clearable && value}
