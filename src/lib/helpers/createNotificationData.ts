@@ -158,6 +158,7 @@ export async function createNotificationData(
 			value = {
 				...common,
 				author,
+				creator: { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' },
 				description,
 				icon: getIssueIcon(data as GithubIssue),
 				opened: state === 'open',
@@ -241,6 +242,7 @@ export async function createNotificationData(
 			value = {
 				...common,
 				author,
+				creator: { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' },
 				description,
 				icon: getPullRequestIcon(data as GithubPullRequest),
 				opened: state === 'open',

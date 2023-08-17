@@ -23,6 +23,7 @@ export type NotificationData = {
 	done: boolean;
 	isNew: boolean;
 	author?: User;
+	creator?: User;
 	title: string;
 	description: string;
 	priority?: {
@@ -103,6 +104,7 @@ export type Settings = {
 	prioritySorting: boolean;
 	showPriority: boolean;
 	providerView: 'github' | 'gitlab' | 'both';
+	showPersonsAsCreators: boolean;
 };
 
 export type Priority = {
