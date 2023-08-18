@@ -54,7 +54,8 @@
 	public repositories.
 </p>
 <p class="list-item">
-	<strong>Repository permissions</strong>: set <strong>Contents</strong>, <strong>Issues</strong>,
+	<strong>Repository permissions</strong>: set <strong>Contents</strong>,
+	<strong>Discussions</strong>, <strong>Issues</strong>,
 	<strong>Metadata</strong>
 	and <strong>Pull requests</strong> to <strong>Access: read-only</strong>.
 </p>
