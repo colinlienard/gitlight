@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { storage } from '~/lib/helpers';
-	import { githubNotifications, loading, watchedPersons } from '~/lib/stores';
+	import { githubNotifications, loading, settings, watchedPersons } from '~/lib/stores';
 	import type { WatchedPerson } from '~/lib/types';
 	import SidebarSection from './SidebarSection.svelte';
 
@@ -12,7 +12,8 @@
 		$watchedPersons = $githubNotifications
 			.reduce<WatchedPerson[]>((previous, current) => {
 				if (!current.author || current.done) return previous;
-				const index = previous.findIndex((person) => person.login === current?.author?.login);
+				const involved = ($settings.showPersonsAsCreators && current?.creator) || current?.author;
+				const index = previous.findIndex((person) => person.login === involved?.login);
 				if (index > -1) {
 					const person = previous.splice(index, 1)[0];
 					return [...previous, { ...person, number: person.number + 1 }];
@@ -20,10 +21,10 @@
 				return [
 					...previous,
 					{
-						login: current.author?.login ?? '',
-						avatar: current.author?.avatar ?? '',
+						login: involved?.login ?? '',
+						avatar: involved?.avatar ?? '',
 						number: 1,
-						bot: current.author.bot,
+						bot: involved?.bot,
 						active:
 							savedWatchedPersons?.find((person) => person.login === current.author?.login)
 								?.active ?? true
@@ -63,13 +64,24 @@
 			person.bot ? { ...person, active } : person
 		);
 	}
+
+	function handleShowPersonsAsCreators(active: boolean) {
+		$settings.showPersonsAsCreators = active;
+	}
 </script>
 
 <SidebarSection
 	title="Persons"
 	description="Authors of notifications."
 	bind:items={$watchedPersons}
-	actions={[{ text: 'Show bots', active: botsHidden, onToggle: handleHideBots }]}
+	actions={[
+		{ text: 'Show bots', active: botsHidden, onToggle: handleHideBots },
+		{
+			text: 'Show as created by (only for pull requests and issues)',
+			active: $settings.showPersonsAsCreators,
+			onToggle: handleShowPersonsAsCreators
+		}
+	]}
 >
 	{#if $watchedPersons.length}
 		{#each $watchedPersons as { login, avatar, active, number }}
