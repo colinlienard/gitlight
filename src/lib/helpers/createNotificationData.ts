@@ -272,31 +272,36 @@ export async function createNotificationData(
 		}
 
 		case 'Discussion': {
-			const data = await getDiscussionUrl(githubNotification).then(({ url, latestCommentEdge }) => {
-				if (!latestCommentEdge) {
-					return {
-						description: 'New activity on discussion'
-					};
-				}
+			const data = await getDiscussionUrl(githubNotification);
+			let { url } = data;
+			const { latestCommentEdge } = data;
+			let description: string;
+			let author;
+			if (!latestCommentEdge) {
+				description = 'New activity on discussion';
+			} else {
 				url += '#discussioncomment-' + latestCommentEdge.node.databaseId;
-				const author = latestCommentEdge.node.author;
-				return {
-					author: {
-						login: author.login,
-						avatar: author.avatarUrl,
-						bot: author.__typename === 'Bot'
-					},
-					description: commentBodyToDescription(latestCommentEdge.node.bodyText),
-					url
+				author = latestCommentEdge.node.author;
+				author = {
+					login: author.login,
+					avatar: author.avatarUrl,
+					bot: author.__typename === 'Bot'
 				};
-			});
+				description = commentBodyToDescription(latestCommentEdge.node.bodyText);
+			}
+
 			value = {
 				...common,
-				...data,
-				icon: DiscussionIcon
+				author,
+				description,
+				url,
+				icon: DiscussionIcon,
+				previously:
+					previous?.description !== description ? previous : previous?.previously || undefined
 			};
 			break;
 		}
+
 		case 'CheckSuite': {
 			const splited = subject.title.split(' ');
 			const workflowName = splited[0];
