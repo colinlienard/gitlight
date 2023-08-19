@@ -19,7 +19,14 @@
 	} from '~/lib/components';
 	import { createNotificationData, fetchGithub, storage } from '~/lib/helpers';
 	import { GithubIcon, GitlabIcon, Logo, RefreshIcon } from '~/lib/icons';
-	import { error, githubNotifications, loading, savedNotifications, settings } from '~/lib/stores';
+	import {
+		error,
+		filteredNotifications,
+		githubNotifications,
+		loading,
+		savedNotifications,
+		settings
+	} from '~/lib/stores';
 	import type { GithubNotification, NotificationData } from '~/lib/types';
 
 	const githubUser = $page.data.session?.githubUser;
@@ -147,8 +154,8 @@
 
 		// Update menu bar
 		if (window.__TAURI__) {
-			const pinned = $githubNotifications.filter(({ pinned }) => pinned);
-			const unread = $githubNotifications.filter(
+			const pinned = $filteredNotifications.filter(({ pinned }) => pinned);
+			const unread = $filteredNotifications.filter(
 				({ pinned, unread, done }) => !pinned && unread && !done
 			);
 			invoke('update_tray', {
