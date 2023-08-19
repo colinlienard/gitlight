@@ -138,13 +138,14 @@
 	$: if (mounted && $githubNotifications.length) {
 		// Save events ids to storage
 		const toSave = $githubNotifications.map(
-			({ id, description, author, pinned, unread, done, time, previously }) => ({
+			({ id, description, author, pinned, unread, done, isNew, time, previously }) => ({
 				id,
 				description,
 				author,
 				pinned,
 				unread,
 				done,
+				isNew,
 				time,
 				previously
 			})

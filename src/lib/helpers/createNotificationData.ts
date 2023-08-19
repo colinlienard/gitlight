@@ -55,7 +55,7 @@ export async function createNotificationData(
 	const pinned = previous?.pinned || false;
 	const unread = isUnread || previous?.unread || false;
 	const done = !isUnread ? previous?.done || false : false;
-	const isNew = previous ? false : isUnread;
+	const isNew = previous ? previous.isNew : isUnread;
 	const [owner, repo] = repository.full_name.split('/');
 
 	// Get Personal Access Tokens

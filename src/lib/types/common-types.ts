@@ -65,6 +65,7 @@ export type SavedNotifications = Array<{
 	pinned: boolean;
 	unread: boolean;
 	done: boolean;
+	isNew: boolean;
 	time: string;
 	previously?: NotificationData['previously'];
 }>;
