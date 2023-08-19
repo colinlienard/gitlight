@@ -58,7 +58,7 @@
 			break;
 	}
 
-	$: if (browser && window.__TAURI__ && unread.length === 0) {
+	$: if (browser && window.__TAURI__ && $filteredNotifications.some((item) => item.isNew)) {
 		invoke('update_tray', { newIcon: false });
 	}
 
