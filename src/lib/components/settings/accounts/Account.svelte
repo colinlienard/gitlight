@@ -26,9 +26,9 @@
 		{:else}
 			<p class="sub">Not logged in.</p>
 			{#if provider === 'github'}
-				<GithubLoginButton>Log in</GithubLoginButton>
+				<GithubLoginButton small>Log in</GithubLoginButton>
 			{:else if provider === 'gitlab'}
-				<GitlabLoginButton>Log in</GitlabLoginButton>
+				<GitlabLoginButton small>Log in</GitlabLoginButton>
 			{/if}
 		{/if}
 	</div>
