@@ -20,7 +20,7 @@
 			) {
 				window.location.reload();
 			} else {
-				goto(`/login${window.__TAURI__ ? '?desktop=true' : ''}`);
+				goto('/login');
 			}
 		}, 1000);
 	}
