@@ -5,6 +5,8 @@
 	import type { WatchedPerson } from '~/lib/types';
 	import SidebarSection from './SidebarSection.svelte';
 
+	$: showPersonsAsCreators = $settings.showPersonsAsCreators;
+
 	// Update watched persons
 	$: if (browser && !$loading) {
 		const savedWatchedPersons = storage.get('github-watched-persons');
@@ -12,7 +14,7 @@
 		$watchedPersons = $githubNotifications
 			.reduce<WatchedPerson[]>((previous, current) => {
 				if (!current.author || current.done) return previous;
-				const involved = ($settings.showPersonsAsCreators && current?.creator) || current?.author;
+				const involved = (showPersonsAsCreators && current?.creator) || current?.author;
 				const index = previous.findIndex((person) => person.login === involved?.login);
 				if (index > -1) {
 					const person = previous.splice(index, 1)[0];
