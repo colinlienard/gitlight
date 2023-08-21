@@ -106,6 +106,7 @@ export type Settings = {
 	showPriority: boolean;
 	providerView: 'github' | 'gitlab' | 'both';
 	showPersonsAsCreators: boolean;
+	applyFiltersForDone: boolean;
 };
 
 export type Priority = {

@@ -10,9 +10,11 @@
 	import { filteredNotifications, githubNotifications, largeScreen, settings } from '~/lib/stores';
 
 	// Sort by priority
-	$: notifications = $settings.prioritySorting
-		? $filteredNotifications.sort((a, b) => (b.priority?.value || 0) - (a.priority?.value || 0))
-		: $filteredNotifications;
+	$: notifications = (
+		$settings.prioritySorting
+			? $filteredNotifications.sort((a, b) => (b.priority?.value || 0) - (a.priority?.value || 0))
+			: $filteredNotifications
+	).filter((item) => !item.done);
 
 	// Filter events
 	$: pinned = notifications.filter((item) => item.pinned && !item.done);

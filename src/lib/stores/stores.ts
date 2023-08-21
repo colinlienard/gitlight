@@ -44,7 +44,8 @@ export const settings = writable<Settings>({
 	prioritySorting: true,
 	showPriority: true,
 	providerView: 'both',
-	showPersonsAsCreators: false
+	showPersonsAsCreators: false,
+	applyFiltersForDone: false
 });
 
 export const largeScreen = writable<boolean>(true);
