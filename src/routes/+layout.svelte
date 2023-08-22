@@ -13,18 +13,15 @@
 
 			// Listen for scheme request on desktop app
 			listen('scheme-request', ({ payload }) => {
-				const scheme = (payload as string).replace('gitlight://', '').split('&');
+				const searchParams = new URLSearchParams((payload as string).replace('gitlight://', ''));
+				const githubAccessToken = searchParams.get('github_access_token');
+				const gitlabAccessToken = searchParams.get('gitlab_access_token');
 
-				let githubAccessToken = scheme[0].split('=')[1];
 				if (githubAccessToken) {
-					githubAccessToken = githubAccessToken.replace('/', '');
-					storage.set('github-access-token', githubAccessToken);
+					storage.set('github-access-token', githubAccessToken.replace('/', ''));
 				}
-
-				let gitlabAccessToken = scheme[1].split('=')[1];
 				if (gitlabAccessToken) {
-					gitlabAccessToken = gitlabAccessToken.replace('/', '');
-					storage.set('gitlab-access-token', gitlabAccessToken);
+					storage.set('gitlab-access-token', gitlabAccessToken.replace('/', ''));
 				}
 
 				if (

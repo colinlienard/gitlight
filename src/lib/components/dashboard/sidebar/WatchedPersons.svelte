@@ -28,8 +28,8 @@
 						number: 1,
 						bot: involved?.bot,
 						active:
-							savedWatchedPersons?.find((person) => person.login === current.author?.login)
-								?.active ?? true
+							savedWatchedPersons?.find((person) => person.login === involved?.login)?.active ??
+							true
 					}
 				];
 			}, [])

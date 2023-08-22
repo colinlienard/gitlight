@@ -62,19 +62,23 @@ export function drag(
 		}
 	}
 
-	function handleMouseUp() {
+	function handleMouseUp({ clientX, clientY }: MouseEvent) {
+		dragging = false;
+
+		// If the mouse hasn't moved enough, reset the styles
+		if (Math.abs(clientX - x) <= 5 && Math.abs(clientY - y) <= 5) {
+			node.setAttribute(
+				'style',
+				`
+          transform: unset;
+          z-index: unset;
+          cursor: grab;
+		    `
+			);
+		}
+
 		window.removeEventListener('mousemove', handleMouseMove);
 		window.removeEventListener('mouseup', handleMouseUp);
-
-		dragging = false;
-		node.setAttribute(
-			'style',
-			`
-        transform: 0, 0;
-        z-index: unset;
-        cursor: unset;
-      `
-		);
 	}
 
 	node.addEventListener('mousedown', handleMouseDown);

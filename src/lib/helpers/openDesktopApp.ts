@@ -5,9 +5,12 @@ export function openDesktopApp({
 	githubAccessToken?: string | null;
 	gitlabAccessToken?: string | null;
 }) {
-	if (githubAccessToken || gitlabAccessToken) {
-		window.location.href = `gitlight://github_access_token=${
-			githubAccessToken || ''
-		}&gitlab_access_token=${gitlabAccessToken || ''}`;
+	const searchParams = new URLSearchParams();
+	if (githubAccessToken) {
+		searchParams.set('github_access_token', githubAccessToken);
 	}
+	if (gitlabAccessToken) {
+		searchParams.set('gitlab_access_token', gitlabAccessToken);
+	}
+	window.location.href = `gitlight://${searchParams.toString()}`;
 }
