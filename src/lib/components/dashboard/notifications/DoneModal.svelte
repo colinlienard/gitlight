@@ -19,7 +19,7 @@
 			</Button>
 			<ScrollbarContainer slot="content" margin="2rem 1rem">
 				<div class="switch-container">
-					<Switch bind:active={applyFiltersForDone} label="Apply filters" />
+					<Switch bind:active={$settings.applyFiltersForDone} label="Apply filters" />
 				</div>
 				<ul class="list">
 					{#each dones as notification (notification.id)}
