@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SmallArrowIcon } from '~/lib/icons';
+	import { SmallArrowIcon } from '$lib/icons';
 	import Tooltip from './Tooltip.svelte';
 
 	export let label: string | undefined = undefined;

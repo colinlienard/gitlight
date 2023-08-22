@@ -1,4 +1,4 @@
-import type { GithubRelease } from '~/lib/types/github-types.js';
+import type { GithubRelease } from '$lib/types/github-types.js';
 
 type Target = 'linux' | 'windows' | 'darwin';
 

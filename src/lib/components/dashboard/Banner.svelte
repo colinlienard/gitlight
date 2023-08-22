@@ -3,8 +3,8 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { openDesktopApp } from '~/lib/helpers';
-	import { CrossIcon, ExclamationMarkIcon } from '~/lib/icons';
+	import { openDesktopApp } from '$lib/helpers';
+	import { CrossIcon, ExclamationMarkIcon } from '$lib/icons';
 	import { DownloadButton } from '../landing';
 
 	let show = false;

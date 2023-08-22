@@ -16,9 +16,9 @@
 		Settings,
 		Sidebar,
 		Tooltip
-	} from '~/lib/components';
-	import { createGithubNotificationData, fetchGithub, storage } from '~/lib/features';
-	import { GithubIcon, GitlabIcon, Logo, RefreshIcon } from '~/lib/icons';
+	} from '$lib/components';
+	import { createGithubNotificationData, fetchGithub, storage } from '$lib/features';
+	import { GithubIcon, GitlabIcon, Logo, RefreshIcon } from '$lib/icons';
 	import {
 		error,
 		filteredNotifications,
@@ -26,8 +26,8 @@
 		loading,
 		savedNotifications,
 		settings
-	} from '~/lib/stores';
-	import type { GithubNotification, NotificationData } from '~/lib/types';
+	} from '$lib/stores';
+	import type { GithubNotification, NotificationData } from '$lib/types';
 
 	const githubUser = $page.data.session?.githubUser;
 	const gitlabUser = $page.data.session?.gitlabUser;

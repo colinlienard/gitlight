@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Tooltip, type TooltipContent } from '~/lib/components';
-	import { GearIcon } from '~/lib/icons';
+	import { Tooltip, type TooltipContent } from '$lib/components';
+	import { GearIcon } from '$lib/icons';
 
 	export let items: { active: boolean }[];
 	export let title: string;

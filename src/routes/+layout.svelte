@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { enable, isEnabled } from 'tauri-plugin-autostart-api';
 	import { goto } from '$app/navigation';
-	import { storage } from '~/lib/features';
+	import { storage } from '$lib/features';
 
 	let onTauriApp = false;
 

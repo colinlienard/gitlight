@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { Footer, GithubLoginButton, GitlabLoginButton, IconButton } from '~/lib/components';
-	import { ArrowRightIcon, GithubIcon, GitlabIcon } from '~/lib/icons';
+	import { Footer, GithubLoginButton, GitlabLoginButton, IconButton } from '$lib/components';
+	import { ArrowRightIcon, GithubIcon, GitlabIcon } from '$lib/icons';
 
 	$: onTauriApp = browser && !!window.__TAURI__;
 </script>

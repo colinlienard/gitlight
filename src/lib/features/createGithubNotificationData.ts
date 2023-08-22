@@ -7,8 +7,8 @@ import {
 	ReleaseIcon,
 	WorkflowFailIcon,
 	WorkflowSuccessIcon
-} from '~/lib/icons';
-import { error, settings } from '~/lib/stores';
+} from '$lib/icons';
+import { error, settings } from '$lib/stores';
 import type {
 	GithubComment,
 	GithubCommit,
@@ -22,7 +22,7 @@ import type {
 	Priority,
 	SavedNotifications,
 	User
-} from '~/lib/types';
+} from '$lib/types';
 import { fetchGithub } from './fetchGithub';
 import { getDiscussionUrl } from './getGithubDiscussionData';
 import { storage } from './storage';

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import { Tooltip, ScrollbarContainer, Separator, IconButton } from '~/lib/components';
-	import { Logo, DoubleArrowIcon } from '~/lib/icons';
+	import { Tooltip, ScrollbarContainer, Separator, IconButton } from '$lib/components';
+	import { Logo, DoubleArrowIcon } from '$lib/icons';
 	import {
 		filteredNotifications,
 		githubNotifications,
@@ -11,7 +11,7 @@
 		settings,
 		watchedPersons,
 		typeFilters
-	} from '~/lib/stores';
+	} from '$lib/stores';
 	import SidebarSearch from './SidebarSearch.svelte';
 	import TypeFilters from './TypeFilters.svelte';
 	import WatchedPersons from './WatchedPersons.svelte';

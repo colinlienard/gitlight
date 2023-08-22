@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { Button } from '~/lib/components';
-	import { storage } from '~/lib/features';
+	import { Button } from '$lib/components';
+	import { storage } from '$lib/features';
 
 	export let provider: 'github' | 'gitlab';
 

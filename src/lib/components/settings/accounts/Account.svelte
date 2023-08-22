@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { GithubLoginButton, GitlabLoginButton } from '~/lib/components';
-	import type { User } from '~/lib/types';
+	import { GithubLoginButton, GitlabLoginButton } from '$lib/components';
+	import type { User } from '$lib/types';
 	import LogOutButton from './LogOutButton.svelte';
 
 	export let title: string;

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { open } from '@tauri-apps/api/shell';
 	import { onDestroy } from 'svelte';
-	import { Button, Tooltip } from '~/lib/components';
-	import { fetchGithub } from '~/lib/features';
-	import { formatRelativeDate, lightenColor } from '~/lib/helpers';
+	import { Button, Tooltip } from '$lib/components';
+	import { fetchGithub } from '$lib/features';
+	import { formatRelativeDate, lightenColor } from '$lib/helpers';
 	import {
 		CheckIcon,
 		DoubleCheckIcon,
@@ -14,9 +14,9 @@
 		RestoreIcon,
 		UnpinIcon,
 		UnreadIcon
-	} from '~/lib/icons';
-	import { githubNotifications, settings } from '~/lib/stores';
-	import type { NotificationData } from '~/lib/types';
+	} from '$lib/icons';
+	import { githubNotifications, settings } from '$lib/stores';
+	import type { NotificationData } from '$lib/types';
 	import NotificationDescription from './NotificationDescription.svelte';
 
 	export let data: NotificationData;

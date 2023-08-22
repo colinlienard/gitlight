@@ -6,7 +6,7 @@ import type {
 	TypeFilters,
 	WatchedPerson,
 	WatchedRepo
-} from '~/lib/types';
+} from '$lib/types';
 
 export const filteredNotifications = writable<NotificationData[]>([]);
 

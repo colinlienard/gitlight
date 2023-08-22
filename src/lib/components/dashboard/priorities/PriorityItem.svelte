@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { Button, Input, Select } from '~/lib/components';
-	import { cleanSpecifier, prioritiesLabel } from '~/lib/helpers';
-	import { CheckIcon, PriorityDownIcon, PriorityUpIcon, TrashIcon } from '~/lib/icons';
-	import type { GithubIssue, GithubNotificationType, Priority } from '~/lib/types';
+	import { Button, Input, Select } from '$lib/components';
+	import { cleanSpecifier, prioritiesLabel } from '$lib/helpers';
+	import { CheckIcon, PriorityDownIcon, PriorityUpIcon, TrashIcon } from '$lib/icons';
+	import type { GithubIssue, GithubNotificationType, Priority } from '$lib/types';
 
 	type StateOptions = Array<{
 		text: string;

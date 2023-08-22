@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { User } from '~/lib/types';
+	import type { User } from '$lib/types';
 
 	type Description = Array<
 		| string

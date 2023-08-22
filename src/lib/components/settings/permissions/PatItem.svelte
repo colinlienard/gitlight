@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { SvelteComponent, createEventDispatcher, onMount } from 'svelte';
-	import { Button, Input } from '~/lib/components';
-	import { CheckIcon, CrossIcon, TrashIcon } from '~/lib/icons';
-	import { settings } from '~/lib/stores';
+	import { Button, Input } from '$lib/components';
+	import { CheckIcon, CrossIcon, TrashIcon } from '$lib/icons';
+	import { settings } from '$lib/stores';
 
 	export let pat: { owner: string; token: string } = { owner: '', token: '' };
 	export let editing = false;

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { ShrinkableWrapper } from '~/lib/components';
-	import { storage } from '~/lib/features';
-	import { RepositoryIcon } from '~/lib/icons';
-	import { githubNotifications, loading, watchedRepos } from '~/lib/stores';
-	import type { WatchedRepo } from '~/lib/types';
+	import { ShrinkableWrapper } from '$lib/components';
+	import { storage } from '$lib/features';
+	import { RepositoryIcon } from '$lib/icons';
+	import { githubNotifications, loading, watchedRepos } from '$lib/stores';
+	import type { WatchedRepo } from '$lib/types';
 	import SidebarSection from './SidebarSection.svelte';
 
 	type WatchedReposByOwner = {

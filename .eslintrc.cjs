@@ -38,7 +38,7 @@ module.exports = {
 				groups: ['external', 'unknown', 'internal', 'sibling', 'parent'],
 				pathGroups: [
 					{ pattern: '$.*', group: 'unknown' },
-					{ pattern: '~/lib/*', group: 'internal' }
+					{ pattern: '$lib/*', group: 'internal' }
 				],
 				alphabetize: { order: 'asc', caseInsensitive: true },
 				'newlines-between': 'never'

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getAppVersion } from '~/lib/helpers';
+	import { getAppVersion } from '$lib/helpers';
 </script>
 
 <footer class="footer">

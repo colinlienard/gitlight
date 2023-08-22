@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { cubicInOut } from 'svelte/easing';
-	import { CrossIcon } from '~/lib/icons';
-	import { error, settings } from '~/lib/stores';
+	import { CrossIcon } from '$lib/icons';
+	import { error, settings } from '$lib/stores';
 
 	let dontShowAgain = false;
 

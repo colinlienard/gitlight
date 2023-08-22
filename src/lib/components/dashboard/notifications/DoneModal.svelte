@@ -1,7 +1,7 @@
 <script>
-	import { Button, Modal, ScrollbarContainer, Switch } from '~/lib/components';
-	import { DoubleCheckIcon } from '~/lib/icons';
-	import { filteredNotifications, githubNotifications, settings } from '~/lib/stores';
+	import { Button, Modal, ScrollbarContainer, Switch } from '$lib/components';
+	import { DoubleCheckIcon } from '$lib/icons';
+	import { filteredNotifications, githubNotifications, settings } from '$lib/stores';
 	import Notification from './Notification.svelte';
 
 	$: applyFiltersForDone = $settings.applyFiltersForDone;

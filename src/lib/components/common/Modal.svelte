@@ -8,7 +8,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { cubicInOut } from 'svelte/easing';
 	import { fade } from 'svelte/transition';
-	import { CrossIcon } from '~/lib/icons';
+	import { CrossIcon } from '$lib/icons';
 	import { IconButton } from '.';
 
 	export let title: string;

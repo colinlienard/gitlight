@@ -1,7 +1,7 @@
 <script>
 	import { browser } from '$app/environment';
 	import { PUBLIC_SITE_URL } from '$env/static/public';
-	import { Button, Tooltip } from '~/lib/components';
+	import { Button, Tooltip } from '$lib/components';
 
 	export let small = false;
 

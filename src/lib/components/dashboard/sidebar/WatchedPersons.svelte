@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { storage } from '~/lib/features';
-	import { githubNotifications, loading, settings, watchedPersons } from '~/lib/stores';
-	import type { WatchedPerson } from '~/lib/types';
+	import { storage } from '$lib/features';
+	import { githubNotifications, loading, settings, watchedPersons } from '$lib/stores';
+	import type { WatchedPerson } from '$lib/types';
 	import SidebarSection from './SidebarSection.svelte';
 
 	$: showPersonsAsCreators = $settings.showPersonsAsCreators;
