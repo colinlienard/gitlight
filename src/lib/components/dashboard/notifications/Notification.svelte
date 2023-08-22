@@ -2,7 +2,8 @@
 	import { open } from '@tauri-apps/api/shell';
 	import { onDestroy } from 'svelte';
 	import { Button, Tooltip } from '~/lib/components';
-	import { fetchGithub, formatRelativeDate, lightenColor } from '~/lib/helpers';
+	import { fetchGithub } from '~/lib/features';
+	import { formatRelativeDate, lightenColor } from '~/lib/helpers';
 	import {
 		CheckIcon,
 		DoubleCheckIcon,

@@ -3,7 +3,8 @@
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { IconButton, Modal, ScrollbarContainer, Separator, Tooltip } from '~/lib/components';
-	import { fetchGithub, getAppVersion, storage } from '~/lib/helpers';
+	import { fetchGithub, storage } from '~/lib/features';
+	import { getAppVersion } from '~/lib/helpers';
 	import { GearIcon } from '~/lib/icons';
 	import { settings } from '~/lib/stores';
 	import type { GithubRelease } from '~/lib/types';

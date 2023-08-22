@@ -1,5 +1,4 @@
 import { page } from '$app/stores';
-import { getDiscussionUrl } from '~/lib/helpers';
 import {
 	ClosedIssueIcon,
 	CommitIcon,
@@ -25,10 +24,11 @@ import type {
 	User
 } from '~/lib/types';
 import { fetchGithub } from './fetchGithub';
-import { getIssueIcon, getPullRequestIcon } from './getIcon';
-import { cleanSpecifier, prioritiesLabel } from './priorities';
-import { removeMarkdownSymbols } from './removeMarkdownSymbols';
+import { getDiscussionUrl } from './getGithubDiscussionData';
 import { storage } from './storage';
+import { getIssueIcon, getPullRequestIcon } from '../helpers/getIcon';
+import { cleanSpecifier, prioritiesLabel } from '../helpers/priorities';
+import { removeMarkdownSymbols } from '../helpers/removeMarkdownSymbols';
 
 type PullRequestEvent = {
 	author: {
@@ -43,7 +43,7 @@ type PullRequestEvent = {
 
 type FetchOptions = Parameters<typeof fetchGithub>[1];
 
-export async function createNotificationData(
+export async function createGithubNotificationData(
 	githubNotification: GithubNotification,
 	savedNotifications: SavedNotifications,
 	firstTime: boolean

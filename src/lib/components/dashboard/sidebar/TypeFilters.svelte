@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Switch } from '~/lib/components';
-	import { storage } from '~/lib/helpers';
+	import { storage } from '~/lib/features';
 	import { githubNotifications, loading, settings, typeFilters } from '~/lib/stores';
 	import SidebarSection from './SidebarSection.svelte';
 

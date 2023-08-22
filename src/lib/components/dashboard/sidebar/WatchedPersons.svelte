@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { storage } from '~/lib/helpers';
+	import { storage } from '~/lib/features';
 	import { githubNotifications, loading, settings, watchedPersons } from '~/lib/stores';
 	import type { WatchedPerson } from '~/lib/types';
 	import SidebarSection from './SidebarSection.svelte';
@@ -37,6 +37,7 @@
 	}
 
 	$: botsHidden = $watchedPersons.some((person) => person.login.endsWith('[bot]') && person.active);
+	$: botsPresent = $watchedPersons.some((person) => person.login.endsWith('[bot]'));
 
 	// Save watched persons to storage
 	$: if (browser) {
@@ -77,7 +78,7 @@
 	description="Authors of notifications."
 	bind:items={$watchedPersons}
 	actions={[
-		{ text: 'Show bots', active: botsHidden, onToggle: handleHideBots },
+		{ text: 'Show bots', active: botsHidden, onToggle: handleHideBots, disabled: !botsPresent },
 		{
 			text: 'Show as created by (only for pull requests and issues)',
 			active: $settings.showPersonsAsCreators,

@@ -1,6 +1,6 @@
 // source code from https://github.com/gitify-app/gitify/pull/538
-import { fetchGithub } from '$lib/helpers/fetchGithub';
-import type { GithubNotification } from '$lib/types';
+import { fetchGithub } from '~/lib/features';
+import type { GithubNotification } from '~/lib/types';
 import { settings } from '../stores';
 
 export type ViewerSubscription = 'IGNORED' | 'SUBSCRIBED' | 'UNSUBSCRIBED';

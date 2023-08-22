@@ -4,7 +4,8 @@
 	import { filteredNotifications, githubNotifications, settings } from '~/lib/stores';
 	import Notification from './Notification.svelte';
 
-	$: dones = ($settings.applyFiltersForDone ? $filteredNotifications : $githubNotifications).filter(
+	$: applyFiltersForDone = $settings.applyFiltersForDone;
+	$: dones = (applyFiltersForDone ? $filteredNotifications : $githubNotifications).filter(
 		({ done }) => done
 	);
 </script>
@@ -18,7 +19,7 @@
 			</Button>
 			<ScrollbarContainer slot="content" margin="2rem 1rem">
 				<div class="switch-container">
-					<Switch bind:active={$settings.applyFiltersForDone} label="Apply filters" />
+					<Switch bind:active={applyFiltersForDone} label="Apply filters" />
 				</div>
 				<ul class="list">
 					{#each dones as notification (notification.id)}

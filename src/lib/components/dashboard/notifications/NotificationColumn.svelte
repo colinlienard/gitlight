@@ -8,7 +8,8 @@
 	import { writable } from 'svelte/store';
 	import { fade, type CrossfadeParams, type TransitionConfig } from 'svelte/transition';
 	import { Button } from '~/lib/components';
-	import { debounce, drag, drop, fetchGithub } from '~/lib/helpers';
+	import { drag, drop, fetchGithub } from '~/lib/features';
+	import { debounce } from '~/lib/helpers';
 	import { ArrowUpIcon } from '~/lib/icons';
 	import {
 		loading,
@@ -77,9 +78,12 @@
 	$: if ($dragging) {
 		scrollPosition = list?.scrollTop;
 	} else {
-		setTimeout(() => {
-			scrollPosition = 0;
-		}, (settings.duration as number) + 10);
+		setTimeout(
+			() => {
+				scrollPosition = 0;
+			},
+			(settings.duration as number) + 10
+		);
 	}
 
 	$: showDropzone = $dragging ? $dragging !== title : false;

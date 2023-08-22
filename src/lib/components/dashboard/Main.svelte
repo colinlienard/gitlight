@@ -5,13 +5,14 @@
 	import { crossfade } from 'svelte/transition';
 	import { browser } from '$app/environment';
 	import { Separator, ScrollbarContainer, NotificationColumn } from '~/lib/components';
-	import { fetchGithub } from '~/lib/helpers';
+	import { fetchGithub } from '~/lib/features';
 	import { CheckIcon, UnreadIcon, PinIcon, DoubleCheckIcon } from '~/lib/icons';
 	import { filteredNotifications, githubNotifications, largeScreen, settings } from '~/lib/stores';
 
 	// Sort by priority
+	$: prioritySorting = $settings.prioritySorting;
 	$: notifications = (
-		$settings.prioritySorting
+		prioritySorting
 			? $filteredNotifications.sort((a, b) => (b.priority?.value || 0) - (a.priority?.value || 0))
 			: $filteredNotifications
 	).filter((item) => !item.done);

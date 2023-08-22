@@ -1,6 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import { browser } from '$app/environment';
-import { fetchGithub, fetchGitlab, openDesktopApp, storage } from '~/lib/helpers';
+import { fetchGithub, fetchGitlab, storage } from '~/lib/features';
+import { openDesktopApp } from '~/lib/helpers';
 import type { GithubUser, GitlabUser } from '~/lib/types';
 
 import '~/styles/_reset.scss';

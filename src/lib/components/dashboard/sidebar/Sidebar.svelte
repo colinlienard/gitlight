@@ -19,21 +19,23 @@
 
 	let search = '';
 
+	$: showPersonsAsCreators = $settings.showPersonsAsCreators;
+	$: showOnlyOpen = $settings.showOnlyOpen;
+
 	// Apply filters and search
 	$: $filteredNotifications = $githubNotifications.filter((notification) => {
 		const repo = $watchedRepos.find((item) => item.id === notification.repoId);
 		const person = $watchedPersons.find(
 			(item) =>
 				item.login ===
-				(($settings.showPersonsAsCreators && notification.creator?.login) ||
-					notification.author?.login)
+				((showPersonsAsCreators && notification.creator?.login) || notification.author?.login)
 		);
 
 		const searched = notification.title.toLowerCase().includes(search.toLowerCase());
 		const isOfType = $typeFilters.some(
 			(filter) => filter.active && filter.type === notification.type
 		);
-		const onlyOpen = $settings.showOnlyOpen
+		const onlyOpen = showOnlyOpen
 			? notification.type === 'PullRequest' || notification.type === 'Issue'
 				? notification.opened
 				: true

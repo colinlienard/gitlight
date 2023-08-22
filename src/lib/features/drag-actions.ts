@@ -67,6 +67,14 @@ export function drag(
 		window.removeEventListener('mouseup', handleMouseUp);
 
 		dragging = false;
+		node.setAttribute(
+			'style',
+			`
+        transform: 0, 0;
+        z-index: unset;
+        cursor: unset;
+      `
+		);
 	}
 
 	node.addEventListener('mousedown', handleMouseDown);

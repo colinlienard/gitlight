@@ -17,7 +17,7 @@
 		Sidebar,
 		Tooltip
 	} from '~/lib/components';
-	import { createNotificationData, fetchGithub, storage } from '~/lib/helpers';
+	import { createGithubNotificationData, fetchGithub, storage } from '~/lib/features';
 	import { GithubIcon, GitlabIcon, Logo, RefreshIcon } from '~/lib/icons';
 	import {
 		error,
@@ -85,7 +85,11 @@
 			newNotifications = (
 				await Promise.all(
 					notifications.map((notification) =>
-						createNotificationData(notification, $savedNotifications, !$githubNotifications.length)
+						createGithubNotificationData(
+							notification,
+							$savedNotifications,
+							!$githubNotifications.length
+						)
 					)
 				)
 			).filter((item): item is NotificationData => !!item);
