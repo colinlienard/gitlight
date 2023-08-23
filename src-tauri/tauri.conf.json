@@ -76,7 +76,7 @@
 				"width": 1400,
 				"titleBarStyle": "Overlay",
 				"hiddenTitle": true,
-				"url": "/login?desktop=true"
+				"url": "/dashboard"
 			}
 		],
 		"systemTray": {

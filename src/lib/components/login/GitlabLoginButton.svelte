@@ -1,7 +1,9 @@
 <script>
 	import { browser } from '$app/environment';
 	import { PUBLIC_SITE_URL } from '$env/static/public';
-	import { Button, Tooltip } from '~/lib/components';
+	import { Button, Tooltip } from '$lib/components';
+
+	export let small = false;
 
 	$: onTauriApp = browser && !!window.__TAURI__;
 </script>
@@ -11,6 +13,7 @@
 		href={onTauriApp ? `${PUBLIC_SITE_URL}/auth/gitlab/login?from_app=true` : '/auth/gitlab/login'}
 		external={onTauriApp && import.meta.env.PROD}
 		disabled
+		{small}
 	>
 		<slot />
 	</Button>

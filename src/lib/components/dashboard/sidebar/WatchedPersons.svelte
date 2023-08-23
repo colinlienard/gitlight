@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { storage } from '~/lib/helpers';
-	import { githubNotifications, loading, settings, watchedPersons } from '~/lib/stores';
-	import type { WatchedPerson } from '~/lib/types';
+	import { storage } from '$lib/features';
+	import { githubNotifications, loading, settings, watchedPersons } from '$lib/stores';
+	import type { WatchedPerson } from '$lib/types';
 	import SidebarSection from './SidebarSection.svelte';
+
+	$: showPersonsAsCreators = $settings.showPersonsAsCreators;
 
 	// Update watched persons
 	$: if (browser && !$loading) {
@@ -12,7 +14,7 @@
 		$watchedPersons = $githubNotifications
 			.reduce<WatchedPerson[]>((previous, current) => {
 				if (!current.author || current.done) return previous;
-				const involved = ($settings.showPersonsAsCreators && current?.creator) || current?.author;
+				const involved = (showPersonsAsCreators && current?.creator) || current?.author;
 				const index = previous.findIndex((person) => person.login === involved?.login);
 				if (index > -1) {
 					const person = previous.splice(index, 1)[0];
@@ -26,8 +28,8 @@
 						number: 1,
 						bot: involved?.bot,
 						active:
-							savedWatchedPersons?.find((person) => person.login === current.author?.login)
-								?.active ?? true
+							savedWatchedPersons?.find((person) => person.login === involved?.login)?.active ??
+							true
 					}
 				];
 			}, [])
@@ -35,6 +37,7 @@
 	}
 
 	$: botsHidden = $watchedPersons.some((person) => person.login.endsWith('[bot]') && person.active);
+	$: botsPresent = $watchedPersons.some((person) => person.login.endsWith('[bot]'));
 
 	// Save watched persons to storage
 	$: if (browser) {
@@ -75,7 +78,7 @@
 	description="Authors of notifications."
 	bind:items={$watchedPersons}
 	actions={[
-		{ text: 'Show bots', active: botsHidden, onToggle: handleHideBots },
+		{ text: 'Show bots', active: botsHidden, onToggle: handleHideBots, disabled: !botsPresent },
 		{
 			text: 'Show as created by (only for pull requests and issues)',
 			active: $settings.showPersonsAsCreators,

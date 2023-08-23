@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { GithubIcon, GitlabIcon } from '~/lib/icons';
+	import { GithubIcon, GitlabIcon } from '$lib/icons';
 	import Account from './Account.svelte';
 
 	const githubUser = $page.data.session?.githubUser;

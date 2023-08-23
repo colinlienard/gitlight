@@ -13,7 +13,7 @@
 	import { sineInOut } from 'svelte/easing';
 	import { fade } from 'svelte/transition';
 	import { browser } from '$app/environment';
-	import { CheckIcon } from '~/lib/icons';
+	import { CheckIcon } from '$lib/icons';
 	import ScrollbarContainer from './ScrollbarContainer.svelte';
 
 	export let content: string | TooltipContent;

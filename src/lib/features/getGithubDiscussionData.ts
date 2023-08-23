@@ -1,6 +1,7 @@
 // source code from https://github.com/gitify-app/gitify/pull/538
-import { fetchGithub } from '$lib/helpers/fetchGithub';
+import { fetchGithub } from '$lib/features';
 import type { GithubNotification } from '$lib/types';
+import { settings } from '../stores';
 
 export type ViewerSubscription = 'IGNORED' | 'SUBSCRIBED' | 'UNSUBSCRIBED';
 
@@ -67,8 +68,15 @@ export async function getDiscussionUrl(notification: GithubNotification): Promis
 	url: string;
 	latestCommentEdge: DiscussionSubCommentEdge | undefined;
 }> {
+	// Get Personal Access Tokens
+	let pat: string | undefined;
+	settings.subscribe(({ pats }) => {
+		if (!notification.repository.private || !pats.length) return;
+		pat = pats.find((pat) => pat.owner === notification.repository.owner.login)?.token;
+	});
 	const response: GraphQLSearch = await fetchGithub('graphql', {
 		method: 'POST',
+		pat,
 		body: {
 			query: `{
         search(query:"${queryString(

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { InlineSelect, Switch } from '~/lib/components';
-	import { settings } from '~/lib/stores';
-	import type { Settings } from '~/lib/types';
+	import { InlineSelect, Switch } from '$lib/components';
+	import { settings } from '$lib/stores';
+	import type { Settings } from '$lib/types';
 
 	const axisOptions: Array<Settings['notificationAxis']> = ['Auto', 'Vertical', 'Horizontal'];
 	const numberOptions: Array<Settings['notificationNumber']> = [25, 50, 75, 100];

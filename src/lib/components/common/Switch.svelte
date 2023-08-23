@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { CheckIcon, CrossIcon } from '~/lib/icons';
+	import { CheckIcon, CrossIcon } from '$lib/icons';
 
 	export let label: string | undefined;
 	export let active: boolean;

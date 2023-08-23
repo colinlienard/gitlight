@@ -1,14 +1,9 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
-	import { Footer, GithubLoginButton, GitlabLoginButton, IconButton } from '~/lib/components';
-	import { ArrowRightIcon, GithubIcon, GitlabIcon } from '~/lib/icons';
+	import { browser } from '$app/environment';
+	import { Footer, GithubLoginButton, GitlabLoginButton, IconButton } from '$lib/components';
+	import { ArrowRightIcon, GithubIcon, GitlabIcon } from '$lib/icons';
 
-	let onTauriApp = true;
-
-	onMount(() => {
-		onTauriApp = $page.url.search === '?desktop=true';
-	});
+	$: onTauriApp = browser && !!window.__TAURI__;
 </script>
 
 <svelte:head>

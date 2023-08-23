@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { emit } from '@tauri-apps/api/event';
-	import { Button } from '~/lib/components';
-	import { getAppVersion } from '~/lib/helpers';
-	import { GithubIcon } from '~/lib/icons';
+	import { Button } from '$lib/components';
+	import { getAppVersion } from '$lib/helpers';
+	import { GithubIcon } from '$lib/icons';
 
 	export let updateAvailable: string | false;
 	export let checkUpdate: () => Promise<boolean>;

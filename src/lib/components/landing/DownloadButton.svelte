@@ -2,9 +2,9 @@
 	import { onMount } from 'svelte';
 	import { sineInOut } from 'svelte/easing';
 	import { fade } from 'svelte/transition';
-	import { Button } from '~/lib/components';
-	import { LinuxIcon, MacosIcon, WindowsIcon } from '~/lib/icons';
-	import type { GithubRelease } from '~/lib/types';
+	import { Button } from '$lib/components';
+	import { LinuxIcon, MacosIcon, WindowsIcon } from '$lib/icons';
+	import type { GithubRelease } from '$lib/types';
 
 	type OS = 'appleSilicon' | 'macIntel' | 'windows' | 'linux';
 

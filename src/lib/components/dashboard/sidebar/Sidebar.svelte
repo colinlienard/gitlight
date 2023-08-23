@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import { Tooltip, ScrollbarContainer, Separator, IconButton } from '~/lib/components';
-	import { Logo, DoubleArrowIcon } from '~/lib/icons';
+	import { Tooltip, ScrollbarContainer, Separator, IconButton } from '$lib/components';
+	import { Logo, DoubleArrowIcon } from '$lib/icons';
 	import {
 		filteredNotifications,
 		githubNotifications,
@@ -11,7 +11,7 @@
 		settings,
 		watchedPersons,
 		typeFilters
-	} from '~/lib/stores';
+	} from '$lib/stores';
 	import SidebarSearch from './SidebarSearch.svelte';
 	import TypeFilters from './TypeFilters.svelte';
 	import WatchedPersons from './WatchedPersons.svelte';
@@ -19,22 +19,23 @@
 
 	let search = '';
 
+	$: showPersonsAsCreators = $settings.showPersonsAsCreators;
+	$: showOnlyOpen = $settings.showOnlyOpen;
+
 	// Apply filters and search
 	$: $filteredNotifications = $githubNotifications.filter((notification) => {
-		if (notification.done) return;
 		const repo = $watchedRepos.find((item) => item.id === notification.repoId);
 		const person = $watchedPersons.find(
 			(item) =>
 				item.login ===
-				(($settings.showPersonsAsCreators && notification.creator?.login) ||
-					notification.author?.login)
+				((showPersonsAsCreators && notification.creator?.login) || notification.author?.login)
 		);
 
 		const searched = notification.title.toLowerCase().includes(search.toLowerCase());
 		const isOfType = $typeFilters.some(
 			(filter) => filter.active && filter.type === notification.type
 		);
-		const onlyOpen = $settings.showOnlyOpen
+		const onlyOpen = showOnlyOpen
 			? notification.type === 'PullRequest' || notification.type === 'Issue'
 				? notification.opened
 				: true

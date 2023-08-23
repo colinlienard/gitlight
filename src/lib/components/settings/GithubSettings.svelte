@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Button } from '~/lib/components';
-	import { ExternalLinkIcon } from '~/lib/icons';
+	import { Button } from '$lib/components';
+	import { ExternalLinkIcon } from '$lib/icons';
 
 	export let onSetTab: (tab: number) => void;
 </script>

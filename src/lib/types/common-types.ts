@@ -65,6 +65,7 @@ export type SavedNotifications = Array<{
 	pinned: boolean;
 	unread: boolean;
 	done: boolean;
+	isNew: boolean;
 	time: string;
 	previously?: NotificationData['previously'];
 }>;
@@ -105,6 +106,7 @@ export type Settings = {
 	showPriority: boolean;
 	providerView: 'github' | 'gitlab' | 'both';
 	showPersonsAsCreators: boolean;
+	applyFiltersForDone: boolean;
 };
 
 export type Priority = {

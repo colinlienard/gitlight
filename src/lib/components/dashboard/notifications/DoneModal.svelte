@@ -1,10 +1,13 @@
 <script>
-	import { Button, Modal, ScrollbarContainer } from '~/lib/components';
-	import { DoubleCheckIcon } from '~/lib/icons';
-	import { githubNotifications } from '~/lib/stores';
+	import { Button, Modal, ScrollbarContainer, Switch } from '$lib/components';
+	import { DoubleCheckIcon } from '$lib/icons';
+	import { filteredNotifications, githubNotifications, settings } from '$lib/stores';
 	import Notification from './Notification.svelte';
 
-	$: dones = $githubNotifications.filter(({ done }) => done);
+	$: applyFiltersForDone = $settings.applyFiltersForDone;
+	$: dones = (applyFiltersForDone ? $filteredNotifications : $githubNotifications).filter(
+		({ done }) => done
+	);
 </script>
 
 {#if dones.length}
@@ -15,6 +18,9 @@
 				Done ({dones.length})
 			</Button>
 			<ScrollbarContainer slot="content" margin="2rem 1rem">
+				<div class="switch-container">
+					<Switch bind:active={$settings.applyFiltersForDone} label="Apply filters" />
+				</div>
 				<ul class="list">
 					{#each dones as notification (notification.id)}
 						<li class="list-item">
@@ -30,6 +36,10 @@
 <style lang="scss">
 	.wrapper {
 		margin-left: auto;
+	}
+
+	.switch-container {
+		padding: 2rem 2rem 0;
 	}
 
 	.list {

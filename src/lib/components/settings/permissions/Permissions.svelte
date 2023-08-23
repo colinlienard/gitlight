@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Button, ShrinkableWrapper } from '~/lib/components';
-	import { ExternalLinkIcon } from '~/lib/icons';
-	import { settings } from '~/lib/stores';
+	import { Button, ShrinkableWrapper } from '$lib/components';
+	import { ExternalLinkIcon } from '$lib/icons';
+	import { settings } from '$lib/stores';
 	import PatItem from './PatItem.svelte';
 
 	export let onExpand: () => void;

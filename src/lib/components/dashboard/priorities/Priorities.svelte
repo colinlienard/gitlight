@@ -8,11 +8,12 @@
 		Separator,
 		Switch,
 		Tooltip
-	} from '~/lib/components';
-	import { defaultPriorities, storage } from '~/lib/helpers';
-	import { PlusIcon, PriorityIcon } from '~/lib/icons';
-	import { settings } from '~/lib/stores';
-	import type { Priority } from '~/lib/types';
+	} from '$lib/components';
+	import { storage } from '$lib/features';
+	import { defaultPriorities } from '$lib/helpers';
+	import { PlusIcon, PriorityIcon } from '$lib/icons';
+	import { settings } from '$lib/stores';
+	import type { Priority } from '$lib/types';
 	import PriorityItem from './PriorityItem.svelte';
 
 	let editing = false;

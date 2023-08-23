@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onDestroy, onMount, type SvelteComponent } from 'svelte';
 	import { browser } from '$app/environment';
-	import { Input, modalOpen } from '~/lib/components';
-	import { SearchIcon } from '~/lib/icons';
-	import { settings } from '~/lib/stores';
+	import { Input, modalOpen } from '$lib/components';
+	import { SearchIcon } from '$lib/icons';
+	import { settings } from '$lib/stores';
 
 	export let search = '';
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { Button } from '~/lib/components';
-	import { storage } from '~/lib/helpers';
+	import { Button } from '$lib/components';
+	import { storage } from '$lib/features';
 
 	export let provider: 'github' | 'gitlab';
 
@@ -20,7 +20,7 @@
 			) {
 				window.location.reload();
 			} else {
-				goto(`/login${window.__TAURI__ ? '?desktop=true' : ''}`);
+				goto('/login');
 			}
 		}, 1000);
 	}

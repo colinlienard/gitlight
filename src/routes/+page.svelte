@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, DownloadButton, FakeNotifications, Footer } from '~/lib/components';
+	import { Button, DownloadButton, FakeNotifications, Footer } from '$lib/components';
 	import {
 		ArrowRightIcon,
 		GithubIcon,
@@ -7,7 +7,7 @@
 		LightningIcon,
 		Logo,
 		SparklesIcon
-	} from '~/lib/icons';
+	} from '$lib/icons';
 </script>
 
 <svelte:head>

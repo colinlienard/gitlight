@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { GithubLoginButton, GitlabLoginButton } from '~/lib/components';
-	import type { User } from '~/lib/types';
+	import { GithubLoginButton, GitlabLoginButton } from '$lib/components';
+	import type { User } from '$lib/types';
 	import LogOutButton from './LogOutButton.svelte';
 
 	export let title: string;
@@ -26,9 +26,9 @@
 		{:else}
 			<p class="sub">Not logged in.</p>
 			{#if provider === 'github'}
-				<GithubLoginButton>Log in</GithubLoginButton>
+				<GithubLoginButton small>Log in</GithubLoginButton>
 			{:else if provider === 'gitlab'}
-				<GitlabLoginButton>Log in</GitlabLoginButton>
+				<GitlabLoginButton small>Log in</GitlabLoginButton>
 			{/if}
 		{/if}
 	</div>

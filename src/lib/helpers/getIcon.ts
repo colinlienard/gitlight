@@ -7,8 +7,8 @@ import {
 	MergedPullRequestIcon,
 	OpenIssueIcon,
 	OpenPullRequestIcon
-} from '~/lib/icons';
-import type { GithubIssue, GithubPullRequest } from '~/lib/types';
+} from '$lib/icons';
+import type { GithubIssue, GithubPullRequest } from '$lib/types';
 
 export function getIssueIcon({ state, state_reason }: GithubIssue): ComponentType {
 	switch (state) {

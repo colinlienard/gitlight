@@ -16,11 +16,18 @@
 		Settings,
 		Sidebar,
 		Tooltip
-	} from '~/lib/components';
-	import { createNotificationData, fetchGithub, storage } from '~/lib/helpers';
-	import { GithubIcon, GitlabIcon, Logo, RefreshIcon } from '~/lib/icons';
-	import { error, githubNotifications, loading, savedNotifications, settings } from '~/lib/stores';
-	import type { GithubNotification, NotificationData } from '~/lib/types';
+	} from '$lib/components';
+	import { createGithubNotificationData, fetchGithub, storage } from '$lib/features';
+	import { GithubIcon, GitlabIcon, Logo, RefreshIcon } from '$lib/icons';
+	import {
+		error,
+		filteredNotifications,
+		githubNotifications,
+		loading,
+		savedNotifications,
+		settings
+	} from '$lib/stores';
+	import type { GithubNotification, NotificationData } from '$lib/types';
 
 	const githubUser = $page.data.session?.githubUser;
 	const gitlabUser = $page.data.session?.gitlabUser;
@@ -78,7 +85,11 @@
 			newNotifications = (
 				await Promise.all(
 					notifications.map((notification) =>
-						createNotificationData(notification, $savedNotifications, !$githubNotifications.length)
+						createGithubNotificationData(
+							notification,
+							$savedNotifications,
+							!$githubNotifications.length
+						)
 					)
 				)
 			).filter((item): item is NotificationData => !!item);
@@ -131,13 +142,14 @@
 	$: if (mounted && $githubNotifications.length) {
 		// Save events ids to storage
 		const toSave = $githubNotifications.map(
-			({ id, description, author, pinned, unread, done, time, previously }) => ({
+			({ id, description, author, pinned, unread, done, isNew, time, previously }) => ({
 				id,
 				description,
 				author,
 				pinned,
 				unread,
 				done,
+				isNew,
 				time,
 				previously
 			})
@@ -147,8 +159,8 @@
 
 		// Update menu bar
 		if (window.__TAURI__) {
-			const pinned = $githubNotifications.filter(({ pinned }) => pinned);
-			const unread = $githubNotifications.filter(
+			const pinned = $filteredNotifications.filter(({ pinned }) => pinned);
+			const unread = $filteredNotifications.filter(
 				({ pinned, unread, done }) => !pinned && unread && !done
 			);
 			invoke('update_tray', {
