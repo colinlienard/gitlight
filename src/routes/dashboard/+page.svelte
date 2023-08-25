@@ -104,13 +104,20 @@
 		if (!newNotifications.length) return;
 
 		// Send push notification and update tray icon
-		const pushNotification = newNotifications[0];
+		const watchedPersons = storage.get('github-watched-persons');
+		const watchedRepos = storage.get('github-watched-repos');
+		const unmutedNotifications = newNotifications.filter(({ author, repoId }) => {
+			const watchedPerson = watchedPersons?.find(({ login }) => login === author?.login);
+			const watchedRepo = watchedRepos?.find(({ id }) => id === repoId);
+			return !watchedPerson?.muted && !watchedRepo?.muted;
+		});
+		const pushNotification = unmutedNotifications[0];
 		if (
 			window.__TAURI__ &&
 			$githubNotifications.length &&
-			pushNotification.unread &&
 			$settings.activateNotifications &&
-			($settings.pushNotificationFromUser || pushNotification.author?.login !== githubUser?.login)
+			pushNotification?.unread &&
+			!pushNotification?.muted
 		) {
 			const { author, title, description } = pushNotification;
 			sendNotification({
@@ -142,7 +149,7 @@
 	$: if (mounted && $githubNotifications.length) {
 		// Save events ids to storage
 		const toSave = $githubNotifications.map(
-			({ id, description, author, pinned, unread, done, isNew, time, previously }) => ({
+			({ id, description, author, pinned, unread, done, isNew, muted, time, previously }) => ({
 				id,
 				description,
 				author,
@@ -150,6 +157,7 @@
 				unread,
 				done,
 				isNew,
+				muted,
 				time,
 				previously
 			})

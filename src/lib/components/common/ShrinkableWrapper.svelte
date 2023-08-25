@@ -54,7 +54,7 @@
 		gap: 0.25rem;
 		transition: margin variables.$transition;
 
-		&.shrinked :global(svg) {
+		&.shrinked .arrow-button :global(svg) {
 			rotate: -90deg;
 		}
 

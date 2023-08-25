@@ -53,8 +53,10 @@ export async function createGithubNotificationData(
 		? savedNotifications.find((n) => n.id === id)
 		: undefined;
 	const pinned = previous?.pinned || false;
-	const unread = isUnread || previous?.unread || false;
+	const muted = previous?.muted || false;
+	const unread = (muted ? previous?.unread : isUnread || previous?.unread) || false;
 	const done = !isUnread ? previous?.done || false : false;
+	const isNew = muted ? false : isUnread;
 	const [owner, repo] = repository.full_name.split('/');
 
 	// Get Personal Access Tokens
@@ -82,7 +84,8 @@ export async function createGithubNotificationData(
 		pinned,
 		unread,
 		done,
-		isNew: isUnread,
+		isNew,
+		muted,
 		reason,
 		time: updated_at,
 		title: subject.title,
