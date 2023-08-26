@@ -103,22 +103,29 @@
 
 		if (!newNotifications.length) return;
 
+		const firstFetch = !$githubNotifications.length;
+
+		// Remove duplicates and add new notifications to the store
+		$githubNotifications = [
+			...newNotifications,
+			...$githubNotifications.filter((item) => !newNotifications.find((n) => n.id === item.id))
+		];
+
+		if (!window.__TAURI__ || firstFetch || !$settings.activateNotifications) return;
+
 		// Send push notification and update tray icon
 		const watchedPersons = storage.get('github-watched-persons');
 		const watchedRepos = storage.get('github-watched-repos');
-		const unmutedNotifications = newNotifications.filter(({ author, repoId }) => {
-			const watchedPerson = watchedPersons?.find(({ login }) => login === author?.login);
+		const unmutedNotifications = newNotifications.filter(({ author, creator, repoId }) => {
+			const watchedPerson = watchedPersons?.find(
+				({ login }) =>
+					login === ($settings.showPersonsAsCreators && creator?.login) || author?.login
+			);
 			const watchedRepo = watchedRepos?.find(({ id }) => id === repoId);
 			return !watchedPerson?.muted && !watchedRepo?.muted;
 		});
 		const pushNotification = unmutedNotifications[0];
-		if (
-			window.__TAURI__ &&
-			$githubNotifications.length &&
-			$settings.activateNotifications &&
-			pushNotification?.unread &&
-			!pushNotification?.muted
-		) {
+		if (pushNotification?.unread && !pushNotification?.muted) {
 			const { author, title, description } = pushNotification;
 			sendNotification({
 				title: `${author ? `${author.login} ` : ''}${description.replace(/(\*|_)/g, '')}`,
@@ -126,12 +133,6 @@
 			});
 			invoke('update_tray', { newIcon: true });
 		}
-
-		// Remove duplicates and add new notifications to the store
-		$githubNotifications = [
-			...newNotifications,
-			...$githubNotifications.filter((item) => !newNotifications.find((n) => n.id === item.id))
-		];
 	}
 
 	function refetch() {
