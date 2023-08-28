@@ -82,6 +82,8 @@ jobs:
       - name: Build
         run: pnpm build
   build-app:
+    # Tauri build from forks fails because no access to secrets
+    if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
