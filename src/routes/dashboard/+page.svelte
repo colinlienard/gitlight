@@ -116,11 +116,8 @@
 		// Send push notification and update tray icon
 		const watchedPersons = storage.get('github-watched-persons');
 		const watchedRepos = storage.get('github-watched-repos');
-		const unmutedNotifications = newNotifications.filter(({ author, creator, repoId }) => {
-			const watchedPerson = watchedPersons?.find(
-				({ login }) =>
-					login === ($settings.showPersonsAsCreators && creator?.login) || author?.login
-			);
+		const unmutedNotifications = newNotifications.filter(({ author, repoId }) => {
+			const watchedPerson = watchedPersons?.find(({ login }) => login === author?.login);
 			const watchedRepo = watchedRepos?.find(({ id }) => id === repoId);
 			return !watchedPerson?.muted && !watchedRepo?.muted;
 		});
