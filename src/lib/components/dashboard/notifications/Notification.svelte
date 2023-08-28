@@ -3,7 +3,7 @@
 	import { onDestroy } from 'svelte';
 	import { Button, Tooltip } from '$lib/components';
 	import { fetchGithub } from '$lib/features';
-	import { formatRelativeDate, lightenColor } from '$lib/helpers';
+	import { formatRelativeDate, getGrayscale, lightenColor } from '$lib/helpers';
 	import {
 		CheckIcon,
 		DoubleCheckIcon,
@@ -171,7 +171,10 @@
 					{/if}
 				</div>
 				{#if priority && $settings.showPriority}
-					<div class="priority {priority.value > 0 ? 'up' : 'down'}">
+					<div
+						class="priority {priority.value > 0 ? 'up' : 'down'}"
+						style:filter={getGrayscale(priority.value)}
+					>
 						{#if priority.value > 0}
 							<PriorityUpIcon />
 						{:else}
