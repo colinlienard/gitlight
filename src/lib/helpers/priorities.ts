@@ -28,3 +28,13 @@ export function cleanSpecifier(string: string) {
 
 	return words.join(' ').toLowerCase();
 }
+
+export function getGrayscale(value: number) {
+	let grayscale = 1;
+	if (value > 0) {
+		grayscale = 1 - value / 5;
+	} else {
+		grayscale = 1 + value / 5;
+	}
+	return `grayscale(${grayscale})`;
+}
