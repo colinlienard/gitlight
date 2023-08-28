@@ -22,6 +22,7 @@ export type NotificationData = {
 	pinned: boolean;
 	done: boolean;
 	isNew: boolean;
+	muted: boolean;
 	author?: User;
 	creator?: User;
 	title: string;
@@ -66,6 +67,7 @@ export type SavedNotifications = Array<{
 	unread: boolean;
 	done: boolean;
 	isNew: boolean;
+	muted: boolean;
 	time: string;
 	previously?: NotificationData['previously'];
 }>;
@@ -77,6 +79,7 @@ export type WatchedRepo = {
 	ownerAvatar: string;
 	number: number;
 	active: boolean;
+	muted: boolean;
 };
 
 export type WatchedPerson = {
@@ -84,12 +87,12 @@ export type WatchedPerson = {
 	avatar: string;
 	number: number;
 	active: boolean;
+	muted: boolean;
 	bot?: boolean;
 };
 
 export type Settings = {
 	activateNotifications: boolean;
-	pushNotificationFromUser: boolean;
 	showNotificationsSyncTimer: boolean;
 	readWhenOpenInBrowser: boolean;
 	readWhenPin: boolean;

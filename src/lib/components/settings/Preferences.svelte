@@ -23,10 +23,6 @@
 	bind:active={$settings.activateNotifications}
 />
 <Switch
-	label="Send push notifications for which you are the author"
-	bind:active={$settings.pushNotificationFromUser}
-/>
-<Switch
 	label="Mark a notification as read when opening in the browser"
 	bind:active={$settings.readWhenOpenInBrowser}
 />

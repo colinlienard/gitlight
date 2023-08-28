@@ -7,8 +7,8 @@ type StorageMap = {
 	'gitlab-access-token': string;
 	settings: Settings;
 	'github-notifications': SavedNotifications;
-	'github-watched-repos': { id: string; active: boolean }[];
-	'github-watched-persons': { login: string; active: boolean }[];
+	'github-watched-repos': { id: string; active: boolean; muted: boolean }[];
+	'github-watched-persons': { login: string; active: boolean; muted: boolean }[];
 	'type-filters': boolean[];
 	priorities: Priority[];
 };

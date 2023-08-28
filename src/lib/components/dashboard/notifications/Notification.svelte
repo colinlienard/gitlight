@@ -7,11 +7,12 @@
 	import {
 		CheckIcon,
 		DoubleCheckIcon,
-		ExternalLinkIcon,
+		MuteIcon,
 		PinIcon,
 		PriorityDownIcon,
 		PriorityUpIcon,
 		RestoreIcon,
+		MutedIcon,
 		UnpinIcon,
 		UnreadIcon
 	} from '$lib/icons';
@@ -29,11 +30,13 @@
 		pinned,
 		done,
 		isNew,
+		muted,
 		author,
 		title,
 		description,
 		priority,
 		time,
+		type,
 		icon,
 		owner,
 		repo,
@@ -59,7 +62,7 @@
 		fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
 	}
 
-	function handleToggle(key: 'unread' | 'pinned' | 'done') {
+	function handleToggle(key: 'unread' | 'pinned' | 'done' | 'muted') {
 		return () => {
 			$githubNotifications = $githubNotifications.map((notification) => {
 				if (notification.id !== id) return notification;
@@ -69,12 +72,16 @@
 				return { ...notification, [key]: !notification[key], isNew: false };
 			});
 
-			if (pinned) {
+			if (key === 'unread' && pinned) {
 				unread = !unread;
 			}
 
 			if (key === 'unread' && unread) {
 				markAsReadInGitHub();
+			}
+
+			if (key === 'muted') {
+				muted = !muted;
 			}
 		};
 	}
@@ -226,18 +233,20 @@
 						</Button>
 					</Tooltip>
 				{/if}
-				{#if url}
-					<Tooltip content="Open in GitHub" position="left" hover>
-						<Button secondary icon on:click={handleOpenInBrowser}>
-							<ExternalLinkIcon />
-						</Button>
-					</Tooltip>
-				{:else}
-					<Tooltip content="Cannot open in GitHub" position="left" hover>
-						<Button secondary icon disabled>
-							<ExternalLinkIcon />
-						</Button>
-					</Tooltip>
+				{#if type === 'Discussion' || type === 'Issue' || type === 'PullRequest'}
+					{#if muted}
+						<Tooltip content="Muted" position="left" hover>
+							<Button secondary icon on:click={handleToggle('muted')}>
+								<MutedIcon />
+							</Button>
+						</Tooltip>
+					{:else}
+						<Tooltip content="Mute" position="left" hover>
+							<Button secondary icon on:click={handleToggle('muted')}>
+								<MuteIcon />
+							</Button>
+						</Tooltip>
+					{/if}
 				{/if}
 			</div>
 		{/if}

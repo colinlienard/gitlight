@@ -2,7 +2,7 @@
 	import { browser } from '$app/environment';
 	import { ShrinkableWrapper } from '$lib/components';
 	import { storage } from '$lib/features';
-	import { RepositoryIcon } from '$lib/icons';
+	import { MuteIcon, RepositoryIcon, MutedIcon } from '$lib/icons';
 	import { githubNotifications, loading, watchedRepos } from '$lib/stores';
 	import type { WatchedRepo } from '$lib/types';
 	import SidebarSection from './SidebarSection.svelte';
@@ -12,6 +12,7 @@
 		avatar: string;
 		number: number;
 		active: boolean;
+		muted: boolean;
 		repos: WatchedRepo[];
 	}[];
 
@@ -21,6 +22,7 @@
 
 		$watchedRepos = $githubNotifications.reduce<WatchedRepo[]>((previous, current) => {
 			if (current.done) return previous;
+			const saved = savedWatchedRepos?.find((repo) => repo.id === current.repoId);
 			const index = previous.findIndex((repo) => repo.id === current.repoId);
 			if (index > -1) {
 				const repo = previous.splice(index, 1)[0];
@@ -34,7 +36,8 @@
 					ownerName: current.owner,
 					ownerAvatar: current.ownerAvatar,
 					number: 1,
-					active: savedWatchedRepos?.find((repo) => repo.id === current.repoId)?.active ?? true
+					active: saved?.active ?? true,
+					muted: saved?.muted ?? false
 				}
 			];
 		}, []);
@@ -53,6 +56,7 @@
 						avatar: current.ownerAvatar,
 						number: current.number,
 						active: true,
+						muted: false,
 						repos: [current]
 					}
 				];
@@ -90,6 +94,7 @@
 		.map((item) => ({
 			...item,
 			active: item.repos.some((repo) => repo.active),
+			muted: item.repos.every((repo) => repo.muted),
 			repos: item.repos.sort((a, b) => b.number - a.number)
 		}));
 
@@ -97,7 +102,7 @@
 	$: if (browser) {
 		storage.set(
 			'github-watched-repos',
-			$watchedRepos.map(({ id, active }) => ({ id, active }))
+			$watchedRepos.map(({ id, active, muted }) => ({ id, active, muted }))
 		);
 	}
 
@@ -124,6 +129,22 @@
 			}
 		};
 	}
+
+	function handleMuteRepo(id: string) {
+		return () => {
+			$watchedRepos = $watchedRepos.map((item) =>
+				item.id === id ? { ...item, muted: !item.muted } : item
+			);
+		};
+	}
+
+	function handleMuteOwner(name: string, value: boolean) {
+		return () => {
+			$watchedRepos = $watchedRepos.map((item) =>
+				item.ownerName === name ? { ...item, muted: !value } : item
+			);
+		};
+	}
 </script>
 
 <SidebarSection
@@ -132,7 +153,7 @@
 	bind:items={$watchedRepos}
 >
 	{#if $watchedRepos.length}
-		{#each watchedReposByOwner as { name, avatar, number, active, repos }}
+		{#each watchedReposByOwner as { name, avatar, number, active, muted, repos }}
 			{#if repos.length === 1}
 				<button
 					class="wrapper"
@@ -142,6 +163,13 @@
 					<img class="image" src={avatar} alt="" />
 					<h3 class="name">{name}/{repos[0].name}</h3>
 					<span class="number">{number}</span>
+					<button class="mute" class:muted on:click|stopPropagation={handleMuteOwner(name, muted)}>
+						{#if muted}
+							<MutedIcon />
+						{:else}
+							<MuteIcon />
+						{/if}
+					</button>
 				</button>
 			{:else}
 				<ShrinkableWrapper>
@@ -154,14 +182,32 @@
 						<img class="image" src={avatar} alt="" />
 						<h3 class="name">{name}</h3>
 						<span class="number">{number}</span>
+						<button
+							class="mute"
+							class:muted
+							on:click|stopPropagation={handleMuteOwner(name, muted)}
+						>
+							{#if muted}
+								<MutedIcon />
+							{:else}
+								<MuteIcon />
+							{/if}
+						</button>
 					</button>
-					{#each repos as { id, name, number, active }}
+					{#each repos as { id, name, number, active, muted }}
 						<button class="wrapper" class:active on:click={handleToggleRepo(id)}>
 							<div class="repo-icon">
 								<RepositoryIcon />
 							</div>
 							<h4 class="name">{name}</h4>
 							<span class="number">{number}</span>
+							<button class="mute" class:muted on:click|stopPropagation={handleMuteRepo(id)}>
+								{#if muted}
+									<MutedIcon />
+								{:else}
+									<MuteIcon />
+								{/if}
+							</button>
 						</button>
 					{/each}
 				</ShrinkableWrapper>
@@ -191,6 +237,10 @@
 			.name::before {
 				width: 100%;
 			}
+		}
+
+		&:not(:hover) .mute {
+			opacity: 0;
 		}
 
 		&::before {
@@ -246,6 +296,23 @@
 
 		.number {
 			color: variables.$grey-4;
+		}
+
+		.mute {
+			margin-left: auto;
+			color: variables.$grey-4;
+
+			&.muted {
+				opacity: 1;
+			}
+
+			&:hover {
+				color: variables.$white;
+			}
+
+			:global(svg) {
+				height: 1.25rem;
+			}
 		}
 	}
 

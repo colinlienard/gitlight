@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { MuteIcon, MutedIcon } from '~/lib/icons';
 	import { storage } from '$lib/features';
 	import { githubNotifications, loading, settings, watchedPersons } from '$lib/stores';
 	import type { WatchedPerson } from '$lib/types';
@@ -15,6 +16,7 @@
 			.reduce<WatchedPerson[]>((previous, current) => {
 				if (!current.author || current.done) return previous;
 				const involved = (showPersonsAsCreators && current?.creator) || current?.author;
+				const saved = savedWatchedPersons?.find((person) => person.login === involved?.login);
 				const index = previous.findIndex((person) => person.login === involved?.login);
 				if (index > -1) {
 					const person = previous.splice(index, 1)[0];
@@ -27,9 +29,8 @@
 						avatar: involved?.avatar ?? '',
 						number: 1,
 						bot: involved?.bot,
-						active:
-							savedWatchedPersons?.find((person) => person.login === involved?.login)?.active ??
-							true
+						active: saved?.active ?? true,
+						muted: saved?.muted ?? false
 					}
 				];
 			}, [])
@@ -43,7 +44,7 @@
 	$: if (browser) {
 		storage.set(
 			'github-watched-persons',
-			$watchedPersons.map(({ login, active }) => ({ login, active }))
+			$watchedPersons.map(({ login, active, muted }) => ({ login, active, muted }))
 		);
 	}
 
@@ -59,6 +60,14 @@
 					person.login === login ? { ...person, active: !person.active } : person
 				);
 			}
+		};
+	}
+
+	function handleMute(login: string) {
+		return () => {
+			$watchedPersons = $watchedPersons.map((person) =>
+				person.login === login ? { ...person, muted: !person.muted } : person
+			);
 		};
 	}
 
@@ -87,11 +96,18 @@
 	]}
 >
 	{#if $watchedPersons.length}
-		{#each $watchedPersons as { login, avatar, active, number }}
-			<button class="wrapper" class:active on:click={null} on:click={handleToggle(login)}>
+		{#each $watchedPersons as { login, avatar, active, muted, number }}
+			<button class="wrapper" class:active on:click={handleToggle(login)}>
 				<img class="image" src={avatar} alt="" />
 				<h3 class="name">{login}</h3>
 				<span class="number">{number}</span>
+				<button class="mute" class:muted on:click|stopPropagation={handleMute(login)}>
+					{#if muted}
+						<MutedIcon />
+					{:else}
+						<MuteIcon />
+					{/if}
+				</button>
 			</button>
 		{/each}
 	{:else}
@@ -114,6 +130,10 @@
 			.name::before {
 				width: 100%;
 			}
+		}
+
+		&:not(:hover) .mute {
+			opacity: 0;
 		}
 
 		&::before {
@@ -156,6 +176,23 @@
 
 		.number {
 			color: variables.$grey-4;
+		}
+
+		.mute {
+			margin-left: auto;
+			color: variables.$grey-4;
+
+			&.muted {
+				opacity: 1;
+			}
+
+			&:hover {
+				color: variables.$white;
+			}
+
+			:global(svg) {
+				height: 1.25rem;
+			}
 		}
 	}
 
