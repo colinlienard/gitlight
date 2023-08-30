@@ -14,6 +14,7 @@
 	import { loading, githubNotifications, settings as settingsStore } from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
 	import Notification from './Notification.svelte';
+	import NotificationsPlaceholder from './NotificationsPlaceholder.svelte';
 	import SkeletonNotification from './SkeletonNotification.svelte';
 
 	type SvelteAnimation = (
@@ -172,13 +173,7 @@
 				</li>
 			{/each}
 			{#if empty}
-				<div class="placeholder" in:fade={{ duration: 300 }}>
-					<div class="icon-container">
-						<svelte:component this={placeholder.icon} />
-					</div>
-					<h4 class="title">No notifications to display</h4>
-					<p class="text">{placeholder.text}</p>
-				</div>
+				<NotificationsPlaceholder icon={placeholder.icon} text={placeholder.text} />
 			{/if}
 		{/if}
 	</ul>
@@ -324,48 +319,6 @@
 			&:hover {
 				z-index: 1;
 			}
-		}
-	}
-
-	.placeholder {
-		display: flex;
-		height: 100%;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		padding: 1rem 0;
-		color: variables.$grey-4;
-		gap: 0.5rem;
-		text-align: center;
-
-		.icon-container {
-			position: relative;
-			padding: 0.5rem;
-			border: 1px solid;
-			border-radius: variables.$radius;
-			margin-bottom: 0.5rem;
-
-			:global(svg) {
-				height: 1rem;
-			}
-
-			&::before {
-				position: absolute;
-				background-image: linear-gradient(transparent, rgba(variables.$grey-1, 0.75));
-				content: '';
-				inset: -1px;
-			}
-		}
-
-		.title {
-			@include typography.bold;
-		}
-
-		.text {
-			@include typography.small;
-			@include typography.base;
-
-			max-width: 12rem;
 		}
 	}
 </style>
