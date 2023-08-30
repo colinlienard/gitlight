@@ -74,7 +74,6 @@
 
 		display: -webkit-box;
 		overflow: hidden;
-		width: 100%;
 		-webkit-box-orient: vertical;
 		color: variables.$grey-4;
 		hyphens: auto;

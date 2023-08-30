@@ -1,4 +1,4 @@
-import { largeScreen } from '../stores';
+import { settings } from '../stores';
 
 const lists: Array<{
 	node: HTMLElement;
@@ -24,7 +24,7 @@ export function drag(
 		itemId = id;
 		x = e.clientX;
 		y = e.clientY;
-		largeScreen.subscribe((value) => (vertical = !value));
+		settings.subscribe(({ viewMode }) => (vertical = viewMode === 'Kanban (vertical)'));
 	}
 
 	function handleMouseMove({ clientX, clientY }: MouseEvent) {

@@ -3,7 +3,7 @@
 	import { settings } from '$lib/stores';
 	import type { Settings } from '$lib/types';
 
-	const axisOptions: Array<Settings['notificationAxis']> = ['Auto', 'Vertical', 'Horizontal'];
+	const viewModeOptions: Array<Settings['viewMode']> = ['List', 'Kanban', 'Kanban (vertical)'];
 	const numberOptions: Array<Settings['notificationNumber']> = [25, 50, 75, 100];
 
 	let mounted = false;
@@ -35,14 +35,10 @@
 />
 <span />
 <h3>Interface</h3>
-<Switch label="Hide sidebar" bind:active={$settings.sidebarHidden} />
+<InlineSelect label="Notification axis" options={viewModeOptions} bind:value={$settings.viewMode} />
 <Switch label="Show notifications sync timer" bind:active={$settings.showNotificationsSyncTimer} />
 <Switch
 	label="Show notifications owner and repository"
 	bind:active={$settings.showNotificationsRepo}
 />
-<InlineSelect
-	label="Notification axis"
-	options={axisOptions}
-	bind:value={$settings.notificationAxis}
-/>
+<Switch label="Hide sidebar" bind:active={$settings.sidebarHidden} />

@@ -11,12 +11,7 @@
 	import { drag, drop, fetchGithub } from '$lib/features';
 	import { debounce } from '$lib/helpers';
 	import { ArrowUpIcon } from '$lib/icons';
-	import {
-		loading,
-		largeScreen,
-		githubNotifications,
-		settings as settingsStore
-	} from '$lib/stores';
+	import { loading, githubNotifications, settings as settingsStore } from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
 	import Notification from './Notification.svelte';
 	import SkeletonEvent from './SkeletonEvent.svelte';
@@ -88,6 +83,8 @@
 
 	$: showDropzone = $dragging ? $dragging !== title : false;
 
+	$: verticalKanban = $settingsStore.viewMode === 'Kanban (vertical)';
+
 	function flipIfVisible(...args: Parameters<typeof flip>) {
 		const node = args[0].getBoundingClientRect();
 		const parent = args[0].parentElement?.getBoundingClientRect();
@@ -110,15 +107,14 @@
 				return {
 					...notification,
 					pinned: true,
-					unread: notification.unread || (!notification.pinned && $settingsStore.readWhenPin),
-					isNew: false
+					unread: notification.unread || (!notification.pinned && $settingsStore.readWhenPin)
 				};
 			}
 			if (title === 'Read') {
 				fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
-				return { ...notification, unread: false, pinned: false, isNew: false };
+				return { ...notification, unread: false, pinned: false };
 			}
-			return { ...notification, unread: true, pinned: false, isNew: false };
+			return { ...notification, unread: true, pinned: false };
 		});
 	}
 </script>
@@ -127,7 +123,7 @@
 	class="column"
 	class:has-dropzone={showDropzone}
 	class:dragging={!!$dragging}
-	class:vertical={$largeScreen}
+	class:vertical={!verticalKanban}
 >
 	<div class="column-header">
 		<svelte:component this={icon} />
@@ -140,7 +136,7 @@
 	{#if showDropzone}
 		<div class="dropzone" class:hovering transition:fade={{ duration: 150 }} />
 	{/if}
-	{#if scrolled && $largeScreen}
+	{#if scrolled && !verticalKanban}
 		<div class="scroll-button" transition:fade={{ duration: 150 }}>
 			<Button secondary small on:click={handleScrollToTop}>
 				Scroll to top <ArrowUpIcon />
@@ -149,7 +145,7 @@
 	{/if}
 	<ul
 		class="list"
-		class:scroll-visible={transitioning || empty || !$largeScreen || !!$dragging}
+		class:scroll-visible={transitioning || empty || verticalKanban || !!$dragging}
 		style="--scroll-position: -{scrollPosition}px"
 		use:drop={{
 			onDrop: handleDrop,

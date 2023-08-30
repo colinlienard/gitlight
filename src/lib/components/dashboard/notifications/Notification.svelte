@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { open } from '@tauri-apps/api/shell';
-	import { onDestroy } from 'svelte';
 	import { Button, Tooltip } from '$lib/components';
 	import { fetchGithub } from '$lib/features';
-	import { formatRelativeDate, getGrayscale, lightenColor } from '$lib/helpers';
+	import { getGrayscale, lightenColor } from '$lib/helpers';
 	import {
 		CheckIcon,
 		DoubleCheckIcon,
@@ -19,6 +18,7 @@
 	import { githubNotifications, settings } from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
 	import NotificationDescription from './NotificationDescription.svelte';
+	import NotificationStatus from './NotificationStatus.svelte';
 
 	export let data: NotificationData;
 	export let dragged = false;
@@ -29,13 +29,11 @@
 		unread,
 		pinned,
 		done,
-		isNew,
 		muted,
 		author,
 		title,
 		description,
 		priority,
-		time,
 		type,
 		icon,
 		owner,
@@ -45,18 +43,9 @@
 		url,
 		previously
 	} = data;
-	let displayTime = formatRelativeDate(time);
 	let repoUrl = `https://github.com/${owner}/${repo}`;
 	let hoverTitle = false;
 	let hoverTitleTimeout: ReturnType<typeof setTimeout>;
-
-	const interval = setInterval(() => {
-		displayTime = formatRelativeDate(time);
-	}, 60000);
-
-	onDestroy(() => {
-		clearInterval(interval);
-	});
 
 	function markAsReadInGitHub() {
 		fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
@@ -67,9 +56,9 @@
 			$githubNotifications = $githubNotifications.map((notification) => {
 				if (notification.id !== id) return notification;
 				if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
-					return { ...notification, pinned: !notification.pinned, unread: false, isNew: false };
+					return { ...notification, pinned: !notification.pinned, unread: false };
 				}
-				return { ...notification, [key]: !notification[key], isNew: false };
+				return { ...notification, [key]: !notification[key] };
 			});
 
 			if (key === 'unread' && pinned) {
@@ -101,12 +90,6 @@
 		url && openUrl(url);
 	}
 
-	function handleMouseEnter() {
-		$githubNotifications = $githubNotifications.map((event) =>
-			event.id === id ? { ...event, isNew: false } : event
-		);
-	}
-
 	function handleTitleHover(event: MouseEvent) {
 		if (event.type === 'mouseenter') {
 			hoverTitleTimeout = setTimeout(() => {
@@ -129,27 +112,20 @@
 	}
 </script>
 
-<div class="container" class:transparent={!unread && !done} class:dragged>
-	<div
-		class="notification"
-		on:mouseenter={isNew && interactive ? handleMouseEnter : undefined}
-		role="presentation"
-	>
-		{#if isNew && unread}
-			<div class="new" />
-		{/if}
+<div class="container" class:transparent={!unread && !pinned && !done} class:dragged>
+	<div class="notification">
 		{#if $settings.showNotificationsRepo}
 			<div class="top">
 				<button class="repo" on:mouseup={() => openUrl(repoUrl)}>
 					{owner}/<span class="bold">{repo}</span>
 				</button>
-				<p class="time">{displayTime}</p>
+				<NotificationStatus {data} />
 			</div>
 		{/if}
 		<div class="description">
 			<NotificationDescription {author} {description} {openUrl} />
 			{#if !$settings.showNotificationsRepo}
-				<p class="time">{displayTime}</p>
+				<NotificationStatus {data} />
 			{/if}
 		</div>
 		<div class="main" class:has-priority={priority && $settings.showPriority}>
@@ -279,7 +255,7 @@
 		}
 
 		&.transparent {
-			opacity: 0.65;
+			opacity: 0.6;
 			transition: opacity variables.$transition;
 
 			&:hover {
@@ -303,15 +279,6 @@
 		flex-direction: column;
 		padding: 1rem;
 		gap: 0.75rem;
-	}
-
-	.new {
-		position: absolute;
-		width: 0.5rem;
-		height: 0.5rem;
-		border-radius: 50%;
-		background-color: variables.$blue-2;
-		inset: 0.25rem 0.25rem auto auto;
 	}
 
 	.top {
@@ -345,7 +312,6 @@
 		gap: 0.75rem;
 	}
 
-	.time,
 	.repo {
 		@include typography.small;
 
