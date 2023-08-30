@@ -48,6 +48,7 @@
 
 		.pinned {
 			flex: 0 0 1.25rem;
+			color: variables.$yellow;
 
 			:global(svg) {
 				height: 1.25rem;

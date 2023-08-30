@@ -13,7 +13,8 @@
 		RestoreIcon,
 		MutedIcon,
 		UnpinIcon,
-		UnreadIcon
+		UnreadIcon,
+		ExternalLinkIcon
 	} from '$lib/icons';
 	import { githubNotifications, settings } from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
@@ -57,6 +58,10 @@
 				if (notification.id !== id) return notification;
 				if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
 					return { ...notification, pinned: !notification.pinned, unread: false };
+				}
+				if (key === 'done' && unread) {
+					markAsReadInGitHub();
+					return { ...notification, done: !notification.done, unread: false };
 				}
 				return { ...notification, [key]: !notification[key] };
 			});
@@ -174,53 +179,63 @@
 		{#if !dragged && interactive}
 			<div class="over">
 				{#if !done}
-					{#if !unread && !pinned}
-						<Tooltip content="Mark as done" position="left" hover>
+					{#if !unread}
+						<Tooltip content="Mark as done" position="bottom right" hover>
 							<Button icon on:click={handleToggle('done')}>
 								<DoubleCheckIcon />
 							</Button>
 						</Tooltip>
 					{/if}
 					{#if unread}
-						<Tooltip content="Mark as read" position="left" hover>
+						<Tooltip content="Mark as read" position="bottom right" hover>
 							<Button icon on:click={handleToggle('unread')}>
 								<CheckIcon />
 							</Button>
 						</Tooltip>
+						<Tooltip content="Mark as done" position="bottom" hover>
+							<Button secondary icon on:click={handleToggle('done')}>
+								<DoubleCheckIcon />
+							</Button>
+						</Tooltip>
 					{:else}
-						<Tooltip content="Mark as unread" position="left" hover>
+						<Tooltip content="Mark as unread" position="bottom" hover>
 							<Button secondary icon on:click={handleToggle('unread')}>
 								<UnreadIcon />
 							</Button>
 						</Tooltip>
 					{/if}
-					{#if unread || pinned}
-						<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left" hover>
-							<Button secondary icon on:click={handleToggle('pinned')}>
-								{#if pinned}
-									<UnpinIcon />
-								{:else}
-									<PinIcon />
-								{/if}
-							</Button>
-						</Tooltip>
-					{/if}
+					<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="bottom" hover>
+						<Button secondary icon on:click={handleToggle('pinned')}>
+							{#if pinned}
+								<UnpinIcon />
+							{:else}
+								<PinIcon />
+							{/if}
+						</Button>
+					</Tooltip>
 				{:else}
-					<Tooltip content="Restore" position="left" hover>
+					<Tooltip content="Restore" position="bottom" hover>
 						<Button icon on:click={handleToggle('done')}>
 							<RestoreIcon />
 						</Button>
 					</Tooltip>
 				{/if}
+				{#if url}
+					<Tooltip content="Open in browser" position="bottom" hover>
+						<Button secondary icon on:click={handleOpenInBrowser}>
+							<ExternalLinkIcon />
+						</Button>
+					</Tooltip>
+				{/if}
 				{#if type === 'Discussion' || type === 'Issue' || type === 'PullRequest'}
 					{#if muted}
-						<Tooltip content="Muted" position="left" hover>
+						<Tooltip content="Muted" position="bottom" hover>
 							<Button secondary icon on:click={handleToggle('muted')}>
 								<MutedIcon />
 							</Button>
 						</Tooltip>
 					{:else}
-						<Tooltip content="Mute" position="left" hover>
+						<Tooltip content="Mute" position="bottom" hover>
 							<Button secondary icon on:click={handleToggle('muted')}>
 								<MuteIcon />
 							</Button>
@@ -434,22 +449,28 @@
 	.over {
 		position: absolute;
 		display: flex;
-		flex-direction: column;
-		align-items: end;
-		justify-content: start;
+		flex-direction: row-reverse;
+		justify-content: end;
 		padding: 0.5rem;
 		gap: 0.5rem;
-		inset: 0 0 0 auto;
+		inset: 0;
 		transition: opacity variables.$transition;
 
 		&::before {
 			position: absolute;
-			width: 8rem;
+			width: 100%;
+			max-width: 12rem;
+			height: 100%;
+			max-height: 6rem;
 			border-radius: 0 calc(variables.$radius - 1px) calc(variables.$radius - 1px) 0;
-			background-image: linear-gradient(to right, transparent, variables.$grey-1);
+			background-image: radial-gradient(at top right, variables.$grey-1, transparent 75%);
 			content: '';
-			inset: 0 0 0 auto;
+			inset: 0 0 auto auto;
 			pointer-events: none;
+		}
+
+		& > :global(div) {
+			height: fit-content;
 		}
 	}
 

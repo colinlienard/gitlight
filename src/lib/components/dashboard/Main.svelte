@@ -48,7 +48,7 @@
 
 <ScrollbarContainer margin="0.25rem">
 	{#if $settings.viewMode === 'List'}
-		<ul class="list" style:height={notifications.length ? undefined : '100%'}>
+		<ul class="list" style:height={notifications.length ? 'auto' : '100%'}>
 			{#if $loading}
 				<li><SkeletonNotification /></li>
 				<li><SkeletonNotification /></li>
