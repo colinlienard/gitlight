@@ -5,7 +5,7 @@
 	import { fetchGithub } from '$lib/features';
 	import { CheckIcon, UnreadIcon, PinIcon, DoubleCheckIcon } from '$lib/icons';
 	import { filteredNotifications, githubNotifications, loading, settings } from '$lib/stores';
-	import { Notification, SkeletonEvent } from './notifications';
+	import { Notification, SkeletonNotification } from './notifications';
 
 	// Sort by priority
 	$: prioritySorting = $settings.prioritySorting;
@@ -50,8 +50,8 @@
 	{#if $settings.viewMode === 'List'}
 		<ul class="list">
 			{#if $loading}
-				<li><SkeletonEvent /></li>
-				<li><SkeletonEvent /></li>
+				<li><SkeletonNotification /></li>
+				<li><SkeletonNotification /></li>
 			{:else}
 				{#each notifications as notification (notification)}
 					<li>

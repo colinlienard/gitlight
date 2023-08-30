@@ -14,7 +14,7 @@
 	import { loading, githubNotifications, settings as settingsStore } from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
 	import Notification from './Notification.svelte';
-	import SkeletonEvent from './SkeletonEvent.svelte';
+	import SkeletonNotification from './SkeletonNotification.svelte';
 
 	type SvelteAnimation = (
 		node: Element,
@@ -154,8 +154,8 @@
 		bind:this={list}
 	>
 		{#if $loading}
-			<li><SkeletonEvent /></li>
-			<li><SkeletonEvent /></li>
+			<li><SkeletonNotification /></li>
+			<li><SkeletonNotification /></li>
 		{:else}
 			{#each notifications as notification (notification)}
 				<li
