@@ -3,7 +3,6 @@
 	import { settings } from '$lib/stores';
 	import type { Settings } from '$lib/types';
 
-	const viewModeOptions: Array<Settings['viewMode']> = ['List', 'Kanban', 'Kanban (vertical)'];
 	const numberOptions: Array<Settings['notificationNumber']> = [25, 50, 75, 100];
 
 	let mounted = false;
@@ -35,10 +34,129 @@
 />
 <span />
 <h3>Interface</h3>
-<InlineSelect label="Notification axis" options={viewModeOptions} bind:value={$settings.viewMode} />
+<div class="views">
+	<button
+		class="view"
+		class:active={$settings.viewMode === 'List'}
+		on:click={() => ($settings.viewMode = 'List')}
+	>
+		<p class="name">List</p>
+		<div class="blocks">
+			<div class="block">
+				<div class="item" />
+				<div class="item" />
+				<div class="item" />
+				<div class="item" />
+				<div class="item" />
+			</div>
+		</div>
+	</button>
+	<button
+		class="view"
+		class:active={$settings.viewMode === 'Kanban'}
+		on:click={() => ($settings.viewMode = 'Kanban')}
+	>
+		<p class="name">Kanban</p>
+		<div class="blocks">
+			<div class="block">
+				<div class="item" />
+				<div class="item" />
+				<div class="item" />
+				<div class="item" />
+				<div class="item" />
+			</div>
+			<div class="block">
+				<div class="item" />
+				<div class="item" />
+				<div class="item" />
+				<div class="item" />
+				<div class="item" />
+			</div>
+			<div class="block">
+				<div class="item" />
+				<div class="item" />
+				<div class="item" />
+				<div class="item" />
+				<div class="item" />
+			</div>
+		</div>
+	</button>
+	<button
+		class="view"
+		class:active={$settings.viewMode === 'Kanban (vertical)'}
+		on:click={() => ($settings.viewMode = 'Kanban (vertical)')}
+	>
+		<p class="name">Kanban (vertical)</p>
+		<div class="blocks vertical">
+			<div class="block">
+				<div class="item" />
+			</div>
+			<div class="block">
+				<div class="item" />
+				<div class="item" />
+			</div>
+			<div class="block">
+				<div class="item" />
+				<div class="item" />
+			</div>
+		</div>
+	</button>
+</div>
 <Switch label="Show notifications sync timer" bind:active={$settings.showNotificationsSyncTimer} />
 <Switch
 	label="Show notifications owner and repository"
 	bind:active={$settings.showNotificationsRepo}
 />
 <Switch label="Hide sidebar" bind:active={$settings.sidebarHidden} />
+
+<style lang="scss">
+	.views {
+		display: flex;
+		gap: 1rem;
+
+		.view {
+			@include mixins.box(true);
+
+			display: flex;
+			overflow: hidden;
+			width: 100%;
+			height: 8rem;
+			flex-direction: column;
+			align-items: center;
+			padding: 0.5rem 0.5rem 0;
+			gap: 0.5rem;
+
+			&.active {
+				outline: 2px solid variables.$blue-2;
+				outline-offset: -2px;
+			}
+
+			.blocks {
+				display: flex;
+				width: 100%;
+				gap: 0.25rem;
+
+				&.vertical {
+					flex-direction: column;
+				}
+
+				.block {
+					display: flex;
+					width: 100%;
+					flex-direction: column;
+					padding: 0.25rem;
+					border-radius: 0.25rem;
+					background-color: variables.$grey-3;
+					gap: 0.25rem;
+
+					.item {
+						width: 100%;
+						height: 1rem;
+						border-radius: 0.25rem;
+						background-color: #323232;
+					}
+				}
+			}
+		}
+	}
+</style>
