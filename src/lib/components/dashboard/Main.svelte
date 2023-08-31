@@ -4,8 +4,8 @@
 	import { Separator, ScrollbarContainer, NotificationColumn } from '$lib/components';
 	import { fetchGithub } from '$lib/features';
 	import { CheckIcon, UnreadIcon, PinIcon, DoubleCheckIcon } from '$lib/icons';
-	import { filteredNotifications, githubNotifications, loading, settings } from '$lib/stores';
-	import { Notification, NotificationsPlaceholder, SkeletonNotification } from './notifications';
+	import { filteredNotifications, githubNotifications, settings } from '$lib/stores';
+	import { NotificationList } from './notifications';
 
 	// Sort by priority
 	$: prioritySorting = $settings.prioritySorting;
@@ -48,20 +48,7 @@
 
 <ScrollbarContainer margin="0.25rem">
 	{#if $settings.viewMode === 'List'}
-		<ul class="list" style:height={notifications.length ? 'auto' : '100%'}>
-			{#if $loading}
-				<li><SkeletonNotification /></li>
-				<li><SkeletonNotification /></li>
-			{:else if notifications.length}
-				{#each notifications as notification (notification)}
-					<li>
-						<Notification data={notification} />
-					</li>
-				{/each}
-			{:else}
-				<NotificationsPlaceholder icon={CheckIcon} text="Well done!" />
-			{/if}
-		</ul>
+		<NotificationList {notifications} />
 	{:else}
 		<section class="columns-container" class:horizontal={verticalKanban}>
 			<NotificationColumn
@@ -116,25 +103,6 @@
 </ScrollbarContainer>
 
 <style lang="scss">
-	.list {
-		position: relative;
-		display: flex;
-		height: 100%;
-		flex-direction: column;
-		padding: 0 2rem 2rem;
-		gap: 1rem;
-
-		&::before {
-			position: sticky;
-			z-index: 1;
-			height: 2rem;
-			margin-bottom: -1rem;
-			background-image: linear-gradient(variables.$grey-1 1rem, transparent);
-			content: '';
-			inset: 0 0 auto;
-		}
-	}
-
 	.columns-container {
 		position: relative;
 		padding: 2rem 0.5rem;

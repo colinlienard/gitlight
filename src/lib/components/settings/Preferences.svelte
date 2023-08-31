@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { InlineSelect, Switch } from '$lib/components';
+	import { InlineSelect, Switch, Tooltip } from '$lib/components';
 	import { settings } from '$lib/stores';
 	import type { Settings } from '$lib/types';
 
@@ -35,72 +35,86 @@
 <span />
 <h3>Interface</h3>
 <div class="views">
-	<button
-		class="view"
-		class:active={$settings.viewMode === 'List'}
-		on:click={() => ($settings.viewMode = 'List')}
+	<Tooltip
+		content="A simple vertical list, with pinned notifications at the top."
+		hover
+		width="10rem"
 	>
-		<p class="name">List</p>
-		<div class="blocks">
-			<div class="block">
-				<div class="item" />
-				<div class="item" />
-				<div class="item" />
-				<div class="item" />
-				<div class="item" />
+		<button
+			class="view"
+			class:active={$settings.viewMode === 'List'}
+			on:click={() => ($settings.viewMode = 'List')}
+		>
+			<p class="name">List</p>
+			<div class="blocks padding">
+				<div class="block">
+					<div class="item" />
+					<div class="item" />
+					<div class="item" />
+					<div class="item" />
+					<div class="item" />
+				</div>
 			</div>
-		</div>
-	</button>
-	<button
-		class="view"
-		class:active={$settings.viewMode === 'Kanban'}
-		on:click={() => ($settings.viewMode = 'Kanban')}
+		</button>
+	</Tooltip>
+	<Tooltip content="Three columns with pinned, unread and read notifications." hover width="10rem">
+		<button
+			class="view"
+			class:active={$settings.viewMode === 'Kanban'}
+			on:click={() => ($settings.viewMode = 'Kanban')}
+		>
+			<p class="name">Kanban</p>
+			<div class="blocks">
+				<div class="block">
+					<div class="item" />
+					<div class="item" />
+					<div class="item" />
+					<div class="item" />
+					<div class="item" />
+				</div>
+				<div class="block">
+					<div class="item" />
+					<div class="item" />
+					<div class="item" />
+					<div class="item" />
+					<div class="item" />
+				</div>
+				<div class="block">
+					<div class="item" />
+					<div class="item" />
+					<div class="item" />
+					<div class="item" />
+					<div class="item" />
+				</div>
+			</div>
+		</button>
+	</Tooltip>
+	<Tooltip
+		content="Three groups in one column with pinned, unread and read notifications."
+		hover
+		width="10rem"
 	>
-		<p class="name">Kanban</p>
-		<div class="blocks">
-			<div class="block">
-				<div class="item" />
-				<div class="item" />
-				<div class="item" />
-				<div class="item" />
-				<div class="item" />
+		<button
+			class="view"
+			class:active={$settings.viewMode === 'Kanban (vertical)'}
+			on:click={() => ($settings.viewMode = 'Kanban (vertical)')}
+		>
+			<p class="name">Kanban (vertical)</p>
+			<div class="blocks padding vertical">
+				<div class="block">
+					<div class="item" />
+				</div>
+				<div class="block">
+					<div class="item" />
+					<div class="item" />
+				</div>
+				<div class="block">
+					<div class="item" />
+					<div class="item" />
+				</div>
 			</div>
-			<div class="block">
-				<div class="item" />
-				<div class="item" />
-				<div class="item" />
-				<div class="item" />
-				<div class="item" />
-			</div>
-			<div class="block">
-				<div class="item" />
-				<div class="item" />
-				<div class="item" />
-				<div class="item" />
-				<div class="item" />
-			</div>
-		</div>
-	</button>
-	<button
-		class="view"
-		class:active={$settings.viewMode === 'Kanban (vertical)'}
-		on:click={() => ($settings.viewMode = 'Kanban (vertical)')}
-	>
-		<p class="name">Kanban (vertical)</p>
-		<div class="blocks vertical">
-			<div class="block">
-				<div class="item" />
-			</div>
-			<div class="block">
-				<div class="item" />
-				<div class="item" />
-			</div>
-			<div class="block">
-				<div class="item" />
-				<div class="item" />
-			</div>
-		</div>
-	</button>
+		</button>
+	</Tooltip>
 </div>
 <Switch label="Show notifications sync timer" bind:active={$settings.showNotificationsSyncTimer} />
 <Switch
@@ -113,6 +127,10 @@
 	.views {
 		display: flex;
 		gap: 1rem;
+
+		& > :global(div) {
+			width: 100%;
+		}
 
 		.view {
 			@include mixins.box(true);
@@ -135,6 +153,10 @@
 				display: flex;
 				width: 100%;
 				gap: 0.25rem;
+
+				&.padding {
+					padding: 0 0.5rem;
+				}
 
 				&.vertical {
 					flex-direction: column;

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import { settings } from '~/lib/stores';
 	import { formatRelativeDate } from '$lib/helpers';
 	import { PinIcon } from '$lib/icons';
+	import { settings } from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
 
 	export let data: NotificationData;

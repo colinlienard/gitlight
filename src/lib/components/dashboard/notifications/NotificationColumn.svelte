@@ -14,7 +14,7 @@
 	import { loading, githubNotifications, settings as settingsStore } from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
 	import Notification from './Notification.svelte';
-	import NotificationsPlaceholder from './NotificationsPlaceholder.svelte';
+	import NotificationPlaceholder from './NotificationPlaceholder.svelte';
 	import SkeletonNotification from './SkeletonNotification.svelte';
 
 	type SvelteAnimation = (
@@ -173,7 +173,7 @@
 				</li>
 			{/each}
 			{#if empty}
-				<NotificationsPlaceholder icon={placeholder.icon} text={placeholder.text} />
+				<NotificationPlaceholder icon={placeholder.icon} text={placeholder.text} />
 			{/if}
 		{/if}
 	</ul>

@@ -449,28 +449,27 @@
 	.over {
 		position: absolute;
 		display: flex;
-		flex-direction: row-reverse;
+		flex-flow: row-reverse wrap;
 		justify-content: end;
 		padding: 0.5rem;
 		gap: 0.5rem;
-		inset: 0;
+		inset: 0 0 auto auto;
+		pointer-events: none;
 		transition: opacity variables.$transition;
 
 		&::before {
 			position: absolute;
-			width: 100%;
-			max-width: 12rem;
-			height: 100%;
-			max-height: 6rem;
+			width: 12rem;
+			height: 6rem;
 			border-radius: 0 calc(variables.$radius - 1px) calc(variables.$radius - 1px) 0;
 			background-image: radial-gradient(at top right, variables.$grey-1, transparent 75%);
 			content: '';
 			inset: 0 0 auto auto;
-			pointer-events: none;
 		}
 
 		& > :global(div) {
 			height: fit-content;
+			pointer-events: all;
 		}
 	}
 
