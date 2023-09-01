@@ -452,17 +452,17 @@
 		flex-flow: row-reverse wrap;
 		justify-content: end;
 		padding: 0.5rem;
-		gap: 0.5rem;
+		gap: 0.25rem;
 		inset: 0 0 auto auto;
 		pointer-events: none;
 		transition: opacity variables.$transition;
 
 		&::before {
 			position: absolute;
-			width: 12rem;
-			height: 6rem;
+			width: 16rem;
+			height: 5rem;
 			border-radius: 0 calc(variables.$radius - 1px) calc(variables.$radius - 1px) 0;
-			background-image: radial-gradient(at top right, variables.$grey-1, transparent 75%);
+			background-image: radial-gradient(at top right, variables.$grey-1 25%, transparent 75%);
 			content: '';
 			inset: 0 0 auto auto;
 		}
@@ -492,7 +492,7 @@
 		}
 
 		&::after {
-			background-image: linear-gradient(rgba(variables.$grey-1, 0.75), transparent);
+			background-image: linear-gradient(rgba(variables.$grey-1, 0.5), transparent);
 		}
 	}
 </style>

@@ -90,7 +90,7 @@
 		</button>
 	</Tooltip>
 	<Tooltip
-		content="Three groups in one column with pinned, unread and read notifications."
+		content="Three vertically aligned groups with pinned, unread and read notifications."
 		hover
 		width="10rem"
 	>
