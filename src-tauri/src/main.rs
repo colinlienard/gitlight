@@ -4,9 +4,10 @@
 )]
 
 use tauri::{
-    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
+    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem, ActivationPolicy, Size, LogicalSize,
 };
 use tauri_plugin_autostart::MacosLauncher;
+use tauri_plugin_positioner::{Position, WindowExt};
 
 #[tauri::command]
 fn update_tray(
@@ -69,6 +70,8 @@ fn main() {
                 app.emit_all("scheme-request", url).unwrap();
             }
 
+            app.set_activation_policy(ActivationPolicy::Accessory);
+
             Ok(())
         })
         .plugin(tauri_plugin_window_state::Builder::default().build())
@@ -76,31 +79,60 @@ fn main() {
             MacosLauncher::LaunchAgent,
             Some(vec![""]),
         ))
+        .plugin(tauri_plugin_positioner::init())
         .system_tray(tray)
         .on_system_tray_event(|app, event| {
-            if let SystemTrayEvent::MenuItemClick { id, .. } = event {
-                match id.as_str() {
-                    "text" | "focus" => {
-                        let window = app.get_window("main").unwrap();
+            tauri_plugin_positioner::on_tray_event(app, &event);
+            match event {
+                SystemTrayEvent::LeftClick {
+                    position: _,
+                    size: _,
+                    ..
+                } => {
+                    let window = app.get_window("main").unwrap();
+                    // use TrayCenter as initial window position
+                    let _ = window.move_window(Position::TrayCenter);
+                    if window.is_visible().unwrap() {
+                        window.hide().unwrap();
+                    } else {
+                        window.show().unwrap();
                         window.set_focus().unwrap();
                     }
-                    "quit" => {
-                        std::process::exit(0);
-                    }
-                    _ => {}
+
+                    window.set_decorations(false).unwrap();
+                    window.set_size(Size::Logical(LogicalSize { width: 400.0, height: 600.0 })).unwrap();
+                }
+                _ => {}
+            }
+          //   if let SystemTrayEvent::MenuItemClick { id, .. } = event {
+          //     match id.as_str() {
+          //         "text" | "focus" => {
+          //             let window = app.get_window("main").unwrap();
+          //             window.set_focus().unwrap();
+          //         }
+          //         "quit" => {
+          //             std::process::exit(0);
+          //         }
+          //         _ => {}
+          //     }
+          // }
+        })
+        .on_window_event(|event| match event.event() {
+            tauri::WindowEvent::Focused(is_focused) => {
+                // detect click outside of the focused window and hide the app
+                if !is_focused {
+                    event.window().hide().unwrap();
                 }
             }
-        })
-        .on_window_event(|event| {
-            if let tauri::WindowEvent::CloseRequested { api, .. } = event.event() {
-                #[cfg(not(target_os = "macos"))]
-                event.window().hide().unwrap();
+            _ => {} // if let tauri::WindowEvent::CloseRequested { api, .. } = event.event() {
+                    //     #[cfg(not(target_os = "macos"))]
+                    //     event.window().hide().unwrap();
 
-                #[cfg(target_os = "macos")]
-                tauri::AppHandle::hide(&event.window().app_handle()).unwrap();
+                    //     #[cfg(target_os = "macos")]
+                    //     tauri::AppHandle::hide(&event.window().app_handle()).unwrap();
 
-                api.prevent_close();
-            }
+                    //     api.prevent_close();
+                    // }
         })
         .invoke_handler(tauri::generate_handler![update_tray])
         .build(tauri::generate_context!())
