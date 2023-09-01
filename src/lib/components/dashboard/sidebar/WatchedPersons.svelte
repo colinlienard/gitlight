@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { MuteIcon, MutedIcon } from '~/lib/icons';
 	import { storage } from '$lib/features';
+	import { MuteIcon, MutedIcon } from '$lib/icons';
 	import { githubNotifications, loading, settings, watchedPersons } from '$lib/stores';
 	import type { WatchedPerson } from '$lib/types';
 	import SidebarSection from './SidebarSection.svelte';

@@ -11,15 +11,11 @@
 	import { drag, drop, fetchGithub } from '$lib/features';
 	import { debounce } from '$lib/helpers';
 	import { ArrowUpIcon } from '$lib/icons';
-	import {
-		loading,
-		largeScreen,
-		githubNotifications,
-		settings as settingsStore
-	} from '$lib/stores';
+	import { loading, githubNotifications, settings as settingsStore } from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
 	import Notification from './Notification.svelte';
-	import SkeletonEvent from './SkeletonEvent.svelte';
+	import NotificationPlaceholder from './NotificationPlaceholder.svelte';
+	import SkeletonNotification from './SkeletonNotification.svelte';
 
 	type SvelteAnimation = (
 		node: Element,
@@ -88,6 +84,8 @@
 
 	$: showDropzone = $dragging ? $dragging !== title : false;
 
+	$: verticalKanban = $settingsStore.viewMode === 'Kanban (vertical)';
+
 	function flipIfVisible(...args: Parameters<typeof flip>) {
 		const node = args[0].getBoundingClientRect();
 		const parent = args[0].parentElement?.getBoundingClientRect();
@@ -110,15 +108,14 @@
 				return {
 					...notification,
 					pinned: true,
-					unread: notification.unread || (!notification.pinned && $settingsStore.readWhenPin),
-					isNew: false
+					unread: notification.unread || (!notification.pinned && $settingsStore.readWhenPin)
 				};
 			}
 			if (title === 'Read') {
 				fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
-				return { ...notification, unread: false, pinned: false, isNew: false };
+				return { ...notification, unread: false, pinned: false };
 			}
-			return { ...notification, unread: true, pinned: false, isNew: false };
+			return { ...notification, unread: true, pinned: false };
 		});
 	}
 </script>
@@ -127,7 +124,7 @@
 	class="column"
 	class:has-dropzone={showDropzone}
 	class:dragging={!!$dragging}
-	class:vertical={$largeScreen}
+	class:vertical={!verticalKanban}
 >
 	<div class="column-header">
 		<svelte:component this={icon} />
@@ -140,7 +137,7 @@
 	{#if showDropzone}
 		<div class="dropzone" class:hovering transition:fade={{ duration: 150 }} />
 	{/if}
-	{#if scrolled && $largeScreen}
+	{#if scrolled && !verticalKanban}
 		<div class="scroll-button" transition:fade={{ duration: 150 }}>
 			<Button secondary small on:click={handleScrollToTop}>
 				Scroll to top <ArrowUpIcon />
@@ -149,7 +146,7 @@
 	{/if}
 	<ul
 		class="list"
-		class:scroll-visible={transitioning || empty || !$largeScreen || !!$dragging}
+		class:scroll-visible={transitioning || empty || verticalKanban || !!$dragging}
 		style="--scroll-position: -{scrollPosition}px"
 		use:drop={{
 			onDrop: handleDrop,
@@ -158,8 +155,8 @@
 		bind:this={list}
 	>
 		{#if $loading}
-			<li><SkeletonEvent /></li>
-			<li><SkeletonEvent /></li>
+			<li><SkeletonNotification /></li>
+			<li><SkeletonNotification /></li>
 		{:else}
 			{#each notifications as notification (notification)}
 				<li
@@ -176,13 +173,7 @@
 				</li>
 			{/each}
 			{#if empty}
-				<div class="placeholder" in:fade={{ duration: 300 }}>
-					<div class="icon-container">
-						<svelte:component this={placeholder.icon} />
-					</div>
-					<h4 class="title">No notifications to display</h4>
-					<p class="text">{placeholder.text}</p>
-				</div>
+				<NotificationPlaceholder icon={placeholder.icon} text={placeholder.text} />
 			{/if}
 		{/if}
 	</ul>
@@ -328,48 +319,6 @@
 			&:hover {
 				z-index: 1;
 			}
-		}
-	}
-
-	.placeholder {
-		display: flex;
-		height: 100%;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		padding: 1rem 0;
-		color: variables.$grey-4;
-		gap: 0.5rem;
-		text-align: center;
-
-		.icon-container {
-			position: relative;
-			padding: 0.5rem;
-			border: 1px solid;
-			border-radius: variables.$radius;
-			margin-bottom: 0.5rem;
-
-			:global(svg) {
-				height: 1rem;
-			}
-
-			&::before {
-				position: absolute;
-				background-image: linear-gradient(transparent, rgba(variables.$grey-1, 0.75));
-				content: '';
-				inset: -1px;
-			}
-		}
-
-		.title {
-			@include typography.bold;
-		}
-
-		.text {
-			@include typography.small;
-			@include typography.base;
-
-			max-width: 12rem;
 		}
 	}
 </style>

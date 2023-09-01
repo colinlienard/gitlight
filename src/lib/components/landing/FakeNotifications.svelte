@@ -13,7 +13,6 @@
 		unread: true,
 		pinned: false,
 		done: false,
-		isNew: false,
 		repoId: '',
 		ownerAvatar: '',
 		url: '',
@@ -99,7 +98,6 @@
 		{
 			...common,
 			type: 'PullRequest',
-			isNew: true,
 			author: {
 				...commonAuthor,
 				login: 'colinlienard',

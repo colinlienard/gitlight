@@ -32,11 +32,10 @@ export const loading = writable<boolean>(true);
 export const settings = writable<Settings>({
 	activateNotifications: true,
 	showNotificationsSyncTimer: true,
-	readWhenOpenInBrowser: false,
-	readWhenPin: false,
+	readWhenOpenInBrowser: true,
+	readWhenPin: true,
 	showNotificationsRepo: true,
 	notificationNumber: 50,
-	notificationAxis: 'Auto',
 	sidebarHidden: false,
 	showOnlyOpen: false,
 	pats: [],
@@ -44,9 +43,8 @@ export const settings = writable<Settings>({
 	showPriority: true,
 	providerView: 'both',
 	showPersonsAsCreators: false,
-	applyFiltersForDone: false
+	applyFiltersForDone: false,
+	viewMode: 'Kanban'
 });
-
-export const largeScreen = writable<boolean>(true);
 
 export const error = writable<string | null>(null);

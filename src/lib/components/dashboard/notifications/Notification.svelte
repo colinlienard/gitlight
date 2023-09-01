@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { open } from '@tauri-apps/api/shell';
-	import { onDestroy } from 'svelte';
 	import { Button, Tooltip } from '$lib/components';
 	import { fetchGithub } from '$lib/features';
-	import { formatRelativeDate, getGrayscale, lightenColor } from '$lib/helpers';
+	import { getGrayscale, lightenColor } from '$lib/helpers';
 	import {
 		CheckIcon,
 		DoubleCheckIcon,
@@ -14,11 +13,13 @@
 		RestoreIcon,
 		MutedIcon,
 		UnpinIcon,
-		UnreadIcon
+		UnreadIcon,
+		ExternalLinkIcon
 	} from '$lib/icons';
 	import { githubNotifications, settings } from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
 	import NotificationDescription from './NotificationDescription.svelte';
+	import NotificationStatus from './NotificationStatus.svelte';
 
 	export let data: NotificationData;
 	export let dragged = false;
@@ -29,13 +30,11 @@
 		unread,
 		pinned,
 		done,
-		isNew,
 		muted,
 		author,
 		title,
 		description,
 		priority,
-		time,
 		type,
 		icon,
 		owner,
@@ -45,18 +44,9 @@
 		url,
 		previously
 	} = data;
-	let displayTime = formatRelativeDate(time);
 	let repoUrl = `https://github.com/${owner}/${repo}`;
 	let hoverTitle = false;
 	let hoverTitleTimeout: ReturnType<typeof setTimeout>;
-
-	const interval = setInterval(() => {
-		displayTime = formatRelativeDate(time);
-	}, 60000);
-
-	onDestroy(() => {
-		clearInterval(interval);
-	});
 
 	function markAsReadInGitHub() {
 		fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
@@ -67,9 +57,13 @@
 			$githubNotifications = $githubNotifications.map((notification) => {
 				if (notification.id !== id) return notification;
 				if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
-					return { ...notification, pinned: !notification.pinned, unread: false, isNew: false };
+					return { ...notification, pinned: !notification.pinned, unread: false };
 				}
-				return { ...notification, [key]: !notification[key], isNew: false };
+				if (key === 'done' && unread) {
+					markAsReadInGitHub();
+					return { ...notification, done: !notification.done, unread: false };
+				}
+				return { ...notification, [key]: !notification[key] };
 			});
 
 			if (key === 'unread' && pinned) {
@@ -101,12 +95,6 @@
 		url && openUrl(url);
 	}
 
-	function handleMouseEnter() {
-		$githubNotifications = $githubNotifications.map((event) =>
-			event.id === id ? { ...event, isNew: false } : event
-		);
-	}
-
 	function handleTitleHover(event: MouseEvent) {
 		if (event.type === 'mouseenter') {
 			hoverTitleTimeout = setTimeout(() => {
@@ -129,27 +117,20 @@
 	}
 </script>
 
-<div class="container" class:transparent={!unread && !done} class:dragged>
-	<div
-		class="notification"
-		on:mouseenter={isNew && interactive ? handleMouseEnter : undefined}
-		role="presentation"
-	>
-		{#if isNew && unread}
-			<div class="new" />
-		{/if}
+<div class="container" class:transparent={!unread && !pinned && !done} class:dragged>
+	<div class="notification">
 		{#if $settings.showNotificationsRepo}
 			<div class="top">
 				<button class="repo" on:mouseup={() => openUrl(repoUrl)}>
 					{owner}/<span class="bold">{repo}</span>
 				</button>
-				<p class="time">{displayTime}</p>
+				<NotificationStatus {data} />
 			</div>
 		{/if}
 		<div class="description">
 			<NotificationDescription {author} {description} {openUrl} />
 			{#if !$settings.showNotificationsRepo}
-				<p class="time">{displayTime}</p>
+				<NotificationStatus {data} />
 			{/if}
 		</div>
 		<div class="main" class:has-priority={priority && $settings.showPriority}>
@@ -198,53 +179,63 @@
 		{#if !dragged && interactive}
 			<div class="over">
 				{#if !done}
-					{#if !unread && !pinned}
-						<Tooltip content="Mark as done" position="left" hover>
+					{#if !unread}
+						<Tooltip content="Mark as done" position="bottom right" hover>
 							<Button icon on:click={handleToggle('done')}>
 								<DoubleCheckIcon />
 							</Button>
 						</Tooltip>
 					{/if}
 					{#if unread}
-						<Tooltip content="Mark as read" position="left" hover>
+						<Tooltip content="Mark as read" position="bottom right" hover>
 							<Button icon on:click={handleToggle('unread')}>
 								<CheckIcon />
 							</Button>
 						</Tooltip>
+						<Tooltip content="Mark as done" position="bottom" hover>
+							<Button secondary icon on:click={handleToggle('done')}>
+								<DoubleCheckIcon />
+							</Button>
+						</Tooltip>
 					{:else}
-						<Tooltip content="Mark as unread" position="left" hover>
+						<Tooltip content="Mark as unread" position="bottom" hover>
 							<Button secondary icon on:click={handleToggle('unread')}>
 								<UnreadIcon />
 							</Button>
 						</Tooltip>
 					{/if}
-					{#if unread || pinned}
-						<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="left" hover>
-							<Button secondary icon on:click={handleToggle('pinned')}>
-								{#if pinned}
-									<UnpinIcon />
-								{:else}
-									<PinIcon />
-								{/if}
-							</Button>
-						</Tooltip>
-					{/if}
+					<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="bottom" hover>
+						<Button secondary icon on:click={handleToggle('pinned')}>
+							{#if pinned}
+								<UnpinIcon />
+							{:else}
+								<PinIcon />
+							{/if}
+						</Button>
+					</Tooltip>
 				{:else}
-					<Tooltip content="Restore" position="left" hover>
+					<Tooltip content="Restore" position="bottom" hover>
 						<Button icon on:click={handleToggle('done')}>
 							<RestoreIcon />
 						</Button>
 					</Tooltip>
 				{/if}
+				{#if url}
+					<Tooltip content="Open in browser" position="bottom" hover>
+						<Button secondary icon on:click={handleOpenInBrowser}>
+							<ExternalLinkIcon />
+						</Button>
+					</Tooltip>
+				{/if}
 				{#if type === 'Discussion' || type === 'Issue' || type === 'PullRequest'}
 					{#if muted}
-						<Tooltip content="Muted" position="left" hover>
+						<Tooltip content="Muted" position="bottom" hover>
 							<Button secondary icon on:click={handleToggle('muted')}>
 								<MutedIcon />
 							</Button>
 						</Tooltip>
 					{:else}
-						<Tooltip content="Mute" position="left" hover>
+						<Tooltip content="Mute" position="bottom" hover>
 							<Button secondary icon on:click={handleToggle('muted')}>
 								<MuteIcon />
 							</Button>
@@ -279,7 +270,7 @@
 		}
 
 		&.transparent {
-			opacity: 0.65;
+			opacity: 0.6;
 			transition: opacity variables.$transition;
 
 			&:hover {
@@ -303,15 +294,6 @@
 		flex-direction: column;
 		padding: 1rem;
 		gap: 0.75rem;
-	}
-
-	.new {
-		position: absolute;
-		width: 0.5rem;
-		height: 0.5rem;
-		border-radius: 50%;
-		background-color: variables.$blue-2;
-		inset: 0.25rem 0.25rem auto auto;
 	}
 
 	.top {
@@ -345,7 +327,6 @@
 		gap: 0.75rem;
 	}
 
-	.time,
 	.repo {
 		@include typography.small;
 
@@ -468,22 +449,27 @@
 	.over {
 		position: absolute;
 		display: flex;
-		flex-direction: column;
-		align-items: end;
-		justify-content: start;
+		flex-flow: row-reverse wrap;
+		justify-content: end;
 		padding: 0.5rem;
-		gap: 0.5rem;
-		inset: 0 0 0 auto;
+		gap: 0.25rem;
+		inset: 0 0 auto auto;
+		pointer-events: none;
 		transition: opacity variables.$transition;
 
 		&::before {
 			position: absolute;
-			width: 8rem;
+			width: 16rem;
+			height: 5rem;
 			border-radius: 0 calc(variables.$radius - 1px) calc(variables.$radius - 1px) 0;
-			background-image: linear-gradient(to right, transparent, variables.$grey-1);
+			background-image: radial-gradient(at top right, variables.$grey-1 25%, transparent 75%);
 			content: '';
-			inset: 0 0 0 auto;
-			pointer-events: none;
+			inset: 0 0 auto auto;
+		}
+
+		& > :global(div) {
+			height: fit-content;
+			pointer-events: all;
 		}
 	}
 
@@ -506,7 +492,7 @@
 		}
 
 		&::after {
-			background-image: linear-gradient(rgba(variables.$grey-1, 0.75), transparent);
+			background-image: linear-gradient(rgba(variables.$grey-1, 0.5), transparent);
 		}
 	}
 </style>

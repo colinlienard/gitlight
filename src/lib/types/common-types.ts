@@ -21,7 +21,6 @@ export type NotificationData = {
 	unread: boolean;
 	pinned: boolean;
 	done: boolean;
-	isNew: boolean;
 	muted: boolean;
 	author?: User;
 	creator?: User;
@@ -66,7 +65,6 @@ export type SavedNotifications = Array<{
 	pinned: boolean;
 	unread: boolean;
 	done: boolean;
-	isNew: boolean;
 	muted: boolean;
 	time: string;
 	previously?: NotificationData['previously'];
@@ -98,7 +96,6 @@ export type Settings = {
 	readWhenPin: boolean;
 	showNotificationsRepo: boolean;
 	notificationNumber: number;
-	notificationAxis: 'Auto' | 'Vertical' | 'Horizontal';
 	sidebarHidden: boolean;
 	showOnlyOpen: boolean;
 	pats: Array<{
@@ -110,6 +107,7 @@ export type Settings = {
 	providerView: 'github' | 'gitlab' | 'both';
 	showPersonsAsCreators: boolean;
 	applyFiltersForDone: boolean;
+	viewMode: 'List' | 'Kanban' | 'Kanban (vertical)';
 };
 
 export type Priority = {

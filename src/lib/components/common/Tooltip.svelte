@@ -162,7 +162,7 @@
 		background-color: variables.$grey-1;
 
 		&.fit-content {
-			max-width: fit-content;
+			max-width: max-content;
 		}
 
 		&.no-wrap {
