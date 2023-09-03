@@ -10,7 +10,12 @@ use tauri::{
 use tauri_plugin_autostart::MacosLauncher;
 use tauri_plugin_positioner::{Position, WindowExt};
 mod commands;
+mod title_bar;
 mod tray;
+
+#[cfg(target_os = "macos")]
+#[macro_use]
+extern crate objc;
 
 fn main() {
     tauri_plugin_deep_link::prepare("app.gitlight");
@@ -32,6 +37,7 @@ fn main() {
 
     let is_tray_app = Arc::new(RwLock::new(false));
     let is_tray_app_clone = is_tray_app.clone();
+    let is_tray_app_clone_2 = is_tray_app.clone();
 
     tauri::Builder::default()
         .setup(move |app| {
@@ -54,6 +60,8 @@ fn main() {
                 tray::deactivate_tray_mode(&app.handle());
             }
 
+            title_bar::set_title_bar_transparent(app.get_window("main").unwrap());
+
             Ok(())
         })
         .plugin(tauri_plugin_window_state::Builder::default().build())
@@ -71,8 +79,8 @@ fn main() {
                     size: _,
                     ..
                 } => {
+                    let window = app.get_window("main").unwrap();
                     if *is_tray_app_clone.read().unwrap() {
-                        let window = app.get_window("main").unwrap();
                         window.move_window(Position::TrayCenter).unwrap();
                         if window.is_visible().unwrap() {
                             window.hide().unwrap();
@@ -80,6 +88,9 @@ fn main() {
                             window.show().unwrap();
                             window.set_focus().unwrap();
                         }
+                    } else {
+                        window.show().unwrap();
+                        window.set_focus().unwrap();
                     }
                 }
                 SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
@@ -98,6 +109,9 @@ fn main() {
                             let window = app.get_window("main").unwrap();
                             window.move_window(Position::TrayCenter).unwrap();
                         }
+                        let window = app.get_window("main").unwrap();
+                        window.show().unwrap();
+                        window.set_focus().unwrap();
                     }
                     "quit" => {
                         std::process::exit(0);
@@ -107,7 +121,7 @@ fn main() {
                 _ => {}
             }
         })
-        .on_window_event(|event| match event.event() {
+        .on_window_event(move |event| match event.event() {
             tauri::WindowEvent::CloseRequested { api, .. } => {
                 #[cfg(not(target_os = "macos"))]
                 event.window().hide().unwrap();
@@ -118,7 +132,7 @@ fn main() {
                 api.prevent_close();
             }
             tauri::WindowEvent::Focused(is_focused) => {
-                if !is_focused {
+                if !is_focused && *is_tray_app_clone_2.read().unwrap() {
                     event.window().hide().unwrap();
                 }
             }

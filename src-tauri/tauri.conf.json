@@ -74,7 +74,6 @@
 				"resizable": true,
 				"title": "GitLight",
 				"width": 1400,
-				"titleBarStyle": "Transparent",
 				"hiddenTitle": true,
 				"url": "/dashboard"
 			}
