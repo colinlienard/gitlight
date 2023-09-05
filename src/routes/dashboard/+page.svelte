@@ -199,6 +199,11 @@
 
 		clearInterval(interval);
 	});
+
+	function setTrayMode() {
+		console.log('set tray mode');
+		invoke('set_tray_mode', { isTrayApp: true });
+	}
 </script>
 
 <svelte:head>
@@ -233,6 +238,7 @@
 				{/if}
 			</div>
 			<div class="settings-wrapper">
+				<button on:click={setTrayMode}>ok</button>
 				<Priorities />
 				<Settings />
 			</div>

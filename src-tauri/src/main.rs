@@ -3,19 +3,23 @@
     windows_subsystem = "windows"
 )]
 
-use std::sync::{Arc, RwLock};
-use tauri::{
-    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
-};
-use tauri_plugin_autostart::MacosLauncher;
-use tauri_plugin_positioner::{Position, WindowExt};
-mod commands;
-mod title_bar;
-mod tray;
-
 #[cfg(target_os = "macos")]
 #[macro_use]
 extern crate objc;
+
+use serde_json::json;
+use std::sync::{Arc, RwLock};
+use tauri::{
+    CustomMenuItem, Manager, PhysicalPosition, Position, SystemTray, SystemTrayEvent,
+    SystemTrayMenu, SystemTrayMenuItem,
+};
+use tauri_plugin_autostart::MacosLauncher;
+use tauri_plugin_positioner::{Position::TrayCenter, WindowExt};
+use tauri_plugin_store::StoreBuilder;
+
+mod commands;
+mod title_bar;
+mod tray;
 
 fn main() {
     tauri_plugin_deep_link::prepare("app.gitlight");
@@ -39,6 +43,9 @@ fn main() {
     let is_tray_app_clone = is_tray_app.clone();
     let is_tray_app_clone_2 = is_tray_app.clone();
 
+    let store_option = Arc::new(RwLock::new(None));
+    let store_option_clone = store_option.clone();
+
     tauri::Builder::default()
         .setup(move |app| {
             let handle = app.handle();
@@ -47,15 +54,21 @@ fn main() {
             })
             .unwrap();
 
+            app.handle().tray_handle().set_tooltip("tooltip").unwrap();
+
             #[cfg(not(target_os = "macos"))]
             if let Some(url) = std::env::args().nth(1) {
                 app.emit_all("scheme-request", url).unwrap();
             }
 
+            let mut store_option_lock = store_option.write().unwrap();
+            *store_option_lock =
+                Some(StoreBuilder::new(app.handle(), "store.bin".parse()?).build());
+
             if *is_tray_app.read().unwrap() {
                 tray::activate_tray_mode(&app.handle());
                 let window = app.get_window("main").unwrap();
-                window.move_window(Position::TrayCenter).unwrap();
+                window.move_window(TrayCenter).unwrap();
             } else {
                 tray::deactivate_tray_mode(&app.handle());
             }
@@ -64,12 +77,13 @@ fn main() {
 
             Ok(())
         })
-        .plugin(tauri_plugin_window_state::Builder::default().build())
         .plugin(tauri_plugin_autostart::init(
             MacosLauncher::LaunchAgent,
             Some(vec![""]),
         ))
         .plugin(tauri_plugin_positioner::init())
+        .plugin(tauri_plugin_store::Builder::default().build())
+        .plugin(tauri_plugin_window_state::Builder::default().build())
         .system_tray(tray)
         .on_system_tray_event(move |app, event| {
             tauri_plugin_positioner::on_tray_event(app, &event);
@@ -81,7 +95,7 @@ fn main() {
                 } => {
                     let window = app.get_window("main").unwrap();
                     if *is_tray_app_clone.read().unwrap() {
-                        window.move_window(Position::TrayCenter).unwrap();
+                        window.move_window(TrayCenter).unwrap();
                         if window.is_visible().unwrap() {
                             window.hide().unwrap();
                         } else {
@@ -102,14 +116,29 @@ fn main() {
                         let is_tray_app_value = *is_tray_app_clone.read().unwrap();
                         let mut is_tray_app_lock = is_tray_app_clone.write().unwrap();
                         *is_tray_app_lock = !is_tray_app_value;
+                        let window = app.get_window("main").unwrap();
+                        let store_option_lock = &mut *store_option_clone.write().unwrap();
                         if is_tray_app_value {
                             tray::deactivate_tray_mode(app);
+                            store_option_lock
+                                .as_mut()
+                                .unwrap()
+                                .insert("is_tray_app".to_string(), json!(false))
+                                .unwrap();
                         } else {
                             tray::activate_tray_mode(app);
-                            let window = app.get_window("main").unwrap();
-                            window.move_window(Position::TrayCenter).unwrap();
+                            store_option_lock
+                                .as_mut()
+                                .unwrap()
+                                .insert("is_tray_app".to_string(), json!(true))
+                                .unwrap();
+                            window
+                                .set_position(Position::Physical(PhysicalPosition {
+                                    x: 100,
+                                    y: 100,
+                                }))
+                                .unwrap();
                         }
-                        let window = app.get_window("main").unwrap();
                         window.show().unwrap();
                         window.set_focus().unwrap();
                     }
@@ -136,9 +165,17 @@ fn main() {
                     event.window().hide().unwrap();
                 }
             }
+            tauri::WindowEvent::Moved(position) => {
+                if position.x == 100 && position.y == 100 {
+                    event.window().move_window(TrayCenter).unwrap();
+                }
+            }
             _ => {}
         })
-        .invoke_handler(tauri::generate_handler![commands::update_tray])
+        .invoke_handler(tauri::generate_handler![
+            commands::update_tray,
+            commands::set_tray_mode
+        ])
         .build(tauri::generate_context!())
         .expect("error while running tauri application")
         .run(|_app_handle, event| {

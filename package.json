@@ -19,7 +19,8 @@
 	"dependencies": {
 		"@tauri-apps/api": "^1.4.0",
 		"overlayscrollbars": "^2.2.1",
-		"tauri-plugin-autostart-api": "github:tauri-apps/tauri-plugin-autostart"
+		"tauri-plugin-autostart-api": "github:tauri-apps/tauri-plugin-autostart",
+		"tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#v1"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-static": "^2.0.3",

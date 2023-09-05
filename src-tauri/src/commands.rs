@@ -1,3 +1,7 @@
+use crate::tray::{activate_tray_mode, deactivate_tray_mode};
+use serde_json::json;
+use tauri_plugin_store::StoreBuilder;
+
 #[tauri::command]
 pub fn update_tray(
     app_handle: tauri::AppHandle,
@@ -28,4 +32,18 @@ pub fn update_tray(
                 .unwrap();
         }
     }
+}
+
+#[tauri::command]
+pub fn set_tray_mode(app_handle: tauri::AppHandle, is_tray_app: bool) {
+    if is_tray_app {
+        activate_tray_mode(&app_handle);
+    } else {
+        deactivate_tray_mode(&app_handle);
+    }
+    let store = Some(StoreBuilder::new(app_handle, "store.bin".to_string().into()).build());
+    store
+        .unwrap()
+        .insert("is_tray_app".to_string(), json!(is_tray_app))
+        .unwrap();
 }
