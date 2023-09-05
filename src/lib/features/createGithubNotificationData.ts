@@ -1,13 +1,4 @@
 import { page } from '$app/stores';
-import {
-	ClosedIssueIcon,
-	CommitIcon,
-	DiscussionIcon,
-	ExclamationMarkIcon,
-	ReleaseIcon,
-	WorkflowFailIcon,
-	WorkflowSuccessIcon
-} from '$lib/icons';
 import { error, settings } from '$lib/stores';
 import type {
 	GithubComment,
@@ -104,7 +95,7 @@ export async function createGithubNotificationData(
 					? { login: author.login, avatar: author.avatar_url, bot: author.type === 'Bot' }
 					: { login: commit.author.name },
 				description: '*made a commit*',
-				icon: CommitIcon,
+				icon: 'commit',
 				url: html_url
 			};
 			break;
@@ -262,7 +253,7 @@ export async function createGithubNotificationData(
 				...common,
 				author: { login: author.login, avatar: author.avatar_url, bot: author.type === 'Bot' },
 				description: 'made a release',
-				icon: ReleaseIcon,
+				icon: 'release',
 				labels: [
 					{ name: tag_name, color: 'FFFFFF' },
 					...(prerelease ? [{ name: 'pre-release', color: 'FFA723' }] : [])
@@ -296,7 +287,7 @@ export async function createGithubNotificationData(
 				author,
 				description,
 				url,
-				icon: DiscussionIcon,
+				icon: 'discussion',
 				previously:
 					previous?.description !== description ? previous : previous?.previously || undefined
 			};
@@ -316,14 +307,14 @@ export async function createGithubNotificationData(
 			};
 
 			if (subject.title.includes('succeeded')) {
-				value = { ...data, icon: WorkflowSuccessIcon };
+				value = { ...data, icon: 'workflow-success' };
 			}
 
 			if (subject.title.includes('failed')) {
-				value = { ...data, icon: WorkflowFailIcon };
+				value = { ...data, icon: 'workflow-fail' };
 			}
 
-			value = { ...data, icon: ClosedIssueIcon };
+			value = { ...data, icon: 'closed-issue' };
 			break;
 		}
 
@@ -332,7 +323,7 @@ export async function createGithubNotificationData(
 				...common,
 				type: 'CheckSuite',
 				description: `'${subject.type}' notifications are not yet fully supported`,
-				icon: ExclamationMarkIcon
+				icon: 'unsupported'
 			};
 			break;
 	}

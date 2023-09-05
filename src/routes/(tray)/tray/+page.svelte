@@ -27,13 +27,12 @@
 
 <main class="main">
 	<ScrollbarContainer margin="0.25rem">
-		<NotificationList {notifications} />
+		<NotificationList {notifications} scrollShadow={false} />
 	</ScrollbarContainer>
 </main>
 
 <style lang="scss">
 	.main {
 		height: 100vh;
-		padding: 2rem 0 0;
 	}
 </style>

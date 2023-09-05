@@ -5,7 +5,7 @@
 	import { browser } from '$app/environment';
 	import { Button, Tooltip } from '$lib/components';
 	import { fetchGithub } from '$lib/features';
-	import { getGrayscale, lightenColor } from '$lib/helpers';
+	import { getGrayscale, getNotificationIcon, lightenColor } from '$lib/helpers';
 	import {
 		CheckIcon,
 		DoubleCheckIcon,
@@ -163,7 +163,7 @@
 		</div>
 		<div class="main" class:has-priority={priority && $settings.showPriority}>
 			<span class="icon-container">
-				<svelte:component this={icon} />
+				<svelte:component this={getNotificationIcon(icon)} />
 			</span>
 			<div class="texts">
 				<div
