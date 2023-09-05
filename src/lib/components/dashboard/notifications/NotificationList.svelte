@@ -14,7 +14,7 @@
 </script>
 
 <ul class="list" style:height={notifications.length ? 'auto' : '100%'}>
-	{#if $loading}
+	{#if $loading && !notifications.length}
 		<li><SkeletonNotification /></li>
 		<li><SkeletonNotification /></li>
 	{:else if notifications.length}

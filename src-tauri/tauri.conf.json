@@ -69,14 +69,24 @@
 		},
 		"windows": [
 			{
-				"fullscreen": false,
-				"height": 900,
-				"resizable": true,
-				"title": "GitLight",
+        "label": "main",
+				"url": "/dashboard",
 				"width": 1400,
+				"height": 900,
+				"title": "GitLight",
 				"titleBarStyle": "Overlay",
+				"hiddenTitle": true
+			},
+      {
+        "label": "tray",
+				"url": "/tray",
+				"width": 400,
+				"height": 600,
+				"title": "GitLight",
+				"resizable": false,
+				"decorations": false,
 				"hiddenTitle": true,
-				"url": "/dashboard"
+        "visible": false
 			}
 		],
 		"systemTray": {

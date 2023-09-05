@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
+	import { browser } from '$app/environment';
 	import { formatRelativeDate } from '$lib/helpers';
 	import { PinIcon } from '$lib/icons';
 	import { settings } from '$lib/stores';
@@ -9,6 +10,8 @@
 
 	let { time, pinned, unread } = data;
 	let displayTime = formatRelativeDate(time);
+
+	$: isTrayApp = browser && window.__TAURI__ && window.location.pathname === '/tray';
 
 	const interval = setInterval(() => {
 		displayTime = formatRelativeDate(time);
@@ -21,7 +24,7 @@
 
 <div class="status">
 	<p class="time">{displayTime}</p>
-	{#if $settings.viewMode === 'List'}
+	{#if $settings.viewMode === 'List' || isTrayApp}
 		{#if pinned}
 			<span class="pinned">
 				<PinIcon />

@@ -1,5 +1,8 @@
 <script lang="ts">
+	import { emit, listen, type UnlistenFn } from '@tauri-apps/api/event';
 	import { open } from '@tauri-apps/api/shell';
+	import { onDestroy, onMount } from 'svelte';
+	import { browser } from '$app/environment';
 	import { Button, Tooltip } from '$lib/components';
 	import { fetchGithub } from '$lib/features';
 	import { getGrayscale, lightenColor } from '$lib/helpers';
@@ -20,6 +23,8 @@
 	import type { NotificationData } from '$lib/types';
 	import NotificationDescription from './NotificationDescription.svelte';
 	import NotificationStatus from './NotificationStatus.svelte';
+
+	type ToggleKey = 'unread' | 'pinned' | 'done' | 'muted';
 
 	export let data: NotificationData;
 	export let dragged = false;
@@ -48,12 +53,35 @@
 	let hoverTitle = false;
 	let hoverTitleTimeout: ReturnType<typeof setTimeout>;
 
+	$: isTrayApp = browser && window.location.pathname === '/tray';
+
+	let unlisten: UnlistenFn = () => null;
+
+	onMount(async () => {
+		if (!isTrayApp && window.__TAURI__) {
+			unlisten = await listen<{ key: ToggleKey }>(`notification-toggle:${id}`, (event) => {
+				handleToggle(event.payload.key)();
+			});
+		}
+	});
+
+	onDestroy(() => {
+		if (!isTrayApp && browser && window.__TAURI__) {
+			unlisten();
+		}
+	});
+
 	function markAsReadInGitHub() {
 		fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
 	}
 
-	function handleToggle(key: 'unread' | 'pinned' | 'done' | 'muted') {
+	function handleToggle(key: ToggleKey) {
 		return () => {
+			if (isTrayApp) {
+				emit(`notification-toggle:${id}`, { key });
+				return;
+			}
+
 			$githubNotifications = $githubNotifications.map((notification) => {
 				if (notification.id !== id) return notification;
 				if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {

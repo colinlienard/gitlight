@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { emit } from '@tauri-apps/api/event';
 	import { cubicInOut } from 'svelte/easing';
 	import { crossfade } from 'svelte/transition';
+	import { browser } from '$app/environment';
 	import { Separator, ScrollbarContainer, NotificationColumn } from '$lib/components';
 	import { fetchGithub } from '$lib/features';
 	import { CheckIcon, UnreadIcon, PinIcon, DoubleCheckIcon } from '$lib/icons';
@@ -16,6 +18,11 @@
 			  )
 			: $filteredNotifications
 	).filter((item) => !item.done);
+
+	// Send data to tray app
+	$: if (browser && window.__TAURI__) {
+		emit('notification', { notifications });
+	}
 
 	// Filter events
 	$: pinned = notifications.filter((item) => item.pinned && !item.done);
