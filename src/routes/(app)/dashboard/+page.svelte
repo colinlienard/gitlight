@@ -173,8 +173,7 @@
 				({ pinned, unread, done }) => !pinned && unread && !done
 			);
 			invoke('update_tray', {
-				title: `${unread.length}`,
-				description: `${unread.length} unread • ${pinned.length} pinned`
+				title: `${unread.length} unread${pinned.length ? ` • ${pinned.length} pinned` : ''}`
 			});
 		}
 	}

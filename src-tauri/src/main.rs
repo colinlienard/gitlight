@@ -3,54 +3,25 @@
     windows_subsystem = "windows"
 )]
 
+#[cfg(target_os = "macos")]
+#[macro_use]
+extern crate objc;
+
 use tauri::{
     CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
 };
 use tauri_plugin_autostart::MacosLauncher;
+use tauri_plugin_positioner::{Position, WindowExt};
 
-#[tauri::command]
-fn update_tray(
-    app_handle: tauri::AppHandle,
-    title: Option<String>,
-    description: Option<String>,
-    new_icon: Option<bool>,
-) {
-    let tray_handle = app_handle.tray_handle();
-    #[cfg(target_os = "macos")]
-    if let Some(title) = title {
-        tray_handle.set_title(&title).unwrap();
-    }
-    if let Some(description) = description {
-        tray_handle.get_item("text").set_title(description).unwrap();
-    }
-    if let Some(new_icon) = new_icon {
-        if new_icon {
-            tray_handle
-                .set_icon(tauri::Icon::Raw(
-                    include_bytes!("../icons/tray-new.png").to_vec(),
-                ))
-                .unwrap();
-        } else {
-            tray_handle
-                .set_icon(tauri::Icon::Raw(
-                    include_bytes!("../icons/tray-base.png").to_vec(),
-                ))
-                .unwrap();
-        }
-    }
-}
+mod commands;
+mod title_bar;
 
 fn main() {
-    tauri_plugin_deep_link::prepare("de.fabianlars.deep-link-test");
+    tauri_plugin_deep_link::prepare("app.gitlight");
 
-    let title = CustomMenuItem::new("title".to_string(), "GitHub notifications").disabled();
-    let text = CustomMenuItem::new("text".to_string(), "1 pinned • 2 unread");
-    let focus = CustomMenuItem::new("focus".to_string(), "Dashboard");
+    let focus = CustomMenuItem::new("focus".to_string(), "Dashboard...");
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let tray_menu = SystemTrayMenu::new()
-        .add_item(title)
-        .add_item(text)
-        .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(focus)
         .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(quit);
@@ -69,30 +40,50 @@ fn main() {
                 app.emit_all("scheme-request", url).unwrap();
             }
 
+            let tray_window = app.get_window("tray").unwrap();
+            tray_window.hide().unwrap();
+
+            #[cfg(target_os = "macos")]
+            title_bar::hide_window_buttons(tray_window);
+
             Ok(())
         })
-        .plugin(tauri_plugin_window_state::Builder::default().build())
         .plugin(tauri_plugin_autostart::init(
             MacosLauncher::LaunchAgent,
             Some(vec![""]),
         ))
+        .plugin(tauri_plugin_positioner::init())
+        .plugin(tauri_plugin_window_state::Builder::default().build())
         .system_tray(tray)
         .on_system_tray_event(|app, event| {
-            if let SystemTrayEvent::MenuItemClick { id, .. } = event {
-                match id.as_str() {
-                    "text" | "focus" => {
+            tauri_plugin_positioner::on_tray_event(app, &event);
+            match event {
+                SystemTrayEvent::LeftClick { .. } => {
+                    let tray_window = app.get_window("tray").unwrap();
+                    if tray_window.is_visible().unwrap() {
+                        tray_window.hide().unwrap();
+                    } else {
+                        tray_window.move_window(Position::TrayCenter).unwrap();
+                        tray_window.show().unwrap();
+                        tray_window.set_focus().unwrap();
+                    }
+                }
+                SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
+                    "focus" => {
                         let window = app.get_window("main").unwrap();
+                        window.center().unwrap();
                         window.set_focus().unwrap();
                     }
                     "quit" => {
                         std::process::exit(0);
                     }
                     _ => {}
-                }
+                },
+                _ => {}
             }
         })
-        .on_window_event(|event| {
-            if let tauri::WindowEvent::CloseRequested { api, .. } = event.event() {
+        .on_window_event(move |event| match event.event() {
+            tauri::WindowEvent::CloseRequested { api, .. } => {
                 #[cfg(not(target_os = "macos"))]
                 event.window().hide().unwrap();
 
@@ -101,8 +92,15 @@ fn main() {
 
                 api.prevent_close();
             }
+            tauri::WindowEvent::Focused(is_focused) => {
+                let window = event.window();
+                if !is_focused && window.label() == "tray" {
+                    window.hide().unwrap();
+                }
+            }
+            _ => {}
         })
-        .invoke_handler(tauri::generate_handler![update_tray])
+        .invoke_handler(tauri::generate_handler![commands::update_tray])
         .build(tauri::generate_context!())
         .expect("error while running tauri application")
         .run(|_app_handle, event| {
