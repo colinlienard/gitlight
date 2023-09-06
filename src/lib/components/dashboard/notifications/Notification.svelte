@@ -4,7 +4,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { Button, Tooltip } from '$lib/components';
-	import { fetchGithub } from '$lib/features';
+	import { delayedHover, fetchGithub } from '$lib/features';
 	import { getGrayscale, getNotificationIcon, lightenColor } from '$lib/helpers';
 	import {
 		CheckIcon,
@@ -50,8 +50,6 @@
 		previously
 	} = data;
 	let repoUrl = `https://github.com/${owner}/${repo}`;
-	let hoverTitle = false;
-	let hoverTitleTimeout: ReturnType<typeof setTimeout>;
 
 	$: isTrayApp = browser && window.location.pathname === '/tray';
 
@@ -123,18 +121,6 @@
 		url && openUrl(url);
 	}
 
-	function handleTitleHover(event: MouseEvent) {
-		if (event.type === 'mouseenter') {
-			hoverTitleTimeout = setTimeout(() => {
-				hoverTitle = true;
-			}, 150);
-			return;
-		}
-
-		hoverTitle = false;
-		clearTimeout(hoverTitleTimeout);
-	}
-
 	function openUrl(url: string) {
 		if (dragged) return;
 		if (window.__TAURI__) {
@@ -168,15 +154,13 @@
 			<div class="texts">
 				<div
 					class="title-container"
-					class:no-overflow={hoverTitle}
-					on:mouseenter={handleTitleHover}
-					on:mouseleave={handleTitleHover}
+					use:delayedHover={{ className: 'notification-hover' }}
 					on:mouseup={handleOpenInBrowser}
 					role="presentation"
 				>
-					<h3 class="title">{title}</h3>
+					<h3 class="notification-title">{title}</h3>
 					{#if number}
-						<span class="number">#{number}</span>
+						<span class="notification-number">#{number}</span>
 					{/if}
 				</div>
 				{#if priority && $settings.showPriority}
@@ -195,7 +179,11 @@
 			</div>
 		</div>
 		{#if labels && labels.length}
-			<ul class="labels">
+			<ul
+				class="labels"
+				class:clip={labels.length > 3}
+				use:delayedHover={{ className: 'labels-hover', active: labels.length > 3 }}
+			>
 				{#each labels as label}
 					<li class="label" style:color={lightenColor(label.color)}>
 						{label.name}
@@ -388,7 +376,7 @@
 				overflow: hidden;
 				gap: 0.5ch;
 
-				.title {
+				.notification-title {
 					display: inline;
 					overflow: hidden;
 					flex: 0 1 auto;
@@ -398,7 +386,7 @@
 					white-space: nowrap;
 				}
 
-				.number {
+				.notification-number {
 					color: variables.$blue-3;
 				}
 
@@ -406,15 +394,14 @@
 					text-decoration: underline;
 				}
 
-				&.no-overflow {
+				&:global(.notification-hover) {
 					display: unset;
-					padding-right: 3rem;
 
-					.title {
+					:global(.notification-title) {
 						white-space: unset;
 					}
 
-					.number {
+					:global(.notification-title-number) {
 						text-decoration: underline;
 					}
 				}
@@ -457,13 +444,41 @@
 		flex-wrap: wrap;
 		gap: 0.5rem;
 
+		&.clip {
+			position: relative;
+			overflow: hidden;
+			height: 3.5rem;
+
+			&::before {
+				position: absolute;
+				z-index: 1;
+				height: 1.5rem;
+				background-image: linear-gradient(transparent, variables.$grey-2);
+				content: '';
+				inset: auto 0 0;
+				pointer-events: none;
+			}
+		}
+
+		&:global(.labels-hover) {
+			height: auto;
+			transition: height 1s 1s ease-in-out;
+
+			&::before {
+				opacity: 0;
+			}
+		}
+
 		.label {
 			@include typography.small;
 
 			position: relative;
+			overflow: hidden;
 			padding: 0.25rem 0.5rem;
 			border: 1px solid;
 			border-radius: variables.$radius;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 
 			.label-background {
 				position: absolute;
