@@ -19,7 +19,7 @@
 	class:scroll-shadow={scrollShadow}
 	style:height={notifications.length ? 'auto' : '100%'}
 >
-	{#if $loading && !notifications.length}
+	{#if $loading}
 		<li><SkeletonNotification /></li>
 		<li><SkeletonNotification /></li>
 	{:else if notifications.length}

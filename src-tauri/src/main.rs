@@ -19,7 +19,7 @@ mod title_bar;
 fn main() {
     tauri_plugin_deep_link::prepare("app.gitlight");
 
-    let focus = CustomMenuItem::new("focus".to_string(), "Dashboard...");
+    let focus = CustomMenuItem::new("dashboard".to_string(), "Dashboard...");
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let tray_menu = SystemTrayMenu::new()
         .add_item(focus)
@@ -46,6 +46,9 @@ fn main() {
             #[cfg(target_os = "macos")]
             title_bar::hide_window_buttons(tray_window);
 
+            #[cfg(not(target_os = "macos"))]
+            tray_window.set_decorations(false).unwrap();
+
             Ok(())
         })
         .plugin(tauri_plugin_autostart::init(
@@ -69,9 +72,9 @@ fn main() {
                     }
                 }
                 SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
-                    "focus" => {
+                    "dashboard" => {
                         let window = app.get_window("main").unwrap();
-                        window.center().unwrap();
+                        window.show().unwrap();
                         window.set_focus().unwrap();
                     }
                     "quit" => {

@@ -3,35 +3,48 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { NotificationList, ScrollbarContainer } from '~/lib/components';
+	import { loading } from '~/lib/stores';
 	import type { NotificationData } from '~/lib/types';
 
 	let notifications: NotificationData[] = [];
-	let unlisten: UnlistenFn = () => null;
+	let unlistenNotification: UnlistenFn = () => null;
+	let unlistenLoading: UnlistenFn = () => null;
 
 	$: isTrayApp = browser && window.__TAURI__ && window.location.pathname === '/tray';
 
 	onMount(async () => {
 		if (isTrayApp) {
-			unlisten = await listen<{ notifications: NotificationData[] }>('notification', (event) => {
-				notifications = event.payload.notifications;
+			unlistenNotification = await listen<{ notifications: NotificationData[] }>(
+				'notifications',
+				(event) => {
+					notifications = event.payload.notifications;
+				}
+			);
+			unlistenLoading = await listen<{ loading: boolean }>('loading', (event) => {
+				$loading = event.payload.loading;
 			});
 		}
 	});
 
 	onDestroy(() => {
 		if (isTrayApp) {
-			unlisten();
+			unlistenNotification();
+			unlistenLoading();
 		}
 	});
 </script>
 
 <main class="main">
-	<ScrollbarContainer margin="0.25rem">
+	<ScrollbarContainer margin="2rem 1rem">
 		<NotificationList {notifications} scrollShadow={false} />
 	</ScrollbarContainer>
 </main>
 
 <style lang="scss">
+	:global(html) {
+		font-size: 16px;
+	}
+
 	.main {
 		height: 100vh;
 	}

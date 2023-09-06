@@ -2,6 +2,7 @@
 use cocoa::appkit::{NSWindow, NSWindowButton};
 use tauri::Window;
 
+#[cfg(target_os = "macos")]
 pub fn hide_window_buttons(window: Window) {
     unsafe {
         let id = window.ns_window().unwrap() as cocoa::base::id;

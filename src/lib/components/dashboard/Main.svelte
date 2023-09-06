@@ -6,7 +6,7 @@
 	import { Separator, ScrollbarContainer, NotificationColumn } from '$lib/components';
 	import { fetchGithub } from '$lib/features';
 	import { CheckIcon, UnreadIcon, PinIcon, DoubleCheckIcon } from '$lib/icons';
-	import { filteredNotifications, githubNotifications, settings } from '$lib/stores';
+	import { filteredNotifications, githubNotifications, loading, settings } from '$lib/stores';
 	import { NotificationList } from './notifications';
 
 	// Sort by priority
@@ -21,7 +21,10 @@
 
 	// Send data to tray app
 	$: if (browser && window.__TAURI__) {
-		emit('notification', { notifications });
+		emit('notifications', { notifications });
+	}
+	$: if (browser && window.__TAURI__) {
+		emit('loading', { loading: $loading });
 	}
 
 	// Filter events
