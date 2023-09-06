@@ -1,4 +1,3 @@
-import type { ComponentType } from 'svelte';
 import type { GithubLabel, GithubNotificationType, GithubRepository } from './github-types';
 
 export type User = {
@@ -14,6 +13,21 @@ export type Session = {
 	gitlabUser?: User;
 	gitlabAccessToken?: string;
 };
+
+export type NotificationIcon =
+	| 'commit'
+	| 'open-issue'
+	| 'completed-issue'
+	| 'closed-issue'
+	| 'draft-pr'
+	| 'open-pr'
+	| 'merged-pr'
+	| 'closed-pr'
+	| 'release'
+	| 'discussion'
+	| 'workflow-fail'
+	| 'workflow-success'
+	| 'unsupported';
 
 export type NotificationData = {
 	id: string;
@@ -31,7 +45,7 @@ export type NotificationData = {
 		value: number;
 	};
 	time: string;
-	icon: ComponentType;
+	icon: NotificationIcon;
 	opened?: boolean;
 	owner: string;
 	repo: string;

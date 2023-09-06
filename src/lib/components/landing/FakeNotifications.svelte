@@ -1,10 +1,4 @@
 <script lang="ts">
-	import {
-		CommitIcon,
-		MergedPullRequestIcon,
-		OpenIssueIcon,
-		OpenPullRequestIcon
-	} from '$lib/icons';
 	import type { NotificationData } from '$lib/types';
 	import Notification from '../dashboard/notifications/Notification.svelte';
 
@@ -37,7 +31,7 @@
 			title: 'feat(back): tauri functionnalities',
 			description: 'made a commit',
 			time: new Date().toString(),
-			icon: CommitIcon,
+			icon: 'commit',
 			owner: 'colinlienard',
 			repo: 'gitlight'
 		},
@@ -52,7 +46,7 @@
 			title: 'feat(astro): write config if not present when building',
 			description: 'merged this pull request',
 			time: new Date().toString(),
-			icon: MergedPullRequestIcon,
+			icon: 'merged-pr',
 			owner: 'lagonapp',
 			repo: 'lagon',
 			number: 845,
@@ -72,7 +66,7 @@
 			title: 'feat(cli): add rustls as default Cargo feature',
 			description: 'merged this pull request',
 			time: new Date(new Date().getTime() - 1000000).toString(),
-			icon: MergedPullRequestIcon,
+			icon: 'merged-pr',
 			owner: 'tauri-apps',
 			repo: 'tauri',
 			number: 6900
@@ -89,7 +83,7 @@
 			description:
 				'commented: The Svelte repo is currently in the process of heavy restructuring for Svelte 4. After that, work on Svelte 5 will likely change',
 			time: new Date(new Date().getTime() - 10000000).toString(),
-			icon: OpenIssueIcon,
+			icon: 'open-issue',
 			owner: 'sveltejs',
 			repo: 'svelte',
 			number: 8569,
@@ -106,7 +100,7 @@
 			title: 'feat(front): add the landing page',
 			description: 'opened this pull request',
 			time: new Date(new Date().getTime() - 23000).toString(),
-			icon: OpenPullRequestIcon,
+			icon: 'open-pr',
 			owner: 'colinlienard',
 			repo: 'gitlight',
 			number: 44,

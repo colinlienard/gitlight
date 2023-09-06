@@ -69,18 +69,28 @@
 		},
 		"windows": [
 			{
-				"fullscreen": false,
-				"height": 900,
-				"resizable": true,
-				"title": "GitLight",
+				"url": "/dashboard",
 				"width": 1400,
+				"height": 900,
+				"title": "GitLight",
 				"titleBarStyle": "Overlay",
-				"hiddenTitle": true,
-				"url": "/dashboard"
+				"hiddenTitle": true
+			},
+      {
+        "label": "tray",
+				"url": "/tray",
+				"width": 400,
+				"height": 600,
+				"title": "GitLight",
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
+        "resizable": false
 			}
 		],
 		"systemTray": {
-			"iconPath": "icons/tray-base.png"
+			"iconPath": "icons/tray-base.png",
+      "title": "Loading...",
+      "menuOnLeftClick": false
 		}
 	}
 }

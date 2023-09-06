@@ -5,6 +5,7 @@
 	import { Notification, NotificationPlaceholder, SkeletonNotification } from '.';
 
 	export let notifications: NotificationData[];
+	export let scrollShadow = true;
 
 	$: displayNotifications = (() => {
 		const pinned = notifications.filter((item) => item.pinned);
@@ -13,7 +14,11 @@
 	})();
 </script>
 
-<ul class="list" style:height={notifications.length ? 'auto' : '100%'}>
+<ul
+	class="list"
+	class:scroll-shadow={scrollShadow}
+	style:height={notifications.length ? 'auto' : '100%'}
+>
 	{#if $loading}
 		<li><SkeletonNotification /></li>
 		<li><SkeletonNotification /></li>
@@ -34,17 +39,21 @@
 		display: flex;
 		height: 100%;
 		flex-direction: column;
-		padding: 0 2rem 2rem;
+		padding: 2rem;
 		gap: 1rem;
 
-		&::before {
-			position: sticky;
-			z-index: 1;
-			height: 2rem;
-			margin-bottom: -1rem;
-			background-image: linear-gradient(variables.$grey-1 1rem, transparent);
-			content: '';
-			inset: 0 0 auto;
+		&.scroll-shadow {
+			padding-top: 0;
+
+			&::before {
+				position: sticky;
+				z-index: 1;
+				height: 2rem;
+				margin-bottom: -1rem;
+				background-image: linear-gradient(variables.$grey-1 1rem, transparent);
+				content: '';
+				inset: 0 0 auto;
+			}
 		}
 	}
 </style>

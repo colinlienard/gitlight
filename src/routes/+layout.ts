@@ -13,7 +13,7 @@ export const prerender = true;
 export const ssr = true;
 
 export async function load({ url }) {
-	if (!browser) return;
+	if (!browser || url.pathname === '/tray') return;
 
 	// Migrate old storage keys
 	// TODO: Remove this in a future version
