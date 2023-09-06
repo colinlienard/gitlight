@@ -1,5 +1,9 @@
 html {
 	font-size: 15px;
+
+	@include screens.mobile {
+		font-size: 14px;
+	}
 }
 
 body {
