@@ -1,9 +1,6 @@
-export function delayedHover(
-	node: HTMLElement,
-	{ className, active = true }: { className: string; active?: boolean }
-) {
-	if (!active) return;
+import type { Action } from 'svelte/action';
 
+export const delayedHover: Action<HTMLElement, string> = (node, className) => {
 	let timeout: ReturnType<typeof setTimeout>;
 
 	function handleMouseEnter() {
@@ -28,4 +25,4 @@ export function delayedHover(
 			node.removeEventListener('mouseleave', handleMouseLeave);
 		}
 	};
-}
+};

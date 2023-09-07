@@ -5,7 +5,7 @@
 	import { browser } from '$app/environment';
 	import { Button, Tooltip } from '$lib/components';
 	import { delayedHover, fetchGithub } from '$lib/features';
-	import { getGrayscale, getNotificationIcon, lightenColor } from '$lib/helpers';
+	import { getGrayscale, getNotificationIcon } from '$lib/helpers';
 	import {
 		CheckIcon,
 		DoubleCheckIcon,
@@ -22,6 +22,7 @@
 	import { githubNotifications, settings } from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
 	import NotificationDescription from './NotificationDescription.svelte';
+	import NotificationLabels from './NotificationLabels.svelte';
 	import NotificationStatus from './NotificationStatus.svelte';
 
 	type ToggleKey = 'unread' | 'pinned' | 'done' | 'muted';
@@ -154,7 +155,7 @@
 			<div class="texts">
 				<div
 					class="title-container"
-					use:delayedHover={{ className: 'notification-hover' }}
+					use:delayedHover={'notification-hover'}
 					on:mouseup={handleOpenInBrowser}
 					role="presentation"
 				>
@@ -178,20 +179,7 @@
 				{/if}
 			</div>
 		</div>
-		{#if labels && labels.length}
-			<ul
-				class="labels"
-				class:clip={labels.length > 3}
-				use:delayedHover={{ className: 'labels-hover', active: labels.length > 3 }}
-			>
-				{#each labels as label}
-					<li class="label" style:color={lightenColor(label.color)}>
-						{label.name}
-						<div class="label-background" style:background-color={`#${label.color}`} />
-					</li>
-				{/each}
-			</ul>
-		{/if}
+		<NotificationLabels {labels} />
 		{#if !dragged && interactive}
 			<div class="over">
 				{#if !done}
@@ -435,56 +423,6 @@
 
 			.texts {
 				margin-top: 0;
-			}
-		}
-	}
-
-	.labels {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-
-		&.clip {
-			position: relative;
-			overflow: hidden;
-			height: 3.5rem;
-
-			&::before {
-				position: absolute;
-				z-index: 1;
-				height: 1.5rem;
-				background-image: linear-gradient(transparent, variables.$grey-2);
-				content: '';
-				inset: auto 0 0;
-				pointer-events: none;
-			}
-		}
-
-		&:global(.labels-hover) {
-			height: auto;
-			transition: height 1s 1s ease-in-out;
-
-			&::before {
-				opacity: 0;
-			}
-		}
-
-		.label {
-			@include typography.small;
-
-			position: relative;
-			overflow: hidden;
-			padding: 0.25rem 0.5rem;
-			border: 1px solid;
-			border-radius: variables.$radius;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-
-			.label-background {
-				position: absolute;
-				border-radius: variables.$radius;
-				inset: 0;
-				opacity: 0.1;
 			}
 		}
 	}
