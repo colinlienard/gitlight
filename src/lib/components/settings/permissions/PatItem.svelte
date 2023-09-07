@@ -23,6 +23,7 @@
 	}
 
 	function handleDelete() {
+		dispatchEvent(new CustomEvent('refetch'));
 		showDeleteConfirm = false;
 		$settings.pats = $settings.pats.filter((p) => p.owner !== pat.owner);
 	}
@@ -36,8 +37,11 @@
 			error = 'This owner already exists.';
 			return;
 		}
+
 		$settings.pats.push(pat);
 		$settings.pats = $settings.pats;
+
+		dispatchEvent(new CustomEvent('refetch'));
 		dispatch('exit');
 	}
 
