@@ -125,8 +125,8 @@
 		if (pushNotification?.unread && !pushNotification?.muted) {
 			const { author, title, description } = pushNotification;
 			sendNotification({
-				title: `${author ? `${author.login} ` : ''}${description.replace(/(\*|_)/g, '')}`,
-				body: title
+				title,
+				body: `${author ? `${author.login} ` : ''}${description.replace(/(\*|_)/g, '')}`
 			});
 			invoke('update_tray', { newIcon: true });
 		}
