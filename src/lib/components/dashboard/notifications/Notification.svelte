@@ -4,8 +4,8 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { Button, Tooltip } from '$lib/components';
-	import { fetchGithub } from '$lib/features';
-	import { getGrayscale, getNotificationIcon, lightenColor } from '$lib/helpers';
+	import { delayedHover, fetchGithub } from '$lib/features';
+	import { getGrayscale, getNotificationIcon } from '$lib/helpers';
 	import {
 		CheckIcon,
 		DoubleCheckIcon,
@@ -22,6 +22,7 @@
 	import { githubNotifications, settings } from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
 	import NotificationDescription from './NotificationDescription.svelte';
+	import NotificationLabels from './NotificationLabels.svelte';
 	import NotificationStatus from './NotificationStatus.svelte';
 
 	type ToggleKey = 'unread' | 'pinned' | 'done' | 'muted';
@@ -50,8 +51,6 @@
 		previously
 	} = data;
 	let repoUrl = `https://github.com/${owner}/${repo}`;
-	let hoverTitle = false;
-	let hoverTitleTimeout: ReturnType<typeof setTimeout>;
 
 	$: isTrayApp = browser && window.location.pathname === '/tray';
 
@@ -123,18 +122,6 @@
 		url && openUrl(url);
 	}
 
-	function handleTitleHover(event: MouseEvent) {
-		if (event.type === 'mouseenter') {
-			hoverTitleTimeout = setTimeout(() => {
-				hoverTitle = true;
-			}, 150);
-			return;
-		}
-
-		hoverTitle = false;
-		clearTimeout(hoverTitleTimeout);
-	}
-
 	function openUrl(url: string) {
 		if (dragged) return;
 		if (window.__TAURI__) {
@@ -168,15 +155,13 @@
 			<div class="texts">
 				<div
 					class="title-container"
-					class:no-overflow={hoverTitle}
-					on:mouseenter={handleTitleHover}
-					on:mouseleave={handleTitleHover}
+					use:delayedHover={'notification-hover'}
 					on:mouseup={handleOpenInBrowser}
 					role="presentation"
 				>
-					<h3 class="title">{title}</h3>
+					<h3 class="notification-title">{title}</h3>
 					{#if number}
-						<span class="number">#{number}</span>
+						<span class="notification-number">#{number}</span>
 					{/if}
 				</div>
 				{#if priority && $settings.showPriority}
@@ -194,16 +179,7 @@
 				{/if}
 			</div>
 		</div>
-		{#if labels && labels.length}
-			<ul class="labels">
-				{#each labels as label}
-					<li class="label" style:color={lightenColor(label.color)}>
-						{label.name}
-						<div class="label-background" style:background-color={`#${label.color}`} />
-					</li>
-				{/each}
-			</ul>
-		{/if}
+		<NotificationLabels {labels} />
 		{#if !dragged && interactive}
 			<div class="over">
 				{#if !done}
@@ -388,7 +364,7 @@
 				overflow: hidden;
 				gap: 0.5ch;
 
-				.title {
+				.notification-title {
 					display: inline;
 					overflow: hidden;
 					flex: 0 1 auto;
@@ -398,7 +374,7 @@
 					white-space: nowrap;
 				}
 
-				.number {
+				.notification-number {
 					color: variables.$blue-3;
 				}
 
@@ -406,15 +382,14 @@
 					text-decoration: underline;
 				}
 
-				&.no-overflow {
+				&:global(.notification-hover) {
 					display: unset;
-					padding-right: 3rem;
 
-					.title {
+					:global(.notification-title) {
 						white-space: unset;
 					}
 
-					.number {
+					:global(.notification-title-number) {
 						text-decoration: underline;
 					}
 				}
@@ -448,28 +423,6 @@
 
 			.texts {
 				margin-top: 0;
-			}
-		}
-	}
-
-	.labels {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-
-		.label {
-			@include typography.small;
-
-			position: relative;
-			padding: 0.25rem 0.5rem;
-			border: 1px solid;
-			border-radius: variables.$radius;
-
-			.label-background {
-				position: absolute;
-				border-radius: variables.$radius;
-				inset: 0;
-				opacity: 0.1;
 			}
 		}
 	}

@@ -1,3 +1,4 @@
+import type { Action } from 'svelte/action';
 import { settings } from '../stores';
 
 const lists: Array<{
@@ -9,10 +10,10 @@ let itemId: string;
 let dropzone: number;
 let dragging = false;
 
-export function drag(
-	node: HTMLElement,
-	{ id, onDragStart }: { id: string; onDragStart: (id: string) => void }
-) {
+export const drag: Action<HTMLElement, { id: string; onDragStart: (id: string) => void }> = (
+	node,
+	{ id, onDragStart }
+) => {
 	let x: number;
 	let y: number;
 	let vertical = false;
@@ -90,18 +91,15 @@ export function drag(
 			window.removeEventListener('mouseup', handleMouseUp);
 		}
 	};
-}
+};
 
-export function drop(
-	node: HTMLElement,
+export const drop: Action<
+	HTMLElement,
 	{
-		onDrop,
-		onHoverChange
-	}: {
 		onDrop: (id: string) => void;
 		onHoverChange: (value: boolean) => void;
 	}
-) {
+> = (node, { onDrop, onHoverChange }) => {
 	const index = lists.length;
 	lists.push({ node, hovering: false, onHoverChange });
 
@@ -118,4 +116,4 @@ export function drop(
 			window.removeEventListener('mouseup', handleMouseUp);
 		}
 	};
-}
+};
