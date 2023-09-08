@@ -41,6 +41,10 @@
 </main>
 
 <style lang="scss">
+	:global(html) {
+		font-size: 15px;
+	}
+
 	.main {
 		height: 100vh;
 	}

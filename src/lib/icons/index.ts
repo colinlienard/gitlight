@@ -35,6 +35,7 @@ export { default as RestoreIcon } from './RestoreIcon.svelte';
 export { default as SearchIcon } from './SearchIcon.svelte';
 export { default as SmallArrowIcon } from './SmallArrowIcon.svelte';
 export { default as SparklesIcon } from './SparklesIcon.svelte';
+export { default as ThreeDotsIcon } from './ThreeDotsIcon.svelte';
 export { default as TrashIcon } from './TrashIcon.svelte';
 export { default as MutedIcon } from './MutedIcon.svelte';
 export { default as MuteIcon } from './MuteIcon.svelte';

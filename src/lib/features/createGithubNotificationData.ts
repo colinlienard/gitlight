@@ -115,8 +115,8 @@ export async function createGithubNotificationData(
 				comments_url
 			} = data as GithubIssue;
 
-			let author;
-			let description = 'New activity on issue';
+			let author: NotificationData['author'];
+			let description: NotificationData['description'] = '';
 			let url = html_url;
 			if (
 				state == 'open' &&
@@ -145,7 +145,7 @@ export async function createGithubNotificationData(
 				}
 			}
 
-			if (!firstTime && previous?.description === description) return null;
+			if ((!firstTime && previous?.description === description) || !description) return null;
 
 			value = {
 				...common,
@@ -182,8 +182,8 @@ export async function createGithubNotificationData(
 				commits_url
 			} = data as GithubPullRequest;
 
-			let author;
-			let description;
+			let author: NotificationData['author'];
+			let description: NotificationData['description'] = '';
 			let url = html_url;
 			const time = new Date(common.time).getTime();
 			if (
@@ -233,7 +233,7 @@ export async function createGithubNotificationData(
 				description = '*requested your review*';
 			}
 
-			if (!(firstTime && previous?.description === description) || !description) return null;
+			if ((!firstTime && previous?.description === description) || !description) return null;
 
 			value = {
 				...common,

@@ -17,7 +17,8 @@
 		MutedIcon,
 		UnpinIcon,
 		UnreadIcon,
-		ExternalLinkIcon
+		ExternalLinkIcon,
+		ThreeDotsIcon
 	} from '$lib/icons';
 	import { githubNotifications, settings } from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
@@ -51,6 +52,8 @@
 		previously
 	} = data;
 	let repoUrl = `https://github.com/${owner}/${repo}`;
+	let hoverAction = false;
+	let hoverActionTimeout: ReturnType<typeof setTimeout>;
 
 	$: isTrayApp = browser && window.location.pathname === '/tray';
 
@@ -70,6 +73,17 @@
 		}
 	});
 
+	function handleHoverActions(event: MouseEvent) {
+		if (event.type === 'mouseenter') {
+			hoverAction = true;
+			clearTimeout(hoverActionTimeout);
+			return;
+		}
+		hoverActionTimeout = setTimeout(() => {
+			hoverAction = false;
+		}, 200);
+	}
+
 	function markAsReadInGitHub() {
 		fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
 	}
@@ -86,9 +100,8 @@
 				if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
 					return { ...notification, pinned: !notification.pinned, unread: false };
 				}
-				if (key === 'done' && unread) {
-					markAsReadInGitHub();
-					return { ...notification, done: !notification.done, unread: false };
+				if (key === 'done') {
+					return { ...notification, done: !notification.done, unread: false, pinned: false };
 				}
 				return { ...notification, [key]: !notification[key] };
 			});
@@ -97,7 +110,7 @@
 				unread = !unread;
 			}
 
-			if (key === 'unread' && unread) {
+			if ((key === 'unread' || key === 'done') && unread) {
 				markAsReadInGitHub();
 			}
 
@@ -181,69 +194,83 @@
 		</div>
 		<NotificationLabels {labels} />
 		{#if !dragged && interactive}
-			<div class="over">
-				{#if !done}
-					{#if !unread}
-						<Tooltip content="Mark as done" position="bottom right" hover>
-							<Button icon on:click={handleToggle('done')}>
-								<DoubleCheckIcon />
-							</Button>
-						</Tooltip>
-					{/if}
-					{#if unread}
-						<Tooltip content="Mark as read" position="bottom right" hover>
-							<Button icon on:click={handleToggle('unread')}>
-								<CheckIcon />
-							</Button>
-						</Tooltip>
-						<Tooltip content="Mark as done" position="bottom" hover>
-							<Button secondary icon on:click={handleToggle('done')}>
-								<DoubleCheckIcon />
-							</Button>
-						</Tooltip>
-					{:else}
-						<Tooltip content="Mark as unread" position="bottom" hover>
-							<Button secondary icon on:click={handleToggle('unread')}>
-								<UnreadIcon />
-							</Button>
-						</Tooltip>
-					{/if}
-					<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="bottom" hover>
-						<Button secondary icon on:click={handleToggle('pinned')}>
-							{#if pinned}
-								<UnpinIcon />
-							{:else}
-								<PinIcon />
-							{/if}
+			<div
+				class="over"
+				class:large-shadow={hoverAction}
+				on:mouseenter={handleHoverActions}
+				on:mouseleave={handleHoverActions}
+				role="presentation"
+			>
+				{#if !hoverAction}
+					<div class="action-trigger">
+						<Button secondary icon>
+							<ThreeDotsIcon />
 						</Button>
-					</Tooltip>
+					</div>
 				{:else}
-					<Tooltip content="Restore" position="bottom" hover>
-						<Button icon on:click={handleToggle('done')}>
-							<RestoreIcon />
-						</Button>
-					</Tooltip>
-				{/if}
-				{#if url}
-					<Tooltip content="Open in browser" position="bottom" hover>
-						<Button secondary icon on:click={handleOpenInBrowser}>
-							<ExternalLinkIcon />
-						</Button>
-					</Tooltip>
-				{/if}
-				{#if type === 'Discussion' || type === 'Issue' || type === 'PullRequest'}
-					{#if muted}
-						<Tooltip content="Muted" position="bottom" hover>
-							<Button secondary icon on:click={handleToggle('muted')}>
-								<MutedIcon />
+					{#if !done}
+						{#if !unread}
+							<Tooltip content="Mark as done" position="bottom right" hover>
+								<Button icon on:click={handleToggle('done')}>
+									<DoubleCheckIcon />
+								</Button>
+							</Tooltip>
+						{/if}
+						{#if unread}
+							<Tooltip content="Mark as read" position="bottom right" hover>
+								<Button icon on:click={handleToggle('unread')}>
+									<CheckIcon />
+								</Button>
+							</Tooltip>
+							<Tooltip content="Mark as done" position="bottom" hover>
+								<Button secondary icon on:click={handleToggle('done')}>
+									<DoubleCheckIcon />
+								</Button>
+							</Tooltip>
+						{:else}
+							<Tooltip content="Mark as unread" position="bottom" hover>
+								<Button secondary icon on:click={handleToggle('unread')}>
+									<UnreadIcon />
+								</Button>
+							</Tooltip>
+						{/if}
+						<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="bottom" hover>
+							<Button secondary icon on:click={handleToggle('pinned')}>
+								{#if pinned}
+									<UnpinIcon />
+								{:else}
+									<PinIcon />
+								{/if}
 							</Button>
 						</Tooltip>
 					{:else}
-						<Tooltip content="Mute" position="bottom" hover>
-							<Button secondary icon on:click={handleToggle('muted')}>
-								<MuteIcon />
+						<Tooltip content="Restore" position="bottom" hover>
+							<Button icon on:click={handleToggle('done')}>
+								<RestoreIcon />
 							</Button>
 						</Tooltip>
+					{/if}
+					{#if url}
+						<Tooltip content="Open in browser" position="bottom" hover>
+							<Button secondary icon on:click={handleOpenInBrowser}>
+								<ExternalLinkIcon />
+							</Button>
+						</Tooltip>
+					{/if}
+					{#if type === 'Discussion' || type === 'Issue' || type === 'PullRequest'}
+						{#if muted}
+							<Tooltip content="Muted" position="bottom" hover>
+								<Button secondary icon on:click={handleToggle('muted')}>
+									<MutedIcon />
+								</Button>
+							</Tooltip>
+						{:else}
+							<Tooltip content="Mute" position="bottom" hover>
+								<Button secondary icon on:click={handleToggle('muted')}>
+									<MuteIcon />
+								</Button>
+							</Tooltip>
+						{/if}
 					{/if}
 				{/if}
 			</div>
@@ -440,17 +467,26 @@
 
 		&::before {
 			position: absolute;
-			width: 16rem;
-			height: 5rem;
+			width: 4rem;
+			height: 4rem;
 			border-radius: 0 calc(variables.$radius - 1px) calc(variables.$radius - 1px) 0;
 			background-image: radial-gradient(at top right, variables.$grey-1 25%, transparent 75%);
 			content: '';
 			inset: 0 0 auto auto;
 		}
 
+		&.large-shadow::before {
+			width: 20rem;
+			height: 6rem;
+		}
+
 		& > :global(div) {
 			height: fit-content;
 			pointer-events: all;
+		}
+
+		.action-trigger {
+			z-index: 1;
 		}
 	}
 
