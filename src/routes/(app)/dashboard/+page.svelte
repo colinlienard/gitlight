@@ -146,10 +146,6 @@
 		}, 60000);
 	}
 
-	function handleFocus() {
-		window.__TAURI__ && invoke('update_tray', { newIcon: false });
-	}
-
 	$: if (mounted && $githubNotifications.length) {
 		// Save events ids to storage
 		const toSave = $githubNotifications.map(
@@ -181,7 +177,6 @@
 	}
 
 	onMount(async () => {
-		window.addEventListener('focus', handleFocus);
 		window.addEventListener('refetch', refetch);
 
 		$savedNotifications = storage.get('github-notifications') || [];
@@ -194,7 +189,6 @@
 
 	onDestroy(() => {
 		if (mounted) {
-			window.removeEventListener('focus', handleFocus);
 			window.removeEventListener('refetch', refetch);
 		}
 

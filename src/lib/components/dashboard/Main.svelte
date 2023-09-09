@@ -26,6 +26,9 @@
 	$: if (browser && window.__TAURI__) {
 		emit('loading', { loading: $loading });
 	}
+	$: if (browser && window.__TAURI__) {
+		emit('settings', { settings: $settings });
+	}
 
 	// Filter events
 	$: pinned = notifications.filter((item) => item.pinned && !item.done);
