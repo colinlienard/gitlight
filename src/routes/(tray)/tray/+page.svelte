@@ -2,9 +2,9 @@
 	import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import { NotificationList, ScrollbarContainer } from '~/lib/components';
-	import { loading } from '~/lib/stores';
-	import type { NotificationData } from '~/lib/types';
+	import { NotificationList, ScrollbarContainer } from '$lib/components';
+	import { loading } from '$lib/stores';
+	import type { NotificationData } from '$lib/types';
 
 	let notifications: NotificationData[] = [];
 	let unlistenNotification: UnlistenFn = () => null;
