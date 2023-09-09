@@ -42,7 +42,6 @@ export const settings = writable<Settings>({
 	prioritySorting: true,
 	showPriority: true,
 	providerView: 'both',
-	showPersonsAsCreators: false,
 	applyFiltersForDone: false,
 	viewMode: 'Kanban'
 });

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Action } from 'svelte/action';
-	import { delayedHover } from '~/lib/features';
-	import { lightenColor } from '~/lib/helpers';
-	import type { GithubLabel } from '~/lib/types';
+	import { delayedHover } from '$lib/features';
+	import { lightenColor } from '$lib/helpers';
+	import type { GithubLabel } from '$lib/types';
 
 	export let labels: GithubLabel[] = [];
 

@@ -119,7 +119,6 @@ export type Settings = {
 	prioritySorting: boolean;
 	showPriority: boolean;
 	providerView: 'github' | 'gitlab' | 'both';
-	showPersonsAsCreators: boolean;
 	applyFiltersForDone: boolean;
 	viewMode: 'List' | 'Kanban' | 'Kanban (vertical)';
 };

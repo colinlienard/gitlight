@@ -115,8 +115,8 @@ export async function createGithubNotificationData(
 				comments_url
 			} = data as GithubIssue;
 
-			let author;
-			let description = 'New activity on issue';
+			let author: NotificationData['author'];
+			let description: NotificationData['description'] = '';
 			let url = html_url;
 			if (
 				state == 'open' &&
@@ -145,7 +145,7 @@ export async function createGithubNotificationData(
 				}
 			}
 
-			if (!firstTime && previous?.description === description) return null;
+			if ((!firstTime && previous?.description === description) || !description) return null;
 
 			value = {
 				...common,
@@ -182,11 +182,15 @@ export async function createGithubNotificationData(
 				commits_url
 			} = data as GithubPullRequest;
 
-			let author;
-			let description = 'New activity on pull request';
+			let author: NotificationData['author'];
+			let description: NotificationData['description'] = '';
 			let url = html_url;
 			const time = new Date(common.time).getTime();
-			if (state == 'open' && time - new Date(created_at).getTime() < 30000) {
+			if (
+				state == 'open' &&
+				time - new Date(created_at).getTime() < 30000 &&
+				reason !== 'review_requested'
+			) {
 				author = { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
 				description = '*opened* this pull request';
 			} else if (state === 'closed' && time - new Date(closed_at as string).getTime() < 30000) {
@@ -216,7 +220,7 @@ export async function createGithubNotificationData(
 					},
 					undefined
 				);
-				if (event && new Date(event.time).getTime() - time < 30000) {
+				if (event && time - new Date(event.time).getTime() < 30000) {
 					author = event.author;
 					description = event.description;
 					if (event.url) url = event.url;
@@ -229,7 +233,7 @@ export async function createGithubNotificationData(
 				description = '*requested your review*';
 			}
 
-			if (!firstTime && previous?.description === description) return null;
+			if ((!firstTime && previous?.description === description) || !description) return null;
 
 			value = {
 				...common,

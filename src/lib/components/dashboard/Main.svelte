@@ -34,20 +34,25 @@
 
 	$: verticalKanban = $settings.viewMode === 'Kanban (vertical)';
 
-	function markAllAsRead() {
-		$githubNotifications = $githubNotifications.map((notifications) =>
-			unread.includes(notifications) ? { ...notifications, unread: false } : notifications
-		);
+	function readAllInGithub() {
 		fetchGithub('notifications', {
 			method: 'PUT',
 			body: { read: true }
 		});
 	}
 
+	function markAllAsRead() {
+		$githubNotifications = $githubNotifications.map((notifications) =>
+			unread.includes(notifications) ? { ...notifications, unread: false } : notifications
+		);
+		readAllInGithub();
+	}
+
 	function markAllAsDone() {
 		$githubNotifications = $githubNotifications.map((notifications) =>
 			read.includes(notifications) ? { ...notifications, done: true } : notifications
 		);
+		readAllInGithub();
 	}
 
 	// Animations settings

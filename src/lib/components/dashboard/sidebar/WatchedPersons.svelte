@@ -2,11 +2,9 @@
 	import { browser } from '$app/environment';
 	import { storage } from '$lib/features';
 	import { MuteIcon, MutedIcon } from '$lib/icons';
-	import { githubNotifications, loading, settings, watchedPersons } from '$lib/stores';
+	import { githubNotifications, loading, watchedPersons } from '$lib/stores';
 	import type { WatchedPerson } from '$lib/types';
 	import SidebarSection from './SidebarSection.svelte';
-
-	$: showPersonsAsCreators = $settings.showPersonsAsCreators;
 
 	// Update watched persons
 	$: if (browser && !$loading) {
@@ -15,7 +13,7 @@
 		$watchedPersons = $githubNotifications
 			.reduce<WatchedPerson[]>((previous, current) => {
 				if (!current.author || current.done) return previous;
-				const involved = (showPersonsAsCreators && current?.creator) || current?.author;
+				const involved = current?.creator || current?.author;
 				const saved = savedWatchedPersons?.find((person) => person.login === involved?.login);
 				const index = previous.findIndex((person) => person.login === involved?.login);
 				if (index > -1) {
@@ -76,23 +74,14 @@
 			person.bot ? { ...person, active } : person
 		);
 	}
-
-	function handleShowPersonsAsCreators(active: boolean) {
-		$settings.showPersonsAsCreators = active;
-	}
 </script>
 
 <SidebarSection
-	title="Persons"
-	description="Authors of notifications."
+	title="Authors"
+	description="Perons who created PRs and issues, or authors of notifications."
 	bind:items={$watchedPersons}
 	actions={[
-		{ text: 'Show bots', active: botsHidden, onToggle: handleHideBots, disabled: !botsPresent },
-		{
-			text: 'Show as created by (only for pull requests and issues)',
-			active: $settings.showPersonsAsCreators,
-			onToggle: handleShowPersonsAsCreators
-		}
+		{ text: 'Show bots', active: botsHidden, onToggle: handleHideBots, disabled: !botsPresent }
 	]}
 >
 	{#if $watchedPersons.length}
