@@ -100,6 +100,7 @@ fn main() {
                 if !is_focused && window.label() == "tray" {
                     window.hide().unwrap();
                 }
+                commands::update_tray(window.app_handle(), None, Some(false))
             }
             _ => {}
         })
