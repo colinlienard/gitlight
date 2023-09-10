@@ -7,13 +7,34 @@ export type GitlabUser = {
 
 export type GitlabEvent = {
 	id: number;
-	action_name: 'opened' | 'closed' | 'merged' | 'commented_on';
 	author: GitlabUser;
 	created_at: string;
-} & {
-	action_name: 'pushed new';
-	push_data: {
-		commit_count: number;
-		commit_title: string;
-	};
-};
+} & (
+	| {
+			action_name: 'pushed new';
+			push_data: {
+				commit_count: number;
+				commit_title: string;
+			};
+	  }
+	| {
+			action_name: 'created';
+			push_data: unknown;
+	  }
+	| {
+			action_name: 'opened';
+			push_data: unknown;
+	  }
+	| {
+			action_name: 'closed';
+			push_data: unknown;
+	  }
+	| {
+			action_name: 'merged';
+			push_data: unknown;
+	  }
+	| {
+			action_name: 'commented_on';
+			push_data: unknown;
+	  }
+);

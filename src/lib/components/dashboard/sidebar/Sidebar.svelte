@@ -33,7 +33,7 @@
 			(filter) => filter.active && filter.type === notification.type
 		);
 		const onlyOpen = showOnlyOpen
-			? notification.type === 'PullRequest' || notification.type === 'Issue'
+			? notification.type === 'pr' || notification.type === 'issue'
 				? notification.opened
 				: true
 			: true;

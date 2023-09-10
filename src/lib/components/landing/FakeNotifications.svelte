@@ -22,7 +22,7 @@
 	const fakeNotifications: NotificationData[] = [
 		{
 			...common,
-			type: 'Commit',
+			type: 'commit',
 			author: {
 				...commonAuthor,
 				login: 'colinlienard',
@@ -37,7 +37,7 @@
 		},
 		{
 			...common,
-			type: 'PullRequest',
+			type: 'pr',
 			author: {
 				...commonAuthor,
 				login: 'QuiiBz',
@@ -57,7 +57,7 @@
 		},
 		{
 			...common,
-			type: 'PullRequest',
+			type: 'pr',
 			author: {
 				...commonAuthor,
 				login: 'lucasfernog',
@@ -73,7 +73,7 @@
 		},
 		{
 			...common,
-			type: 'Issue',
+			type: 'issue',
 			author: {
 				...commonAuthor,
 				login: 'Rich-Harris',
@@ -91,7 +91,7 @@
 		},
 		{
 			...common,
-			type: 'PullRequest',
+			type: 'pr',
 			author: {
 				...commonAuthor,
 				login: 'colinlienard',

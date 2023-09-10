@@ -1,4 +1,4 @@
-import type { GithubLabel, GithubNotificationType, GithubRepository } from './github-types';
+import type { GithubLabel, GithubRepository } from './github-types';
 
 export type User = {
 	name?: string;
@@ -29,9 +29,11 @@ export type NotificationIcon =
 	| 'workflow-success'
 	| 'unsupported';
 
+export type NotificationType = 'pr' | 'issue' | 'commit' | 'release' | 'discussion' | 'workflow';
+
 export type NotificationData = {
 	id: string;
-	type: GithubNotificationType;
+	type: NotificationType;
 	unread: boolean;
 	pinned: boolean;
 	done: boolean;
@@ -62,7 +64,7 @@ export type NotificationData = {
 
 export type TypeFilters = Array<{
 	name: string;
-	type: GithubNotificationType;
+	type: NotificationType;
 	active: boolean;
 	number: number;
 }>;
@@ -140,6 +142,6 @@ export type Priority = {
 	  }
 	| {
 			criteria: 'type';
-			specifier: GithubNotificationType;
+			specifier: NotificationType;
 	  }
 );

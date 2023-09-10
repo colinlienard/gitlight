@@ -252,7 +252,7 @@
 							</Button>
 						</Tooltip>
 					{/if}
-					{#if type === 'Discussion' || type === 'Issue' || type === 'PullRequest'}
+					{#if type === 'discussion' || type === 'issue' || type === 'pr'}
 						{#if muted}
 							<Tooltip content="Muted" position="bottom" hover>
 								<Button secondary icon on:click={handleToggle('muted')}>

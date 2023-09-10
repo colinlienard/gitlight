@@ -21,7 +21,8 @@
 	import {
 		createGithubNotificationData,
 		fetchGithub,
-		storage,
+		fetchGitlab,
+		createGitlabNotificationData,
 		type StorageMap
 	} from '$lib/features';
 	import { GithubIcon, GitlabIcon, Logo, RefreshIcon } from '$lib/icons';
@@ -32,7 +33,7 @@
 		loading,
 		settings
 	} from '$lib/stores';
-	import type { GithubNotification, NotificationData } from '$lib/types';
+	import type { GithubNotification, GitlabEvent, NotificationData } from '$lib/types';
 
 	const githubUser = $page.data.session?.githubUser;
 	const gitlabUser = $page.data.session?.gitlabUser;
@@ -43,8 +44,7 @@
 	let mounted = false;
 
 	let interval = setInterval(() => {
-		fetchGithubNotifications();
-		fetchGitlabNotifications();
+		fetchAll();
 	}, 60000);
 
 	$: if (synced && !syncTime) {
@@ -67,10 +67,28 @@
 		return (currentAuthor ? currentAuthor.muted : currentCreator?.muted) || repo?.muted || muted;
 	}
 
+	function refetch() {
+		// Clear and refetch notifications
+		$githubNotifications = [];
+		fetchAll();
+
+		// Reset interval
+		clearInterval(interval);
+		interval = setInterval(() => {
+			fetchAll();
+		}, 60000);
+	}
+
+	async function fetchAll() {
+		synced = false;
+
+		await Promise.all([fetchGithubNotifications(), fetchGitlabNotifications()]);
+
+		synced = true;
+	}
+
 	async function fetchGithubNotifications() {
 		if (!githubUser) return;
-
-		synced = false;
 
 		let newNotifications: NotificationData[] = [];
 		const savedNotifications = storage.get('github-notifications') || [];
@@ -128,8 +146,6 @@
 			$error =
 				'An error occurred while fetching notifications. Please try to reload the page or log out and log in again.';
 			console.error(e);
-		} finally {
-			synced = true;
 		}
 
 		if (!newNotifications.length) return;
@@ -167,31 +183,29 @@
 		let newNotifications: NotificationData[] = [];
 
 		try {
-			console.log('salut');
+			console.log(await fetchGitlab(`projects/colinlienard1%2Fgitlab-test/events`));
 
-			const response = await fetchGitlab('events');
-			console.log(response);
+			// const response = await fetchGitlab<GitlabEvent[]>('events');
+			// console.log(response);
+			// newNotifications = (
+			// 	await Promise.all(
+			// 		response.map((event) =>
+			// 			createGitlabNotificationData(
+			// 				event,
+			// 				[],
+			// 				true
+			// 				// $savedNotifications,
+			// 				// !$githubNotifications.length
+			// 			)
+			// 		)
+			// 	)
+			// ).filter((item): item is NotificationData => !!item);
+			// console.log(newNotifications);
 		} catch (e) {
 			$error =
 				'An error occurred while fetching notifications. Please try to reload the page or log out and log in again.';
 			console.error(e);
-		} finally {
-			synced = true;
 		}
-	}
-
-	function refetch() {
-		// Clear and refetch notifications
-		$githubNotifications = [];
-		fetchGithubNotifications();
-		fetchGitlabNotifications();
-
-		// Reset interval
-		clearInterval(interval);
-		interval = setInterval(() => {
-			fetchGithubNotifications();
-			fetchGitlabNotifications();
-		}, 60000);
 	}
 
 	function updateTrayTitle() {
@@ -238,8 +252,7 @@
 
 		mounted = true;
 
-		await fetchGitlabNotifications();
-		// await Promise.all([fetchGithubNotifications, fetchGitlabNotifications]);
+		await fetchAll();
 		$loading = false;
 	});
 

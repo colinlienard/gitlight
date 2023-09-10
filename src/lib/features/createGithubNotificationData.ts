@@ -72,7 +72,6 @@ export async function createGithubNotificationData(
 		unread,
 		done,
 		muted,
-		reason,
 		time: updated_at,
 		title: subject.title,
 		type: subject.type,
@@ -93,7 +92,8 @@ export async function createGithubNotificationData(
 					: { login: commit.author.name },
 				description: '*made a commit*',
 				icon: 'commit',
-				url: html_url
+				url: html_url,
+				type: 'commit'
 			};
 			break;
 		}
@@ -155,7 +155,8 @@ export async function createGithubNotificationData(
 				labels,
 				url,
 				previously:
-					previous?.description !== description ? previous : previous?.previously || undefined
+					previous?.description !== description ? previous : previous?.previously || undefined,
+				type: 'issue'
 			};
 			break;
 		}
@@ -251,7 +252,8 @@ export async function createGithubNotificationData(
 				labels,
 				url,
 				previously:
-					previous?.description !== description ? previous : previous?.previously || undefined
+					previous?.description !== description ? previous : previous?.previously || undefined,
+				type: 'pr'
 			};
 			break;
 		}
@@ -267,7 +269,8 @@ export async function createGithubNotificationData(
 					{ name: tag_name, color: 'FFFFFF' },
 					...(prerelease ? [{ name: 'pre-release', color: 'FFA723' }] : [])
 				],
-				url: html_url
+				url: html_url,
+				type: 'release'
 			};
 			break;
 		}
@@ -298,7 +301,8 @@ export async function createGithubNotificationData(
 				url,
 				icon: 'discussion',
 				previously:
-					previous?.description !== description ? previous : previous?.previously || undefined
+					previous?.description !== description ? previous : previous?.previously || undefined,
+				type: 'discussion'
 			};
 			break;
 		}
@@ -312,8 +316,9 @@ export async function createGithubNotificationData(
 				...common,
 				title: `${workflowName} for ${branch}`,
 				description: `Workflow run ${status}`,
-				url: `https://github.com/${repository.full_name}/pull/${branch}`
-			};
+				url: `https://github.com/${repository.full_name}/pull/${branch}`,
+				type: 'workflow'
+			} as const;
 
 			if (subject.title.includes('succeeded')) {
 				value = { ...data, icon: 'workflow-success' };
@@ -330,9 +335,9 @@ export async function createGithubNotificationData(
 		default:
 			value = {
 				...common,
-				type: 'CheckSuite',
 				description: `'${subject.type}' notifications are not yet fully supported`,
-				icon: 'unsupported'
+				icon: 'unsupported',
+				type: 'workflow'
 			};
 			break;
 	}
