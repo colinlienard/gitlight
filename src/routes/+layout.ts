@@ -31,9 +31,13 @@ export async function load({ url }) {
 	let githubAccessToken = storage.get('github-access-token');
 	let gitlabUser = storage.get('gitlab-user');
 	let gitlabAccessToken = storage.get('gitlab-access-token');
+	let gitlabRefreshToken = storage.get('gitlab-refresh-token');
+	let gitlabExpiration = storage.get('gitlab-expiration');
 
 	const githubTokenParam = url.searchParams.get('github_access_token');
 	const gitlabTokenParam = url.searchParams.get('gitlab_access_token');
+	const gitlabRefreshTokenParam = url.searchParams.get('gitlab_refresh_token');
+	const gitlabExpirationParam = url.searchParams.get('gitlab_expiration');
 
 	// Get GitHub access token
 	if (githubTokenParam) {
@@ -45,6 +49,18 @@ export async function load({ url }) {
 	if (gitlabTokenParam) {
 		gitlabAccessToken = gitlabTokenParam;
 		storage.set('gitlab-access-token', gitlabAccessToken);
+	}
+
+	// Get GitLab refresh token
+	if (gitlabRefreshTokenParam) {
+		gitlabRefreshToken = gitlabRefreshTokenParam;
+		storage.set('gitlab-refresh-token', gitlabRefreshToken);
+	}
+
+	// Get GitLab expiration
+	if (gitlabExpirationParam) {
+		gitlabExpiration = gitlabExpirationParam;
+		storage.set('gitlab-expiration', gitlabExpiration);
 	}
 
 	// Open the app with the access token

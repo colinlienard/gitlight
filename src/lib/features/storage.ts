@@ -5,6 +5,8 @@ export type StorageMap = {
 	'github-access-token': string;
 	'gitlab-user': User;
 	'gitlab-access-token': string;
+	'gitlab-refresh-token': string;
+	'gitlab-expiration': string;
 	settings: Settings;
 	'github-notifications': SavedNotifications;
 	'github-watched-repos': { id: string; active: boolean; muted: boolean }[];
