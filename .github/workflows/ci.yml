@@ -17,7 +17,7 @@ jobs:
   lint-ts:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 8
@@ -33,7 +33,7 @@ jobs:
   lint-rs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 8
@@ -52,7 +52,7 @@ jobs:
   typecheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 8
@@ -68,7 +68,7 @@ jobs:
   build-front:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 8
@@ -86,7 +86,7 @@ jobs:
     if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Tauri dependencies
         run: |
           sudo apt-get update
