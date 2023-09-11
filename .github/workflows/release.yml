@@ -28,7 +28,7 @@ jobs:
           - os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Tauri dependencies (ubuntu only)
         if: matrix.os == 'ubuntu-20.04'
         run: |
