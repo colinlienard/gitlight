@@ -2251,9 +2251,9 @@ checksum = "99e1d07c6eab1ce8b6382b8e3c7246fe117ff3f8b34be065f5ebace6749fe845"
 
 [[package]]
 name = "objc2"
-version = "0.3.0-beta.5"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ef3a6024722b4230242a53e5b5759ce117548983696b8e4b7bc2fd1f8fce621e"
+checksum = "559c5a40fdd30eb5e344fbceacf7595a81e242529fb4e21cf5f43fb4f11ff98d"
 dependencies = [
  "objc-sys",
  "objc2-encode",
@@ -2261,9 +2261,9 @@ dependencies = [
 
 [[package]]
 name = "objc2-encode"
-version = "2.0.0-pre.4"
+version = "3.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8f8f7297b786454a87e392631e2b2754ed59a7b413effa8521225d93f46b2192"
+checksum = "d079845b37af429bfe5dfa76e6d087d788031045b25cfc6fd898486fd9847666"
 
 [[package]]
 name = "objc_exception"
@@ -3645,9 +3645,9 @@ dependencies = [
 
 [[package]]
 name = "tauri-plugin-deep-link"
-version = "0.1.1"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "33a3ae55bcfe692e5361edc4708bd9f415270cc02e1cdba8ab7768566208b4e2"
+checksum = "4536f5f6602e8fdfaa7b3b185076c2a0704f8eb7015f4e58461eb483ec3ed1f8"
 dependencies = [
  "dirs 5.0.1",
  "interprocess",
