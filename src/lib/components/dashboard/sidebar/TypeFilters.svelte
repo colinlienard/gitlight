@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Switch } from '$lib/components';
 	import { storage } from '$lib/features';
-	import { githubNotifications, loading, settings, typeFilters } from '$lib/stores';
+	import { globalNotifications, loading, settings, typeFilters } from '$lib/stores';
 	import SidebarSection from './SidebarSection.svelte';
 
 	let mounted = false;
@@ -18,7 +18,7 @@
 	// Set notification numbers for each type
 	$: {
 		$typeFilters = $typeFilters.map((filter) => {
-			filter.number = $githubNotifications.filter((n) => n.type === filter.type && !n.done).length;
+			filter.number = $globalNotifications.filter((n) => n.type === filter.type && !n.done).length;
 			return filter;
 		});
 	}

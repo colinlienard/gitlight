@@ -2,7 +2,7 @@
 	import { browser } from '$app/environment';
 	import { storage } from '$lib/features';
 	import { MuteIcon, MutedIcon } from '$lib/icons';
-	import { githubNotifications, loading, watchedPersons } from '$lib/stores';
+	import { globalNotifications, loading, watchedPersons } from '$lib/stores';
 	import type { User, WatchedPerson } from '$lib/types';
 	import SidebarSection from './SidebarSection.svelte';
 
@@ -10,7 +10,7 @@
 	$: if (browser && !$loading) {
 		let savedWatchedPersons = storage.get('github-watched-persons');
 
-		const persons = $githubNotifications.reduce<WatchedPerson[]>((previous, current) => {
+		const persons = $globalNotifications.reduce<WatchedPerson[]>((previous, current) => {
 			if (current.done) return previous;
 			if (current.creator) {
 				previous = addPerson(previous, current.creator, 1, savedWatchedPersons);

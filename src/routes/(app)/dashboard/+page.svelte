@@ -30,6 +30,8 @@
 		error,
 		filteredNotifications,
 		githubNotifications,
+		gitlabNotifications,
+		globalNotifications,
 		loading,
 		settings
 	} from '$lib/stores';
@@ -65,6 +67,15 @@
 		const currentCreator = persons.find(({ login }) => login === creator?.login);
 		const repo = repos.find(({ id }) => id === repoId);
 		return (currentAuthor ? currentAuthor.muted : currentCreator?.muted) || repo?.muted || muted;
+	}
+
+	$: providerView = $settings.providerView;
+	$: {
+		// TODO: sort notifications by date
+		$globalNotifications = [
+			...(providerView !== 'gitlab' ? $githubNotifications : []),
+			...(providerView !== 'github' ? $gitlabNotifications : [])
+		];
 	}
 
 	function refetch() {
@@ -183,29 +194,39 @@
 		let newNotifications: NotificationData[] = [];
 
 		try {
-			console.log(await fetchGitlab(`projects/colinlienard1%2Fgitlab-test/events`));
-
-			// const response = await fetchGitlab<GitlabEvent[]>('events');
-			// console.log(response);
-			// newNotifications = (
-			// 	await Promise.all(
-			// 		response.map((event) =>
-			// 			createGitlabNotificationData(
-			// 				event,
-			// 				[],
-			// 				true
-			// 				// $savedNotifications,
-			// 				// !$githubNotifications.length
-			// 			)
-			// 		)
-			// 	)
-			// ).filter((item): item is NotificationData => !!item);
-			// console.log(newNotifications);
+			const response = await fetchGitlab<GitlabEvent[]>(
+				`projects/colinlienard1%2Fgitlab-test/events`
+			);
+			console.log(response);
+			newNotifications = (
+				await Promise.all(
+					response.map((event) =>
+						createGitlabNotificationData(
+							event,
+							[],
+							true
+							// $savedNotifications,
+							// !$githubNotifications.length
+						)
+					)
+				)
+			).filter((item): item is NotificationData => !!item);
+			console.log(newNotifications);
 		} catch (e) {
 			$error =
 				'An error occurred while fetching notifications. Please try to reload the page or log out and log in again.';
 			console.error(e);
 		}
+
+		if (!newNotifications.length) return;
+
+		const firstFetch = !$gitlabNotifications.length;
+
+		// Remove duplicates and add new notifications to the store
+		$gitlabNotifications = [
+			...newNotifications,
+			...$gitlabNotifications.filter((item) => !newNotifications.find((n) => n.id === item.id))
+		];
 	}
 
 	function updateTrayTitle() {
@@ -304,8 +325,8 @@
 		<nav class="nav">
 			<button
 				class="tab"
-				class:selected={$settings.providerView === 'github'}
-				on:click={() => ($settings.providerView = 'github')}
+				class:selected={providerView === 'github'}
+				on:click={() => (providerView = 'github')}
 			>
 				<GithubIcon />
 				<p class="text">GitHub</p>
@@ -315,8 +336,8 @@
 			</button>
 			<button
 				class="tab"
-				class:selected={$settings.providerView === 'gitlab'}
-				on:click={() => ($settings.providerView = 'gitlab')}
+				class:selected={providerView === 'gitlab'}
+				on:click={() => (providerView = 'gitlab')}
 			>
 				<GitlabIcon />
 				<p class="text">GitLab</p>
@@ -326,14 +347,14 @@
 			</button>
 			<button
 				class="tab"
-				class:selected={$settings.providerView === 'both'}
-				on:click={() => ($settings.providerView = 'both')}
+				class:selected={providerView === 'both'}
+				on:click={() => (providerView = 'both')}
 			>
 				<p class="text">Both</p>
 			</button>
 			<DoneModal />
 		</nav>
-		{#if $settings.providerView === 'github' && !githubUser}
+		{#if providerView === 'github' && !githubUser}
 			<div class="login-container">
 				<div class="text">Manage your GitHub and GitLab notifications at the same time.</div>
 				<GithubLoginButton>
@@ -341,7 +362,7 @@
 					Log in to GitHub
 				</GithubLoginButton>
 			</div>
-		{:else if $settings.providerView === 'gitlab' && !gitlabUser}
+		{:else if providerView === 'gitlab' && !gitlabUser}
 			<div class="login-container">
 				<div class="text">Manage your GitHub and GitLab notifications at the same time.</div>
 				<GitlabLoginButton>

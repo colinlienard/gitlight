@@ -5,12 +5,12 @@
 	import { Logo, DoubleArrowIcon } from '$lib/icons';
 	import {
 		filteredNotifications,
-		githubNotifications,
 		loading,
 		watchedRepos,
 		settings,
 		watchedPersons,
-		typeFilters
+		typeFilters,
+		globalNotifications
 	} from '$lib/stores';
 	import SidebarSearch from './SidebarSearch.svelte';
 	import TypeFilters from './TypeFilters.svelte';
@@ -22,7 +22,7 @@
 	$: showOnlyOpen = $settings.showOnlyOpen;
 
 	// Apply filters and search
-	$: $filteredNotifications = $githubNotifications.filter((notification) => {
+	$: $filteredNotifications = $globalNotifications.filter((notification) => {
 		const repo = $watchedRepos.find((item) => item.id === notification.repoId);
 		const person = $watchedPersons.find(
 			(item) => item.login === (notification.creator?.login || notification.author?.login)

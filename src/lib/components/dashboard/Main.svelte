@@ -6,7 +6,13 @@
 	import { Separator, ScrollbarContainer, NotificationColumn } from '$lib/components';
 	import { fetchGithub } from '$lib/features';
 	import { CheckIcon, UnreadIcon, PinIcon, DoubleCheckIcon } from '$lib/icons';
-	import { filteredNotifications, githubNotifications, loading, settings } from '$lib/stores';
+	import {
+		filteredNotifications,
+		githubNotifications,
+		gitlabNotifications,
+		loading,
+		settings
+	} from '$lib/stores';
 	import { NotificationList } from './notifications';
 
 	// Sort by priority
@@ -44,18 +50,26 @@
 		});
 	}
 
+	function markAllAs(key: 'unread' | 'done', value: boolean) {
+		if ($settings.providerView !== 'gitlab') {
+			$githubNotifications = $githubNotifications.map((notifications) =>
+				unread.includes(notifications) ? { ...notifications, [key]: value } : notifications
+			);
+			readAllInGithub();
+		}
+		if ($settings.providerView !== 'github') {
+			$gitlabNotifications = $gitlabNotifications.map((notifications) =>
+				unread.includes(notifications) ? { ...notifications, [key]: value } : notifications
+			);
+		}
+	}
+
 	function markAllAsRead() {
-		$githubNotifications = $githubNotifications.map((notifications) =>
-			unread.includes(notifications) ? { ...notifications, unread: false } : notifications
-		);
-		readAllInGithub();
+		markAllAs('unread', false);
 	}
 
 	function markAllAsDone() {
-		$githubNotifications = $githubNotifications.map((notifications) =>
-			read.includes(notifications) ? { ...notifications, done: true } : notifications
-		);
-		readAllInGithub();
+		markAllAs('done', true);
 	}
 
 	// Animations settings

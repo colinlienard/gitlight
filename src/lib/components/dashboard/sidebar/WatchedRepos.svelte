@@ -3,7 +3,7 @@
 	import { ShrinkableWrapper } from '$lib/components';
 	import { storage } from '$lib/features';
 	import { MuteIcon, RepositoryIcon, MutedIcon } from '$lib/icons';
-	import { githubNotifications, loading, watchedRepos } from '$lib/stores';
+	import { globalNotifications, loading, watchedRepos } from '$lib/stores';
 	import type { WatchedRepo } from '$lib/types';
 	import SidebarSection from './SidebarSection.svelte';
 
@@ -20,7 +20,7 @@
 	$: if (browser && !$loading) {
 		const savedWatchedRepos = storage.get('github-watched-repos');
 
-		$watchedRepos = $githubNotifications.reduce<WatchedRepo[]>((previous, current) => {
+		$watchedRepos = $globalNotifications.reduce<WatchedRepo[]>((previous, current) => {
 			if (current.done) return previous;
 			const saved = savedWatchedRepos?.find((repo) => repo.id === current.repoId);
 			const index = previous.findIndex((repo) => repo.id === current.repoId);

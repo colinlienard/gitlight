@@ -33,6 +33,7 @@ export type NotificationType = 'pr' | 'issue' | 'commit' | 'release' | 'discussi
 
 export type NotificationData = {
 	id: string;
+	from: 'github' | 'gitlab';
 	type: NotificationType;
 	unread: boolean;
 	pinned: boolean;

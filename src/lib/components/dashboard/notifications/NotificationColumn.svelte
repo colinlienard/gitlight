@@ -11,7 +11,12 @@
 	import { drag, drop, fetchGithub } from '$lib/features';
 	import { debounce } from '$lib/helpers';
 	import { ArrowUpIcon } from '$lib/icons';
-	import { loading, githubNotifications, settings as settingsStore } from '$lib/stores';
+	import {
+		loading,
+		settings as settingsStore,
+		githubNotifications,
+		gitlabNotifications
+	} from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
 	import Notification from './Notification.svelte';
 	import NotificationPlaceholder from './NotificationPlaceholder.svelte';
@@ -102,21 +107,25 @@
 		dragId = null;
 		$dragging = false;
 
-		$githubNotifications = $githubNotifications.map((notification) => {
-			if (notification.id !== id) return notification;
-			if (title === 'Pinned') {
-				return {
-					...notification,
-					pinned: true,
-					unread: $settingsStore.readWhenPin ? false : notification.unread
-				};
-			}
-			if (title === 'Read') {
-				fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
-				return { ...notification, unread: false, pinned: false };
-			}
-			return { ...notification, unread: true, pinned: false };
-		});
+		const from = $githubNotifications.find((n) => n.id === id) ? 'github' : 'gitlab';
+
+		(from === 'github' ? githubNotifications : gitlabNotifications).update((previous) =>
+			previous.map((notification) => {
+				if (notification.id !== id) return notification;
+				if (title === 'Pinned') {
+					return {
+						...notification,
+						pinned: true,
+						unread: $settingsStore.readWhenPin ? false : notification.unread
+					};
+				}
+				if (title === 'Read') {
+					fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
+					return { ...notification, unread: false, pinned: false };
+				}
+				return { ...notification, unread: true, pinned: false };
+			})
+		);
 	}
 </script>
 

@@ -11,6 +11,10 @@ export const filteredNotifications = writable<NotificationData[]>([]);
 
 export const githubNotifications = writable<NotificationData[]>([]);
 
+export const gitlabNotifications = writable<NotificationData[]>([]);
+
+export const globalNotifications = writable<NotificationData[]>([]);
+
 export const typeFilters = writable<TypeFilters>([
 	{ name: 'Pull requests', type: 'pr', active: true, number: 0 },
 	{ name: 'Issues', type: 'issue', active: true, number: 0 },

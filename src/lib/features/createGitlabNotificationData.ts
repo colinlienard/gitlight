@@ -5,18 +5,20 @@ export async function createGitlabNotificationData(
 	savedNotifications: SavedNotifications,
 	firstTime: boolean
 ): Promise<NotificationData | null> {
-	return null;
 	const common = {
-		id: gitlabEvent.id,
+		id: `${gitlabEvent.id}`,
+		from: 'gitlab',
 		pinned: false,
 		unread: true,
 		done: false,
 		muted: false,
 		time: gitlabEvent.created_at,
-		owner,
-		repo,
-		repoId: `${repository.id}`,
-		ownerAvatar: repository.owner.avatar_url
+		owner: 'owner',
+		repo: 'repo',
+		// repoId: `${repository.id}`,
+		repoId: '1234',
+		// ownerAvatar: repository.owner.avatar_url
+		ownerAvatar: 'https://placehold.co/400'
 	} as const;
 
 	switch (gitlabEvent.action_name) {
@@ -24,8 +26,8 @@ export async function createGitlabNotificationData(
 			return {
 				...common,
 				icon: 'commit',
-				title: 'aaaa',
-				description: 'bbbb',
+				title: gitlabEvent.push_data.commit_title,
+				description: '*made a commit*',
 				author: {
 					login: gitlabEvent.author.username,
 					avatar: gitlabEvent.author.avatar_url,

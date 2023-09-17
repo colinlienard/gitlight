@@ -68,6 +68,7 @@ export async function createGithubNotificationData(
 
 	const common = {
 		id,
+		from: 'github',
 		pinned,
 		unread,
 		done,

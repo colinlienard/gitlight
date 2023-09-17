@@ -13,9 +13,13 @@ type Options = {
 export async function fetchGitlab<T = void>(url: string, options?: Options): Promise<T> {
 	let { accessToken } = options || {};
 	if (!accessToken) {
-		page.subscribe(({ data }) => {
-			accessToken = data.session?.gitlabAccessToken || '';
-		});
+		if (storage.has('gitlab-access-token')) {
+			accessToken = storage.get('gitlab-access-token') as string;
+		} else {
+			page.subscribe(({ data }) => {
+				accessToken = data.session?.gitlabAccessToken || '';
+			});
+		}
 	}
 
 	// Refresh the GitLab access token if it has expired

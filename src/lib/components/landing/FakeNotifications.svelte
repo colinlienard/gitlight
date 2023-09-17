@@ -4,6 +4,7 @@
 
 	const common = {
 		id: '',
+		from: 'github',
 		unread: true,
 		pinned: false,
 		done: false,

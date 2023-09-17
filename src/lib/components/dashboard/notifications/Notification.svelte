@@ -20,7 +20,7 @@
 		ExternalLinkIcon,
 		ThreeDotsIcon
 	} from '$lib/icons';
-	import { githubNotifications, settings } from '$lib/stores';
+	import { githubNotifications, gitlabNotifications, settings } from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
 	import NotificationDescription from './NotificationDescription.svelte';
 	import NotificationLabels from './NotificationLabels.svelte';
@@ -34,6 +34,7 @@
 
 	let {
 		id,
+		from,
 		unread,
 		pinned,
 		done,
@@ -94,22 +95,24 @@
 				return;
 			}
 
-			$githubNotifications = $githubNotifications.map((notification) => {
-				if (notification.id !== id) return notification;
-				if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
-					return { ...notification, pinned: !notification.pinned, unread: false };
-				}
-				if (key === 'done') {
-					return { ...notification, done: !notification.done, unread: false, pinned: false };
-				}
-				return { ...notification, [key]: !notification[key] };
-			});
+			(from === 'github' ? githubNotifications : gitlabNotifications).update((previous) =>
+				previous.map((notification) => {
+					if (notification.id !== id) return notification;
+					if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
+						return { ...notification, pinned: !notification.pinned, unread: false };
+					}
+					if (key === 'done') {
+						return { ...notification, done: !notification.done, unread: false, pinned: false };
+					}
+					return { ...notification, [key]: !notification[key] };
+				})
+			);
 
 			if (key === 'unread' && pinned) {
 				unread = !unread;
 			}
 
-			if ((key === 'unread' || key === 'done') && unread) {
+			if (from === 'github' && (key === 'unread' || key === 'done') && unread) {
 				markAsReadInGitHub();
 			}
 
