@@ -11,7 +11,7 @@ export type GitlabEvent = {
 	created_at: string;
 } & (
 	| {
-			action_name: 'pushed new';
+			action_name: 'pushed new' | 'pushed to';
 			push_data: {
 				commit_count: number;
 				commit_title: string;
@@ -24,6 +24,8 @@ export type GitlabEvent = {
 	| {
 			action_name: 'opened';
 			push_data: unknown;
+			target_title: string;
+			target_type: 'MergeRequest' | 'Issue';
 	  }
 	| {
 			action_name: 'closed';

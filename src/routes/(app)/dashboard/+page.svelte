@@ -71,11 +71,16 @@
 
 	$: providerView = $settings.providerView;
 	$: {
-		// TODO: sort notifications by date
-		$globalNotifications = [
+		let notifications = [
 			...(providerView !== 'gitlab' ? $githubNotifications : []),
 			...(providerView !== 'github' ? $gitlabNotifications : [])
 		];
+		if (providerView === 'both') {
+			notifications = notifications.sort(
+				(a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
+			);
+		}
+		$globalNotifications = notifications;
 	}
 
 	function refetch() {
@@ -194,19 +199,26 @@
 		let newNotifications: NotificationData[] = [];
 
 		try {
-			const response = await fetchGitlab<GitlabEvent[]>(
+			let notifications = await fetchGitlab<GitlabEvent[]>(
 				`projects/colinlienard1%2Fgitlab-test/events`
 			);
-			console.log(response);
+			console.log('vanilla notifications', notifications);
+
+			// Keep only new or modified notifications
+			if ($gitlabNotifications.length) {
+				notifications = notifications.filter(({ id, created_at }) => {
+					const current = $githubNotifications.find((item) => item.id === id.toString());
+					return current ? created_at !== current.time : true;
+				});
+			}
+
 			newNotifications = (
 				await Promise.all(
-					response.map((event) =>
+					notifications.map((event) =>
 						createGitlabNotificationData(
 							event,
-							[],
-							true
-							// $savedNotifications,
-							// !$githubNotifications.length
+							storage.get('gitlab-notifications') || [],
+							!$gitlabNotifications.length
 						)
 					)
 				)
@@ -268,6 +280,24 @@
 		setTimeout(updateTrayTitle, 10);
 	}
 
+	$: if (mounted && $gitlabNotifications.length) {
+		// Save notifications to storage
+		const toSave = $gitlabNotifications.map(
+			({ id, description, author, pinned, unread, done, muted, time, previously }) => ({
+				id,
+				description,
+				author,
+				pinned,
+				unread,
+				done,
+				muted,
+				time,
+				previously
+			})
+		);
+		storage.set('gitlab-notifications', toSave);
+	}
+
 	onMount(async () => {
 		window.addEventListener('refetch', refetch);
 
@@ -326,7 +356,7 @@
 			<button
 				class="tab"
 				class:selected={providerView === 'github'}
-				on:click={() => (providerView = 'github')}
+				on:click={() => ($settings.providerView = 'github')}
 			>
 				<GithubIcon />
 				<p class="text">GitHub</p>
@@ -337,7 +367,7 @@
 			<button
 				class="tab"
 				class:selected={providerView === 'gitlab'}
-				on:click={() => (providerView = 'gitlab')}
+				on:click={() => ($settings.providerView = 'gitlab')}
 			>
 				<GitlabIcon />
 				<p class="text">GitLab</p>
@@ -348,7 +378,7 @@
 			<button
 				class="tab"
 				class:selected={providerView === 'both'}
-				on:click={() => (providerView = 'both')}
+				on:click={() => ($settings.providerView = 'both')}
 			>
 				<p class="text">Both</p>
 			</button>

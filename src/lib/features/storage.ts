@@ -9,6 +9,7 @@ export type StorageMap = {
 	'gitlab-expiration': string;
 	settings: Settings;
 	'github-notifications': SavedNotifications;
+	'gitlab-notifications': SavedNotifications;
 	'github-watched-repos': { id: string; active: boolean; muted: boolean }[];
 	'github-watched-persons': WatchedPerson[];
 	'type-filters': boolean[];

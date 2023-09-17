@@ -5,13 +5,19 @@ export async function createGitlabNotificationData(
 	savedNotifications: SavedNotifications,
 	firstTime: boolean
 ): Promise<NotificationData | null> {
+	const previous = savedNotifications.find((n) => n.id === gitlabEvent.id.toString());
+	const pinned = previous?.pinned || false;
+	const muted = previous?.muted || false;
+	const unread = (muted ? false : previous?.unread) || false;
+	const done = previous?.done || false;
+
 	const common = {
 		id: `${gitlabEvent.id}`,
 		from: 'gitlab',
-		pinned: false,
-		unread: true,
-		done: false,
-		muted: false,
+		pinned,
+		unread,
+		done,
+		muted,
 		time: gitlabEvent.created_at,
 		owner: 'owner',
 		repo: 'repo',
@@ -37,7 +43,18 @@ export async function createGitlabNotificationData(
 			};
 
 		case 'opened':
-			return null;
+			return {
+				...common,
+				icon: 'open-pr',
+				title: gitlabEvent.target_title,
+				description: '*opened* this merge request',
+				author: {
+					login: gitlabEvent.author.username,
+					avatar: gitlabEvent.author.avatar_url,
+					name: gitlabEvent.author.name
+				},
+				type: 'pr'
+			};
 
 		case 'closed':
 			return null;
