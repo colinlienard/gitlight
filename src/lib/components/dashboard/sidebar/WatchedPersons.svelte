@@ -3,42 +3,50 @@
 	import { storage } from '$lib/features';
 	import { MuteIcon, MutedIcon } from '$lib/icons';
 	import { githubNotifications, loading, watchedPersons } from '$lib/stores';
-	import type { WatchedPerson } from '$lib/types';
+	import type { User, WatchedPerson } from '$lib/types';
 	import SidebarSection from './SidebarSection.svelte';
 
 	// Update watched persons
 	$: if (browser && !$loading) {
 		let savedWatchedPersons = storage.get('github-watched-persons');
 
-		const persons = $githubNotifications.reduce<WatchedPerson[]>((previous, current) => {
-			if (!current.author || current.done) return previous;
-			const involved = current?.creator || current?.author;
-			const saved = savedWatchedPersons?.find((person) => person.login === involved?.login);
-			if (saved && savedWatchedPersons) {
-				savedWatchedPersons = savedWatchedPersons.filter(
-					(person) => person.login !== involved?.login
-				);
-			}
-			const index = previous.findIndex((person) => person.login === involved?.login);
-			if (index > -1) {
-				const person = previous.splice(index, 1)[0];
-				return [...previous, { ...person, number: person.number + 1 }];
-			}
-			return [
-				...previous,
-				{
-					login: involved?.login ?? '',
-					avatar: involved?.avatar ?? '',
-					number: 1,
-					bot: involved?.bot,
-					active: saved?.active ?? true,
-					muted: saved?.muted ?? false
+		const persons = $githubNotifications
+			.reduce<User[]>((previous, current) => {
+				if (current.done) return previous;
+				if (current.creator) previous.push(current.creator);
+				if (current.author && current.author.login !== current.creator?.login)
+					previous.push(current.author);
+				return previous;
+			}, [])
+			.reduce<WatchedPerson[]>((previous, current) => {
+				const saved = savedWatchedPersons?.find((person) => person.login === current?.login);
+				if (saved && savedWatchedPersons) {
+					savedWatchedPersons = savedWatchedPersons.filter(
+						(person) => person.login !== current?.login
+					);
 				}
-			];
-		}, []);
+				const index = previous.findIndex((person) => person.login === current?.login);
+				if (index > -1) {
+					const person = previous.splice(index, 1)[0];
+					return [...previous, { ...person, number: person.number + 1 }];
+				}
+				return [
+					...previous,
+					{
+						login: current?.login ?? '',
+						avatar: current?.avatar ?? '',
+						number: 1,
+						bot: current?.bot,
+						active: saved?.active ?? true,
+						muted: saved?.muted ?? false
+					}
+				];
+			}, []);
 		persons.push(
 			...(savedWatchedPersons
-				? savedWatchedPersons.map((person) => ({ ...person, number: 0 }))
+				? savedWatchedPersons
+						.filter((person) => person.muted)
+						.map((person) => ({ ...person, number: 0 }))
 				: [])
 		);
 
@@ -70,9 +78,20 @@
 
 	function handleMute(login: string) {
 		return () => {
-			$watchedPersons = $watchedPersons.map((person) =>
-				person.login === login ? { ...person, muted: !person.muted } : person
-			);
+			let toSplice: number | null = null;
+			const persons = $watchedPersons.map((person, index) => {
+				if (person.login === login) {
+					if (person.muted) {
+						toSplice = index;
+					}
+					return { ...person, muted: !person.muted };
+				}
+				return person;
+			});
+			if (toSplice !== null) {
+				persons.splice(toSplice, 1);
+			}
+			$watchedPersons = persons;
 		};
 	}
 
@@ -85,7 +104,7 @@
 
 <SidebarSection
 	title="Authors"
-	description="Perons who created PRs and issues, or authors of notifications."
+	description="Perons who created PRs and issues, and authors of notifications."
 	bind:items={$watchedPersons}
 	actions={[
 		{ text: 'Show bots', active: botsHidden, onToggle: handleHideBots, disabled: !botsPresent }
