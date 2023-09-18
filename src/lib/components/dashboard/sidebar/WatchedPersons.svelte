@@ -8,31 +8,41 @@
 
 	// Update watched persons
 	$: if (browser && !$loading) {
-		const savedWatchedPersons = storage.get('github-watched-persons');
+		let savedWatchedPersons = storage.get('github-watched-persons');
 
-		$watchedPersons = $githubNotifications
-			.reduce<WatchedPerson[]>((previous, current) => {
-				if (!current.author || current.done) return previous;
-				const involved = current?.creator || current?.author;
-				const saved = savedWatchedPersons?.find((person) => person.login === involved?.login);
-				const index = previous.findIndex((person) => person.login === involved?.login);
-				if (index > -1) {
-					const person = previous.splice(index, 1)[0];
-					return [...previous, { ...person, number: person.number + 1 }];
+		const persons = $githubNotifications.reduce<WatchedPerson[]>((previous, current) => {
+			if (!current.author || current.done) return previous;
+			const involved = current?.creator || current?.author;
+			const saved = savedWatchedPersons?.find((person) => person.login === involved?.login);
+			if (saved && savedWatchedPersons) {
+				savedWatchedPersons = savedWatchedPersons.filter(
+					(person) => person.login !== involved?.login
+				);
+			}
+			const index = previous.findIndex((person) => person.login === involved?.login);
+			if (index > -1) {
+				const person = previous.splice(index, 1)[0];
+				return [...previous, { ...person, number: person.number + 1 }];
+			}
+			return [
+				...previous,
+				{
+					login: involved?.login ?? '',
+					avatar: involved?.avatar ?? '',
+					number: 1,
+					bot: involved?.bot,
+					active: saved?.active ?? true,
+					muted: saved?.muted ?? false
 				}
-				return [
-					...previous,
-					{
-						login: involved?.login ?? '',
-						avatar: involved?.avatar ?? '',
-						number: 1,
-						bot: involved?.bot,
-						active: saved?.active ?? true,
-						muted: saved?.muted ?? false
-					}
-				];
-			}, [])
-			.sort((a, b) => b.number - a.number);
+			];
+		}, []);
+		persons.push(
+			...(savedWatchedPersons
+				? savedWatchedPersons.map((person) => ({ ...person, number: 0 }))
+				: [])
+		);
+
+		$watchedPersons = persons.sort((a, b) => b.number - a.number);
 	}
 
 	$: botsHidden = $watchedPersons.some((person) => person.login.endsWith('[bot]') && person.active);
@@ -40,10 +50,7 @@
 
 	// Save watched persons to storage
 	$: if (browser) {
-		storage.set(
-			'github-watched-persons',
-			$watchedPersons.map(({ login, active, muted }) => ({ login, active, muted }))
-		);
+		storage.set('github-watched-persons', $watchedPersons);
 	}
 
 	function handleToggle(login: string) {
@@ -89,7 +96,9 @@
 			<button class="wrapper" class:active on:click={handleToggle(login)}>
 				<img class="image" src={avatar} alt="" />
 				<h3 class="name">{login}</h3>
-				<span class="number">{number}</span>
+				{#if number}
+					<span class="number">{number}</span>
+				{/if}
 				<button class="mute" class:muted on:click|stopPropagation={handleMute(login)}>
 					{#if muted}
 						<MutedIcon />
