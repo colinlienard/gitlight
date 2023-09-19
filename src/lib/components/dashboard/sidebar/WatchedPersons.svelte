@@ -10,47 +10,53 @@
 	$: if (browser && !$loading) {
 		let savedWatchedPersons = storage.get('github-watched-persons');
 
-		const persons = $githubNotifications
-			.reduce<User[]>((previous, current) => {
-				if (current.done) return previous;
-				if (current.creator) previous.push(current.creator);
-				if (current.author && current.author.login !== current.creator?.login)
-					previous.push(current.author);
-				return previous;
-			}, [])
-			.reduce<WatchedPerson[]>((previous, current) => {
-				const saved = savedWatchedPersons?.find((person) => person.login === current?.login);
-				if (saved && savedWatchedPersons) {
-					savedWatchedPersons = savedWatchedPersons.filter(
-						(person) => person.login !== current?.login
-					);
+		const persons = $githubNotifications.reduce<WatchedPerson[]>((previous, current) => {
+			if (current.done) return previous;
+			if (current.creator) {
+				previous = addPerson(previous, current.creator, 1, savedWatchedPersons);
+				if (current.author && current.author.login !== current.creator.login) {
+					previous = addPerson(previous, current.author, 0, savedWatchedPersons);
 				}
-				const index = previous.findIndex((person) => person.login === current?.login);
-				if (index > -1) {
-					const person = previous.splice(index, 1)[0];
-					return [...previous, { ...person, number: person.number + 1 }];
-				}
-				return [
-					...previous,
-					{
-						login: current?.login ?? '',
-						avatar: current?.avatar ?? '',
-						number: 1,
-						bot: current?.bot,
-						active: saved?.active ?? true,
-						muted: saved?.muted ?? false
-					}
-				];
-			}, []);
+			} else if (current.author) {
+				previous = addPerson(previous, current.author, 1, savedWatchedPersons);
+			}
+			return previous;
+		}, []);
+
 		persons.push(
 			...(savedWatchedPersons
 				? savedWatchedPersons
-						.filter((person) => person.muted)
+						.filter((person) => !persons.find((p) => p.login === person.login) && person.muted)
 						.map((person) => ({ ...person, number: 0 }))
 				: [])
 		);
 
 		$watchedPersons = persons.sort((a, b) => b.number - a.number);
+	}
+
+	function addPerson(
+		previous: WatchedPerson[],
+		person: User,
+		number: number,
+		savedWatchedPersons: WatchedPerson[] | null
+	): WatchedPerson[] {
+		const saved = savedWatchedPersons?.find((p) => p.login === person.login);
+		const index = previous.findIndex((p) => p.login === person?.login);
+		if (index > -1) {
+			const person = previous.splice(index, 1)[0];
+			return [...previous, { ...person, number: person.number + number }];
+		}
+		return [
+			...previous,
+			{
+				login: person.login,
+				avatar: person.avatar ?? '',
+				number,
+				bot: person.bot,
+				active: saved?.active ?? true,
+				muted: saved?.muted ?? false
+			}
+		];
 	}
 
 	$: botsHidden = $watchedPersons.some((person) => person.login.endsWith('[bot]') && person.active);
@@ -79,15 +85,9 @@
 	function handleMute(login: string) {
 		return () => {
 			let toSplice: number | null = null;
-			const persons = $watchedPersons.map((person, index) => {
-				if (person.login === login) {
-					if (person.muted) {
-						toSplice = index;
-					}
-					return { ...person, muted: !person.muted };
-				}
-				return person;
-			});
+			const persons = $watchedPersons.map((person) =>
+				person.login === login ? { ...person, muted: !person.muted } : person
+			);
 			if (toSplice !== null) {
 				persons.splice(toSplice, 1);
 			}
@@ -103,7 +103,7 @@
 </script>
 
 <SidebarSection
-	title="Authors"
+	title="Persons"
 	description="Perons who created PRs and issues, and authors of notifications."
 	bind:items={$watchedPersons}
 	actions={[
