@@ -3,36 +3,60 @@
 	import { storage } from '$lib/features';
 	import { MuteIcon, MutedIcon } from '$lib/icons';
 	import { githubNotifications, loading, watchedPersons } from '$lib/stores';
-	import type { WatchedPerson } from '$lib/types';
+	import type { User, WatchedPerson } from '$lib/types';
 	import SidebarSection from './SidebarSection.svelte';
 
 	// Update watched persons
 	$: if (browser && !$loading) {
-		const savedWatchedPersons = storage.get('github-watched-persons');
+		let savedWatchedPersons = storage.get('github-watched-persons');
 
-		$watchedPersons = $githubNotifications
-			.reduce<WatchedPerson[]>((previous, current) => {
-				if (!current.author || current.done) return previous;
-				const involved = current?.creator || current?.author;
-				const saved = savedWatchedPersons?.find((person) => person.login === involved?.login);
-				const index = previous.findIndex((person) => person.login === involved?.login);
-				if (index > -1) {
-					const person = previous.splice(index, 1)[0];
-					return [...previous, { ...person, number: person.number + 1 }];
+		const persons = $githubNotifications.reduce<WatchedPerson[]>((previous, current) => {
+			if (current.done) return previous;
+			if (current.creator) {
+				previous = addPerson(previous, current.creator, 1, savedWatchedPersons);
+				if (current.author && current.author.login !== current.creator.login) {
+					previous = addPerson(previous, current.author, 0, savedWatchedPersons);
 				}
-				return [
-					...previous,
-					{
-						login: involved?.login ?? '',
-						avatar: involved?.avatar ?? '',
-						number: 1,
-						bot: involved?.bot,
-						active: saved?.active ?? true,
-						muted: saved?.muted ?? false
-					}
-				];
-			}, [])
-			.sort((a, b) => b.number - a.number);
+			} else if (current.author) {
+				previous = addPerson(previous, current.author, 1, savedWatchedPersons);
+			}
+			return previous;
+		}, []);
+
+		persons.push(
+			...(savedWatchedPersons
+				? savedWatchedPersons
+						.filter((person) => !persons.find((p) => p.login === person.login) && person.muted)
+						.map((person) => ({ ...person, number: 0 }))
+				: [])
+		);
+
+		$watchedPersons = persons.sort((a, b) => b.number - a.number);
+	}
+
+	function addPerson(
+		previous: WatchedPerson[],
+		person: User,
+		number: number,
+		savedWatchedPersons: WatchedPerson[] | null
+	): WatchedPerson[] {
+		const saved = savedWatchedPersons?.find((p) => p.login === person.login);
+		const index = previous.findIndex((p) => p.login === person?.login);
+		if (index > -1) {
+			const person = previous.splice(index, 1)[0];
+			return [...previous, { ...person, number: person.number + number }];
+		}
+		return [
+			...previous,
+			{
+				login: person.login,
+				avatar: person.avatar ?? '',
+				number,
+				bot: person.bot,
+				active: saved?.active ?? true,
+				muted: saved?.muted ?? false
+			}
+		];
 	}
 
 	$: botsHidden = $watchedPersons.some((person) => person.login.endsWith('[bot]') && person.active);
@@ -40,10 +64,7 @@
 
 	// Save watched persons to storage
 	$: if (browser) {
-		storage.set(
-			'github-watched-persons',
-			$watchedPersons.map(({ login, active, muted }) => ({ login, active, muted }))
-		);
+		storage.set('github-watched-persons', $watchedPersons);
 	}
 
 	function handleToggle(login: string) {
@@ -63,9 +84,14 @@
 
 	function handleMute(login: string) {
 		return () => {
-			$watchedPersons = $watchedPersons.map((person) =>
+			let toSplice: number | null = null;
+			const persons = $watchedPersons.map((person) =>
 				person.login === login ? { ...person, muted: !person.muted } : person
 			);
+			if (toSplice !== null) {
+				persons.splice(toSplice, 1);
+			}
+			$watchedPersons = persons;
 		};
 	}
 
@@ -77,8 +103,8 @@
 </script>
 
 <SidebarSection
-	title="Authors"
-	description="Perons who created PRs and issues, or authors of notifications."
+	title="Persons"
+	description="Perons who created PRs and issues, and authors of notifications."
 	bind:items={$watchedPersons}
 	actions={[
 		{ text: 'Show bots', active: botsHidden, onToggle: handleHideBots, disabled: !botsPresent }
@@ -89,7 +115,9 @@
 			<button class="wrapper" class:active on:click={handleToggle(login)}>
 				<img class="image" src={avatar} alt="" />
 				<h3 class="name">{login}</h3>
-				<span class="number">{number}</span>
+				{#if number}
+					<span class="number">{number}</span>
+				{/if}
 				<button class="mute" class:muted on:click|stopPropagation={handleMute(login)}>
 					{#if muted}
 						<MutedIcon />

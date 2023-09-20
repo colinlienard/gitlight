@@ -1,4 +1,4 @@
-import type { Priority, SavedNotifications, Settings, User } from '../types';
+import type { Priority, SavedNotifications, Settings, User, WatchedPerson } from '../types';
 
 type StorageMap = {
 	'github-user': User;
@@ -8,7 +8,7 @@ type StorageMap = {
 	settings: Settings;
 	'github-notifications': SavedNotifications;
 	'github-watched-repos': { id: string; active: boolean; muted: boolean }[];
-	'github-watched-persons': { login: string; active: boolean; muted: boolean }[];
+	'github-watched-persons': WatchedPerson[];
 	'type-filters': boolean[];
 	priorities: Priority[];
 };
