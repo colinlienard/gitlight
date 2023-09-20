@@ -128,7 +128,7 @@
 		<GearIcon />
 	</IconButton>
 </Tooltip>
-<Tooltip content="Accounts" hover position="bottom">
+<Tooltip content="Accounts" hover position="bottom right">
 	<button class="account-trigger" on:click={handleTrigger((tabIndex = 3))}>
 		{#if githubUser}
 			<img
@@ -163,8 +163,10 @@
 				</li>
 			{/each}
 		</ul>
-		<Separator vertical />
-		<ScrollbarContainer bind:this={scrollContainer}>
+		<div class="separator">
+			<Separator vertical />
+		</div>
+		<ScrollbarContainer margin="2rem 1rem" bind:this={scrollContainer}>
 			<div class="tab-content">
 				<!-- @ts-expect-error -->
 				<svelte:component this={tabs[tabIndex].component} {...tabs[tabIndex].props} />
@@ -203,13 +205,12 @@
 	.content {
 		display: flex;
 		height: 100%;
-		padding: 2rem;
-		gap: 2rem;
 
 		.tabs {
 			display: flex;
-			width: 10rem;
+			width: 14rem;
 			flex-direction: column;
+			padding: 2rem;
 			gap: 1.5rem;
 
 			.tab {
@@ -231,10 +232,15 @@
 			}
 		}
 
+		.separator {
+			width: 1px;
+			padding: 2rem 0;
+		}
+
 		.tab-content {
 			display: flex;
 			flex-direction: column;
-			padding-right: 1rem;
+			padding: 2rem;
 			gap: 1rem;
 
 			:global(h3) {

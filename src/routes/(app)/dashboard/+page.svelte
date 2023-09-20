@@ -207,7 +207,7 @@
 			<div class="wrapper">
 				{#if $settings.sidebarHidden}
 					<div transition:slide={{ axis: 'x', duration: 300, easing: cubicInOut }}>
-						<Tooltip content="Show sidebar" position="bottom" hover>
+						<Tooltip content="Show sidebar" position="bottom left" hover>
 							<button class="logo-button" on:click={() => ($settings.sidebarHidden = false)}>
 								<Logo />
 							</button>
