@@ -63,14 +63,13 @@
 		if (!isTrayApp && window.__TAURI__) {
 			unlisten = await listen<{ key: ToggleKey }>(`notification-toggle:${id}`, (event) => {
 				handleToggle(event.payload.key)();
+				unlisten();
 			});
 		}
 	});
 
 	onDestroy(() => {
-		if (!isTrayApp && browser && window.__TAURI__) {
-			unlisten();
-		}
+		unlisten();
 	});
 
 	function handleHoverActions(event: MouseEvent) {
