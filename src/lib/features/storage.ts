@@ -1,6 +1,6 @@
 import type { Priority, SavedNotifications, Settings, User, WatchedPerson } from '../types';
 
-type StorageMap = {
+export type StorageMap = {
 	'github-user': User;
 	'github-access-token': string;
 	'gitlab-user': User;
