@@ -121,15 +121,7 @@
 
 	function handleOpenInBrowser() {
 		if ($settings.readWhenOpenInBrowser) {
-			$githubNotifications = $githubNotifications.map((event) => {
-				if (event.id === id) {
-					if (event.unread) {
-						markAsReadInGitHub();
-					}
-					return { ...event, unread: false };
-				}
-				return event;
-			});
+			handleToggle('unread')();
 		}
 		url && openUrl(url);
 	}
