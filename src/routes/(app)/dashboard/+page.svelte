@@ -31,7 +31,7 @@
 		loading,
 		settings
 	} from '$lib/stores';
-	import type { GithubNotification, NotificationData, WatchedPerson } from '$lib/types';
+	import type { GithubNotification, NotificationData } from '$lib/types';
 
 	const githubUser = $page.data.session?.githubUser;
 	const gitlabUser = $page.data.session?.gitlabUser;
@@ -54,15 +54,15 @@
 		clearInterval(syncInterval);
 	}
 
-	function notificationIsNotMuted(
+	function notificationIsMuted(
 		{ author, creator, repoId, muted }: NotificationData,
-		persons: WatchedPerson[],
+		persons: StorageMap['github-watched-persons'],
 		repos: StorageMap['github-watched-repos']
 	) {
 		const currentAuthor = persons.find(({ login }) => login === author?.login);
 		const currentCreator = persons.find(({ login }) => login === creator?.login);
 		const repo = repos.find(({ id }) => id === repoId);
-		return !currentAuthor?.muted && !currentCreator?.muted && !repo?.muted && !muted;
+		return currentAuthor?.muted || currentCreator?.muted || repo?.muted || muted;
 	}
 
 	async function fetchNotifications() {
@@ -114,7 +114,7 @@
 				.filter((item): item is NotificationData => !!item)
 				// If the notification is muted, do not update its status
 				.map((item) => {
-					const muted = !notificationIsNotMuted(item, persons, repos);
+					const muted = notificationIsMuted(item, persons, repos);
 					const previous = savedNotifications.find((n) => n.id === item.id);
 					const unread = muted ? previous?.unread || false : item.unread;
 					const done = unread ? false : item.done;
@@ -141,8 +141,8 @@
 		if (!window.__TAURI__ || firstFetch || !$settings.activateNotifications) return;
 
 		// Send push notification and update tray icon
-		const unmutedNotifications = newNotifications.filter((item) =>
-			notificationIsNotMuted(item, persons, repos)
+		const unmutedNotifications = newNotifications.filter(
+			(item) => !notificationIsMuted(item, persons, repos)
 		);
 		const pushNotification = unmutedNotifications[0];
 		if (pushNotification?.unread && !pushNotification?.muted) {
