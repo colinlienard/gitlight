@@ -5,6 +5,21 @@ export type GitlabUser = {
 	avatar_url: string;
 };
 
+export type GitlabMergeRequest = {
+	id: number;
+	iid: number;
+	title: string;
+	description: string;
+	state: 'opened' | 'closed' | 'merged';
+	created_at: string;
+	updated_at: string;
+	source_branch: string;
+	draft: boolean;
+	author: GitlabUser;
+	web_url: string;
+	labels: string[];
+};
+
 export type GitlabEvent = {
 	id: number;
 	author: GitlabUser;
@@ -13,30 +28,32 @@ export type GitlabEvent = {
 	| {
 			action_name: 'pushed new' | 'pushed to';
 			push_data: {
+				action: 'created' | 'pushed';
 				commit_count: number;
 				commit_title: string;
+				ref: string;
 			};
 	  }
 	| {
 			action_name: 'created';
-			push_data: unknown;
 	  }
 	| {
 			action_name: 'opened';
-			push_data: unknown;
+			target_iid: number;
 			target_title: string;
 			target_type: 'MergeRequest' | 'Issue';
 	  }
 	| {
 			action_name: 'closed';
-			push_data: unknown;
 	  }
 	| {
 			action_name: 'merged';
-			push_data: unknown;
 	  }
 	| {
-			action_name: 'commented_on';
-			push_data: unknown;
+			action_name: 'commented on';
+			note: {
+				body: string;
+				noteable_type: 'MergeRequest' | 'Issue';
+			};
 	  }
 );

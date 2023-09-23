@@ -20,9 +20,10 @@
 	} from '$lib/components';
 	import {
 		createGithubNotificationData,
+		createGitlabNotificationData,
 		fetchGithub,
 		fetchGitlab,
-		createGitlabNotificationData,
+		storage,
 		type StorageMap
 	} from '$lib/features';
 	import { GithubIcon, GitlabIcon, Logo, RefreshIcon } from '$lib/icons';
@@ -110,6 +111,7 @@
 		const savedNotifications = storage.get('github-notifications') || [];
 		const persons = storage.get('github-watched-persons') || [];
 		const repos = storage.get('github-watched-repos') || [];
+		const firstFetch = !$githubNotifications.length;
 
 		try {
 			// Fetch notifications from Github with multiple pages
@@ -141,11 +143,7 @@
 			newNotifications = (
 				await Promise.all(
 					notifications.map((notification) =>
-						createGithubNotificationData(
-							notification,
-							savedNotifications,
-							!$githubNotifications.length
-						)
+						createGithubNotificationData(notification, savedNotifications, firstFetch)
 					)
 				)
 			)
@@ -165,8 +163,6 @@
 		}
 
 		if (!newNotifications.length) return;
-
-		const firstFetch = !$githubNotifications.length;
 
 		// Remove duplicates and add new notifications to the store
 		$githubNotifications = [
@@ -194,9 +190,9 @@
 	async function fetchGitlabNotifications() {
 		if (!gitlabUser) return;
 
-		synced = false;
-
 		let newNotifications: NotificationData[] = [];
+		const savedNotifications = storage.get('gitlab-notifications') || [];
+		const firstFetch = !$gitlabNotifications.length;
 
 		try {
 			let notifications = await fetchGitlab<GitlabEvent[]>(
@@ -207,23 +203,30 @@
 			// Keep only new or modified notifications
 			if ($gitlabNotifications.length) {
 				notifications = notifications.filter(({ id, created_at }) => {
-					const current = $githubNotifications.find((item) => item.id === id.toString());
+					const current = $gitlabNotifications.find((item) => item.id === id.toString());
 					return current ? created_at !== current.time : true;
 				});
 			}
 
+			/*
+      - group events by target_iid, or ref
+        - if not first fetch, search in savedNotifications and take same id
+      - for each group
+        - if target_iid, get the issue/mr
+        - if ref, do nothing (unless there is only one, if so get the mr with ?source_branch=)
+      - merge ref group with target_iid group
+      - order by date inside groups
+      - create notification data with previous for each group (one group = one notification)
+      */
+
 			newNotifications = (
 				await Promise.all(
 					notifications.map((event) =>
-						createGitlabNotificationData(
-							event,
-							storage.get('gitlab-notifications') || [],
-							!$gitlabNotifications.length
-						)
+						createGitlabNotificationData(event, savedNotifications, firstFetch)
 					)
 				)
 			).filter((item): item is NotificationData => !!item);
-			console.log(newNotifications);
+			// console.log(newNotifications);
 		} catch (e) {
 			$error =
 				'An error occurred while fetching notifications. Please try to reload the page or log out and log in again.';
@@ -231,8 +234,6 @@
 		}
 
 		if (!newNotifications.length) return;
-
-		const firstFetch = !$gitlabNotifications.length;
 
 		// Remove duplicates and add new notifications to the store
 		$gitlabNotifications = [
