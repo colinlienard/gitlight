@@ -10,17 +10,17 @@
 	);
 </script>
 
-{#if dones.length}
-	<div class="wrapper">
-		<Modal title="Done ({dones.length})" small>
-			<Button slot="trigger" secondary small>
-				<DoubleCheckIcon />
-				Done ({dones.length})
-			</Button>
-			<ScrollbarContainer slot="content" margin="2rem 1rem">
-				<div class="switch-container">
-					<Switch bind:active={$settings.applyFiltersForDone} label="Apply filters" />
-				</div>
+<div class="wrapper">
+	<Modal title="Done ({dones.length})" small>
+		<Button slot="trigger" secondary small>
+			<DoubleCheckIcon />
+			Done ({dones.length})
+		</Button>
+		<ScrollbarContainer slot="content" margin="2rem 1rem">
+			<div class="switch-container">
+				<Switch bind:active={$settings.applyFiltersForDone} label="Apply filters" />
+			</div>
+			{#if dones.length}
 				<ul class="list">
 					{#each dones as notification (notification.id)}
 						<li class="list-item">
@@ -28,10 +28,14 @@
 						</li>
 					{/each}
 				</ul>
-			</ScrollbarContainer>
-		</Modal>
-	</div>
-{/if}
+			{:else}
+				<div class="empty">
+					<p class="text">No notifications to display.</p>
+				</div>
+			{/if}
+		</ScrollbarContainer>
+	</Modal>
+</div>
 
 <style lang="scss">
 	.wrapper {
@@ -47,5 +51,16 @@
 		flex-direction: column;
 		padding: 2rem;
 		gap: 1rem;
+	}
+
+	.empty {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 2rem;
+
+		.text {
+			color: variables.$grey-4;
+		}
 	}
 </style>

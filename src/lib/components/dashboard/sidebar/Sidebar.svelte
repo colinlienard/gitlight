@@ -64,7 +64,7 @@
 			<Logo />
 			<h1 class="hero">GitLight</h1>
 		</div>
-		<Tooltip content="Hide sidebar" position="bottom" hover>
+		<Tooltip content="Hide sidebar" position="bottom right" hover>
 			<IconButton on:click={() => ($settings.sidebarHidden = true)}>
 				<DoubleArrowIcon />
 			</IconButton>

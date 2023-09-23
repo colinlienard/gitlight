@@ -1,7 +1,6 @@
 import { writable } from 'svelte/store';
 import type {
 	NotificationData,
-	SavedNotifications,
 	Settings,
 	TypeFilters,
 	WatchedPerson,
@@ -11,8 +10,6 @@ import type {
 export const filteredNotifications = writable<NotificationData[]>([]);
 
 export const githubNotifications = writable<NotificationData[]>([]);
-
-export const savedNotifications = writable<SavedNotifications>([]);
 
 export const typeFilters = writable<TypeFilters>([
 	{ name: 'Pull requests', type: 'PullRequest', active: true, number: 0 },

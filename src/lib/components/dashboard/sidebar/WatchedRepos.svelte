@@ -151,6 +151,7 @@
 	title="Repositories"
 	description="Repos from where notifications come."
 	bind:items={$watchedRepos}
+	zIndex={2}
 >
 	{#if $watchedRepos.length}
 		{#each watchedReposByOwner as { name, avatar, number, active, muted, repos }}
@@ -299,6 +300,7 @@
 		}
 
 		.mute {
+			flex: 0 0 1.25rem;
 			margin-left: auto;
 			color: variables.$grey-4;
 

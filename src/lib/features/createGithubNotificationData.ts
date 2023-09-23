@@ -39,14 +39,11 @@ export async function createGithubNotificationData(
 	savedNotifications: SavedNotifications,
 	firstTime: boolean
 ): Promise<NotificationData | null> {
-	const { id, repository, subject, unread: isUnread, updated_at, reason } = githubNotification;
-	const previous = Array.isArray(savedNotifications)
-		? savedNotifications.find((n) => n.id === id)
-		: undefined;
+	const { id, repository, subject, unread, updated_at, reason } = githubNotification;
+	const previous = savedNotifications.find((n) => n.id === id);
 	const pinned = previous?.pinned || false;
 	const muted = previous?.muted || false;
-	const unread = (muted ? previous?.unread : isUnread || previous?.unread) || false;
-	const done = !isUnread ? previous?.done || false : false;
+	const done = previous?.done || false;
 	const [owner, repo] = repository.full_name.split('/');
 
 	// Get Personal Access Tokens

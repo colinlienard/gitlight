@@ -7,10 +7,12 @@
 	export let notifications: NotificationData[];
 	export let scrollShadow = true;
 
-	$: displayNotifications = [...notifications]
-		.sort((a) => (!a.unread ? 1 : -1))
-		.sort((a) => (a.pinned ? 1 : -1))
-		.reverse();
+	$: displayNotifications = [
+		...notifications.filter((n) => n.pinned && n.unread),
+		...notifications.filter((n) => n.pinned && !n.unread),
+		...notifications.filter((n) => !n.pinned && n.unread),
+		...notifications.filter((n) => !n.pinned && !n.unread)
+	];
 </script>
 
 <ul

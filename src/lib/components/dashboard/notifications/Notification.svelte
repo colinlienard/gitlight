@@ -63,14 +63,13 @@
 		if (!isTrayApp && window.__TAURI__) {
 			unlisten = await listen<{ key: ToggleKey }>(`notification-toggle:${id}`, (event) => {
 				handleToggle(event.payload.key)();
+				unlisten();
 			});
 		}
 	});
 
 	onDestroy(() => {
-		if (!isTrayApp && browser && window.__TAURI__) {
-			unlisten();
-		}
+		unlisten();
 	});
 
 	function handleHoverActions(event: MouseEvent) {
@@ -122,15 +121,7 @@
 
 	function handleOpenInBrowser() {
 		if ($settings.readWhenOpenInBrowser) {
-			$githubNotifications = $githubNotifications.map((event) => {
-				if (event.id === id) {
-					if (event.unread) {
-						markAsReadInGitHub();
-					}
-					return { ...event, unread: false };
-				}
-				return event;
-			});
+			handleToggle('unread')();
 		}
 		url && openUrl(url);
 	}

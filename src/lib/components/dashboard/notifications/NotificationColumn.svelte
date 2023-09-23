@@ -108,7 +108,7 @@
 				return {
 					...notification,
 					pinned: true,
-					unread: notification.unread || (!notification.pinned && $settingsStore.readWhenPin)
+					unread: $settingsStore.readWhenPin ? false : notification.unread
 				};
 			}
 			if (title === 'Read') {

@@ -17,14 +17,18 @@
 		Sidebar,
 		Tooltip
 	} from '$lib/components';
-	import { createGithubNotificationData, fetchGithub, storage } from '$lib/features';
+	import {
+		createGithubNotificationData,
+		fetchGithub,
+		storage,
+		type StorageMap
+	} from '$lib/features';
 	import { GithubIcon, GitlabIcon, Logo, RefreshIcon } from '$lib/icons';
 	import {
 		error,
 		filteredNotifications,
 		githubNotifications,
 		loading,
-		savedNotifications,
 		settings
 	} from '$lib/stores';
 	import type { GithubNotification, NotificationData } from '$lib/types';
@@ -50,10 +54,24 @@
 		clearInterval(syncInterval);
 	}
 
+	function notificationIsMuted(
+		{ author, creator, repoId, muted }: NotificationData,
+		persons: StorageMap['github-watched-persons'],
+		repos: StorageMap['github-watched-repos']
+	) {
+		const currentAuthor = persons.find(({ login }) => login === author?.login);
+		const currentCreator = persons.find(({ login }) => login === creator?.login);
+		const repo = repos.find(({ id }) => id === repoId);
+		return currentAuthor?.muted || currentCreator?.muted || repo?.muted || muted;
+	}
+
 	async function fetchNotifications() {
 		synced = false;
 
 		let newNotifications: NotificationData[] = [];
+		const savedNotifications = storage.get('github-notifications') || [];
+		const persons = storage.get('github-watched-persons') || [];
+		const repos = storage.get('github-watched-repos') || [];
 
 		try {
 			// Fetch notifications from Github with multiple pages
@@ -87,12 +105,21 @@
 					notifications.map((notification) =>
 						createGithubNotificationData(
 							notification,
-							$savedNotifications,
+							savedNotifications,
 							!$githubNotifications.length
 						)
 					)
 				)
-			).filter((item): item is NotificationData => !!item);
+			)
+				.filter((item): item is NotificationData => !!item)
+				// If the notification is muted, do not update its status
+				.map((item) => {
+					const muted = notificationIsMuted(item, persons, repos);
+					const previous = savedNotifications.find((n) => n.id === item.id);
+					const unread = muted ? previous?.unread || false : item.unread;
+					const done = unread ? false : item.done;
+					return { ...item, unread, done };
+				});
 		} catch (e) {
 			$error =
 				'An error occurred while fetching notifications. Please try to reload the page or log out and log in again.';
@@ -114,14 +141,9 @@
 		if (!window.__TAURI__ || firstFetch || !$settings.activateNotifications) return;
 
 		// Send push notification and update tray icon
-		const watchedPersons = storage.get('github-watched-persons');
-		const watchedRepos = storage.get('github-watched-repos');
-		const unmutedNotifications = newNotifications.filter(({ author, creator, repoId }) => {
-			const currentAuthor = watchedPersons?.find(({ login }) => login === author?.login);
-			const currentCreator = watchedPersons?.find(({ login }) => login === creator?.login);
-			const repo = watchedRepos?.find(({ id }) => id === repoId);
-			return !currentAuthor?.muted && !currentCreator?.muted && !repo?.muted;
-		});
+		const unmutedNotifications = newNotifications.filter(
+			(item) => !notificationIsMuted(item, persons, repos)
+		);
 		const pushNotification = unmutedNotifications[0];
 		if (pushNotification?.unread && !pushNotification?.muted) {
 			const { author, title, description } = pushNotification;
@@ -146,7 +168,7 @@
 	}
 
 	$: if (mounted && $githubNotifications.length) {
-		// Save events ids to storage
+		// Save notifications to storage
 		const toSave = $githubNotifications.map(
 			({ id, description, author, pinned, unread, done, muted, time, previously }) => ({
 				id,
@@ -160,7 +182,6 @@
 				previously
 			})
 		);
-		$savedNotifications = toSave;
 		storage.set('github-notifications', toSave);
 
 		// Update menu bar
@@ -177,8 +198,6 @@
 
 	onMount(async () => {
 		window.addEventListener('refetch', refetch);
-
-		$savedNotifications = storage.get('github-notifications') || [];
 
 		mounted = true;
 
@@ -207,7 +226,7 @@
 			<div class="wrapper">
 				{#if $settings.sidebarHidden}
 					<div transition:slide={{ axis: 'x', duration: 300, easing: cubicInOut }}>
-						<Tooltip content="Show sidebar" position="bottom" hover>
+						<Tooltip content="Show sidebar" position="bottom left" hover>
 							<button class="logo-button" on:click={() => ($settings.sidebarHidden = false)}>
 								<Logo />
 							</button>

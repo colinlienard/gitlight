@@ -14,13 +14,13 @@
 
 	$: isTrayApp = browser && window.__TAURI__ && window.location.pathname === '/tray';
 
-	function handleFocus() {
+	function handleBlur() {
 		scrollContainer?.scrollTo({ top: 0 });
 	}
 
 	onMount(async () => {
 		if (isTrayApp) {
-			window.addEventListener('focus', handleFocus);
+			window.addEventListener('blur', handleBlur);
 
 			const [a, b, c] = await Promise.all([
 				listen<{ notifications: NotificationData[] }>('notifications', (event) => {
@@ -41,7 +41,7 @@
 
 	onDestroy(() => {
 		if (isTrayApp) {
-			window.removeEventListener('focus', handleFocus);
+			window.removeEventListener('blur', handleBlur);
 
 			unlistenNotification();
 			unlistenLoading();

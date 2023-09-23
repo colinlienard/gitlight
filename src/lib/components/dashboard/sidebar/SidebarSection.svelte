@@ -6,6 +6,7 @@
 	export let title: string;
 	export let description: string;
 	export let actions: TooltipContent = [];
+	export let zIndex = 1;
 
 	$: activeLenght = items.filter((filter) => filter.active).length;
 
@@ -16,7 +17,7 @@
 	}
 </script>
 
-<div class="section">
+<div class="section" style:z-index={zIndex}>
 	<div class="row">
 		<h2 class="title">{title}</h2>
 		<Tooltip
