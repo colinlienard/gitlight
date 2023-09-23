@@ -43,6 +43,7 @@
 	// Toggle sidebar when Cmd+S or ctrl+S is pressed
 	function toogleSidebar(event: KeyboardEvent) {
 		if ((event.metaKey || event.ctrlKey) && event.key === 's') {
+			event.preventDefault();
 			$settings.sidebarHidden = !$settings.sidebarHidden;
 		}
 	}
