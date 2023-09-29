@@ -1,6 +1,7 @@
 import type {
 	GithubIssue,
 	GithubPullRequest,
+	GitlabIssue,
 	GitlabMergeRequest,
 	NotificationIcon
 } from '$lib/types';
@@ -27,14 +28,25 @@ export function getPullRequestIcon({ state, merged, draft }: GithubPullRequest):
 	}
 }
 
-export function getMergeRequestIcon({ state, draft }: GitlabMergeRequest): NotificationIcon {
-	switch (state) {
+export function getGitlabIcon(data: GitlabMergeRequest | GitlabIssue): NotificationIcon {
+	if ('source_branch' in data) {
+		switch (data.state) {
+			case 'opened':
+				return data.draft ? 'draft-pr' : 'open-pr';
+			case 'closed':
+				return 'closed-pr';
+			case 'merged':
+				return 'merged-pr';
+			default:
+				throw new Error('Invalid state');
+		}
+	}
+
+	switch (data.state) {
 		case 'opened':
-			return draft ? 'draft-pr' : 'open-pr';
+			return 'open-issue';
 		case 'closed':
-			return 'closed-pr';
-		case 'merged':
-			return 'merged-pr';
+			return 'closed-issue';
 		default:
 			throw new Error('Invalid state');
 	}

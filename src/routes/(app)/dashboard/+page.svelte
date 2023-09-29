@@ -23,6 +23,7 @@
 		createGitlabNotificationData,
 		fetchGithub,
 		fetchGitlab,
+		prepareGitlabNotificationData,
 		storage,
 		type StorageMap
 	} from '$lib/features';
@@ -208,25 +209,10 @@
 				});
 			}
 
-			/*
-      - group events by target_iid, or ref
-        - if not first fetch, search in savedNotifications and take same id
-      - for each group
-        - if target_iid, get the issue/mr
-        - if ref, do nothing (unless there is only one, if so get the mr with ?source_branch=)
-      - merge ref group with target_iid group
-      - order by date inside groups
-      - create notification data with previous for each group (one group = one notification)
-      */
-
-			newNotifications = (
-				await Promise.all(
-					notifications.map((event) =>
-						createGitlabNotificationData(event, savedNotifications, firstFetch)
-					)
-				)
-			).filter((item): item is NotificationData => !!item);
-			// console.log(newNotifications);
+			const prepared = await prepareGitlabNotificationData(notifications);
+			newNotifications = prepared
+				.map((item) => createGitlabNotificationData(item, savedNotifications))
+				.filter((item): item is NotificationData => !!item);
 		} catch (e) {
 			$error =
 				'An error occurred while fetching notifications. Please try to reload the page or log out and log in again.';
