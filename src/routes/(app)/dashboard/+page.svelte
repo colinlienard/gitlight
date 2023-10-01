@@ -203,11 +203,14 @@
 
 			// Keep only new or modified notifications
 			if ($gitlabNotifications.length) {
-				notifications = notifications.filter(({ id, created_at }) => {
-					const current = $gitlabNotifications.find((item) => item.id === id.toString());
+				notifications = notifications.filter(({ id, target_id, created_at }) => {
+					const current = $gitlabNotifications.find((item) =>
+						target_id ? item.id === target_id.toString() : id.toString()
+					);
 					return current ? created_at !== current.time : true;
 				});
 			}
+			console.log('filtered notifications', notifications, $gitlabNotifications);
 
 			const prepared = await prepareGitlabNotificationData(notifications);
 			newNotifications = prepared

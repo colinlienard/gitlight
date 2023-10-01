@@ -72,6 +72,8 @@ export async function prepareGitlabNotificationData(events: GitlabEvent[]) {
 		})
 	);
 
+	if (events.length === 1) return groupedWithData;
+
 	const mergedGroups = groupedWithData
 		.reduce<GroupedEvent[]>((previous, current) => {
 			if (current.target_id && !current.ref) {
@@ -147,7 +149,7 @@ export function createGitlabNotificationData(
 	savedNotifications: SavedNotifications
 ): NotificationData | null {
 	const firstEvent = event.events[0];
-	const id = event.target_id ? event.target_id.toString() : `${event.ref}-${firstEvent.id}`;
+	const id = event.target_id ? event.target_id.toString() : firstEvent.id.toString();
 	if (!id) return null;
 
 	const previous = savedNotifications.find((n) => n.id === id);
@@ -172,7 +174,9 @@ export function createGitlabNotificationData(
 		ownerAvatar: 'https://placehold.co/400'
 	} as const;
 
-	const secondEvent = event.events[1];
+	const secondEvent = event.events[1] || previous;
+	const previously = secondEvent ? getTextData(secondEvent) : undefined;
+
 	switch (firstEvent.action_name) {
 		case 'pushed new':
 			return {
@@ -193,7 +197,7 @@ export function createGitlabNotificationData(
 				title: event.data.title,
 				labels: event.data.labels.map((label) => ({ name: label, color: '#000000' })),
 				url: event.data.web_url,
-				previously: secondEvent && getTextData(secondEvent)
+				previously
 			};
 
 		case 'opened':
@@ -206,7 +210,7 @@ export function createGitlabNotificationData(
 				title: event.data.title,
 				labels: event.data.labels.map((label) => ({ name: label, color: '#000000' })),
 				url: event.data.web_url,
-				previously: secondEvent && getTextData(secondEvent)
+				previously
 			};
 
 		case 'closed':
@@ -225,7 +229,7 @@ export function createGitlabNotificationData(
 				title: event.data.title,
 				labels: event.data.labels.map((label) => ({ name: label, color: '#000000' })),
 				url: event.data.web_url,
-				previously: secondEvent && getTextData(secondEvent)
+				previously
 			};
 
 		case 'created':

@@ -120,7 +120,9 @@
 					};
 				}
 				if (title === 'Read') {
-					fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
+					if (from === 'github') {
+						fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
+					}
 					return { ...notification, unread: false, pinned: false };
 				}
 				return { ...notification, unread: true, pinned: false };
