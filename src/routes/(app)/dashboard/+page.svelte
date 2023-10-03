@@ -77,7 +77,7 @@
 			...(providerView !== 'gitlab' ? $githubNotifications : []),
 			...(providerView !== 'github' ? $gitlabNotifications : [])
 		];
-		if (providerView === 'both') {
+		if (providerView !== 'github') {
 			notifications = notifications.sort(
 				(a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
 			);
@@ -193,24 +193,32 @@
 
 		let newNotifications: NotificationData[] = [];
 		const savedNotifications = storage.get('gitlab-notifications') || [];
-		const firstFetch = !$gitlabNotifications.length;
 
 		try {
-			let notifications = await fetchGitlab<GitlabEvent[]>(
-				`projects/colinlienard1%2Fgitlab-test/events`
-			);
-			console.log('vanilla notifications', notifications);
+			let notifications = (
+				await fetchGitlab<GitlabEvent[]>(`projects/colinlienard1%2Fgitlab-test/events`)
+			).filter((n) => n.action_name !== 'created' && n.action_name !== 'deleted');
 
 			// Keep only new or modified notifications
 			if ($gitlabNotifications.length) {
-				notifications = notifications.filter(({ id, target_id, created_at }) => {
-					const current = $gitlabNotifications.find((item) =>
-						target_id ? item.id === target_id.toString() : id.toString()
-					);
-					return current ? created_at !== current.time : true;
+				notifications = notifications.filter((n) => {
+					const current = $gitlabNotifications.find((item) => {
+						switch (true) {
+							case n.target_type === 'Note':
+								return 'note' in n && n.note.noteable_id.toString() === item.id;
+							case !!n.target_id:
+								return 'target_id' in n && n.target_id?.toString() === item.id;
+							case 'push_data' in n:
+								return !('push_data' in n && n.push_data.ref === item.ref);
+							default:
+								return item.id === n.id.toString();
+						}
+					});
+					return current
+						? new Date(n.created_at).getTime() > new Date(current.time).getTime()
+						: true;
 				});
 			}
-			console.log('filtered notifications', notifications, $gitlabNotifications);
 
 			const prepared = await prepareGitlabNotificationData(notifications);
 			newNotifications = prepared

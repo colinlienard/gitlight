@@ -57,6 +57,7 @@ export type NotificationData = {
 	number?: number;
 	labels?: GithubLabel[];
 	url?: string;
+	ref?: string;
 	previously?: {
 		author?: User;
 		description: NotificationData['description'];

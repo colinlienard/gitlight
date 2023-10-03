@@ -5,31 +5,26 @@ export type GitlabUser = {
 	avatar_url: string;
 };
 
-export type GitlabMergeRequest = {
+export type GitlabBaseItem = {
 	id: number;
 	iid: number;
 	title: string;
 	description: string;
-	state: 'opened' | 'closed' | 'merged';
 	created_at: string;
 	updated_at: string;
-	source_branch: string;
-	draft: boolean;
-	author: GitlabUser;
 	web_url: string;
+	author: GitlabUser;
 	labels: string[];
 };
 
-export type GitlabIssue = {
-	id: number;
-	iid: number;
-	title: string;
-	description: string;
+export type GitlabIssue = GitlabBaseItem & {
 	state: 'opened' | 'closed';
-	created_at: string;
-	updated_at: string;
-	web_url: string;
-	labels: string[];
+};
+
+export type GitlabMergeRequest = GitlabBaseItem & {
+	state: 'opened' | 'closed' | 'merged';
+	source_branch: string;
+	draft: boolean;
 };
 
 export type GitlabEvent = {
@@ -41,6 +36,7 @@ export type GitlabEvent = {
 			action_name: 'pushed new' | 'pushed to';
 			target_id: null;
 			target_iid: null;
+			target_type: null;
 			push_data: {
 				action: 'created' | 'pushed';
 				commit_count: number;
@@ -52,28 +48,39 @@ export type GitlabEvent = {
 			action_name: 'created';
 			target_id: number;
 			target_iid: number;
+			target_type: null;
 	  }
 	| {
 			action_name: 'opened';
 			target_id: number;
 			target_iid: number;
-			target_title: string;
 			target_type: 'MergeRequest' | 'Issue';
+			target_title: string;
 	  }
 	| {
 			action_name: 'closed';
 			target_id: number;
 			target_iid: number;
+			target_type: 'MergeRequest' | 'Issue';
+			target_title: string;
 	  }
 	| {
-			action_name: 'merged';
+			action_name: 'accepted';
 			target_id: number;
 			target_iid: number;
+			target_type: null;
+	  }
+	| {
+			action_name: 'deleted';
+			target_id: number;
+			target_iid: number;
+			target_type: null;
 	  }
 	| {
 			action_name: 'commented on';
 			target_id: number;
 			target_iid: number;
+			target_type: 'Note';
 			note: {
 				body: string;
 				noteable_id: number;

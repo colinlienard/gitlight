@@ -16,19 +16,19 @@ type GroupedEvent = {
 };
 
 /*
-- group events by target_iid, or ref
+- group events by target_id, or ref
   - if not first fetch, search in savedNotifications and take same id
 - for each group
-  - if target_iid, get the issue/mr
+  - if target_id, get the issue/mr
   - if ref, do nothing (unless there is only one, if so get the mr with ?source_branch=)
-- merge ref group with target_iid group
+- merge ref group with target_id group
 - order by date inside groups
 - create notification data with previous for each group (one group = one notification)
 */
 export async function prepareGitlabNotificationData(events: GitlabEvent[]) {
 	const grouped = events.reduce<GroupedEvent[]>((previous, current) => {
 		const target_id =
-			('note' in current ? current.note.noteable_id : current.target_id) || undefined;
+			(current.target_type === 'Note' ? current.note.noteable_id : current.target_id) || undefined;
 		const ref =
 			current.action_name === 'pushed to' || current.action_name === 'pushed new'
 				? current.push_data.ref
@@ -50,14 +50,14 @@ export async function prepareGitlabNotificationData(events: GitlabEvent[]) {
 				const firstEvent = item.events[0];
 				let type: 'Issue' | 'MergeRequest' = 'MergeRequest';
 				if (
-					('note' in firstEvent && firstEvent.note.noteable_type === 'Issue') ||
+					(firstEvent.target_type === 'Note' && firstEvent.note.noteable_type === 'Issue') ||
 					('target_type' in firstEvent && firstEvent.target_type === 'Issue')
 				) {
 					type = 'Issue';
 				}
 				const data = await fetchGitlab<GitlabMergeRequest | GitlabIssue>(
 					`projects/colinlienard1%2Fgitlab-test/${type === 'Issue' ? 'issues' : 'merge_requests'}/${
-						'note' in firstEvent ? firstEvent.note.noteable_iid : firstEvent.target_iid
+						firstEvent.target_type === 'Note' ? firstEvent.note.noteable_iid : firstEvent.target_iid
 					}`
 				);
 				return {
@@ -87,7 +87,7 @@ export async function prepareGitlabNotificationData(events: GitlabEvent[]) {
 				if (group) {
 					group.events.push(...current.events);
 				} else {
-					previous.push(current);
+					previous.push(...current.events.map((event) => ({ events: [event], ref: current.ref })));
 				}
 			}
 			return previous;
@@ -104,7 +104,10 @@ export async function prepareGitlabNotificationData(events: GitlabEvent[]) {
 	return mergedGroups;
 }
 
-function getTextData(gitlabEvent: GitlabEvent): {
+function getTextData(
+	gitlabEvent: GitlabEvent,
+	hasData = true
+): {
 	author: NotificationData['author'];
 	description: NotificationData['description'];
 } {
@@ -117,9 +120,8 @@ function getTextData(gitlabEvent: GitlabEvent): {
 		description: (() => {
 			switch (gitlabEvent.action_name) {
 				case 'pushed new':
-					return '*made a commit*';
-
 				case 'pushed to':
+					if (hasData) return '*made a commit*';
 					return `*committed*: _${gitlabEvent.push_data.commit_title}_`;
 
 				case 'opened':
@@ -128,17 +130,14 @@ function getTextData(gitlabEvent: GitlabEvent): {
 				case 'commented on':
 					return `*commented*: _${gitlabEvent.note.body}_`;
 
+				case 'closed':
+					return `*closed* this ${gitlabEvent.target_type === 'Issue' ? 'issue' : 'merge request'}`;
+
+				case 'accepted':
+					return `*merged* this merge request`;
+
 				default:
 					return '';
-
-				// case 'closed':
-				// 	return null;
-
-				// case 'merged':
-				// 	return null;
-
-				// case 'created':
-				// 	return null;
 			}
 		})()
 	};
@@ -155,7 +154,7 @@ export function createGitlabNotificationData(
 	const previous = savedNotifications.find((n) => n.id === id);
 	const pinned = previous?.pinned || false;
 	const muted = previous?.muted || false;
-	const unread = (muted ? false : previous?.unread) || false;
+	const unread = previous ? previous.unread : true;
 	const done = previous?.done || false;
 
 	const common = {
@@ -174,65 +173,65 @@ export function createGitlabNotificationData(
 		ownerAvatar: 'https://placehold.co/400'
 	} as const;
 
-	const secondEvent = event.events[1] || previous;
+	const textData = getTextData(firstEvent, !event.data);
+	const secondEvent =
+		event.events[1] ||
+		(previous && previous?.description !== textData.description ? previous : undefined);
 	const previously = secondEvent ? getTextData(secondEvent) : undefined;
 
 	switch (firstEvent.action_name) {
 		case 'pushed new':
-			return {
-				...common,
-				...getTextData(firstEvent),
-				type: 'commit',
-				icon: 'commit',
-				title: firstEvent.push_data.commit_title
-			};
-
 		case 'pushed to':
-			if (!event.data) return null;
+			if (!event.data) {
+				return {
+					...common,
+					...textData,
+					type: 'commit',
+					icon: 'commit',
+					title: firstEvent.push_data.commit_title
+				};
+			}
 			return {
 				...common,
-				...getTextData(firstEvent),
+				...textData,
 				type: 'pr',
 				icon: getGitlabIcon(event.data),
 				title: event.data.title,
 				labels: event.data.labels.map((label) => ({ name: label, color: '#000000' })),
 				url: event.data.web_url,
+				ref: event.ref,
+				creator: {
+					login: event.data.author.username,
+					name: event.data.author.name,
+					avatar: event.data.author.avatar_url
+				},
 				previously
 			};
 
 		case 'opened':
-			if (!event.data) return null;
-			return {
-				...common,
-				...getTextData(firstEvent),
-				type: 'pr',
-				icon: getGitlabIcon(event.data),
-				title: event.data.title,
-				labels: event.data.labels.map((label) => ({ name: label, color: '#000000' })),
-				url: event.data.web_url,
-				previously
-			};
-
 		case 'closed':
-			return null;
-
-		case 'merged':
-			return null;
-
+		case 'accepted':
 		case 'commented on':
 			if (!event.data) return null;
 			return {
 				...common,
-				...getTextData(firstEvent),
+				...textData,
 				type: 'source_branch' in event.data ? 'pr' : 'issue',
 				icon: getGitlabIcon(event.data),
 				title: event.data.title,
 				labels: event.data.labels.map((label) => ({ name: label, color: '#000000' })),
 				url: event.data.web_url,
+				ref: event.ref,
+				creator: {
+					login: event.data.author.username,
+					name: event.data.author.name,
+					avatar: event.data.author.avatar_url
+				},
 				previously
 			};
 
 		case 'created':
+		case 'deleted':
 			return null;
 
 		default:

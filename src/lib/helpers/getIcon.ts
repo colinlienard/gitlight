@@ -46,7 +46,7 @@ export function getGitlabIcon(data: GitlabMergeRequest | GitlabIssue): Notificat
 		case 'opened':
 			return 'open-issue';
 		case 'closed':
-			return 'closed-issue';
+			return 'completed-issue';
 		default:
 			throw new Error('Invalid state');
 	}
