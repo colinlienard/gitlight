@@ -1,10 +1,14 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
+
 	// todo: silence until support is added
 	// https://github.com/sveltejs/svelte-eslint-parser/issues/306
 	type T = $$Generic<string | number>; // eslint-disable-line no-undef
 	export let label: string;
 	export let options: T[];
 	export let value: T;
+
+	const dispatch = createEventDispatcher();
 
 	const width = 100 / options.length;
 	$: index = options.findIndex((option) => option === value);
@@ -18,7 +22,10 @@
 				<button
 					class="button"
 					class:selected={value === option}
-					on:click={() => (value = option)}
+					on:click={(event) => {
+						value = option;
+						dispatch('change', event);
+					}}
 					type="button"
 				>
 					{option}

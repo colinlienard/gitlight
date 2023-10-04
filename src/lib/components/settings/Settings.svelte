@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { invoke } from '@tauri-apps/api/tauri';
 	import { onDestroy, onMount, type ComponentType, SvelteComponent } from 'svelte';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
@@ -97,6 +98,8 @@
 			tabIndex = 1;
 		}
 		mounted = true;
+
+		invoke('toggle_tray', { show: $settings.activeTray });
 
 		window.addEventListener('keydown', handleKeyDown);
 	});

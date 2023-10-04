@@ -1,3 +1,5 @@
+use tauri::{CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayMenuItem};
+
 #[tauri::command]
 pub fn update_tray(app_handle: tauri::AppHandle, title: Option<String>, new_icon: Option<bool>) {
     let tray_handle = app_handle.tray_handle();
@@ -19,5 +21,23 @@ pub fn update_tray(app_handle: tauri::AppHandle, title: Option<String>, new_icon
                 ))
                 .unwrap();
         }
+    }
+}
+
+#[tauri::command]
+pub fn toggle_tray(app_handle: tauri::AppHandle, show: bool) {
+    let tray_handle = app_handle.tray_handle();
+    // let item = tray_handle.try_get_item("dashboard");
+    tray_handle.destroy().unwrap();
+    if show {
+        SystemTray::new()
+            .with_menu(
+                SystemTrayMenu::new()
+                    .add_item(CustomMenuItem::new("dashboard".to_string(), "Dashboard..."))
+                    .add_native_item(SystemTrayMenuItem::Separator)
+                    .add_item(CustomMenuItem::new("quit".to_string(), "Quit")),
+            )
+            .build(&app_handle)
+            .unwrap();
     }
 }

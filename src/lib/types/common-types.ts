@@ -121,6 +121,7 @@ export type Settings = {
 	providerView: 'github' | 'gitlab' | 'both';
 	applyFiltersForDone: boolean;
 	viewMode: 'List' | 'Kanban' | 'Kanban (vertical)';
+	activeTray: boolean;
 };
 
 export type Priority = {

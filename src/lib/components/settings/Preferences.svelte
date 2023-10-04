@@ -1,25 +1,21 @@
 <script lang="ts">
+	import { invoke } from '@tauri-apps/api/tauri';
 	import { InlineSelect, Switch, Tooltip } from '$lib/components';
 	import { settings } from '$lib/stores';
 	import type { Settings } from '$lib/types';
 
 	const numberOptions: Array<Settings['notificationNumber']> = [25, 50, 75, 100];
-
-	let mounted = false;
-
-	$: notificationNumber = $settings.notificationNumber;
-	$: if (mounted) {
-		notificationNumber;
-		dispatchEvent(new CustomEvent('refetch'));
-	} else {
-		mounted = true;
-	}
 </script>
 
 <h3>General</h3>
 <Switch
 	label="Activate push notifications (only on desktop app)"
 	bind:active={$settings.activateNotifications}
+/>
+<Switch
+	label="Activate tray system"
+	bind:active={$settings.activeTray}
+	on:change={() => invoke('toggle_tray', { show: $settings.activeTray })}
 />
 <Switch
 	label="Mark a notification as read when opening in the browser"
@@ -31,6 +27,7 @@
 	label="Notification number"
 	options={numberOptions}
 	bind:value={$settings.notificationNumber}
+	on:change={() => dispatchEvent(new CustomEvent('refetch'))}
 />
 <span />
 <h3>Interface</h3>

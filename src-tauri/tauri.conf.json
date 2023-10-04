@@ -89,7 +89,6 @@
 		],
 		"systemTray": {
 			"iconPath": "icons/tray-base.png",
-      "title": "Loading...",
       "menuOnLeftClick": false
 		}
 	}

@@ -40,7 +40,8 @@ export const settings = writable<Settings>({
 	showPriority: true,
 	providerView: 'both',
 	applyFiltersForDone: false,
-	viewMode: 'Kanban'
+	viewMode: 'Kanban',
+	activeTray: true
 });
 
 export const error = writable<string | null>(null);
