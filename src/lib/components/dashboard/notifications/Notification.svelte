@@ -120,10 +120,11 @@
 	}
 
 	function handleOpenInBrowser() {
-		if ($settings.readWhenOpenInBrowser) {
+		if (!url) return;
+		if ($settings.readWhenOpenInBrowser && unread) {
 			handleToggle('unread')();
 		}
-		url && openUrl(url);
+		openUrl(url);
 	}
 
 	function openUrl(url: string) {
@@ -140,9 +141,11 @@
 	<div class="notification">
 		{#if $settings.showNotificationsRepo}
 			<div class="top">
-				<button class="repo" on:mouseup={() => openUrl(repoUrl)}>
-					{owner}/<span class="bold">{repo}</span>
-				</button>
+				<div class="repo">
+					<button class="repo-button" on:mouseup={() => openUrl(repoUrl)}>
+						{owner}/<span class="bold">{repo}</span>
+					</button>
+				</div>
 				<NotificationStatus {data} />
 			</div>
 		{/if}
@@ -159,6 +162,7 @@
 			<div class="texts">
 				<div
 					class="title-container"
+					class:underlined={!!url}
 					use:delayedHover={'notification-hover'}
 					on:mouseup={handleOpenInBrowser}
 					role="presentation"
@@ -328,15 +332,20 @@
 			overflow: hidden;
 			width: 100%;
 			text-align: left;
-			text-overflow: ellipsis;
 			white-space: nowrap;
 
-			&:hover {
-				text-decoration: underline;
-			}
+			.repo-button {
+				overflow: hidden;
+				max-width: 100%;
+				text-overflow: ellipsis;
 
-			.bold {
-				@include typography.bold;
+				&:hover {
+					text-decoration: underline;
+				}
+
+				.bold {
+					@include typography.bold;
+				}
 			}
 		}
 	}
@@ -386,7 +395,6 @@
 					display: inline;
 					overflow: hidden;
 					flex: 0 1 auto;
-					cursor: pointer;
 					hyphens: auto;
 					text-overflow: ellipsis;
 					white-space: nowrap;
@@ -396,7 +404,8 @@
 					color: variables.$blue-3;
 				}
 
-				&:hover * {
+				&.underlined:hover * {
+					cursor: pointer;
 					text-decoration: underline;
 				}
 
