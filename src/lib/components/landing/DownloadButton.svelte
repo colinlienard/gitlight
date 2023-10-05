@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { sineInOut } from 'svelte/easing';
 	import { fade } from 'svelte/transition';
+	import { fetchGithub } from '~/lib/features';
 	import { Button } from '$lib/components';
 	import { LinuxIcon, MacosIcon, WindowsIcon } from '$lib/icons';
 	import type { GithubRelease } from '$lib/types';
@@ -15,8 +16,7 @@
 	let releases: Record<OS, string> = { appleSilicon: '', macIntel: '', windows: '', linux: '' };
 
 	onMount(async () => {
-		const response = await fetch('https://api.github.com/repos/colinlienard/gitlight/releases');
-		const data = (await response.json()) as GithubRelease[];
+		const data = await fetchGithub<GithubRelease[]>('repos/colinlienard/gitlight/releases');
 		const { assets } = data[0];
 		releases = {
 			appleSilicon: assets.find(({ name }) => name.endsWith('aarch64.dmg'))

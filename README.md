@@ -6,7 +6,8 @@
 
 GitHub & GitLab notifications on your desktop
 
-![Latest release](https://img.shields.io/github/v/release/colinlienard/gitlight?color=%236040ff&label=Latest%20release)
+| **Download for...** | [Windows](http://localhost:5173/download/windows) | [Mac Intel](http://localhost:5173/download/mac-intel) | [Apple Silicon](http://localhost:5173/download/apple-silicon) | [Linux](http://localhost:5173/download/linux) |
+| ------------------- | ------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------- | --------------------------------------------- |
 
 </div>
 
