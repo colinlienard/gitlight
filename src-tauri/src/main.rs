@@ -47,7 +47,7 @@ fn main() {
         ))
         .plugin(tauri_plugin_positioner::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
-        .system_tray(SystemTray::new())
+        .system_tray(SystemTray::new().with_id("tray"))
         .on_system_tray_event(|app, event| {
             tauri_plugin_positioner::on_tray_event(app, &event);
             match event {
