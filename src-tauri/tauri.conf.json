@@ -84,8 +84,7 @@
 				"title": "GitLight",
         "titleBarStyle": "Overlay",
         "hiddenTitle": true,
-        "resizable": false,
-        "alwaysOnTop": true
+        "resizable": false
 			}
 		],
 		"systemTray": {

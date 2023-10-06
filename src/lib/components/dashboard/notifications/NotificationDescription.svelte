@@ -41,9 +41,13 @@
 
 		return resultArray;
 	})();
+
+	// WebKit fix
+	let element: HTMLParagraphElement;
+	$: multipleLines = element?.scrollHeight > element?.clientHeight;
 </script>
 
-<p class="description">
+<p class="description" bind:this={element} style:height={multipleLines ? '2.65rem' : ''}>
 	{#if prefix}
 		<span>{prefix}</span>
 	{/if}
