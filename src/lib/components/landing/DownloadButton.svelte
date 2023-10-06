@@ -1,40 +1,13 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { sineInOut } from 'svelte/easing';
 	import { fade } from 'svelte/transition';
-	import { fetchGithub } from '~/lib/features';
 	import { Button } from '$lib/components';
 	import { LinuxIcon, MacosIcon, WindowsIcon } from '$lib/icons';
-	import type { GithubRelease } from '$lib/types';
-
-	type OS = 'appleSilicon' | 'macIntel' | 'windows' | 'linux';
 
 	export let show = true;
 	export let position: 'center' | 'bottom' = 'center';
 
 	let open = false;
-	let releases: Record<OS, string> = { appleSilicon: '', macIntel: '', windows: '', linux: '' };
-
-	onMount(async () => {
-		const data = await fetchGithub<GithubRelease[]>('repos/colinlienard/gitlight/releases');
-		const { assets } = data[0];
-		releases = {
-			appleSilicon: assets.find(({ name }) => name.endsWith('aarch64.dmg'))
-				?.browser_download_url as string,
-			macIntel: assets.find(({ name }) => name.endsWith('x64.dmg'))?.browser_download_url as string,
-			windows: assets.find(({ name }) => name.endsWith('.msi'))?.browser_download_url as string,
-			linux: assets.find(({ name }) => name.endsWith('.AppImage'))?.browser_download_url as string
-		};
-	});
-
-	function handleDownload(os: OS) {
-		return () => {
-			open = false;
-			const link = document.createElement('a');
-			link.href = releases[os];
-			link.click();
-		};
-	}
 </script>
 
 <div
@@ -46,19 +19,19 @@
 	<slot />
 	{#if show && open}
 		<div class="tooltip {position}" transition:fade={{ duration: 150, easing: sineInOut }}>
-			<Button on:click={handleDownload('appleSilicon')}>
-				<MacosIcon />
-				Download for Apple Silicon
-			</Button>
-			<Button on:click={handleDownload('macIntel')}>
-				<MacosIcon />
-				Download for Mac Intel
-			</Button>
-			<Button on:click={handleDownload('windows')}>
+			<Button href="http://localhost:5173/download/windows" external>
 				<WindowsIcon />
 				Download for Windows
 			</Button>
-			<Button on:click={handleDownload('linux')}>
+			<Button href="http://localhost:5173/download/apple-silicon" external>
+				<MacosIcon />
+				Download for Apple Silicon
+			</Button>
+			<Button href="http://localhost:5173/download/mac-intel" external>
+				<MacosIcon />
+				Download for Mac Intel
+			</Button>
+			<Button href="http://localhost:5173/download/linux" external>
 				<LinuxIcon />
 				Download for Linux
 			</Button>

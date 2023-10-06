@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import type { GithubRelease } from '~/lib/types/github-types.js';
 
 export async function GET({ params }) {
-	async function getDownloadUrl(os: '.aarch64.dmg' | '.x64.dmg' | '.msi' | '.AppImage') {
+	async function getDownloadUrl(os: 'aarch64.dmg' | '.x64.dmg' | '.msi' | '.AppImage') {
 		const response = await fetch('https://api.github.com/repos/colinlienard/gitlight/releases');
 		const data = (await response.json()) as GithubRelease[];
 		const { assets } = data[0];
@@ -11,7 +11,7 @@ export async function GET({ params }) {
 
 	switch (params.os) {
 		case 'apple-silicon':
-			throw redirect(302, await getDownloadUrl('.aarch64.dmg'));
+			throw redirect(302, await getDownloadUrl('aarch64.dmg'));
 
 		case 'mac-intel':
 			throw redirect(302, await getDownloadUrl('.x64.dmg'));
