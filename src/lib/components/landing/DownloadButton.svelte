@@ -19,19 +19,19 @@
 	<slot />
 	{#if show && open}
 		<div class="tooltip {position}" transition:fade={{ duration: 150, easing: sineInOut }}>
-			<Button href="http://localhost:5173/download/windows" external>
+			<Button href="https://gitlight.app/download/windows">
 				<WindowsIcon />
 				Download for Windows
 			</Button>
-			<Button href="http://localhost:5173/download/apple-silicon" external>
+			<Button href="https://gitlight.app/download/apple-silicon">
 				<MacosIcon />
 				Download for Apple Silicon
 			</Button>
-			<Button href="http://localhost:5173/download/mac-intel" external>
+			<Button href="https://gitlight.app/download/mac-intel">
 				<MacosIcon />
 				Download for Mac Intel
 			</Button>
-			<Button href="http://localhost:5173/download/linux" external>
+			<Button href="https://gitlight.app/download/linux">
 				<LinuxIcon />
 				Download for Linux
 			</Button>

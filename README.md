@@ -2,38 +2,38 @@
 
 <img src="./assets/macos-icon.png" alt="" height="128px" />
 
-# GitLight <a href="https://gitlight.app" target="_blank">↗</a>
+# GitLight
 
-GitHub & GitLab notifications on your desktop
+GitHub & GitLab notifications on your desktop • [gitlight.app](https://gitlight.app)
 
 <table>
   <tbody>
     <tr>
       <td>Download for</td>
       <td>      
-        <a href="http://localhost:5173/download/windows" target="_blank">
-          <img src="./assets/windows.png" style="transform: translateY(4px)"> Windows
+        <a href="https://gitlight.app/download/windows">
+          <img src="./assets/windows.png"> Windows
         </a>
       </td>
       <td>
-        <a href="http://localhost:5173/download/apple-silicon" target="_blank">
+        <a href="https://gitlight.app/download/apple-silicon">
           <picture>
-            <source media="(prefers-color-scheme: dark)" srcset="./assets/apple-light.png">
-            <img src="./assets/apple-dark.png" style="transform: translateY(4px)">
+            <source media="(prefers-color-scheme: dark)" srcset="./assets/apple-dark.png">
+            <img src="./assets/apple-light.png">
           </picture> Apple Silicon
         </a>
       </td>
       <td>
-        <a href="http://localhost:5173/download/mac-intel" target="_blank">
+        <a href="https://gitlight.app/download/mac-intel">
           <picture>
-            <source media="(prefers-color-scheme: dark)" srcset="./assets/apple-light.png">
-            <img src="./assets/apple-dark.png" style="transform: translateY(4px)">
+            <source media="(prefers-color-scheme: dark)" srcset="./assets/apple-dark.png">
+            <img src="./assets/apple-light.png">
           </picture> Mac Intel
         </a>
       </td>
       <td>
-        <a href="http://localhost:5173/download/linux" target="_blank">
-          <img src="./assets/linux.png" style="transform: translateY(4px)"> Linux
+        <a href="https://gitlight.app/download/linux">
+          <img src="./assets/linux.png"> Linux
         </a>
       </td>
     </tr>
