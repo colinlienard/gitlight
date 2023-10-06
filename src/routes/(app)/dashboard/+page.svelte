@@ -4,6 +4,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { cubicInOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
+	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import {
 		Banner,
@@ -167,6 +168,18 @@
 		}, 60000);
 	}
 
+	function updateTrayTitle() {
+		if (browser && window.__TAURI__) {
+			const pinned = $filteredNotifications.filter(({ pinned }) => pinned);
+			const unread = $filteredNotifications.filter(
+				({ pinned, unread, done }) => !pinned && unread && !done
+			);
+			invoke('update_tray', {
+				title: `${unread.length} unread${pinned.length ? ` • ${pinned.length} pinned` : ''}`
+			});
+		}
+	}
+
 	$: if (mounted && $githubNotifications.length) {
 		// Save notifications to storage
 		const toSave = $githubNotifications.map(
@@ -183,17 +196,15 @@
 			})
 		);
 		storage.set('github-notifications', toSave);
+	}
 
-		// Update menu bar
-		if (window.__TAURI__) {
-			const pinned = $filteredNotifications.filter(({ pinned }) => pinned);
-			const unread = $filteredNotifications.filter(
-				({ pinned, unread, done }) => !pinned && unread && !done
-			);
-			invoke('update_tray', {
-				title: `${unread.length} unread${pinned.length ? ` • ${pinned.length} pinned` : ''}`
-			});
-		}
+	$: if ($filteredNotifications.length) {
+		updateTrayTitle();
+	}
+
+	$: activeTray = $settings.activeTray;
+	$: if (activeTray) {
+		setTimeout(updateTrayTitle, 10);
 	}
 
 	onMount(async () => {

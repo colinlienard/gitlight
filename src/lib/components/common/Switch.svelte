@@ -17,7 +17,12 @@
 
 <label class="switch-container" on:click={handleClick} role="presentation">
 	<span class="switch" class:active>
-		<input class="input" type="checkbox" bind:checked={active} />
+		<input
+			class="input"
+			type="checkbox"
+			bind:checked={active}
+			on:change={(event) => dispatch('change', event)}
+		/>
 		<div class="icon-container">
 			{#if active}
 				<CheckIcon />
