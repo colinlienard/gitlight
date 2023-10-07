@@ -44,10 +44,10 @@
 
 	// WebKit fix
 	let element: HTMLParagraphElement;
-	$: multipleLines = element?.scrollHeight > element?.clientHeight;
+	$: high = element?.scrollHeight > element?.clientHeight + 1;
 </script>
 
-<p class="description" bind:this={element} style:height={multipleLines ? '2.65rem' : ''}>
+<p class="description" bind:this={element} class:high>
 	{#if prefix}
 		<span>{prefix}</span>
 	{/if}
@@ -76,13 +76,21 @@
 	.description {
 		@include typography.base;
 
-		display: -webkit-box;
+		position: relative;
 		overflow: hidden;
-		-webkit-box-orient: vertical;
+		max-height: 2.65rem;
 		color: variables.$grey-4;
 		hyphens: auto;
-		-webkit-line-clamp: 2;
 		word-wrap: break-word;
+
+		&.high::before {
+			position: absolute;
+			width: 2.5rem;
+			height: 1.25rem;
+			background-image: linear-gradient(to right, transparent, variables.$grey-2 75%);
+			content: '';
+			inset: auto 0 0 auto;
+		}
 
 		.clickable:hover {
 			text-decoration: underline;
