@@ -42,12 +42,24 @@
 		return resultArray;
 	})();
 
-	// WebKit fix
+	// WebKit fix to avoid line-clamp bug
+	// Set hard height, and set width: 100% after 500ms
 	let element: HTMLParagraphElement;
-	$: high = element?.scrollHeight > element?.clientHeight + 1;
+	let timer = false;
+
+	setTimeout(() => {
+		timer = true;
+	}, 500);
+
+	$: tall = element?.scrollHeight > element?.clientHeight + 1;
 </script>
 
-<p class="description" bind:this={element} class:high>
+<p
+	class="description"
+	bind:this={element}
+	style:width={timer ? '100%' : ''}
+	style:height={tall ? '2.65rem' : ''}
+>
 	{#if prefix}
 		<span>{prefix}</span>
 	{/if}
@@ -76,21 +88,13 @@
 	.description {
 		@include typography.base;
 
-		position: relative;
+		display: -webkit-box;
 		overflow: hidden;
-		max-height: 2.65rem;
+		-webkit-box-orient: vertical;
 		color: variables.$grey-4;
 		hyphens: auto;
+		-webkit-line-clamp: 2;
 		word-wrap: break-word;
-
-		&.high::before {
-			position: absolute;
-			width: 2.5rem;
-			height: 1.25rem;
-			background-image: linear-gradient(to right, transparent, variables.$grey-2 75%);
-			content: '';
-			inset: auto 0 0 auto;
-		}
 
 		.clickable:hover {
 			text-decoration: underline;
