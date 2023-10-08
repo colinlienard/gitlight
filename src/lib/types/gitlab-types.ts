@@ -77,6 +77,12 @@ export type GitlabEvent = {
 			target_type: null;
 	  }
 	| {
+			action_name: 'joined';
+			target_id: number;
+			target_iid: number;
+			target_type: null;
+	  }
+	| {
 			action_name: 'commented on';
 			target_id: number;
 			target_iid: number;

@@ -232,6 +232,7 @@ export function createGitlabNotificationData(
 
 		case 'created':
 		case 'deleted':
+		case 'joined':
 			return null;
 
 		default:

@@ -193,11 +193,12 @@
 
 		let newNotifications: NotificationData[] = [];
 		const savedNotifications = storage.get('gitlab-notifications') || [];
+		const ignoredNotificationTypes: GitlabEvent['action_name'][] = ['created', 'deleted', 'joined'];
 
 		try {
 			let notifications = (
 				await fetchGitlab<GitlabEvent[]>(`projects/colinlienard1%2Fgitlab-test/events`)
-			).filter((n) => n.action_name !== 'created' && n.action_name !== 'deleted');
+			).filter((n) => !ignoredNotificationTypes.includes(n.action_name));
 
 			// Keep only new or modified notifications
 			if ($gitlabNotifications.length) {
