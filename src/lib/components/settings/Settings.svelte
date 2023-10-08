@@ -99,7 +99,9 @@
 		}
 		mounted = true;
 
-		invoke('toggle_tray', { show: $settings.activeTray });
+		if (window.__TAURI__) {
+			invoke('toggle_tray', { show: $settings.activeTray });
+		}
 
 		window.addEventListener('keydown', handleKeyDown);
 	});
