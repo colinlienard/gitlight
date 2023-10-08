@@ -41,9 +41,25 @@
 
 		return resultArray;
 	})();
+
+	// WebKit fix to avoid line-clamp bug
+	// Set hard height, and set width: 100% after 500ms
+	let element: HTMLParagraphElement;
+	let timer = false;
+
+	setTimeout(() => {
+		timer = true;
+	}, 500);
+
+	$: tall = element?.scrollHeight > element?.clientHeight + 1;
 </script>
 
-<p class="description">
+<p
+	class="description"
+	bind:this={element}
+	style:width={timer ? '100%' : ''}
+	style:height={tall ? '2.65rem' : ''}
+>
 	{#if prefix}
 		<span>{prefix}</span>
 	{/if}

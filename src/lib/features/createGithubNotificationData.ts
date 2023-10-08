@@ -1,5 +1,5 @@
 import { page } from '$app/stores';
-import { error, settings } from '$lib/stores';
+import { error, githubNotifications, settings } from '$lib/stores';
 import type {
 	GithubComment,
 	GithubCommit,
@@ -179,6 +179,16 @@ export async function createGithubNotificationData(
 				commits_url
 			} = data as GithubPullRequest;
 
+			const handleReviewRequested = () => {
+				githubNotifications.subscribe((notifications) => {
+					const current = notifications.find((n) => n.id === id);
+					if (current?.priority?.label !== prioritiesLabel['review-request']) {
+						author = { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
+						description = '*requested your review*';
+					}
+				});
+			};
+
 			let author: NotificationData['author'];
 			let description: NotificationData['description'] = '';
 			let url = html_url;
@@ -222,12 +232,10 @@ export async function createGithubNotificationData(
 					description = event.description;
 					if (event.url) url = event.url;
 				} else if (reason === 'review_requested') {
-					author = { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
-					description = '*requested your review*';
+					handleReviewRequested();
 				}
 			} else if (reason === 'review_requested') {
-				author = { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
-				description = '*requested your review*';
+				handleReviewRequested();
 			}
 
 			if ((!firstTime && previous?.description === description) || !description) return null;

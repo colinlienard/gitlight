@@ -63,7 +63,7 @@
 		const currentAuthor = persons.find(({ login }) => login === author?.login);
 		const currentCreator = persons.find(({ login }) => login === creator?.login);
 		const repo = repos.find(({ id }) => id === repoId);
-		return currentAuthor?.muted || currentCreator?.muted || repo?.muted || muted;
+		return (currentAuthor ? currentAuthor.muted : currentCreator?.muted) || repo?.muted || muted;
 	}
 
 	async function fetchNotifications() {
