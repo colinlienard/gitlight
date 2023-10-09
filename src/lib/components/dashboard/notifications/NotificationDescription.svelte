@@ -15,8 +15,9 @@
 	export let description: string;
 	export let prefix: string | undefined = undefined;
 	export let openUrl: (url: string) => void;
+	export let from: 'github' | 'gitlab';
 
-	$: authorUrl = author && !author.bot ? `https://github.com/${author.login}` : '';
+	$: authorUrl = author && !author.bot ? `https://${from}.com/${author.login}` : '';
 
 	let displayDescription: Description = (() => {
 		const parts = description.split(/(\*|_)/);

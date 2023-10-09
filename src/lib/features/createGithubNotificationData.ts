@@ -464,17 +464,12 @@ function getPriorityValue(
 	reason: GithubNotification['reason']
 ): boolean | null | undefined {
 	switch (priority.criteria) {
-		case 'assigned': {
-			let user: User | undefined;
-			page.subscribe((page) => {
-				user = page.data.session?.githubUser;
-			});
+		case 'assigned':
 			return (
 				data &&
 				'assignees' in data &&
-				data.assignees.some((assignee) => assignee.login === user?.login)
+				data.assignees.some((assignee) => assignee.login === getLoggedUser()?.login)
 			);
-		}
 
 		case 'many-comments':
 			return data && 'comments' in data && data.comments > 5;
@@ -497,4 +492,12 @@ function getPriorityValue(
 		case 'type':
 			return notification.type === priority.specifier;
 	}
+}
+
+function getLoggedUser() {
+	let user: User | undefined;
+	page.subscribe((page) => {
+		user = page.data.session?.githubUser;
+	});
+	return user;
 }

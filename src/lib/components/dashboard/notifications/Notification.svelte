@@ -153,7 +153,7 @@
 			</div>
 		{/if}
 		<div class="description">
-			<NotificationDescription {author} {description} {openUrl} />
+			<NotificationDescription {author} {description} {openUrl} {from} />
 			{#if !$settings.showNotificationsRepo}
 				<NotificationStatus {data} />
 			{/if}
@@ -281,6 +281,7 @@
 				description={previously.description}
 				prefix="Previously, "
 				{openUrl}
+				{from}
 			/>
 		</div>
 	{/if}

@@ -15,6 +15,7 @@ export type GitlabBaseItem = {
 	web_url: string;
 	author: GitlabUser;
 	labels: string[];
+	user_notes_count: number;
 };
 
 export type GitlabIssue = GitlabBaseItem & {
@@ -25,6 +26,10 @@ export type GitlabMergeRequest = GitlabBaseItem & {
 	state: 'opened' | 'closed' | 'merged';
 	source_branch: string;
 	draft: boolean;
+	reviewers: GitlabUser[];
+	assignees: GitlabUser[];
+	upvotes: number;
+	downvotes: number;
 };
 
 export type GitlabEvent = {
@@ -83,10 +88,16 @@ export type GitlabEvent = {
 			target_type: null;
 	  }
 	| {
+			action_name: 'approved';
+			target_id: number;
+			target_iid: number;
+			target_type: 'MergeRequest';
+	  }
+	| {
 			action_name: 'commented on';
 			target_id: number;
 			target_iid: number;
-			target_type: 'Note';
+			target_type: 'Note' | 'DiffNote';
 			note: {
 				body: string;
 				noteable_id: number;

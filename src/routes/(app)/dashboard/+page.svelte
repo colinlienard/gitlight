@@ -49,7 +49,7 @@
 
 	let interval = setInterval(() => {
 		fetchAll();
-	}, 60000);
+	}, 10000);
 
 	$: if (synced && !syncTime) {
 		syncInterval = setInterval(() => {
@@ -205,7 +205,7 @@
 				notifications = notifications.filter((n) => {
 					const current = $gitlabNotifications.find((item) => {
 						switch (true) {
-							case n.target_type === 'Note':
+							case n.target_type === 'Note' || n.target_type === 'DiffNote':
 								return 'note' in n && n.note.noteable_id.toString() === item.id;
 							case !!n.target_id:
 								return 'target_id' in n && n.target_id?.toString() === item.id;
@@ -222,9 +222,11 @@
 			}
 
 			const prepared = await prepareGitlabNotificationData(notifications);
-			newNotifications = prepared
-				.map((item) => createGitlabNotificationData(item, savedNotifications))
-				.filter((item): item is NotificationData => !!item);
+			newNotifications = (
+				await Promise.all(
+					prepared.map((item) => createGitlabNotificationData(item, savedNotifications))
+				)
+			).filter((item): item is NotificationData => !!item);
 		} catch (e) {
 			$error =
 				'An error occurred while fetching notifications. Please try to reload the page or log out and log in again.';
