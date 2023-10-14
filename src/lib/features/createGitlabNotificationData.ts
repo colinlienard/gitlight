@@ -141,7 +141,9 @@ function getTextData(
 						gitlabEvent.target_type === 'DiffNote' &&
 						gitlabEvent.author.username !== getLoggedUser()?.login
 					) {
-						return `*requested changes*: _${gitlabEvent.note.body}_`;
+						return `*requested changes*${
+							gitlabEvent.note.body ? `: _${gitlabEvent.note.body}_` : ' on this pull request'
+						}`;
 					}
 					return `*commented*: _${gitlabEvent.note.body}_`;
 

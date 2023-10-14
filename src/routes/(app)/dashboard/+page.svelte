@@ -88,6 +88,7 @@
 	function refetch() {
 		// Clear and refetch notifications
 		$githubNotifications = [];
+		$gitlabNotifications = [];
 		fetchAll();
 
 		// Reset interval
@@ -100,13 +101,42 @@
 	async function fetchAll() {
 		synced = false;
 
-		await Promise.all([fetchGithubNotifications(), fetchGitlabNotifications()]);
+		const firstFetch = !$githubNotifications.length && !$gitlabNotifications.length;
+
+		const newNotifications = (
+			await Promise.all([fetchGithubNotifications(), fetchGitlabNotifications()])
+		).flat();
+
+		if (
+			!window.__TAURI__ ||
+			!newNotifications.length ||
+			firstFetch ||
+			!$settings.activateNotifications
+		)
+			return;
+
+		// Send push notification and update tray icon
+		let pushNotification: NotificationData | null = null;
+		let index = 0;
+		do {
+			pushNotification = newNotifications[index];
+			index++;
+		} while (pushNotification?.unread && !pushNotification?.muted);
+
+		if (pushNotification) {
+			const { author, title, description } = pushNotification;
+			sendNotification({
+				title,
+				body: `${author ? `${author.login} ` : ''}${description.replace(/(\*|_)/g, '')}`
+			});
+			invoke('update_tray', { newIcon: true });
+		}
 
 		synced = true;
 	}
 
-	async function fetchGithubNotifications() {
-		if (!githubUser) return;
+	async function fetchGithubNotifications(): Promise<NotificationData[]> {
+		if (!githubUser) return [];
 
 		let newNotifications: NotificationData[] = [];
 		const savedNotifications = storage.get('github-notifications') || [];
@@ -132,14 +162,14 @@
 			}
 
 			// Keep only new or modified notifications
-			if ($githubNotifications.length) {
+			if (!firstFetch) {
 				notifications = notifications.filter(({ id, updated_at }) => {
 					const current = $githubNotifications.find((item) => item.id === id);
 					return current ? updated_at !== current.time : true;
 				});
 			}
 
-			if (!notifications.length) return;
+			if (!notifications.length) return [];
 
 			newNotifications = (
 				await Promise.all(
@@ -163,37 +193,25 @@
 			console.error(e);
 		}
 
-		if (!newNotifications.length) return;
-
-		// Remove duplicates and add new notifications to the store
-		$githubNotifications = [
-			...newNotifications,
-			...$githubNotifications.filter((item) => !newNotifications.find((n) => n.id === item.id))
-		];
-
-		if (!window.__TAURI__ || firstFetch || !$settings.activateNotifications) return;
-
-		// Send push notification and update tray icon
-		const unmutedNotifications = newNotifications.filter(
-			(item) => !notificationIsMuted(item, persons, repos)
-		);
-		const pushNotification = unmutedNotifications[0];
-		if (pushNotification?.unread && !pushNotification?.muted) {
-			const { author, title, description } = pushNotification;
-			sendNotification({
-				title,
-				body: `${author ? `${author.login} ` : ''}${description.replace(/(\*|_)/g, '')}`
-			});
-			invoke('update_tray', { newIcon: true });
+		if (newNotifications.length) {
+			// Remove duplicates and add new notifications to the store
+			$githubNotifications = [
+				...newNotifications,
+				...$githubNotifications.filter((item) => !newNotifications.find((n) => n.id === item.id))
+			];
 		}
+
+		return newNotifications.filter((item) => !notificationIsMuted(item, persons, repos));
 	}
 
-	async function fetchGitlabNotifications() {
-		if (!gitlabUser) return;
+	async function fetchGitlabNotifications(): Promise<NotificationData[]> {
+		if (!gitlabUser) return [];
 
 		let newNotifications: NotificationData[] = [];
 		const savedNotifications = storage.get('gitlab-notifications') || [];
 		const ignoredNotificationTypes: GitlabEvent['action_name'][] = ['created', 'deleted', 'joined'];
+		const persons = storage.get('github-watched-persons') || [];
+		const repos = storage.get('github-watched-repos') || [];
 
 		try {
 			let notifications = (
@@ -226,20 +244,31 @@
 				await Promise.all(
 					prepared.map((item) => createGitlabNotificationData(item, savedNotifications))
 				)
-			).filter((item): item is NotificationData => !!item);
+			)
+				.filter((item): item is NotificationData => !!item)
+				// If the notification is muted, do not update its status
+				.map((item) => {
+					const muted = notificationIsMuted(item, persons, repos);
+					const previous = savedNotifications.find((n) => n.id === item.id);
+					const unread = muted ? previous?.unread || false : item.unread;
+					const done = unread ? false : item.done;
+					return { ...item, unread, done };
+				});
 		} catch (e) {
 			$error =
 				'An error occurred while fetching notifications. Please try to reload the page or log out and log in again.';
 			console.error(e);
 		}
 
-		if (!newNotifications.length) return;
-
 		// Remove duplicates and add new notifications to the store
-		$gitlabNotifications = [
-			...newNotifications,
-			...$gitlabNotifications.filter((item) => !newNotifications.find((n) => n.id === item.id))
-		];
+		if (newNotifications.length) {
+			$gitlabNotifications = [
+				...newNotifications,
+				...$gitlabNotifications.filter((item) => !newNotifications.find((n) => n.id === item.id))
+			];
+		}
+
+		return newNotifications.filter((item) => !notificationIsMuted(item, persons, repos));
 	}
 
 	function updateTrayTitle() {
