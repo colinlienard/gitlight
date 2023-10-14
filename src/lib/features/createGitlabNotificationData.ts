@@ -5,6 +5,7 @@ import { cleanSpecifier, getGitlabIcon, prioritiesLabel } from '../helpers';
 import type {
 	GitlabEvent,
 	GitlabIssue,
+	GitlabLabel,
 	GitlabMergeRequest,
 	NotificationData,
 	Priority,
@@ -18,6 +19,8 @@ type GroupedEvent = {
 	events: GitlabEvent[];
 	data?: GitlabMergeRequest | GitlabIssue;
 };
+
+let GITLAB_LABELS: Map<string, GitlabLabel[]> | undefined;
 
 /*
 - group events by target_id, or ref
@@ -218,7 +221,7 @@ export async function createGitlabNotificationData(
 					type: 'pr',
 					icon: getGitlabIcon(event.data),
 					title: event.data.title,
-					labels: event.data.labels.map((label) => ({ name: label, color: '#000000' })),
+					labels: getColoredLabels('colinlienard1%2Fgitlab-test', event.data.labels),
 					url: event.data.web_url,
 					ref: event.ref,
 					creator: {
@@ -243,7 +246,7 @@ export async function createGitlabNotificationData(
 				type: 'source_branch' in event.data ? 'pr' : 'issue',
 				icon: getGitlabIcon(event.data),
 				title: event.data.title,
-				labels: event.data.labels.map((label) => ({ name: label, color: '#000000' })),
+				labels: getColoredLabels('colinlienard1%2Fgitlab-test', event.data.labels),
 				url: event.data.web_url,
 				ref: event.ref,
 				creator: {
@@ -318,6 +321,25 @@ export async function createGitlabNotificationData(
 			value: accumulatedValue
 		}
 	};
+}
+
+export async function fetchGitlabLabels(repos: string[]) {
+	const responses = await Promise.all(
+		repos.map((repo) => fetchGitlab<Array<GitlabLabel>>(`projects/${repo}/labels`))
+	);
+	GITLAB_LABELS = new Map(responses.map((response, index) => [repos[index], response]));
+}
+
+function getColoredLabels(repo: string, labels: string[]): NotificationData['labels'] {
+	const gitlabLabels = GITLAB_LABELS?.get(repo);
+	if (!gitlabLabels) return [];
+	return labels.map((label) => {
+		const gitlabLabel = gitlabLabels.find((l) => l.name === label);
+		return {
+			name: label,
+			color: gitlabLabel?.color || '#000000'
+		};
+	});
 }
 
 function getPriorityValue(

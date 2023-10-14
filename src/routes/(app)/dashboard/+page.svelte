@@ -23,6 +23,7 @@
 		createGitlabNotificationData,
 		fetchGithub,
 		fetchGitlab,
+		fetchGitlabLabels,
 		prepareGitlabNotificationData,
 		storage,
 		type StorageMap
@@ -107,6 +108,8 @@
 			await Promise.all([fetchGithubNotifications(), fetchGitlabNotifications()])
 		).flat();
 
+		synced = true;
+
 		if (
 			!window.__TAURI__ ||
 			!newNotifications.length ||
@@ -131,8 +134,6 @@
 			});
 			invoke('update_tray', { newIcon: true });
 		}
-
-		synced = true;
 	}
 
 	async function fetchGithubNotifications(): Promise<NotificationData[]> {
@@ -212,6 +213,12 @@
 		const ignoredNotificationTypes: GitlabEvent['action_name'][] = ['created', 'deleted', 'joined'];
 		const persons = storage.get('github-watched-persons') || [];
 		const repos = storage.get('github-watched-repos') || [];
+		const firstFetch = !$gitlabNotifications.length;
+
+		// Get labels colors
+		if (firstFetch) {
+			await fetchGitlabLabels(['colinlienard1%2Fgitlab-test']);
+		}
 
 		try {
 			let notifications = (
@@ -219,7 +226,7 @@
 			).filter((n) => !ignoredNotificationTypes.includes(n.action_name));
 
 			// Keep only new or modified notifications
-			if ($gitlabNotifications.length) {
+			if (!firstFetch) {
 				notifications = notifications.filter((n) => {
 					const current = $gitlabNotifications.find((item) => {
 						switch (true) {

@@ -106,3 +106,8 @@ export type GitlabEvent = {
 			};
 	  }
 );
+
+export type GitlabLabel = {
+	name: string;
+	color: string;
+};
