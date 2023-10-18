@@ -1,4 +1,5 @@
 import type { GithubLabel, GithubRepository } from './github-types';
+import type { GitlabEvent } from './gitlab-types';
 
 export type User = {
 	name?: string;
@@ -107,6 +108,16 @@ export type WatchedPerson = {
 	bot?: boolean;
 };
 
+export type GitlabEventWithRepoData = GitlabEvent & {
+	repository: {
+		id: number;
+		domain: string;
+		owner: string;
+		repo: string;
+		encoded: string;
+	};
+};
+
 export type Settings = {
 	activateNotifications: boolean;
 	showNotificationsSyncTimer: boolean;
@@ -126,6 +137,10 @@ export type Settings = {
 	applyFiltersForDone: boolean;
 	viewMode: 'List' | 'Kanban' | 'Kanban (vertical)';
 	activeTray: boolean;
+	gitlabRepos: Array<{
+		id: number;
+		url: string;
+	}>;
 };
 
 export type Priority = {

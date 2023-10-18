@@ -3,7 +3,7 @@ import { fetchGitlab } from './fetchGitlab';
 import { storage } from './storage';
 import { cleanSpecifier, getGitlabIcon, prioritiesLabel } from '../helpers';
 import type {
-	GitlabEvent,
+	GitlabEventWithRepoData,
 	GitlabIssue,
 	GitlabLabel,
 	GitlabMergeRequest,
@@ -16,7 +16,7 @@ import type {
 type GroupedEvent = {
 	target_id?: number;
 	ref?: string;
-	events: GitlabEvent[];
+	events: GitlabEventWithRepoData[];
 	data?: GitlabMergeRequest | GitlabIssue;
 };
 
@@ -32,7 +32,7 @@ let GITLAB_LABELS: Map<string, GitlabLabel[]> | undefined;
 - order by date inside groups
 - create notification data with previous for each group (one group = one notification)
 */
-export async function prepareGitlabNotificationData(events: GitlabEvent[]) {
+export async function prepareGitlabNotificationData(events: GitlabEventWithRepoData[]) {
 	const grouped = events.reduce<GroupedEvent[]>((previous, current) => {
 		const target_id =
 			(current.target_type === 'Note' || current.target_type === 'DiffNote'
@@ -66,7 +66,9 @@ export async function prepareGitlabNotificationData(events: GitlabEvent[]) {
 					type = 'Issue';
 				}
 				const data = await fetchGitlab<GitlabMergeRequest | GitlabIssue>(
-					`projects/colinlienard1%2Fgitlab-test/${type === 'Issue' ? 'issues' : 'merge_requests'}/${
+					`projects/${firstEvent.repository.encoded}/${
+						type === 'Issue' ? 'issues' : 'merge_requests'
+					}/${
 						firstEvent.target_type === 'Note' || firstEvent.target_type === 'DiffNote'
 							? firstEvent.note.noteable_iid
 							: firstEvent.target_iid
@@ -117,7 +119,7 @@ export async function prepareGitlabNotificationData(events: GitlabEvent[]) {
 }
 
 function getTextData(
-	gitlabEvent: GitlabEvent,
+	gitlabEvent: GitlabEventWithRepoData,
 	hasData = true
 ): {
 	author: NotificationData['author'];
@@ -188,10 +190,10 @@ export async function createGitlabNotificationData(
 		done,
 		muted,
 		time: firstEvent.created_at,
-		owner: 'owner',
-		repo: 'repo',
-		// repoId: `${repository.id}`,
-		repoId: '1234',
+		owner: firstEvent.repository.owner,
+		repo: firstEvent.repository.repo,
+		repoId: `${firstEvent.repository.id}`,
+		// repoId: '1234',
 		// ownerAvatar: repository.owner.avatar_url
 		ownerAvatar: 'https://placehold.co/400'
 	} as const;
@@ -221,7 +223,7 @@ export async function createGitlabNotificationData(
 					type: 'pr',
 					icon: getGitlabIcon(event.data),
 					title: event.data.title,
-					labels: getColoredLabels('colinlienard1%2Fgitlab-test', event.data.labels),
+					labels: getColoredLabels(firstEvent.repository.encoded, event.data.labels),
 					url: event.data.web_url,
 					ref: event.ref,
 					creator: {
@@ -246,7 +248,7 @@ export async function createGitlabNotificationData(
 				type: 'source_branch' in event.data ? 'pr' : 'issue',
 				icon: getGitlabIcon(event.data),
 				title: event.data.title,
-				labels: getColoredLabels('colinlienard1%2Fgitlab-test', event.data.labels),
+				labels: getColoredLabels(firstEvent.repository.encoded, event.data.labels),
 				url: event.data.web_url,
 				ref: event.ref,
 				creator: {
@@ -266,7 +268,7 @@ export async function createGitlabNotificationData(
 		default:
 			// Log for debug purposes
 			// eslint-disable-next-line no-console
-			console.log(`Unknown event type: ${(firstEvent as GitlabEvent).action_name}`);
+			console.log(`Unknown event type: ${(firstEvent as GitlabEventWithRepoData).action_name}`);
 			return null;
 	}
 
@@ -280,7 +282,7 @@ export async function createGitlabNotificationData(
 			: firstEvent.target_iid;
 	const comments = iid
 		? await fetchGitlab<Array<{ body: string }>>(
-				`projects/colinlienard1%2Fgitlab-test/${
+				`projects/${firstEvent.repository.encoded}/${
 					firstEvent.target_type === 'Issue' ? 'issues' : 'merge_requests'
 				}/${iid}/notes`
 		  )

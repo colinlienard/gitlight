@@ -5,6 +5,10 @@ export type GitlabUser = {
 	avatar_url: string;
 };
 
+export type GitlabRepository = {
+	id: number;
+};
+
 export type GitlabBaseItem = {
 	id: number;
 	iid: number;
@@ -36,6 +40,7 @@ export type GitlabEvent = {
 	id: number;
 	author: GitlabUser;
 	created_at: string;
+	project_id: number;
 } & (
 	| {
 			action_name: 'pushed new' | 'pushed to';

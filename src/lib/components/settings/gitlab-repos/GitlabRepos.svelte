@@ -1,0 +1,87 @@
+<script lang="ts" context="module">
+	export type Repo = {
+		url: string;
+		id: number;
+		pending: boolean;
+		error: boolean;
+	};
+</script>
+
+<script lang="ts">
+	import { CheckIcon, PlusIcon } from '~/lib/icons';
+	import { settings } from '~/lib/stores';
+	import { Button } from '$lib/components';
+	import RepoInput from './RepoInput.svelte';
+
+	const defaultRepo: Repo = { url: '', id: 0, pending: false, error: true };
+
+	let repos: Array<Repo> = $settings.gitlabRepos.length
+		? $settings.gitlabRepos.map(({ url, id }) => ({ url, id, error: false, pending: false }))
+		: [{ ...defaultRepo }];
+	$: addDisabled = repos.length >= 10;
+	$: saveDisabled = !repos.length || repos.some(({ error, pending }) => error || pending);
+
+	function handleSave() {
+		$settings.gitlabRepos = repos.map(({ url }) => ({ url, id: 0 }));
+		dispatchEvent(new CustomEvent('refetch'));
+	}
+
+	function handleAdd() {
+		repos.push({ ...defaultRepo });
+		repos = repos;
+	}
+
+	function handleDelete(index: number) {
+		return () => {
+			repos.splice(index, 1);
+			repos = repos;
+		};
+	}
+</script>
+
+<div class="container">
+	<p>Enter the repositories url you want notifications from:</p>
+	<p class="subtext">For self-hosted, just enter the domain before gitlab.com.</p>
+	{#each repos as repo, index (index)}
+		<RepoInput bind:repo first={index === 0} on:delete={handleDelete(index)} />
+	{/each}
+	<div class="add-container">
+		<Button secondary disabled={addDisabled} on:click={handleAdd}>
+			<PlusIcon />
+			Add more repositories
+		</Button>
+	</div>
+	<div class="submit-container">
+		<Button small disabled={saveDisabled} on:click={handleSave}>
+			<CheckIcon />
+			Save
+		</Button>
+	</div>
+</div>
+
+<style lang="scss">
+	.container {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.subtext {
+		min-width: 36rem;
+		margin-bottom: 1rem;
+		color: variables.$grey-4;
+	}
+
+	.add-container {
+		width: 100%;
+
+		:global(button) {
+			width: 100%;
+		}
+	}
+
+	.submit-container {
+		display: flex;
+		justify-content: end;
+	}
+</style>

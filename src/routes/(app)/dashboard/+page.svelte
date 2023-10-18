@@ -12,6 +12,7 @@
 		Error,
 		GithubLoginButton,
 		GitlabLoginButton,
+		GitlabRepos,
 		Main,
 		Priorities,
 		Settings,
@@ -38,7 +39,12 @@
 		loading,
 		settings
 	} from '$lib/stores';
-	import type { GithubNotification, GitlabEvent, NotificationData } from '$lib/types';
+	import type {
+		GithubNotification,
+		GitlabEvent,
+		GitlabEventWithRepoData,
+		NotificationData
+	} from '$lib/types';
 
 	const githubUser = $page.data.session?.githubUser;
 	const gitlabUser = $page.data.session?.gitlabUser;
@@ -50,7 +56,7 @@
 
 	let interval = setInterval(() => {
 		fetchAll();
-	}, 10000);
+	}, 60000);
 
 	$: if (synced && !syncTime) {
 		syncInterval = setInterval(() => {
@@ -206,7 +212,7 @@
 	}
 
 	async function fetchGitlabNotifications(): Promise<NotificationData[]> {
-		if (!gitlabUser) return [];
+		if (!gitlabUser || !$settings.gitlabRepos.length) return [];
 
 		let newNotifications: NotificationData[] = [];
 		const savedNotifications = storage.get('gitlab-notifications') || [];
@@ -215,15 +221,42 @@
 		const repos = storage.get('github-watched-repos') || [];
 		const firstFetch = !$gitlabNotifications.length;
 
+		const repositories: GitlabEventWithRepoData['repository'][] = $settings.gitlabRepos.map(
+			({ url, id }) => {
+				const u = new URL(url);
+				const [, owner, repo] = u.pathname.split('/');
+				const encoded = `${owner}%2F${repo}`;
+				return { domain: u.host, owner, repo, encoded, id };
+			}
+		);
+
 		// Get labels colors
 		if (firstFetch) {
-			await fetchGitlabLabels(['colinlienard1%2Fgitlab-test']);
+			await fetchGitlabLabels(repositories.map(({ encoded }) => encoded));
 		}
 
 		try {
+			// Fetch all repos and add repository data to each event
 			let notifications = (
-				await fetchGitlab<GitlabEvent[]>(`projects/colinlienard1%2Fgitlab-test/events`)
-			).filter((n) => !ignoredNotificationTypes.includes(n.action_name));
+				await Promise.all(
+					repositories.map(
+						(repository) =>
+							new Promise<GitlabEvent[]>(async (resolve) => {
+								const response = await fetchGitlab<GitlabEvent[]>(
+									`projects/${repository.encoded}/events`,
+									{ domain: repository.domain }
+								);
+								resolve(response.map((item) => ({ ...item, repository })));
+							})
+					)
+				)
+			)
+				.flat()
+				// .splice(0, $settings.notificationNumber)
+				.filter(
+					(n): n is GitlabEventWithRepoData =>
+						!n || !ignoredNotificationTypes.includes(n.action_name)
+				);
 
 			// Keep only new or modified notifications
 			if (!firstFetch) {
@@ -422,7 +455,7 @@
 			<DoneModal />
 		</nav>
 		{#if providerView === 'github' && !githubUser}
-			<div class="login-container">
+			<div class="center-container">
 				<div class="text">Manage your GitHub and GitLab notifications at the same time.</div>
 				<GithubLoginButton>
 					<GithubIcon />
@@ -430,12 +463,16 @@
 				</GithubLoginButton>
 			</div>
 		{:else if providerView === 'gitlab' && !gitlabUser}
-			<div class="login-container">
+			<div class="center-container">
 				<div class="text">Manage your GitHub and GitLab notifications at the same time.</div>
 				<GitlabLoginButton>
 					<GitlabIcon />
 					Log in to Gitlab
 				</GitlabLoginButton>
+			</div>
+		{:else if providerView === 'gitlab' && !$settings.gitlabRepos.length}
+			<div class="center-container">
+				<GitlabRepos />
 			</div>
 		{:else}
 			<Main />
@@ -594,7 +631,7 @@
 			}
 		}
 
-		.login-container {
+		.center-container {
 			display: flex;
 			height: 100%;
 			flex-direction: column;

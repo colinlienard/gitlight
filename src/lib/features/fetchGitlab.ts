@@ -3,11 +3,11 @@ import { PUBLIC_SITE_URL } from '$env/static/public';
 import { storage } from './storage';
 
 type Options = {
+	domain?: string;
 	noCache?: boolean;
 	accessToken?: string;
 	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	body?: Record<string, unknown>;
-	pat?: string;
 };
 
 export async function fetchGitlab<T = void>(url: string, options?: Options): Promise<T> {
@@ -45,7 +45,7 @@ export async function fetchGitlab<T = void>(url: string, options?: Options): Pro
 	}
 
 	const response = await fetch(
-		`${url.startsWith('http') ? '' : 'https://gitlab.com/api/v4/'}${url}`,
+		`${url.startsWith('http') ? '' : `https://${options?.domain ?? 'gitlab.com'}/api/v4/`}${url}`,
 		{
 			headers: {
 				Authorization: `Bearer ${accessToken}`

@@ -9,6 +9,7 @@
 	export let placeholder: string;
 	export let clearable = false;
 	export let disabled = false;
+	export let error = false;
 
 	let input: HTMLInputElement;
 	let focused = false;
@@ -22,7 +23,7 @@
 	{#if label}
 		<p class="label">{label}</p>
 	{/if}
-	<div class="input-wrapper" class:empty={!value} class:focused>
+	<div class="input-wrapper" class:error class:empty={!value} class:focused>
 		{#if icon}
 			<svelte:component this={icon} />
 		{/if}
@@ -74,7 +75,7 @@
 		cursor: text;
 		gap: 0.5em;
 		outline: solid 3px transparent;
-		outline-offset: -3px;
+		outline-offset: -1px;
 
 		&.empty :global(svg) {
 			color: variables.$grey-4;
@@ -82,6 +83,14 @@
 
 		&.focused {
 			outline-color: variables.$blue-3;
+		}
+
+		&.error {
+			border-color: variables.$red;
+
+			&.focused {
+				outline-color: variables.$red;
+			}
 		}
 
 		:global(svg) {
