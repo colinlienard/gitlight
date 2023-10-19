@@ -18,12 +18,12 @@
 
 	// Update watched repos
 	$: if (browser && !$loading) {
-		const savedWatchedRepos = storage.get('github-watched-repos');
+		const savedWatchedRepos = storage.get('watched-repos');
 
 		$watchedRepos = $globalNotifications.reduce<WatchedRepo[]>((previous, current) => {
 			if (current.done) return previous;
-			const saved = savedWatchedRepos?.find((repo) => repo.id === current.repoId);
-			const index = previous.findIndex((repo) => repo.id === current.repoId);
+			const saved = savedWatchedRepos?.find((repo) => repo.id === current.repository.id);
+			const index = previous.findIndex((repo) => repo.id === current.repository.id);
 			if (index > -1) {
 				const repo = previous.splice(index, 1)[0];
 				return [...previous, { ...repo, number: repo.number + 1 }];
@@ -31,9 +31,9 @@
 			return [
 				...previous,
 				{
-					id: current.repoId,
-					name: current.repo,
-					ownerName: current.owner,
+					id: current.repository.id,
+					name: current.repository.name,
+					ownerName: current.repository.owner,
 					ownerAvatar: current.ownerAvatar,
 					number: 1,
 					active: saved?.active ?? true,
@@ -101,12 +101,12 @@
 	// Save watched repos to storage
 	$: if (browser) {
 		storage.set(
-			'github-watched-repos',
+			'watched-repos',
 			$watchedRepos.map(({ id, active, muted }) => ({ id, active, muted }))
 		);
 	}
 
-	function handleToggleRepo(id: string) {
+	function handleToggleRepo(id: number) {
 		return (event: MouseEvent) => {
 			if (event.altKey || event.ctrlKey || event.shiftKey || event.metaKey) {
 				$watchedRepos = $watchedRepos.map((item) => ({ ...item, active: item.id === id }));
@@ -130,7 +130,7 @@
 		};
 	}
 
-	function handleMuteRepo(id: string) {
+	function handleMuteRepo(id: number) {
 		return () => {
 			$watchedRepos = $watchedRepos.map((item) =>
 				item.id === id ? { ...item, muted: !item.muted } : item

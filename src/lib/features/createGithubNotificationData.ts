@@ -44,7 +44,7 @@ export async function createGithubNotificationData(
 	const pinned = previous?.pinned || false;
 	const muted = previous?.muted || false;
 	const done = previous?.done || false;
-	const [owner, repo] = repository.full_name.split('/');
+	const [owner, name] = repository.full_name.split('/');
 
 	// Get Personal Access Tokens
 	let fetchOptions: FetchOptions = {};
@@ -76,9 +76,12 @@ export async function createGithubNotificationData(
 		time: updated_at,
 		title: subject.title,
 		type: subject.type,
-		owner,
-		repo,
-		repoId: `${repository.id}`,
+		repository: {
+			id: repository.id,
+			owner,
+			name,
+			domain: 'github.com'
+		},
 		ownerAvatar: repository.owner.avatar_url
 	} as const;
 	let value: NotificationData;

@@ -7,6 +7,7 @@
 	import type { Repo } from './GitlabRepos.svelte';
 
 	export let repo: Repo;
+	export let repos: Repo[];
 	export let first: boolean;
 
 	const dispatch = createEventDispatcher();
@@ -29,23 +30,28 @@
 		input.focus();
 	});
 
-	function check(string: string) {
+	function check(value: string) {
 		repo.pending = true;
 		repo.error = false;
 		clearTimeout(timer);
 
 		timer = setTimeout(async () => {
+			if (repos.filter((item) => item.url === value).length > 1) {
+				repo.pending = false;
+				repo.error = true;
+				errorMessage = 'Repository already submitted';
+				return;
+			}
+			// TODO: use url api
 			const regex = /^https:\/\/(gitlab(\.[a-zA-Z0-9-]+)?)\.com\/([^/?\s]+\/[^/?\s]+)$/i;
-			if (regex.test(string)) {
+			if (regex.test(value)) {
 				try {
-					const match = string.match(regex);
+					const match = value.match(regex);
 					if (!match) return;
 					const [, domain, , repository] = match;
 					const response = await fetchGitlab<GitlabRepository>(
 						`projects/${repository.replace('/', '%2F')}`,
-						{
-							domain: domain + '.com'
-						}
+						{ domain: `${domain}.com` }
 					);
 					repo.id = response.id;
 					repo.error = false;
@@ -68,7 +74,7 @@
 	<div class="input-container">
 		<Input
 			bind:value={repo.url}
-			error={repo.error && !untouched}
+			error={repo.error}
 			bind:this={input}
 			placeholder={'https://gitlab.com/you/your-repo'}
 		/>
@@ -76,8 +82,8 @@
 			<div class="addon pending">
 				<div class="spinner" />
 			</div>
-		{:else if !untouched}
-			{#if !repo.error && first}
+		{:else}
+			{#if !repo.error && first && !untouched}
 				<div class="addon first-success">
 					<CheckIcon />
 				</div>
@@ -85,10 +91,10 @@
 			{#if !first}
 				<button
 					class="addon button"
-					class:success={!repo.error}
+					class:success={!repo.error && !untouched}
 					on:click={() => dispatch('delete')}
 				>
-					{#if !repo.error}
+					{#if !repo.error && !untouched}
 						<CheckIcon />
 					{/if}
 					<TrashIcon />

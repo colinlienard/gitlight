@@ -23,7 +23,7 @@
 
 	// Apply filters and search
 	$: $filteredNotifications = $globalNotifications.filter((notification) => {
-		const repo = $watchedRepos.find((item) => item.id === notification.repoId);
+		const repo = $watchedRepos.find((item) => item.id === notification.repository.id);
 		const person = $watchedPersons.find(
 			(item) => item.login === (notification.creator?.login || notification.author?.login)
 		);

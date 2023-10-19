@@ -10,8 +10,8 @@ export type StorageMap = {
 	settings: Settings;
 	'github-notifications': SavedNotifications;
 	'gitlab-notifications': SavedNotifications;
-	'github-watched-repos': { id: string; active: boolean; muted: boolean }[];
-	'github-watched-persons': WatchedPerson[];
+	'watched-repos': { id: number; active: boolean; muted: boolean }[];
+	'watched-persons': WatchedPerson[];
 	'type-filters': boolean[];
 	priorities: Priority[];
 };

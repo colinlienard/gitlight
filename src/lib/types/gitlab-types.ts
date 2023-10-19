@@ -102,7 +102,7 @@ export type GitlabEvent = {
 			action_name: 'commented on';
 			target_id: number;
 			target_iid: number;
-			target_type: 'Note' | 'DiffNote';
+			target_type: 'Note' | 'DiffNote' | 'DiscussionNote';
 			note: {
 				body: string;
 				noteable_id: number;

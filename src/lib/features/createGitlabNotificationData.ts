@@ -34,8 +34,9 @@ let GITLAB_LABELS: Map<string, GitlabLabel[]> | undefined;
 */
 export async function prepareGitlabNotificationData(events: GitlabEventWithRepoData[]) {
 	const grouped = events.reduce<GroupedEvent[]>((previous, current) => {
+		const { target_type } = current;
 		const target_id =
-			(current.target_type === 'Note' || current.target_type === 'DiffNote'
+			(target_type === 'Note' || target_type === 'DiffNote' || target_type === 'DiscussionNote'
 				? current.note.noteable_id
 				: current.target_id) || undefined;
 		const ref =
@@ -57,10 +58,12 @@ export async function prepareGitlabNotificationData(events: GitlabEventWithRepoD
 		grouped.map<Promise<GroupedEvent>>(async (item) => {
 			if (item.target_id) {
 				const firstEvent = item.events[0];
+				const { target_type } = firstEvent;
+				const isNote =
+					target_type === 'Note' || target_type === 'DiffNote' || target_type === 'DiscussionNote';
 				let type: 'Issue' | 'MergeRequest' = 'MergeRequest';
 				if (
-					((firstEvent.target_type === 'Note' || firstEvent.target_type === 'DiffNote') &&
-						firstEvent.note.noteable_type === 'Issue') ||
+					(isNote && firstEvent.note.noteable_type === 'Issue') ||
 					('target_type' in firstEvent && firstEvent.target_type === 'Issue')
 				) {
 					type = 'Issue';
@@ -68,11 +71,7 @@ export async function prepareGitlabNotificationData(events: GitlabEventWithRepoD
 				const data = await fetchGitlab<GitlabMergeRequest | GitlabIssue>(
 					`projects/${firstEvent.repository.encoded}/${
 						type === 'Issue' ? 'issues' : 'merge_requests'
-					}/${
-						firstEvent.target_type === 'Note' || firstEvent.target_type === 'DiffNote'
-							? firstEvent.note.noteable_iid
-							: firstEvent.target_iid
-					}`
+					}/${isNote ? firstEvent.note.noteable_iid : firstEvent.target_iid}`
 				);
 				return {
 					target_id: item.target_id,
@@ -190,11 +189,7 @@ export async function createGitlabNotificationData(
 		done,
 		muted,
 		time: firstEvent.created_at,
-		owner: firstEvent.repository.owner,
-		repo: firstEvent.repository.repo,
-		repoId: `${firstEvent.repository.id}`,
-		// repoId: '1234',
-		// ownerAvatar: repository.owner.avatar_url
+		repository: firstEvent.repository,
 		ownerAvatar: 'https://placehold.co/400'
 	} as const;
 	let value: NotificationData;
@@ -276,14 +271,16 @@ export async function createGitlabNotificationData(
 	if (!priorities || priorities.length === 0) return value;
 
 	// Get all comments
-	const iid =
-		firstEvent.target_type === 'Note' || firstEvent.target_type === 'DiffNote'
-			? firstEvent.note.noteable_iid
-			: firstEvent.target_iid;
+	const { target_type } = firstEvent;
+	const isNote =
+		target_type === 'Note' || target_type === 'DiffNote' || target_type === 'DiscussionNote';
+	const iid = isNote ? firstEvent.note.noteable_iid : firstEvent.target_iid;
 	const comments = iid
 		? await fetchGitlab<Array<{ body: string }>>(
 				`projects/${firstEvent.repository.encoded}/${
-					firstEvent.target_type === 'Issue' ? 'issues' : 'merge_requests'
+					(isNote && firstEvent.note.noteable_type === 'Issue') || target_type === 'Issue'
+						? 'issues'
+						: 'merge_requests'
 				}/${iid}/notes`
 		  )
 		: undefined;
@@ -327,7 +324,7 @@ export async function createGitlabNotificationData(
 
 export async function fetchGitlabLabels(repos: string[]) {
 	const responses = await Promise.all(
-		repos.map((repo) => fetchGitlab<Array<GitlabLabel>>(`projects/${repo}/labels`))
+		repos.map((repo) => fetchGitlab<Array<GitlabLabel>>(`projects/${repo}/labels?per_page=100`))
 	);
 	GITLAB_LABELS = new Map(responses.map((response, index) => [repos[index], response]));
 }
@@ -382,8 +379,14 @@ function getPriorityValue(
 		case 'label':
 			return notification.labels?.some((label) => label.name === priority.specifier);
 
-		case 'state':
-			return data && 'state' in data && data.state === priority.specifier;
+		case 'state': {
+			if (!(data && 'state' in data)) {
+				return false;
+			}
+			let { state } = data;
+			if (state === 'merged') state = 'closed';
+			return state === priority.specifier;
+		}
 
 		case 'type':
 			return notification.type === priority.specifier;

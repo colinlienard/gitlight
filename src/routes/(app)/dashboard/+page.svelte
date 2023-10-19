@@ -68,13 +68,13 @@
 	}
 
 	function notificationIsMuted(
-		{ author, creator, repoId, muted }: NotificationData,
-		persons: StorageMap['github-watched-persons'],
-		repos: StorageMap['github-watched-repos']
+		{ author, creator, repository, muted }: NotificationData,
+		persons: StorageMap['watched-persons'],
+		repos: StorageMap['watched-repos']
 	) {
 		const currentAuthor = persons.find(({ login }) => login === author?.login);
 		const currentCreator = persons.find(({ login }) => login === creator?.login);
-		const repo = repos.find(({ id }) => id === repoId);
+		const repo = repos.find(({ id }) => id === repository.id);
 		return (currentAuthor ? currentAuthor.muted : currentCreator?.muted) || repo?.muted || muted;
 	}
 
@@ -147,8 +147,8 @@
 
 		let newNotifications: NotificationData[] = [];
 		const savedNotifications = storage.get('github-notifications') || [];
-		const persons = storage.get('github-watched-persons') || [];
-		const repos = storage.get('github-watched-repos') || [];
+		const persons = storage.get('watched-persons') || [];
+		const repos = storage.get('watched-repos') || [];
 		const firstFetch = !$githubNotifications.length;
 
 		try {
@@ -217,16 +217,16 @@
 		let newNotifications: NotificationData[] = [];
 		const savedNotifications = storage.get('gitlab-notifications') || [];
 		const ignoredNotificationTypes: GitlabEvent['action_name'][] = ['created', 'deleted', 'joined'];
-		const persons = storage.get('github-watched-persons') || [];
-		const repos = storage.get('github-watched-repos') || [];
+		const persons = storage.get('watched-persons') || [];
+		const repos = storage.get('watched-repos') || [];
 		const firstFetch = !$gitlabNotifications.length;
 
 		const repositories: GitlabEventWithRepoData['repository'][] = $settings.gitlabRepos.map(
 			({ url, id }) => {
 				const u = new URL(url);
-				const [, owner, repo] = u.pathname.split('/');
-				const encoded = `${owner}%2F${repo}`;
-				return { domain: u.host, owner, repo, encoded, id };
+				const [, owner, name] = u.pathname.split('/');
+				const encoded = `${owner}%2F${name}`;
+				return { domain: u.host, owner, name, encoded, id };
 			}
 		);
 
@@ -241,9 +241,10 @@
 				await Promise.all(
 					repositories.map(
 						(repository) =>
+							// eslint-disable-next-line no-async-promise-executor
 							new Promise<GitlabEvent[]>(async (resolve) => {
 								const response = await fetchGitlab<GitlabEvent[]>(
-									`projects/${repository.encoded}/events`,
+									`projects/${repository.encoded}/events?per_page=50`,
 									{ domain: repository.domain }
 								);
 								resolve(response.map((item) => ({ ...item, repository })));

@@ -22,8 +22,9 @@
 	$: saveDisabled = !repos.length || repos.some(({ error, pending }) => error || pending);
 
 	function handleSave() {
-		$settings.gitlabRepos = repos.map(({ url }) => ({ url, id: 0 }));
+		$settings.gitlabRepos = repos.map(({ url, id }) => ({ url, id }));
 		dispatchEvent(new CustomEvent('refetch'));
+		saveDisabled = true;
 	}
 
 	function handleAdd() {
@@ -43,7 +44,7 @@
 	<p>Enter the repositories url you want notifications from:</p>
 	<p class="subtext">For self-hosted, just enter the domain before gitlab.com.</p>
 	{#each repos as repo, index (index)}
-		<RepoInput bind:repo first={index === 0} on:delete={handleDelete(index)} />
+		<RepoInput bind:repo {repos} first={index === 0} on:delete={handleDelete(index)} />
 	{/each}
 	<div class="add-container">
 		<Button secondary disabled={addDisabled} on:click={handleAdd}>

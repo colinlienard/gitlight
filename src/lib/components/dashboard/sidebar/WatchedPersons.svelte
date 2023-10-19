@@ -8,7 +8,7 @@
 
 	// Update watched persons
 	$: if (browser && !$loading) {
-		let savedWatchedPersons = storage.get('github-watched-persons');
+		let savedWatchedPersons = storage.get('watched-persons');
 
 		const persons = $globalNotifications.reduce<WatchedPerson[]>((previous, current) => {
 			if (current.done) return previous;
@@ -64,7 +64,7 @@
 
 	// Save watched persons to storage
 	$: if (browser) {
-		storage.set('github-watched-persons', $watchedPersons);
+		storage.set('watched-persons', $watchedPersons);
 	}
 
 	function handleToggle(login: string) {

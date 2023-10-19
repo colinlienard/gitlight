@@ -51,9 +51,12 @@ export type NotificationData = {
 	time: string;
 	icon: NotificationIcon;
 	opened?: boolean;
-	owner: string;
-	repo: string;
-	repoId: string;
+	repository: {
+		id: number;
+		domain: string;
+		owner: string;
+		name: string;
+	};
 	ownerAvatar: string;
 	number?: number;
 	labels?: GithubLabel[];
@@ -90,7 +93,7 @@ export type SavedNotifications = Array<{
 }>;
 
 export type WatchedRepo = {
-	id: string;
+	id: number;
 	name: string;
 	ownerName: string;
 	ownerAvatar: string;
@@ -113,7 +116,7 @@ export type GitlabEventWithRepoData = GitlabEvent & {
 		id: number;
 		domain: string;
 		owner: string;
-		repo: string;
+		name: string;
 		encoded: string;
 	};
 };

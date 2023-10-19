@@ -3,10 +3,12 @@
 	import { InlineSelect, Switch, Tooltip } from '$lib/components';
 	import { settings } from '$lib/stores';
 	import type { Settings } from '$lib/types';
+	import GitlabRepos from './gitlab-repos/GitlabRepos.svelte';
 
 	const numberOptions: Array<Settings['notificationNumber']> = [25, 50, 75, 100];
 </script>
 
+<GitlabRepos />
 <h3>General</h3>
 <Switch
 	label="Activate push notifications (only on desktop app)"

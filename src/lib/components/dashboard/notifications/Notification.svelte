@@ -45,14 +45,14 @@
 		priority,
 		type,
 		icon,
-		owner,
-		repo,
+		repository,
 		number,
 		labels,
 		url,
 		previously
 	} = data;
-	let repoUrl = `https://github.com/${owner}/${repo}`;
+	// TODO: store actual full url
+	let repoUrl = `https://${repository.domain}/${repository.owner}/${repository.name}`;
 	let hoverAction = false;
 	let hoverActionTimeout: ReturnType<typeof setTimeout>;
 
@@ -146,7 +146,7 @@
 			<div class="top">
 				<div class="repo">
 					<button class="repo-button" on:mouseup={() => openUrl(repoUrl)}>
-						{owner}/<span class="bold">{repo}</span>
+						{repository.owner}/<span class="bold">{repository.name}</span>
 					</button>
 				</div>
 				<NotificationStatus {data} />
