@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Button, ShrinkableWrapper } from '$lib/components';
+	import type { Settings } from '~/lib/types';
+	import { Button, InlineSelect } from '$lib/components';
 	import { ExternalLinkIcon } from '$lib/icons';
 	import { settings } from '$lib/stores';
 	import PatItem from './PatItem.svelte';
@@ -7,12 +8,58 @@
 	export let onExpand: () => void;
 
 	let editing = false;
+	const numberOptions: Array<Settings['notificationNumber']> = [25, 50, 75, 100];
 
 	$: if (editing) {
 		onExpand();
 	}
 </script>
 
+<h3>GitLight settings</h3>
+<InlineSelect
+	label="Notification number"
+	options={numberOptions}
+	bind:value={$settings.notificationNumber}
+	on:change={() => dispatchEvent(new CustomEvent('refetch'))}
+/>
+<span />
+<h3>GitHub notification settings</h3>
+<p class="text">
+	In order to receive GitHub notifications in the app, you need to update some settings:
+</p>
+<Button href="https://github.com/settings/notifications" external small>
+	<ExternalLinkIcon />
+	Notification settings
+</Button>
+<p class="list-item">
+	<strong>Watching</strong> and <strong>Participating, @mentions and custom</strong> must be set to
+	<strong>Notify me: on GitHub</strong>.
+</p>
+<p class="list-item">
+	If you want to receive workflow related notifications, set <strong>Actions</strong> to
+	<strong>Notify me: on GitHub</strong>.
+</p>
+<p class="list-item">
+	If you want to receive Dependabot related notifications, set <strong>
+		Dependabot alerts: New vulnerabilities
+	</strong>
+	to <strong>Notify me: on GitHub</strong>.
+</p>
+<span />
+<h3>Organization access</h3>
+<p class="text">
+	For private repositories, the GitHub organization that owns these repositories must grant GitLight
+	access to notifications:
+</p>
+<Button
+	href="https://github.com/settings/connections/applications/3db3813c5828d8bbe530"
+	external
+	small
+>
+	<ExternalLinkIcon />
+	Organization access
+</Button>
+<span />
 <h3>GitHub PATs</h3>
 <p class="text">
 	Fine-grained Personal Access Tokens are required to access data in private repositories. They
@@ -20,17 +67,6 @@
 	repositories...). <strong>GitLight will only read data in your private repositories</strong>. It
 	will never write or modify anything.
 </p>
-<span />
-<ShrinkableWrapper shrinked>
-	<h3 slot="header">Fow those who where using GitLight before version 0.9.0</h3>
-	<p class="text">
-		Because you accepted the <code>repo</code> scope when you first logged in, you don't need to do
-		anything as long as you're not subscribing to a new private repository from a different owner.
-		But if you want to also use fine-grained permissions, you can just log out and log in again, and
-		you'll be prompted to accept only the
-		<code>notifications</code> scope, not the <code>repo</code> scope anymore.
-	</p>
-</ShrinkableWrapper>
 <span />
 <h3>Create a fine-grained PAT</h3>
 <Button href="https://github.com/settings/tokens?type=beta" external small>
@@ -96,23 +132,12 @@
 			content: '-';
 		}
 
+		strong {
+			@include typography.bold;
+		}
+
 		a {
 			@include mixins.link;
-		}
-	}
-
-	code {
-		position: relative;
-		padding: 0 0.1em;
-		font: inherit;
-
-		&::before {
-			position: absolute;
-			z-index: -1;
-			border-radius: 4px;
-			background-color: variables.$grey-3;
-			content: ' ';
-			inset: -0.1em;
 		}
 	}
 

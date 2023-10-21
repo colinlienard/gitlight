@@ -42,16 +42,13 @@
 				errorMessage = 'Repository already submitted';
 				return;
 			}
-			// TODO: use url api
 			const regex = /^https:\/\/(gitlab(\.[a-zA-Z0-9-]+)?)\.com\/([^/?\s]+\/[^/?\s]+)$/i;
 			if (regex.test(value)) {
 				try {
-					const match = value.match(regex);
-					if (!match) return;
-					const [, domain, , repository] = match;
+					const url = new URL(value);
 					const response = await fetchGitlab<GitlabRepository>(
-						`projects/${repository.replace('/', '%2F')}`,
-						{ domain: `${domain}.com` }
+						`projects/${url.pathname.substring(1).replace('/', '%2F')}`,
+						{ domain: url.host }
 					);
 					repo.id = response.id;
 					repo.error = false;
@@ -84,7 +81,7 @@
 			</div>
 		{:else}
 			{#if !repo.error && first && !untouched}
-				<div class="addon first-success">
+				<div class="addon success">
 					<CheckIcon />
 				</div>
 			{/if}
@@ -136,13 +133,6 @@
 				height: 1rem;
 			}
 
-			&.first-success {
-				:global(svg) {
-					height: 1.25rem;
-					color: variables.$green;
-				}
-			}
-
 			&.pending .spinner {
 				@keyframes spin {
 					from {
@@ -177,44 +167,44 @@
 				:global(svg) {
 					height: 1.25rem;
 				}
+			}
 
-				&.success {
-					:global(svg) {
-						position: absolute;
-						height: 1.25rem;
+			&.success {
+				:global(svg) {
+					position: absolute;
+					height: 1.25rem;
 
-						&:nth-of-type(1) {
-							@keyframes disappear {
-								75% {
-									scale: 1;
-								}
-
-								100% {
-									scale: 0;
-								}
+					&:nth-of-type(1) {
+						@keyframes disappear {
+							75% {
+								scale: 1;
 							}
 
-							animation: disappear 2s ease-in-out forwards;
-							color: variables.$green;
+							100% {
+								scale: 0;
+							}
 						}
 
-						&:nth-of-type(2) {
-							@keyframes appear {
-								0% {
-									scale: 0;
-								}
+						animation: disappear 2s ease-in-out forwards;
+						color: variables.$green;
+					}
 
-								75% {
-									scale: 0;
-								}
-
-								100% {
-									scale: 1;
-								}
+					&:nth-of-type(2) {
+						@keyframes appear {
+							0% {
+								scale: 0;
 							}
 
-							animation: appear 2s ease-in-out;
+							75% {
+								scale: 0;
+							}
+
+							100% {
+								scale: 1;
+							}
 						}
+
+						animation: appear 2s ease-in-out;
 					}
 				}
 			}

@@ -53,6 +53,7 @@ export type NotificationData = {
 	opened?: boolean;
 	repository: {
 		id: number;
+		url: string;
 		domain: string;
 		owner: string;
 		name: string;
@@ -114,6 +115,7 @@ export type WatchedPerson = {
 export type GitlabEventWithRepoData = GitlabEvent & {
 	repository: {
 		id: number;
+		url: string;
 		domain: string;
 		owner: string;
 		name: string;
@@ -123,7 +125,6 @@ export type GitlabEventWithRepoData = GitlabEvent & {
 
 export type Settings = {
 	activateNotifications: boolean;
-	showNotificationsSyncTimer: boolean;
 	readWhenOpenInBrowser: boolean;
 	readWhenPin: boolean;
 	showNotificationsRepo: boolean;

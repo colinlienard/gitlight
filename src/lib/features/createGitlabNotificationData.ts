@@ -218,6 +218,7 @@ export async function createGitlabNotificationData(
 					type: 'pr',
 					icon: getGitlabIcon(event.data),
 					title: event.data.title,
+					number: event.data.iid,
 					labels: getColoredLabels(firstEvent.repository.encoded, event.data.labels),
 					url: event.data.web_url,
 					ref: event.ref,
@@ -243,6 +244,7 @@ export async function createGitlabNotificationData(
 				type: 'source_branch' in event.data ? 'pr' : 'issue',
 				icon: getGitlabIcon(event.data),
 				title: event.data.title,
+				number: event.data.iid,
 				labels: getColoredLabels(firstEvent.repository.encoded, event.data.labels),
 				url: event.data.web_url,
 				ref: event.ref,
@@ -322,11 +324,15 @@ export async function createGitlabNotificationData(
 	};
 }
 
-export async function fetchGitlabLabels(repos: string[]) {
+export async function fetchGitlabLabels(repos: GitlabEventWithRepoData['repository'][]) {
 	const responses = await Promise.all(
-		repos.map((repo) => fetchGitlab<Array<GitlabLabel>>(`projects/${repo}/labels?per_page=100`))
+		repos.map((repo) =>
+			fetchGitlab<Array<GitlabLabel>>(`projects/${repo.encoded}/labels?per_page=100`, {
+				domain: repo.domain
+			})
+		)
 	);
-	GITLAB_LABELS = new Map(responses.map((response, index) => [repos[index], response]));
+	GITLAB_LABELS = new Map(responses.map((response, index) => [repos[index].encoded, response]));
 }
 
 function getColoredLabels(repo: string, labels: string[]): NotificationData['labels'] {

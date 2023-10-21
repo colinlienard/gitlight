@@ -226,13 +226,13 @@
 				const u = new URL(url);
 				const [, owner, name] = u.pathname.split('/');
 				const encoded = `${owner}%2F${name}`;
-				return { domain: u.host, owner, name, encoded, id };
+				return { id, url, domain: u.host, owner, name, encoded };
 			}
 		);
 
 		// Get labels colors
 		if (firstFetch) {
-			await fetchGitlabLabels(repositories.map(({ encoded }) => encoded));
+			await fetchGitlabLabels(repositories);
 		}
 
 		try {
@@ -253,7 +253,6 @@
 				)
 			)
 				.flat()
-				// .splice(0, $settings.notificationNumber)
 				.filter(
 					(n): n is GitlabEventWithRepoData =>
 						!n || !ignoredNotificationTypes.includes(n.action_name)
@@ -407,16 +406,14 @@
 					</div>
 				{/if}
 				<h1 class="title">Notifications</h1>
-				{#if $settings.showNotificationsSyncTimer}
-					<div class="sync-pill" class:loading={!synced}>
-						<RefreshIcon />
-						{#if synced}
-							Synced <span class="time">{syncTime}s ago</span>
-						{:else}
-							Syncing...
-						{/if}
-					</div>
-				{/if}
+				<div class="sync-pill" class:loading={!synced}>
+					<RefreshIcon />
+					{#if synced}
+						Synced <span class="time">{syncTime}s ago</span>
+					{:else}
+						Syncing...
+					{/if}
+				</div>
 			</div>
 			<div class="settings-wrapper">
 				<Priorities />

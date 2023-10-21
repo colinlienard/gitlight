@@ -51,8 +51,6 @@
 		url,
 		previously
 	} = data;
-	// TODO: store actual full url
-	let repoUrl = `https://${repository.domain}/${repository.owner}/${repository.name}`;
 	let hoverAction = false;
 	let hoverActionTimeout: ReturnType<typeof setTimeout>;
 
@@ -145,7 +143,7 @@
 		{#if $settings.showNotificationsRepo}
 			<div class="top">
 				<div class="repo">
-					<button class="repo-button" on:mouseup={() => openUrl(repoUrl)}>
+					<button class="repo-button" on:mouseup={() => openUrl(repository.url)}>
 						{repository.owner}/<span class="bold">{repository.name}</span>
 					</button>
 				</div>

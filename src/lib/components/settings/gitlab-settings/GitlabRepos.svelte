@@ -41,8 +41,7 @@
 </script>
 
 <div class="container">
-	<p>Enter the repositories url you want notifications from:</p>
-	<p class="subtext">For self-hosted, just enter the domain before gitlab.com.</p>
+	<p class="text">Enter the url of the repositories you want to receive notifications from:</p>
 	{#each repos as repo, index (index)}
 		<RepoInput bind:repo {repos} first={index === 0} on:delete={handleDelete(index)} />
 	{/each}
@@ -67,9 +66,7 @@
 		gap: 1rem;
 	}
 
-	.subtext {
-		min-width: 36rem;
-		margin-bottom: 1rem;
+	.text {
 		color: variables.$grey-4;
 	}
 

@@ -15,18 +15,6 @@ export const ssr = true;
 export async function load({ url }) {
 	if (!browser || url.pathname === '/tray') return;
 
-	// Migrate old storage keys
-	// TODO: Remove this in a future version
-	if (localStorage.getItem('user')) {
-		localStorage.setItem('github-user', localStorage.getItem('user') as string);
-		localStorage.removeItem('user');
-	}
-	if (localStorage.getItem('access-token')) {
-		localStorage.setItem('github-access-token', localStorage.getItem('access-token') as string);
-		localStorage.removeItem('access-token');
-	}
-	// End migration
-
 	let githubUser = storage.get('github-user');
 	let githubAccessToken = storage.get('github-access-token');
 	let gitlabUser = storage.get('gitlab-user');

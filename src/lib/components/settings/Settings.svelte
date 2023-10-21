@@ -11,8 +11,8 @@
 	import type { GithubRelease } from '$lib/types';
 	import Accounts from './accounts';
 	import App from './App.svelte';
-	import GithubSettings from './GithubSettings.svelte';
-	import Permissions from './permissions';
+	import GithubSettings from './github-settings';
+	import GitlabSettings from './gitlab-settings';
 	import Preferences from './Preferences.svelte';
 
 	// Cannot use generic type here
@@ -26,24 +26,29 @@
 	let imageLoaded = false;
 	let updateAvailable: string | false = false;
 
+	const githubUser = $page.data.session?.githubUser;
+	const gitlabUser = $page.data.session?.gitlabUser;
+
 	$: tabs = [
 		{ name: 'Preferences', component: Preferences },
+		// ...(githubUser
+		// 	? [
 		{
 			name: 'GitHub settings',
 			component: GithubSettings,
 			props: { onSetTab: (number: number) => (tabIndex = number) }
 		},
-		{
-			name: 'Permissions',
-			component: Permissions,
-			props: {
-				onExpand: () => {
-					setTimeout(() => {
-						scrollContainer?.scrollTo({ top: 999, behavior: 'smooth' });
-					}, 10);
-				}
-			}
-		},
+		// ]
+		// : []),
+		...(gitlabUser
+			? [
+					{
+						name: 'GitLab settings',
+						component: GitlabSettings,
+						props: { onSetTab: (number: number) => (tabIndex = number) }
+					}
+			  ]
+			: []),
 		{ name: 'Accounts', component: Accounts },
 		{
 			name: 'App',
@@ -52,9 +57,6 @@
 			props: { updateAvailable, checkUpdate }
 		}
 	] as Tabs;
-
-	const githubUser = $page.data.session?.githubUser;
-	const gitlabUser = $page.data.session?.gitlabUser;
 
 	// Check if an update is available every 30 min
 	const interval = setInterval(checkUpdate, 1800000);
