@@ -28,6 +28,8 @@ export async function GET({ url }) {
 			const data = await response.json();
 			return new Response(JSON.stringify(data), { status: 200 });
 		}
+
+		return new Response(response.statusText, { status: response.status });
 	} catch (error) {
 		return new Response(JSON.stringify({ error }), { status: 500 });
 	}

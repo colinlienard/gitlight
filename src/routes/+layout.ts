@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import { browser } from '$app/environment';
-import { fetchGithub, fetchGitlab, storage } from '$lib/features';
+import { checkGitlabToken, fetchGithub, fetchGitlab, storage } from '$lib/features';
 import { openDesktopApp } from '$lib/helpers';
 import type { GithubUser, GitlabUser } from '$lib/types';
 
@@ -50,6 +50,9 @@ export async function load({ url }) {
 		gitlabExpiration = gitlabExpirationParam;
 		storage.set('gitlab-expiration', gitlabExpiration);
 	}
+
+	// If the GitLab access token has expired, refresh it
+	await checkGitlabToken();
 
 	// Open the app with the access token
 	if (url.searchParams.has('from_app') && (githubAccessToken || gitlabAccessToken)) {

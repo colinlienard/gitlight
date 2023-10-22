@@ -35,6 +35,7 @@
 			icon: 'commit',
 			repository: {
 				id: 1,
+				url: 'https://github.com/colinlienard/gitlight',
 				owner: 'colinlienard',
 				name: 'gitlight',
 				domain: 'github.com'
@@ -54,6 +55,7 @@
 			icon: 'merged-pr',
 			repository: {
 				id: 1,
+				url: 'https://github.com/lagonapp/lagon',
 				owner: 'lagonapp',
 				name: 'lagon',
 				domain: 'github.com'
@@ -78,6 +80,7 @@
 			icon: 'merged-pr',
 			repository: {
 				id: 1,
+				url: 'https://github.com/tauri-apps/tauri',
 				owner: 'tauri-apps',
 				name: 'tauri',
 				domain: 'github.com'
@@ -99,6 +102,7 @@
 			icon: 'open-issue',
 			repository: {
 				id: 1,
+				url: 'https://github.com/sveltejs/svelte',
 				owner: 'sveltejs',
 				name: 'svelte',
 				domain: 'github.com'
@@ -120,6 +124,7 @@
 			icon: 'open-pr',
 			repository: {
 				id: 1,
+				url: 'https://github.com/colinlienard/gitlight',
 				owner: 'colinlienard',
 				name: 'gitlight',
 				domain: 'github.com'
