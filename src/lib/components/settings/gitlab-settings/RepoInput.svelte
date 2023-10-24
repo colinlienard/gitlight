@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SvelteComponent, createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 	import type { GitlabRepository } from '~/lib/types';
 	import { Input } from '$lib/components';
 	import { fetchGitlab } from '$lib/features';
@@ -16,7 +16,6 @@
 	let errorMessage: string;
 	let mounted = false;
 	let untouched = true;
-	let input: SvelteComponent;
 
 	$: url = repo.url;
 	$: if (mounted) {
@@ -25,10 +24,6 @@
 	} else {
 		mounted = true;
 	}
-
-	onMount(() => {
-		input.focus();
-	});
 
 	function check(value: string) {
 		repo.pending = true;
@@ -71,8 +66,7 @@
 	<div class="input-container">
 		<Input
 			bind:value={repo.url}
-			error={repo.error}
-			bind:this={input}
+			error={repo.error && !untouched}
 			placeholder={'https://gitlab.com/you/your-repo'}
 		/>
 		{#if repo.pending}

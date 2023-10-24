@@ -23,14 +23,14 @@ type GroupedEvent = {
 let GITLAB_LABELS: Map<string, GitlabLabel[]> | undefined;
 
 /*
-- group events by target_id, or ref
+- Group events by target_id, or ref
   - if not first fetch, search in savedNotifications and take same id
-- for each group
+- For each group
   - if target_id, get the issue/mr
-  - if ref, do nothing (unless there is only one, if so get the mr with ?source_branch=)
-- merge ref group with target_id group
-- order by date inside groups
-- create notification data with previous for each group (one group = one notification)
+  - if ref, do nothing
+- Merge ref group with target_id group
+- Order by date inside groups
+- Create notification data with previous for each group (one group = one notification)
 */
 export async function prepareGitlabNotificationData(events: GitlabEventWithRepoData[]) {
 	const grouped = events.reduce<GroupedEvent[]>((previous, current) => {
@@ -189,8 +189,7 @@ export async function createGitlabNotificationData(
 		done,
 		muted,
 		time: firstEvent.created_at,
-		repository: firstEvent.repository,
-		ownerAvatar: 'https://placehold.co/400'
+		repository: firstEvent.repository
 	} as const;
 	let value: NotificationData;
 

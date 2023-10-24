@@ -64,14 +64,6 @@
 		}
 	}
 
-	function markAllAsRead() {
-		markAllAs('unread', false);
-	}
-
-	function markAllAsDone() {
-		markAllAs('done', true);
-	}
-
 	// Animations settings
 	const animationSettings = { duration: 400, easing: cubicInOut };
 	const [send, receive] = crossfade(animationSettings);
@@ -103,7 +95,7 @@
 			>
 				<div slot="header-addon">
 					{#if unread.length}
-						<button class="read-all" on:click={markAllAsRead}>
+						<button class="read-all" on:click={() => markAllAs('unread', false)}>
 							<CheckIcon />
 							All
 						</button>
@@ -123,7 +115,7 @@
 			>
 				<div slot="header-addon">
 					{#if read.length}
-						<button class="read-all" on:click={markAllAsDone}>
+						<button class="read-all" on:click={() => markAllAs('done', true)}>
 							<DoubleCheckIcon />
 							All
 						</button>

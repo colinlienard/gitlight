@@ -31,15 +31,15 @@
 
 	$: tabs = [
 		{ name: 'Preferences', component: Preferences },
-		// ...(githubUser
-		// 	? [
-		{
-			name: 'GitHub settings',
-			component: GithubSettings,
-			props: { onSetTab: (number: number) => (tabIndex = number) }
-		},
-		// ]
-		// : []),
+		...(githubUser
+			? [
+					{
+						name: 'GitHub settings',
+						component: GithubSettings,
+						props: { onSetTab: (number: number) => (tabIndex = number) }
+					}
+			  ]
+			: []),
 		...(gitlabUser
 			? [
 					{
@@ -96,6 +96,7 @@
 		if (saved) {
 			$settings = { ...$settings, ...saved };
 		} else {
+			$settings.providerView = githubUser ? 'github' : 'gitlab';
 			forceOpenSettings = true;
 			tabIndex = 1;
 		}

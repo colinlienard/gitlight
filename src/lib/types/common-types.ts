@@ -58,7 +58,7 @@ export type NotificationData = {
 		owner: string;
 		name: string;
 	};
-	ownerAvatar: string;
+	ownerAvatar?: string;
 	number?: number;
 	labels?: GithubLabel[];
 	url?: string;
@@ -97,7 +97,7 @@ export type WatchedRepo = {
 	id: number;
 	name: string;
 	ownerName: string;
-	ownerAvatar: string;
+	ownerAvatar?: string;
 	number: number;
 	active: boolean;
 	muted: boolean;

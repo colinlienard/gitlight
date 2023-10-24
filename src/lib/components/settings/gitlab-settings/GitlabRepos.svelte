@@ -43,7 +43,7 @@
 <div class="container">
 	<p class="text">Enter the url of the repositories you want to receive notifications from:</p>
 	{#each repos as repo, index (index)}
-		<RepoInput bind:repo {repos} first={index === 0} on:delete={handleDelete(index)} />
+		<RepoInput first={index === 0} {repos} bind:repo on:delete={handleDelete(index)} />
 	{/each}
 	<div class="add-container">
 		<Button secondary disabled={addDisabled} on:click={handleAdd}>

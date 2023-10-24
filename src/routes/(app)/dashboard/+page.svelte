@@ -264,13 +264,13 @@
 					const current = $gitlabNotifications.find((item) => {
 						switch (true) {
 							case n.target_type === 'Note' || n.target_type === 'DiffNote':
-								return 'note' in n && n.note.noteable_id.toString() === item.id;
+								return 'note' in n && n.note.noteable_id?.toString() === item.id;
 							case !!n.target_id:
 								return 'target_id' in n && n.target_id?.toString() === item.id;
 							case 'push_data' in n:
 								return !('push_data' in n && n.push_data.ref === item.ref);
 							default:
-								return item.id === n.id.toString();
+								return item.id === n.id?.toString();
 						}
 					});
 					return current
@@ -469,7 +469,7 @@
 				</GitlabLoginButton>
 			</div>
 		{:else if providerView === 'gitlab' && !$settings.gitlabRepos.length}
-			<div class="center-container">
+			<div class="center-container to-top">
 				<GitlabRepos />
 			</div>
 		{:else}
@@ -635,7 +635,12 @@
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
+			padding: 2rem;
 			gap: 1.5rem;
+
+			&.to-top {
+				justify-content: start;
+			}
 
 			.text {
 				@include typography.heading-2;

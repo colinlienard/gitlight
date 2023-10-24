@@ -9,7 +9,7 @@
 
 	type WatchedReposByOwner = {
 		name: string;
-		avatar: string;
+		avatar?: string;
 		number: number;
 		active: boolean;
 		muted: boolean;
@@ -161,7 +161,13 @@
 					class:active={repos[0].active}
 					on:click={handleToggleRepo(repos[0].id)}
 				>
-					<img class="image" src={avatar} alt="" />
+					{#if avatar}
+						<img class="image" src={avatar} alt="" />
+					{:else}
+						<div class="repo-icon">
+							<RepositoryIcon />
+						</div>
+					{/if}
 					<h3 class="name">{name}/{repos[0].name}</h3>
 					<span class="number">{number}</span>
 					<button class="mute" class:muted on:click|stopPropagation={handleMuteOwner(name, muted)}>
@@ -180,7 +186,13 @@
 						class:active
 						on:click={handleToggleOwner(name, !active)}
 					>
-						<img class="image" src={avatar} alt="" />
+						{#if avatar}
+							<img class="image" src={avatar} alt="" />
+						{:else}
+							<div class="repo-icon">
+								<RepositoryIcon />
+							</div>
+						{/if}
 						<h3 class="name">{name}</h3>
 						<span class="number">{number}</span>
 						<button
