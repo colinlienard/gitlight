@@ -18,8 +18,17 @@
 	let repos: Array<Repo> = $settings.gitlabRepos.length
 		? $settings.gitlabRepos.map(({ url, id }) => ({ url, id, error: false, pending: false }))
 		: [{ ...defaultRepo }];
+	let saveDisabled: boolean | null | undefined = null;
+
 	$: addDisabled = repos.length >= 10;
-	$: saveDisabled = !repos.length || repos.some(({ error, pending }) => error || pending);
+
+	$: if (saveDisabled === null) {
+		saveDisabled = undefined;
+	} else if (saveDisabled === undefined) {
+		saveDisabled = true;
+	} else {
+		saveDisabled = !repos.length || repos.some(({ error, pending }) => error || pending);
+	}
 
 	function handleSave() {
 		$settings.gitlabRepos = repos.map(({ url, id }) => ({ url, id }));
@@ -52,7 +61,7 @@
 		</Button>
 	</div>
 	<div class="submit-container">
-		<Button small disabled={saveDisabled} on:click={handleSave}>
+		<Button small disabled={saveDisabled || false} on:click={handleSave}>
 			<CheckIcon />
 			Save
 		</Button>

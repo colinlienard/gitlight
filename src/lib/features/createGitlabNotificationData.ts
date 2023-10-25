@@ -59,12 +59,13 @@ export async function prepareGitlabNotificationData(events: GitlabEventWithRepoD
 			if (item.target_id) {
 				const firstEvent = item.events[0];
 				const { target_type } = firstEvent;
+				if (target_type === 'Milestone') return item;
 				const isNote =
 					target_type === 'Note' || target_type === 'DiffNote' || target_type === 'DiscussionNote';
 				let type: 'Issue' | 'MergeRequest' = 'MergeRequest';
 				if (
 					(isNote && firstEvent.note.noteable_type === 'Issue') ||
-					('target_type' in firstEvent && firstEvent.target_type === 'Issue')
+					('target_type' in firstEvent && target_type === 'Issue')
 				) {
 					type = 'Issue';
 				}

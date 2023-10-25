@@ -52,6 +52,7 @@ export type GitlabEvent = {
 				commit_count: number;
 				commit_title: string;
 				ref: string;
+				ref_type: 'branch' | 'tag';
 			};
 	  }
 	| {
@@ -64,7 +65,7 @@ export type GitlabEvent = {
 			action_name: 'opened';
 			target_id: number;
 			target_iid: number;
-			target_type: 'MergeRequest' | 'Issue';
+			target_type: 'MergeRequest' | 'Issue' | 'Milestone';
 			target_title: string;
 	  }
 	| {

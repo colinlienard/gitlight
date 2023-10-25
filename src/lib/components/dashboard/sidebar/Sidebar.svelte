@@ -83,21 +83,23 @@
 				<WatchedRepos />
 				<Separator />
 				<WatchedPersons />
-				<Separator />
-				<div class="wrapper">
-					<h2 class="title">Manage</h2>
-					<div class="double-button">
-						<a href="https://github.com/watching" target="_blank" rel="noreferrer">Watching</a>
-						<div />
-						<a
-							href="https://github.com/notifications/subscriptions"
-							target="_blank"
-							rel="noreferrer"
-						>
-							Subscriptions
-						</a>
+				{#if $settings.providerView !== 'gitlab'}
+					<Separator />
+					<div class="wrapper">
+						<h2 class="title">Manage</h2>
+						<div class="double-button">
+							<a href="https://github.com/watching" target="_blank" rel="noreferrer">Watching</a>
+							<div />
+							<a
+								href="https://github.com/notifications/subscriptions"
+								target="_blank"
+								rel="noreferrer"
+							>
+								Subscriptions
+							</a>
+						</div>
 					</div>
-				</div>
+				{/if}
 			{:else}
 				<div class="skeletons-container">
 					<span class="skeleton" />

@@ -23,6 +23,9 @@
 		});
 	}
 
+	$: providerView = $settings.providerView;
+	$: typeFiltersGitlab = providerView === 'gitlab' ? $typeFilters.slice(0, 3) : $typeFilters;
+
 	function handleSelectOne(name: string) {
 		return () => {
 			$typeFilters = $typeFilters.map((filter) =>
@@ -43,7 +46,7 @@
 </script>
 
 <SidebarSection
-	title="Filters"
+	title="Types"
 	description="Filter notifications based on their type."
 	bind:items={$typeFilters}
 	actions={[
@@ -54,7 +57,7 @@
 		}
 	]}
 >
-	{#each $typeFilters as filter (filter.name)}
+	{#each typeFiltersGitlab as filter (filter.name)}
 		<div class="switch-wrapper">
 			<Switch
 				bind:active={filter.active}

@@ -253,10 +253,13 @@
 				)
 			)
 				.flat()
-				.filter(
-					(n): n is GitlabEventWithRepoData =>
-						!n || !ignoredNotificationTypes.includes(n.action_name)
-				);
+				.filter((n): n is GitlabEventWithRepoData => {
+					if (!n) return false;
+					if (n.target_type === 'Milestone') return false;
+					if (ignoredNotificationTypes.includes(n.action_name)) return false;
+					if ('push_data' in n && n.push_data.ref_type === 'tag') return false;
+					return true;
+				});
 
 			// Keep only new or modified notifications
 			if (!firstFetch) {
@@ -428,9 +431,6 @@
 			>
 				<GithubIcon />
 				<p class="text">GitHub</p>
-				{#if !githubUser}
-					<div class="tag blue">Not logged in</div>
-				{/if}
 			</button>
 			<button
 				class="tab"
@@ -439,9 +439,6 @@
 			>
 				<GitlabIcon />
 				<p class="text">GitLab</p>
-				{#if !gitlabUser}
-					<div class="tag blue">Coming soon!</div>
-				{/if}
 			</button>
 			<button
 				class="tab"
@@ -603,28 +600,6 @@
 
 				.text {
 					@include typography.bold;
-				}
-
-				.tag {
-					@include typography.small;
-
-					display: flex;
-					align-items: center;
-					padding: 0.25rem 0.5rem;
-					border-radius: variables.$radius;
-					background-color: variables.$grey-3;
-					color: variables.$white;
-					gap: 0.25rem;
-
-					&.blue {
-						background-color: variables.$blue-1;
-						color: variables.$blue-3;
-					}
-
-					:global(svg) {
-						width: 1rem;
-						height: 1rem;
-					}
 				}
 			}
 		}

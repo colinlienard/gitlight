@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "vite build",
-		"build:tauri": "APP_ENV=tauri tauri build --verbose",
+		"build:tauri": "APP_ENV=tauri tauri build",
 		"build:vercel": "APP_ENV=vercel vite build",
 		"dev": "vite dev",
 		"dev:tauri": "APP_ENV=tauri tauri dev",
