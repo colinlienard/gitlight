@@ -131,13 +131,13 @@
 		large
 		rounded
 		indicator={!!updateAvailable}
-		on:click={handleTrigger((tabIndex = updateAvailable ? 4 : 0))}
+		on:click={handleTrigger(updateAvailable ? tabs.length - 1 : 0)}
 	>
 		<GearIcon />
 	</IconButton>
 </Tooltip>
 <Tooltip content="Accounts" hover position="bottom right">
-	<button class="account-trigger" on:click={handleTrigger((tabIndex = 3))}>
+	<button class="account-trigger" on:click={handleTrigger(tabs.length - 2)}>
 		{#if githubUser}
 			<img
 				class="image"

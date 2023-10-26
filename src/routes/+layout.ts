@@ -55,8 +55,11 @@ export async function load({ url }) {
 	await checkGitlabToken();
 
 	// Open the app with the access token
-	if (url.searchParams.has('from_app') && (githubAccessToken || gitlabAccessToken)) {
-		openDesktopApp({ githubAccessToken, gitlabAccessToken });
+	if (
+		url.searchParams.has('from_app') &&
+		(githubAccessToken || (gitlabAccessToken && gitlabRefreshToken && gitlabExpiration))
+	) {
+		openDesktopApp({ githubAccessToken, gitlabAccessToken, gitlabRefreshToken, gitlabExpiration });
 	}
 
 	// Remove access tokens from the URL
