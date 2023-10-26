@@ -4,10 +4,10 @@ export function openDesktopApp({
 	gitlabRefreshToken,
 	gitlabExpiration
 }: {
-	githubAccessToken: string | null;
-	gitlabAccessToken: string | null;
-	gitlabRefreshToken: string | null;
-	gitlabExpiration: string | null;
+	githubAccessToken?: string | null;
+	gitlabAccessToken?: string | null;
+	gitlabRefreshToken?: string | null;
+	gitlabExpiration?: string | null;
 }) {
 	const searchParams = new URLSearchParams();
 	if (githubAccessToken) {
