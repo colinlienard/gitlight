@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import type { GitlabRepository } from '~/lib/types';
 	import { Input } from '$lib/components';
 	import { fetchGitlab } from '$lib/features';
 	import { CheckIcon, TrashIcon } from '$lib/icons';
+	import type { GitlabRepository } from '$lib/types';
 	import type { Repo } from './GitlabRepos.svelte';
 
 	export let repo: Repo;

@@ -1,5 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import { browser } from '$app/environment';
+import { goto } from '$app/navigation';
 import { checkGitlabToken, fetchGithub, fetchGitlab, storage } from '$lib/features';
 import { openDesktopApp } from '$lib/helpers';
 import type { GithubUser, GitlabUser } from '$lib/types';
@@ -20,12 +21,12 @@ export async function load({ url }) {
 	let gitlabUser = storage.get('gitlab-user');
 	let gitlabAccessToken = storage.get('gitlab-access-token');
 	let gitlabRefreshToken = storage.get('gitlab-refresh-token');
-	let gitlabExpiration = storage.get('gitlab-expiration');
+	let gitlabExpiresIn = storage.get('gitlab-expires-in');
 
 	const githubTokenParam = url.searchParams.get('github_access_token');
 	const gitlabTokenParam = url.searchParams.get('gitlab_access_token');
 	const gitlabRefreshTokenParam = url.searchParams.get('gitlab_refresh_token');
-	const gitlabExpirationParam = url.searchParams.get('gitlab_expiration');
+	const gitlabExpiresInParam = url.searchParams.get('gitlab_expires_in');
 
 	// Get GitHub access token
 	if (githubTokenParam) {
@@ -46,20 +47,34 @@ export async function load({ url }) {
 	}
 
 	// Get GitLab expiration
-	if (gitlabExpirationParam) {
-		gitlabExpiration = gitlabExpirationParam;
-		storage.set('gitlab-expiration', gitlabExpiration);
+	if (gitlabExpiresInParam) {
+		gitlabExpiresIn = gitlabExpiresInParam;
+		storage.set('gitlab-expires-in', gitlabExpiresIn);
 	}
 
 	// If the GitLab access token has expired, refresh it
-	await checkGitlabToken();
+	if (gitlabAccessToken && gitlabRefreshToken && gitlabExpiresIn) {
+		try {
+			await checkGitlabToken();
+		} catch {
+			// If this fail, logout
+			storage.remove(`gitlab-user`);
+			storage.remove(`gitlab-access-token`);
+
+			if (storage.has('github-user')) {
+				window.location.reload();
+			} else {
+				goto('/login');
+			}
+		}
+	}
 
 	// Open the app with the access token
 	if (
 		url.searchParams.has('from_app') &&
-		(githubAccessToken || (gitlabAccessToken && gitlabRefreshToken && gitlabExpiration))
+		(githubAccessToken || (gitlabAccessToken && gitlabRefreshToken && gitlabExpiresIn))
 	) {
-		openDesktopApp({ githubAccessToken, gitlabAccessToken, gitlabRefreshToken, gitlabExpiration });
+		openDesktopApp({ githubAccessToken, gitlabAccessToken, gitlabRefreshToken, gitlabExpiresIn });
 	}
 
 	// Remove access tokens from the URL

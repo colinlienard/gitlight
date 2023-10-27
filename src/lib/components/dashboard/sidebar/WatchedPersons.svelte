@@ -2,23 +2,23 @@
 	import { browser } from '$app/environment';
 	import { storage } from '$lib/features';
 	import { MuteIcon, MutedIcon } from '$lib/icons';
-	import { globalNotifications, loading, watchedPersons } from '$lib/stores';
+	import { globalNotifications, loading, settings, watchedPersons } from '$lib/stores';
 	import type { User, WatchedPerson } from '$lib/types';
 	import SidebarSection from './SidebarSection.svelte';
 
 	// Update watched persons
 	$: if (browser && !$loading) {
-		let savedWatchedPersons = storage.get('watched-persons');
+		const savedWatchedPersons = storage.get('watched-persons');
 
 		const persons = $globalNotifications.reduce<WatchedPerson[]>((previous, current) => {
 			if (current.done) return previous;
 			if (current.creator) {
-				previous = addPerson(previous, current.creator, 1, savedWatchedPersons);
+				previous = addPerson(previous, current.creator, 1, savedWatchedPersons, current.from);
 				if (current.author && current.author.login !== current.creator.login) {
-					previous = addPerson(previous, current.author, 0, savedWatchedPersons);
+					previous = addPerson(previous, current.author, 0, savedWatchedPersons, current.from);
 				}
 			} else if (current.author) {
-				previous = addPerson(previous, current.author, 1, savedWatchedPersons);
+				previous = addPerson(previous, current.author, 1, savedWatchedPersons, current.from);
 			}
 			return previous;
 		}, []);
@@ -26,7 +26,10 @@
 		persons.push(
 			...(savedWatchedPersons
 				? savedWatchedPersons
-						.filter((person) => !persons.find((p) => p.login === person.login) && person.muted)
+						.filter(
+							(person) =>
+								!persons.find((p) => p.login === person.login) && (person.muted || !person.active)
+						)
 						.map((person) => ({ ...person, number: 0 }))
 				: [])
 		);
@@ -38,7 +41,8 @@
 		previous: WatchedPerson[],
 		person: User,
 		number: number,
-		savedWatchedPersons: WatchedPerson[] | null
+		savedWatchedPersons: WatchedPerson[] | null,
+		from: 'github' | 'gitlab'
 	): WatchedPerson[] {
 		const saved = savedWatchedPersons?.find((p) => p.login === person.login);
 		const index = previous.findIndex((p) => p.login === person?.login);
@@ -54,7 +58,8 @@
 				number,
 				bot: person.bot,
 				active: saved?.active ?? true,
-				muted: saved?.muted ?? false
+				muted: saved?.muted ?? false,
+				from
 			}
 		];
 	}
@@ -111,21 +116,23 @@
 	]}
 >
 	{#if $watchedPersons.length}
-		{#each $watchedPersons as { login, avatar, active, muted, number }}
-			<button class="wrapper" class:active on:click={handleToggle(login)}>
-				<img class="image" src={avatar} alt="" />
-				<h3 class="name">{login}</h3>
-				{#if number}
-					<span class="number">{number}</span>
-				{/if}
-				<button class="mute" class:muted on:click|stopPropagation={handleMute(login)}>
-					{#if muted}
-						<MutedIcon />
-					{:else}
-						<MuteIcon />
+		{#each $watchedPersons as { login, avatar, active, muted, number, from }}
+			{#if $settings.providerView == 'both' || $settings.providerView === from}
+				<button class="wrapper" class:active on:click={handleToggle(login)}>
+					<img class="image" src={avatar} alt="" />
+					<h3 class="name">{login}</h3>
+					{#if number}
+						<span class="number">{number}</span>
 					{/if}
+					<button class="mute" class:muted on:click|stopPropagation={handleMute(login)}>
+						{#if muted}
+							<MutedIcon />
+						{:else}
+							<MuteIcon />
+						{/if}
+					</button>
 				</button>
-			</button>
+			{/if}
 		{/each}
 	{:else}
 		<p class="empty">No persons to display</p>

@@ -230,12 +230,12 @@
 			}
 		);
 
-		// Get labels colors
-		if (firstFetch) {
-			await fetchGitlabLabels(repositories);
-		}
-
 		try {
+			// Get labels colors
+			if (firstFetch) {
+				await fetchGitlabLabels(repositories);
+			}
+
 			// Fetch all repos and add repository data to each event
 			let notifications = (
 				await Promise.all(

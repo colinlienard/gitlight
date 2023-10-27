@@ -8,9 +8,9 @@
 </script>
 
 <script lang="ts">
-	import { CheckIcon, PlusIcon } from '~/lib/icons';
-	import { settings } from '~/lib/stores';
 	import { Button } from '$lib/components';
+	import { CheckIcon, PlusIcon } from '$lib/icons';
+	import { settings } from '$lib/stores';
 	import RepoInput from './RepoInput.svelte';
 
 	const defaultRepo: Repo = { url: '', id: 0, pending: false, error: true };

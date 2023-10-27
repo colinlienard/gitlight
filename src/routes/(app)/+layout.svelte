@@ -16,12 +16,16 @@
 				const searchParams = new URLSearchParams((payload as string).replace('gitlight://', ''));
 				const githubAccessToken = searchParams.get('github_access_token');
 				const gitlabAccessToken = searchParams.get('gitlab_access_token');
+				const gitlabRefreshToken = searchParams.get('gitlab_refresh_token');
+				const gitlabExpiresIn = searchParams.get('gitlab_expires_in');
 
 				if (githubAccessToken) {
 					storage.set('github-access-token', githubAccessToken.replace('/', ''));
 				}
-				if (gitlabAccessToken) {
+				if (gitlabAccessToken && gitlabRefreshToken && gitlabExpiresIn) {
 					storage.set('gitlab-access-token', gitlabAccessToken.replace('/', ''));
+					storage.set('gitlab-refresh-token', gitlabRefreshToken.replace('/', ''));
+					storage.set('gitlab-expires-in', gitlabExpiresIn.replace('/', ''));
 				}
 
 				if (

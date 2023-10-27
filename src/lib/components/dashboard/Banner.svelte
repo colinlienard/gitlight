@@ -3,7 +3,7 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { storage } from '~/lib/features';
+	import { storage } from '$lib/features';
 	import { openDesktopApp } from '$lib/helpers';
 	import { CrossIcon, ExclamationMarkIcon } from '$lib/icons';
 	import { DownloadButton } from '../landing';
@@ -24,7 +24,7 @@
 		const githubAccessToken = $page.data.session?.githubAccessToken;
 		const gitlabAccessToken = $page.data.session?.gitlabAccessToken;
 		const gitlabRefreshToken = storage.get('gitlab-refresh-token');
-		const gitlabExpiration = storage.get('gitlab-expiration');
+		const gitlabExpiresIn = storage.get('gitlab-expires-in');
 		if (githubAccessToken || gitlabAccessToken) {
 			setTimeout(() => {
 				if (hasFocus) {
@@ -36,7 +36,7 @@
 			openDesktopApp({
 				githubAccessToken,
 				gitlabAccessToken,
-				gitlabExpiration,
+				gitlabExpiresIn,
 				gitlabRefreshToken
 			});
 		}

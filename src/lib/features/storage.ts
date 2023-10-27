@@ -1,4 +1,11 @@
-import type { Priority, SavedNotifications, Settings, User, WatchedPerson } from '../types';
+import type {
+	Priority,
+	SavedNotifications,
+	Settings,
+	User,
+	WatchedPerson,
+	WatchedRepo
+} from '../types';
 
 export type StorageMap = {
 	'github-user': User;
@@ -6,11 +13,11 @@ export type StorageMap = {
 	'gitlab-user': User;
 	'gitlab-access-token': string;
 	'gitlab-refresh-token': string;
-	'gitlab-expiration': string;
+	'gitlab-expires-in': string;
 	settings: Settings;
 	'github-notifications': SavedNotifications;
 	'gitlab-notifications': SavedNotifications;
-	'watched-repos': { id: number; active: boolean; muted: boolean }[];
+	'watched-repos': WatchedRepo[];
 	'watched-persons': WatchedPerson[];
 	'type-filters': boolean[];
 	priorities: Priority[];

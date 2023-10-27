@@ -101,6 +101,7 @@ export type WatchedRepo = {
 	number: number;
 	active: boolean;
 	muted: boolean;
+	from: 'github' | 'gitlab';
 };
 
 export type WatchedPerson = {
@@ -110,6 +111,7 @@ export type WatchedPerson = {
 	active: boolean;
 	muted: boolean;
 	bot?: boolean;
+	from: 'github' | 'gitlab';
 };
 
 export type GitlabEventWithRepoData = GitlabEvent & {

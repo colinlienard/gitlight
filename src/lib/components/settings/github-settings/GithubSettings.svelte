@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { Settings } from '~/lib/types';
 	import { Button, InlineSelect } from '$lib/components';
 	import { ExternalLinkIcon } from '$lib/icons';
 	import { settings } from '$lib/stores';
+	import type { Settings } from '$lib/types';
 	import PatItem from './PatItem.svelte';
 
 	export let onExpand: () => void;
