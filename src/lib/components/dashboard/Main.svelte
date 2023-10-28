@@ -53,13 +53,17 @@
 	function markAllAs(key: 'unread' | 'done', value: boolean) {
 		if ($settings.providerView !== 'gitlab') {
 			$githubNotifications = $githubNotifications.map((notifications) =>
-				unread.includes(notifications) ? { ...notifications, [key]: value } : notifications
+				(key === 'unread' ? unread : read).includes(notifications)
+					? { ...notifications, [key]: value }
+					: notifications
 			);
 			readAllInGithub();
 		}
 		if ($settings.providerView !== 'github') {
 			$gitlabNotifications = $gitlabNotifications.map((notifications) =>
-				unread.includes(notifications) ? { ...notifications, [key]: value } : notifications
+				(key === 'unread' ? unread : read).includes(notifications)
+					? { ...notifications, [key]: value }
+					: notifications
 			);
 		}
 	}
