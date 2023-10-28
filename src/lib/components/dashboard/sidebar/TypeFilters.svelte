@@ -18,7 +18,9 @@
 	// Set notification numbers for each type
 	$: {
 		$typeFilters = $typeFilters.map((filter) => {
-			filter.number = $globalNotifications.filter((n) => n.type === filter.type && !n.done).length;
+			filter.number = $globalNotifications.filter(
+				(n) => n.type === filter.type && n.status !== 'done'
+			).length;
 			return filter;
 		});
 	}

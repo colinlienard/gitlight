@@ -8,7 +8,7 @@
 
 	export let data: NotificationData;
 
-	let { time, pinned, unread } = data;
+	let { time, status } = data;
 	let displayTime = formatRelativeDate(time);
 
 	$: isTrayApp = browser && window.__TAURI__ && window.location.pathname === '/tray';
@@ -25,12 +25,11 @@
 <div class="status">
 	<p class="time">{displayTime}</p>
 	{#if $settings.viewMode === 'List' || isTrayApp}
-		{#if pinned}
+		{#if status === 'pinned'}
 			<span class="pinned">
 				<PinIcon />
 			</span>
-		{/if}
-		{#if unread}
+		{:else if status === 'unread'}
 			<div class="unread" />
 		{/if}
 	{/if}

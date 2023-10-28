@@ -69,6 +69,7 @@
 		},
 		"windows": [
 			{
+        "label": "main",
 				"url": "/dashboard",
 				"width": 1400,
 				"height": 900,
@@ -84,7 +85,9 @@
 				"title": "GitLight",
         "titleBarStyle": "Overlay",
         "hiddenTitle": true,
-        "resizable": false
+        "resizable": false,
+        "visible": false,
+        "focus": false
 			}
 		],
 		"systemTray": {

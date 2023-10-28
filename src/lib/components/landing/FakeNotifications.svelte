@@ -5,9 +5,7 @@
 	const common = {
 		id: '',
 		from: 'github',
-		unread: true,
-		pinned: false,
-		done: false,
+		status: 'unread',
 		repoId: '',
 		ownerAvatar: '',
 		url: '',

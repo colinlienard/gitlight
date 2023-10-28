@@ -11,7 +11,7 @@
 		const savedWatchedPersons = storage.get('watched-persons');
 
 		const persons = $globalNotifications.reduce<WatchedPerson[]>((previous, current) => {
-			if (current.done) return previous;
+			if (current.status === 'done') return previous;
 			if (current.creator) {
 				previous = addPerson(previous, current.creator, 1, savedWatchedPersons, current.from);
 				if (current.author && current.author.login !== current.creator.login) {

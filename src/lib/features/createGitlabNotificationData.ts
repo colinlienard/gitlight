@@ -177,17 +177,13 @@ export async function createGitlabNotificationData(
 	if (!id) return null;
 
 	const previous = savedNotifications.find((n) => n.id === id);
-	const pinned = previous?.pinned || false;
+	const status = previous?.status || 'unread';
 	const muted = previous?.muted || false;
-	const unread = previous ? previous.unread : true;
-	const done = previous?.done || false;
 
 	const common = {
 		id,
 		from: 'gitlab',
-		pinned,
-		unread,
-		done,
+		status,
 		muted,
 		time: firstEvent.created_at,
 		repository: firstEvent.repository

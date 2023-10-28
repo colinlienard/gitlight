@@ -130,7 +130,7 @@
 		do {
 			pushNotification = newNotifications[index];
 			index++;
-		} while (pushNotification?.unread && !pushNotification?.muted);
+		} while (pushNotification?.status === 'unread' && !pushNotification?.muted);
 
 		if (pushNotification) {
 			const { author, title, description } = pushNotification;
@@ -188,11 +188,13 @@
 				.filter((item): item is NotificationData => !!item)
 				// If the notification is muted, do not update its status
 				.map((item) => {
-					const muted = notificationIsMuted(item, persons, repos);
-					const previous = savedNotifications.find((n) => n.id === item.id);
-					const unread = muted ? previous?.unread || false : item.unread;
-					const done = unread ? false : item.done;
-					return { ...item, unread, done };
+					if (notificationIsMuted(item, persons, repos)) {
+						const previous = savedNotifications.find((n) => n.id === item.id);
+						if (previous && previous.status) {
+							return { ...item, status: previous.status };
+						}
+					}
+					return item;
 				});
 		} catch (e) {
 			$error =
@@ -291,11 +293,13 @@
 				.filter((item): item is NotificationData => !!item)
 				// If the notification is muted, do not update its status
 				.map((item) => {
-					const muted = notificationIsMuted(item, persons, repos);
-					const previous = savedNotifications.find((n) => n.id === item.id);
-					const unread = muted ? previous?.unread || false : item.unread;
-					const done = unread ? false : item.done;
-					return { ...item, unread, done };
+					if (notificationIsMuted(item, persons, repos)) {
+						const previous = savedNotifications.find((n) => n.id === item.id);
+						if (previous) {
+							return { ...item, status: previous.status };
+						}
+					}
+					return item;
 				});
 		} catch (e) {
 			$error =
@@ -316,26 +320,28 @@
 
 	function updateTrayTitle() {
 		if (browser && window.__TAURI__) {
-			const pinned = $filteredNotifications.filter(({ pinned }) => pinned);
-			const unread = $filteredNotifications.filter(
-				({ pinned, unread, done }) => !pinned && unread && !done
-			);
-			invoke('update_tray', {
-				title: `${unread.length} unread${pinned.length ? ` • ${pinned.length} pinned` : ''}`
-			});
+			const unread = $filteredNotifications.filter(({ status }) => status === 'unread');
+			const pinned = $filteredNotifications.filter(({ status }) => status === 'pinned');
+			let title = '';
+			if (pinned.length && unread.length) {
+				title = `${unread.length} unread • ${pinned.length} pinned`;
+			} else if (pinned.length) {
+				title = `${pinned.length} pinned`;
+			} else if (unread.length) {
+				title = `${unread.length} unread`;
+			}
+			invoke('update_tray', { title });
 		}
 	}
 
 	$: if (mounted && $githubNotifications.length) {
 		// Save notifications to storage
 		const toSave = $githubNotifications.map(
-			({ id, description, author, pinned, unread, done, muted, time, previously }) => ({
+			({ id, description, author, status, muted, time, previously }) => ({
 				id,
 				description,
 				author,
-				pinned,
-				unread,
-				done,
+				status,
 				muted,
 				time,
 				previously
@@ -356,13 +362,11 @@
 	$: if (mounted && $gitlabNotifications.length) {
 		// Save notifications to storage
 		const toSave = $gitlabNotifications.map(
-			({ id, description, author, pinned, unread, done, muted, time, previously }) => ({
+			({ id, description, author, status, muted, time, previously }) => ({
 				id,
 				description,
 				author,
-				pinned,
-				unread,
-				done,
+				status,
 				muted,
 				time,
 				previously
