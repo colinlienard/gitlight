@@ -28,8 +28,10 @@ export async function GET({ url }) {
 		});
 
 		if (response.ok) {
-			const { access_token } = await response.json();
-			const url = `/dashboard?gitlab_access_token=${access_token}`;
+			const { access_token, refresh_token, expires_in, created_at } = await response.json();
+			const url = `/dashboard?gitlab_access_token=${access_token}&gitlab_refresh_token=${refresh_token}&gitlab_expires_in=${
+				(created_at + expires_in) * 1000
+			}`;
 			if (searchParams.has('from_app')) {
 				throw redirect(302, `${url}&from_app=true`);
 			}

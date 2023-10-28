@@ -1,4 +1,5 @@
-import type { GithubLabel, GithubNotificationType, GithubRepository } from './github-types';
+import type { GithubLabel, GithubRepository } from './github-types';
+import type { GitlabEvent } from './gitlab-types';
 
 export type User = {
 	name?: string;
@@ -29,9 +30,12 @@ export type NotificationIcon =
 	| 'workflow-success'
 	| 'unsupported';
 
+export type NotificationType = 'pr' | 'issue' | 'commit' | 'release' | 'discussion' | 'workflow';
+
 export type NotificationData = {
 	id: string;
-	type: GithubNotificationType;
+	from: 'github' | 'gitlab';
+	type: NotificationType;
 	unread: boolean;
 	pinned: boolean;
 	done: boolean;
@@ -47,13 +51,18 @@ export type NotificationData = {
 	time: string;
 	icon: NotificationIcon;
 	opened?: boolean;
-	owner: string;
-	repo: string;
-	repoId: string;
-	ownerAvatar: string;
+	repository: {
+		id: number;
+		url: string;
+		domain: string;
+		owner: string;
+		name: string;
+	};
+	ownerAvatar?: string;
 	number?: number;
 	labels?: GithubLabel[];
 	url?: string;
+	ref?: string;
 	previously?: {
 		author?: User;
 		description: NotificationData['description'];
@@ -62,7 +71,7 @@ export type NotificationData = {
 
 export type TypeFilters = Array<{
 	name: string;
-	type: GithubNotificationType;
+	type: NotificationType;
 	active: boolean;
 	number: number;
 }>;
@@ -85,13 +94,14 @@ export type SavedNotifications = Array<{
 }>;
 
 export type WatchedRepo = {
-	id: string;
+	id: number;
 	name: string;
 	ownerName: string;
-	ownerAvatar: string;
+	ownerAvatar?: string;
 	number: number;
 	active: boolean;
 	muted: boolean;
+	from: 'github' | 'gitlab';
 };
 
 export type WatchedPerson = {
@@ -101,11 +111,22 @@ export type WatchedPerson = {
 	active: boolean;
 	muted: boolean;
 	bot?: boolean;
+	from: 'github' | 'gitlab';
+};
+
+export type GitlabEventWithRepoData = GitlabEvent & {
+	repository: {
+		id: number;
+		url: string;
+		domain: string;
+		owner: string;
+		name: string;
+		encoded: string;
+	};
 };
 
 export type Settings = {
 	activateNotifications: boolean;
-	showNotificationsSyncTimer: boolean;
 	readWhenOpenInBrowser: boolean;
 	readWhenPin: boolean;
 	showNotificationsRepo: boolean;
@@ -122,6 +143,10 @@ export type Settings = {
 	applyFiltersForDone: boolean;
 	viewMode: 'List' | 'Kanban' | 'Kanban (vertical)';
 	activeTray: boolean;
+	gitlabRepos: Array<{
+		id: number;
+		url: string;
+	}>;
 };
 
 export type Priority = {
@@ -140,6 +165,6 @@ export type Priority = {
 	  }
 	| {
 			criteria: 'type';
-			specifier: GithubNotificationType;
+			specifier: NotificationType;
 	  }
 );

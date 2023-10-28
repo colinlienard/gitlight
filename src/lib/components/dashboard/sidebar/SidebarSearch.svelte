@@ -10,7 +10,12 @@
 	let input: SvelteComponent;
 
 	function handleSearchFocus(event: KeyboardEvent) {
-		if (event.key === '/' && !$modalOpen && !$settings.sidebarHidden) {
+		if (
+			(event.metaKey || event.ctrlKey) &&
+			event.key === 'f' &&
+			!$modalOpen &&
+			!$settings.sidebarHidden
+		) {
 			event.preventDefault();
 			input.focus();
 		}

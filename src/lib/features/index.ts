@@ -1,4 +1,5 @@
 export * from './createGithubNotificationData';
+export * from './createGitlabNotificationData';
 export * from './delayed-hover';
 export * from './drag-actions';
 export * from './fetchGithub';

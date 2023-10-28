@@ -4,6 +4,7 @@
 
 	const common = {
 		id: '',
+		from: 'github',
 		unread: true,
 		pinned: false,
 		done: false,
@@ -22,7 +23,7 @@
 	const fakeNotifications: NotificationData[] = [
 		{
 			...common,
-			type: 'Commit',
+			type: 'commit',
 			author: {
 				...commonAuthor,
 				login: 'colinlienard',
@@ -32,12 +33,17 @@
 			description: 'made a commit',
 			time: new Date().toString(),
 			icon: 'commit',
-			owner: 'colinlienard',
-			repo: 'gitlight'
+			repository: {
+				id: 1,
+				url: 'https://github.com/colinlienard/gitlight',
+				owner: 'colinlienard',
+				name: 'gitlight',
+				domain: 'github.com'
+			}
 		},
 		{
 			...common,
-			type: 'PullRequest',
+			type: 'pr',
 			author: {
 				...commonAuthor,
 				login: 'QuiiBz',
@@ -47,8 +53,13 @@
 			description: 'merged this pull request',
 			time: new Date().toString(),
 			icon: 'merged-pr',
-			owner: 'lagonapp',
-			repo: 'lagon',
+			repository: {
+				id: 1,
+				url: 'https://github.com/lagonapp/lagon',
+				owner: 'lagonapp',
+				name: 'lagon',
+				domain: 'github.com'
+			},
 			number: 845,
 			labels: [
 				{ name: 'feature', color: 'a2eeef' },
@@ -57,7 +68,7 @@
 		},
 		{
 			...common,
-			type: 'PullRequest',
+			type: 'pr',
 			author: {
 				...commonAuthor,
 				login: 'lucasfernog',
@@ -67,13 +78,18 @@
 			description: 'merged this pull request',
 			time: new Date(new Date().getTime() - 1000000).toString(),
 			icon: 'merged-pr',
-			owner: 'tauri-apps',
-			repo: 'tauri',
+			repository: {
+				id: 1,
+				url: 'https://github.com/tauri-apps/tauri',
+				owner: 'tauri-apps',
+				name: 'tauri',
+				domain: 'github.com'
+			},
 			number: 6900
 		},
 		{
 			...common,
-			type: 'Issue',
+			type: 'issue',
 			author: {
 				...commonAuthor,
 				login: 'Rich-Harris',
@@ -84,14 +100,19 @@
 				'commented: The Svelte repo is currently in the process of heavy restructuring for Svelte 4. After that, work on Svelte 5 will likely change',
 			time: new Date(new Date().getTime() - 10000000).toString(),
 			icon: 'open-issue',
-			owner: 'sveltejs',
-			repo: 'svelte',
+			repository: {
+				id: 1,
+				url: 'https://github.com/sveltejs/svelte',
+				owner: 'sveltejs',
+				name: 'svelte',
+				domain: 'github.com'
+			},
 			number: 8569,
 			labels: [{ name: 'breaking change', color: 'd73a4a' }]
 		},
 		{
 			...common,
-			type: 'PullRequest',
+			type: 'pr',
 			author: {
 				...commonAuthor,
 				login: 'colinlienard',
@@ -101,8 +122,13 @@
 			description: 'opened this pull request',
 			time: new Date(new Date().getTime() - 23000).toString(),
 			icon: 'open-pr',
-			owner: 'colinlienard',
-			repo: 'gitlight',
+			repository: {
+				id: 1,
+				url: 'https://github.com/colinlienard/gitlight',
+				owner: 'colinlienard',
+				name: 'gitlight',
+				domain: 'github.com'
+			},
 			number: 44,
 			labels: [
 				{ name: 'feature', color: '4AF574' },

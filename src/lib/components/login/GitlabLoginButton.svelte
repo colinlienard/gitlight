@@ -12,8 +12,8 @@
 	<Button
 		href={onTauriApp ? `${PUBLIC_SITE_URL}/auth/gitlab/login?from_app=true` : '/auth/gitlab/login'}
 		external={onTauriApp && import.meta.env.PROD}
-		disabled
 		{small}
+		disabled
 	>
 		<slot />
 	</Button>

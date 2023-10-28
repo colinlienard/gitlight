@@ -16,7 +16,7 @@ export const defaultPriorities: Priority[] = [
 	{ criteria: 'assigned', value: 4 },
 	{ criteria: 'review-request', value: 3 },
 	{ criteria: 'label', value: 2, specifier: 'bug' },
-	{ criteria: 'type', value: -2, specifier: 'Commit' },
+	{ criteria: 'type', value: -2, specifier: 'commit' },
 	{ criteria: 'state', value: -8, specifier: 'closed' }
 ];
 

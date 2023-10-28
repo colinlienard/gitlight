@@ -20,7 +20,7 @@
 		ExternalLinkIcon,
 		ThreeDotsIcon
 	} from '$lib/icons';
-	import { githubNotifications, settings } from '$lib/stores';
+	import { githubNotifications, gitlabNotifications, settings } from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
 	import NotificationDescription from './NotificationDescription.svelte';
 	import NotificationLabels from './NotificationLabels.svelte';
@@ -34,6 +34,7 @@
 
 	let {
 		id,
+		from,
 		unread,
 		pinned,
 		done,
@@ -44,14 +45,12 @@
 		priority,
 		type,
 		icon,
-		owner,
-		repo,
+		repository,
 		number,
 		labels,
 		url,
 		previously
 	} = data;
-	let repoUrl = `https://github.com/${owner}/${repo}`;
 	let hoverAction = false;
 	let hoverActionTimeout: ReturnType<typeof setTimeout>;
 
@@ -94,22 +93,24 @@
 				return;
 			}
 
-			$githubNotifications = $githubNotifications.map((notification) => {
-				if (notification.id !== id) return notification;
-				if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
-					return { ...notification, pinned: !notification.pinned, unread: false };
-				}
-				if (key === 'done') {
-					return { ...notification, done: !notification.done, unread: false, pinned: false };
-				}
-				return { ...notification, [key]: !notification[key] };
-			});
+			(from === 'github' ? githubNotifications : gitlabNotifications).update((previous) =>
+				previous.map((notification) => {
+					if (notification.id !== id) return notification;
+					if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
+						return { ...notification, pinned: !notification.pinned, unread: false };
+					}
+					if (key === 'done') {
+						return { ...notification, done: !notification.done, unread: false, pinned: false };
+					}
+					return { ...notification, [key]: !notification[key] };
+				})
+			);
 
 			if (key === 'unread' && pinned) {
 				unread = !unread;
 			}
 
-			if ((key === 'unread' || key === 'done') && unread) {
+			if (from === 'github' && (key === 'unread' || key === 'done') && unread) {
 				markAsReadInGitHub();
 			}
 
@@ -142,15 +143,15 @@
 		{#if $settings.showNotificationsRepo}
 			<div class="top">
 				<div class="repo">
-					<button class="repo-button" on:mouseup={() => openUrl(repoUrl)}>
-						{owner}/<span class="bold">{repo}</span>
+					<button class="repo-button" on:mouseup={() => openUrl(repository.url)}>
+						{repository.owner}/<span class="bold">{repository.name}</span>
 					</button>
 				</div>
 				<NotificationStatus {data} />
 			</div>
 		{/if}
 		<div class="description">
-			<NotificationDescription {author} {description} {openUrl} />
+			<NotificationDescription {author} {description} {openUrl} {from} />
 			{#if !$settings.showNotificationsRepo}
 				<NotificationStatus {data} />
 			{/if}
@@ -252,7 +253,7 @@
 							</Button>
 						</Tooltip>
 					{/if}
-					{#if type === 'Discussion' || type === 'Issue' || type === 'PullRequest'}
+					{#if type === 'discussion' || type === 'issue' || type === 'pr'}
 						{#if muted}
 							<Tooltip content="Muted" position="bottom" hover>
 								<Button secondary icon on:click={handleToggle('muted')}>
@@ -278,6 +279,7 @@
 				description={previously.description}
 				prefix="Previously, "
 				{openUrl}
+				{from}
 			/>
 		</div>
 	{/if}

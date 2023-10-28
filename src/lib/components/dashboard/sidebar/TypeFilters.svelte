@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Switch } from '$lib/components';
 	import { storage } from '$lib/features';
-	import { githubNotifications, loading, settings, typeFilters } from '$lib/stores';
+	import { globalNotifications, loading, settings, typeFilters } from '$lib/stores';
 	import SidebarSection from './SidebarSection.svelte';
 
 	let mounted = false;
@@ -18,10 +18,13 @@
 	// Set notification numbers for each type
 	$: {
 		$typeFilters = $typeFilters.map((filter) => {
-			filter.number = $githubNotifications.filter((n) => n.type === filter.type && !n.done).length;
+			filter.number = $globalNotifications.filter((n) => n.type === filter.type && !n.done).length;
 			return filter;
 		});
 	}
+
+	$: providerView = $settings.providerView;
+	$: typeFiltersGitlab = providerView === 'gitlab' ? $typeFilters.slice(0, 3) : $typeFilters;
 
 	function handleSelectOne(name: string) {
 		return () => {
@@ -43,7 +46,7 @@
 </script>
 
 <SidebarSection
-	title="Filters"
+	title="Types"
 	description="Filter notifications based on their type."
 	bind:items={$typeFilters}
 	actions={[
@@ -54,7 +57,7 @@
 		}
 	]}
 >
-	{#each $typeFilters as filter (filter.name)}
+	{#each typeFiltersGitlab as filter (filter.name)}
 		<div class="switch-wrapper">
 			<Switch
 				bind:active={filter.active}

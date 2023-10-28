@@ -48,7 +48,7 @@ GitHub & GitLab notifications on your desktop • [gitlight.app](https://gitligh
 
 ## About
 
-Better GitHub notifications and ~~GitLab push notifications~~ (not yet). Available on **MacOS**, **Windows**, **Linux** and in the **browser**. Free and open-source.
+Better GitHub and/or GitLab notifications. Available on **MacOS**, **Windows**, **Linux** and in the **browser**. Free and open-source.
 
 > [!IMPORTANT]  
 > GitLight is currently in development so bugs may be present
@@ -59,6 +59,7 @@ Better GitHub notifications and ~~GitLab push notifications~~ (not yet). Availab
 - Monitor notifications with efficiency thanks to a kanban style interface
 - Filter by repository, organization, pull request, issues, commits...
 - Get precise notification data
+- GitHub and GitLab notifications at the same time
 - And more...
 
 ## Contributing

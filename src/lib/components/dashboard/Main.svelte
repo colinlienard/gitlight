@@ -6,7 +6,13 @@
 	import { Separator, ScrollbarContainer, NotificationColumn } from '$lib/components';
 	import { fetchGithub } from '$lib/features';
 	import { CheckIcon, UnreadIcon, PinIcon, DoubleCheckIcon } from '$lib/icons';
-	import { filteredNotifications, githubNotifications, loading, settings } from '$lib/stores';
+	import {
+		filteredNotifications,
+		githubNotifications,
+		gitlabNotifications,
+		loading,
+		settings
+	} from '$lib/stores';
 	import { NotificationList } from './notifications';
 
 	// Sort by priority
@@ -44,18 +50,22 @@
 		});
 	}
 
-	function markAllAsRead() {
-		$githubNotifications = $githubNotifications.map((notifications) =>
-			unread.includes(notifications) ? { ...notifications, unread: false } : notifications
-		);
-		readAllInGithub();
-	}
-
-	function markAllAsDone() {
-		$githubNotifications = $githubNotifications.map((notifications) =>
-			read.includes(notifications) ? { ...notifications, done: true } : notifications
-		);
-		readAllInGithub();
+	function markAllAs(key: 'unread' | 'done', value: boolean) {
+		if ($settings.providerView !== 'gitlab') {
+			$githubNotifications = $githubNotifications.map((notifications) =>
+				(key === 'unread' ? unread : read).includes(notifications)
+					? { ...notifications, [key]: value }
+					: notifications
+			);
+			readAllInGithub();
+		}
+		if ($settings.providerView !== 'github') {
+			$gitlabNotifications = $gitlabNotifications.map((notifications) =>
+				(key === 'unread' ? unread : read).includes(notifications)
+					? { ...notifications, [key]: value }
+					: notifications
+			);
+		}
 	}
 
 	// Animations settings
@@ -89,7 +99,7 @@
 			>
 				<div slot="header-addon">
 					{#if unread.length}
-						<button class="read-all" on:click={markAllAsRead}>
+						<button class="read-all" on:click={() => markAllAs('unread', false)}>
 							<CheckIcon />
 							All
 						</button>
@@ -109,7 +119,7 @@
 			>
 				<div slot="header-addon">
 					{#if read.length}
-						<button class="read-all" on:click={markAllAsDone}>
+						<button class="read-all" on:click={() => markAllAs('done', true)}>
 							<DoubleCheckIcon />
 							All
 						</button>

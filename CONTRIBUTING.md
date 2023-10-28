@@ -51,6 +51,25 @@ Then, create a `.env` file at the root of the project:
 AUTH_GITHUB_ID={your client ID}
 AUTH_GITHUB_SECRET={your client secret}
 AUTH_SECRET={your 32 characters code}
+PUBLIC_SITE_URL=http://localhost:5173
+```
+
+#### GitLab application
+
+The app needs to authenticate the user to GitLab, so we need to create a new GitLab application [here](https://gitlab.com/-/profile/applications) and click on **Add new application**. Fill the fields and set the **Callback url** to `http://localhost:5173/auth/gitlab/callback`. Choose the following scopes:
+
+- `read_api`
+- `read_user`
+
+Also create a unique 32 characters code here: https://generate-secret.vercel.app/32
+
+Then, create a `.env` file at the root of the project:
+
+```.env
+AUTH_GITLAB_ID={your client ID}
+AUTH_GITLAB_SECRET={your client secret}
+AUTH_SECRET={your 32 characters code}
+PUBLIC_SITE_URL=http://localhost:5173
 ```
 
 #### Frontend

@@ -44,7 +44,7 @@ export async function createGithubNotificationData(
 	const pinned = previous?.pinned || false;
 	const muted = previous?.muted || false;
 	const done = previous?.done || false;
-	const [owner, repo] = repository.full_name.split('/');
+	const [owner, name] = repository.full_name.split('/');
 
 	// Get Personal Access Tokens
 	let fetchOptions: FetchOptions = {};
@@ -68,17 +68,21 @@ export async function createGithubNotificationData(
 
 	const common = {
 		id,
+		from: 'github',
 		pinned,
 		unread,
 		done,
 		muted,
-		reason,
 		time: updated_at,
 		title: subject.title,
 		type: subject.type,
-		owner,
-		repo,
-		repoId: `${repository.id}`,
+		repository: {
+			id: repository.id,
+			url: repository.full_name,
+			owner,
+			name,
+			domain: 'github.com'
+		},
 		ownerAvatar: repository.owner.avatar_url
 	} as const;
 	let value: NotificationData;
@@ -93,7 +97,8 @@ export async function createGithubNotificationData(
 					: { login: commit.author.name },
 				description: '*made a commit*',
 				icon: 'commit',
-				url: html_url
+				url: html_url,
+				type: 'commit'
 			};
 			break;
 		}
@@ -155,7 +160,8 @@ export async function createGithubNotificationData(
 				labels,
 				url,
 				previously:
-					previous?.description !== description ? previous : previous?.previously || undefined
+					previous?.description !== description ? previous : previous?.previously || undefined,
+				type: 'issue'
 			};
 			break;
 		}
@@ -251,7 +257,8 @@ export async function createGithubNotificationData(
 				labels,
 				url,
 				previously:
-					previous?.description !== description ? previous : previous?.previously || undefined
+					previous?.description !== description ? previous : previous?.previously || undefined,
+				type: 'pr'
 			};
 			break;
 		}
@@ -267,7 +274,8 @@ export async function createGithubNotificationData(
 					{ name: tag_name, color: 'FFFFFF' },
 					...(prerelease ? [{ name: 'pre-release', color: 'FFA723' }] : [])
 				],
-				url: html_url
+				url: html_url,
+				type: 'release'
 			};
 			break;
 		}
@@ -298,7 +306,8 @@ export async function createGithubNotificationData(
 				url,
 				icon: 'discussion',
 				previously:
-					previous?.description !== description ? previous : previous?.previously || undefined
+					previous?.description !== description ? previous : previous?.previously || undefined,
+				type: 'discussion'
 			};
 			break;
 		}
@@ -312,8 +321,9 @@ export async function createGithubNotificationData(
 				...common,
 				title: `${workflowName} for ${branch}`,
 				description: `Workflow run ${status}`,
-				url: `https://github.com/${repository.full_name}/pull/${branch}`
-			};
+				url: `https://github.com/${repository.full_name}/pull/${branch}`,
+				type: 'workflow'
+			} as const;
 
 			if (subject.title.includes('succeeded')) {
 				value = { ...data, icon: 'workflow-success' };
@@ -330,9 +340,9 @@ export async function createGithubNotificationData(
 		default:
 			value = {
 				...common,
-				type: 'CheckSuite',
 				description: `'${subject.type}' notifications are not yet fully supported`,
-				icon: 'unsupported'
+				icon: 'unsupported',
+				type: 'workflow'
 			};
 			break;
 	}
@@ -458,17 +468,12 @@ function getPriorityValue(
 	reason: GithubNotification['reason']
 ): boolean | null | undefined {
 	switch (priority.criteria) {
-		case 'assigned': {
-			let user: User | undefined;
-			page.subscribe((page) => {
-				user = page.data.session?.githubUser;
-			});
+		case 'assigned':
 			return (
 				data &&
 				'assignees' in data &&
-				data.assignees.some((assignee) => assignee.login === user?.login)
+				data.assignees.some((assignee) => assignee.login === getLoggedUser()?.login)
 			);
-		}
 
 		case 'many-comments':
 			return data && 'comments' in data && data.comments > 5;
@@ -491,4 +496,12 @@ function getPriorityValue(
 		case 'type':
 			return notification.type === priority.specifier;
 	}
+}
+
+function getLoggedUser() {
+	let user: User | undefined;
+	page.subscribe((page) => {
+		user = page.data.session?.githubUser;
+	});
+	return user;
 }

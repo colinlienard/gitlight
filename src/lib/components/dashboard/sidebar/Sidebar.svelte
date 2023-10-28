@@ -5,12 +5,12 @@
 	import { Logo, DoubleArrowIcon } from '$lib/icons';
 	import {
 		filteredNotifications,
-		githubNotifications,
 		loading,
 		watchedRepos,
 		settings,
 		watchedPersons,
-		typeFilters
+		typeFilters,
+		globalNotifications
 	} from '$lib/stores';
 	import SidebarSearch from './SidebarSearch.svelte';
 	import TypeFilters from './TypeFilters.svelte';
@@ -22,8 +22,8 @@
 	$: showOnlyOpen = $settings.showOnlyOpen;
 
 	// Apply filters and search
-	$: $filteredNotifications = $githubNotifications.filter((notification) => {
-		const repo = $watchedRepos.find((item) => item.id === notification.repoId);
+	$: $filteredNotifications = $globalNotifications.filter((notification) => {
+		const repo = $watchedRepos.find((item) => item.id === notification.repository.id);
 		const person = $watchedPersons.find(
 			(item) => item.login === (notification.creator?.login || notification.author?.login)
 		);
@@ -33,7 +33,7 @@
 			(filter) => filter.active && filter.type === notification.type
 		);
 		const onlyOpen = showOnlyOpen
-			? notification.type === 'PullRequest' || notification.type === 'Issue'
+			? notification.type === 'pr' || notification.type === 'issue'
 				? notification.opened
 				: true
 			: true;
@@ -83,21 +83,23 @@
 				<WatchedRepos />
 				<Separator />
 				<WatchedPersons />
-				<Separator />
-				<div class="wrapper">
-					<h2 class="title">Manage</h2>
-					<div class="double-button">
-						<a href="https://github.com/watching" target="_blank" rel="noreferrer">Watching</a>
-						<div />
-						<a
-							href="https://github.com/notifications/subscriptions"
-							target="_blank"
-							rel="noreferrer"
-						>
-							Subscriptions
-						</a>
+				{#if $settings.providerView !== 'gitlab'}
+					<Separator />
+					<div class="wrapper">
+						<h2 class="title">Manage</h2>
+						<div class="double-button">
+							<a href="https://github.com/watching" target="_blank" rel="noreferrer">Watching</a>
+							<div />
+							<a
+								href="https://github.com/notifications/subscriptions"
+								target="_blank"
+								rel="noreferrer"
+							>
+								Subscriptions
+							</a>
+						</div>
 					</div>
-				</div>
+				{/if}
 			{:else}
 				<div class="skeletons-container">
 					<span class="skeleton" />

@@ -28,9 +28,13 @@ export async function fetchGithub<T = void>(url: string, options?: Options): Pro
 
 	if (options?.method === 'PATCH') return undefined as T;
 
-	if (response.ok) {
+	if (response.ok && response.status === 200) {
 		return await response.json();
 	}
 
-	throw new Error(`${response.status}`);
+	if (!response.ok) {
+		throw new Error(`${response.status}`);
+	}
+
+	return undefined as T;
 }

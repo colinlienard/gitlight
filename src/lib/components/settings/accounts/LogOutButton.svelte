@@ -32,7 +32,13 @@
 	}
 </script>
 
-<div class="log-out" on:mousedown={handleMouseDown} on:mouseup={handleMouseUp} role="presentation">
+<div
+	class="log-out"
+	on:mousedown={handleMouseDown}
+	on:mouseup={handleMouseUp}
+	on:mouseleave={handleMouseUp}
+	role="presentation"
+>
 	<div class="progress" class:active class:ended={!timeout} />
 	<Button secondary small>Hold to log out</Button>
 </div>

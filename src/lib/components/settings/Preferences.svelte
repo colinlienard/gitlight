@@ -1,19 +1,13 @@
 <script lang="ts">
 	import { invoke } from '@tauri-apps/api/tauri';
-	import { InlineSelect, Switch, Tooltip } from '$lib/components';
+	import { Switch, Tooltip } from '$lib/components';
 	import { settings } from '$lib/stores';
-	import type { Settings } from '$lib/types';
-
-	const numberOptions: Array<Settings['notificationNumber']> = [25, 50, 75, 100];
 </script>
 
 <h3>General</h3>
+<Switch label="Activate push notifications" bind:active={$settings.activateNotifications} />
 <Switch
-	label="Activate push notifications (only on desktop app)"
-	bind:active={$settings.activateNotifications}
-/>
-<Switch
-	label="Activate tray system"
+	label="Show GitLight in menu bar"
 	bind:active={$settings.activeTray}
 	on:change={() => invoke('toggle_tray', { show: $settings.activeTray })}
 />
@@ -23,12 +17,6 @@
 />
 <Switch label="Mark a notification as read when pinned" bind:active={$settings.readWhenPin} />
 <Switch label="Hide closed PRs and issues" bind:active={$settings.showOnlyOpen} />
-<InlineSelect
-	label="Notification number"
-	options={numberOptions}
-	bind:value={$settings.notificationNumber}
-	on:change={() => dispatchEvent(new CustomEvent('refetch'))}
-/>
 <span />
 <h3>Interface</h3>
 <div class="views">
@@ -113,12 +101,10 @@
 		</button>
 	</Tooltip>
 </div>
-<Switch label="Show notifications sync timer" bind:active={$settings.showNotificationsSyncTimer} />
 <Switch
 	label="Show notifications owner and repository"
 	bind:active={$settings.showNotificationsRepo}
 />
-<Switch label="Hide sidebar" bind:active={$settings.sidebarHidden} />
 
 <style lang="scss">
 	.views {

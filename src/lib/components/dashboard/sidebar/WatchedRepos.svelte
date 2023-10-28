@@ -3,27 +3,28 @@
 	import { ShrinkableWrapper } from '$lib/components';
 	import { storage } from '$lib/features';
 	import { MuteIcon, RepositoryIcon, MutedIcon } from '$lib/icons';
-	import { githubNotifications, loading, watchedRepos } from '$lib/stores';
+	import { globalNotifications, loading, settings, watchedRepos } from '$lib/stores';
 	import type { WatchedRepo } from '$lib/types';
 	import SidebarSection from './SidebarSection.svelte';
 
 	type WatchedReposByOwner = {
 		name: string;
-		avatar: string;
+		avatar?: string;
 		number: number;
 		active: boolean;
 		muted: boolean;
 		repos: WatchedRepo[];
+		from: 'github' | 'gitlab';
 	}[];
 
 	// Update watched repos
 	$: if (browser && !$loading) {
-		const savedWatchedRepos = storage.get('github-watched-repos');
+		const savedWatchedRepos = storage.get('watched-repos');
 
-		$watchedRepos = $githubNotifications.reduce<WatchedRepo[]>((previous, current) => {
+		const repos = $globalNotifications.reduce<WatchedRepo[]>((previous, current) => {
 			if (current.done) return previous;
-			const saved = savedWatchedRepos?.find((repo) => repo.id === current.repoId);
-			const index = previous.findIndex((repo) => repo.id === current.repoId);
+			const saved = savedWatchedRepos?.find((repo) => repo.id === current.repository.id);
+			const index = previous.findIndex((repo) => repo.id === current.repository.id);
 			if (index > -1) {
 				const repo = previous.splice(index, 1)[0];
 				return [...previous, { ...repo, number: repo.number + 1 }];
@@ -31,16 +32,27 @@
 			return [
 				...previous,
 				{
-					id: current.repoId,
-					name: current.repo,
-					ownerName: current.owner,
+					id: current.repository.id,
+					name: current.repository.name,
+					ownerName: current.repository.owner,
 					ownerAvatar: current.ownerAvatar,
 					number: 1,
 					active: saved?.active ?? true,
-					muted: saved?.muted ?? false
+					muted: saved?.muted ?? false,
+					from: current.from
 				}
 			];
 		}, []);
+
+		repos.push(
+			...(savedWatchedRepos
+				? savedWatchedRepos
+						.filter((repo) => !repos.find((p) => p.id === repo.id) && (repo.muted || !repo.active))
+						.map((repo) => ({ ...repo, number: 0 }))
+				: [])
+		);
+
+		$watchedRepos = repos;
 	}
 
 	$: watchedReposByOwner = $watchedRepos
@@ -57,7 +69,8 @@
 						number: current.number,
 						active: true,
 						muted: false,
-						repos: [current]
+						repos: [current],
+						from: current.from
 					}
 				];
 			}
@@ -100,13 +113,10 @@
 
 	// Save watched repos to storage
 	$: if (browser) {
-		storage.set(
-			'github-watched-repos',
-			$watchedRepos.map(({ id, active, muted }) => ({ id, active, muted }))
-		);
+		storage.set('watched-repos', $watchedRepos);
 	}
 
-	function handleToggleRepo(id: string) {
+	function handleToggleRepo(id: number) {
 		return (event: MouseEvent) => {
 			if (event.altKey || event.ctrlKey || event.shiftKey || event.metaKey) {
 				$watchedRepos = $watchedRepos.map((item) => ({ ...item, active: item.id === id }));
@@ -130,7 +140,7 @@
 		};
 	}
 
-	function handleMuteRepo(id: string) {
+	function handleMuteRepo(id: number) {
 		return () => {
 			$watchedRepos = $watchedRepos.map((item) =>
 				item.id === id ? { ...item, muted: !item.muted } : item
@@ -154,34 +164,22 @@
 	zIndex={2}
 >
 	{#if $watchedRepos.length}
-		{#each watchedReposByOwner as { name, avatar, number, active, muted, repos }}
-			{#if repos.length === 1}
-				<button
-					class="wrapper"
-					class:active={repos[0].active}
-					on:click={handleToggleRepo(repos[0].id)}
-				>
-					<img class="image" src={avatar} alt="" />
-					<h3 class="name">{name}/{repos[0].name}</h3>
-					<span class="number">{number}</span>
-					<button class="mute" class:muted on:click|stopPropagation={handleMuteOwner(name, muted)}>
-						{#if muted}
-							<MutedIcon />
-						{:else}
-							<MuteIcon />
-						{/if}
-					</button>
-				</button>
-			{:else}
-				<ShrinkableWrapper>
+		{#each watchedReposByOwner as { name, avatar, number, active, muted, repos, from }}
+			{#if $settings.providerView == 'both' || $settings.providerView === from}
+				{#if repos.length === 1}
 					<button
-						slot="header"
-						class="wrapper smaller"
-						class:active
-						on:click={handleToggleOwner(name, !active)}
+						class="wrapper"
+						class:active={repos[0].active}
+						on:click={handleToggleRepo(repos[0].id)}
 					>
-						<img class="image" src={avatar} alt="" />
-						<h3 class="name">{name}</h3>
+						{#if avatar}
+							<img class="image" src={avatar} alt="" />
+						{:else}
+							<div class="repo-icon">
+								<RepositoryIcon />
+							</div>
+						{/if}
+						<h3 class="name">{name}/{repos[0].name}</h3>
 						<span class="number">{number}</span>
 						<button
 							class="mute"
@@ -195,14 +193,28 @@
 							{/if}
 						</button>
 					</button>
-					{#each repos as { id, name, number, active, muted }}
-						<button class="wrapper" class:active on:click={handleToggleRepo(id)}>
-							<div class="repo-icon">
-								<RepositoryIcon />
-							</div>
-							<h4 class="name">{name}</h4>
+				{:else}
+					<ShrinkableWrapper>
+						<button
+							slot="header"
+							class="wrapper smaller"
+							class:active
+							on:click={handleToggleOwner(name, !active)}
+						>
+							{#if avatar}
+								<img class="image" src={avatar} alt="" />
+							{:else}
+								<div class="repo-icon">
+									<RepositoryIcon />
+								</div>
+							{/if}
+							<h3 class="name">{name}</h3>
 							<span class="number">{number}</span>
-							<button class="mute" class:muted on:click|stopPropagation={handleMuteRepo(id)}>
+							<button
+								class="mute"
+								class:muted
+								on:click|stopPropagation={handleMuteOwner(name, muted)}
+							>
 								{#if muted}
 									<MutedIcon />
 								{:else}
@@ -210,8 +222,24 @@
 								{/if}
 							</button>
 						</button>
-					{/each}
-				</ShrinkableWrapper>
+						{#each repos as { id, name, number, active, muted }}
+							<button class="wrapper" class:active on:click={handleToggleRepo(id)}>
+								<div class="repo-icon">
+									<RepositoryIcon />
+								</div>
+								<h4 class="name">{name}</h4>
+								<span class="number">{number}</span>
+								<button class="mute" class:muted on:click|stopPropagation={handleMuteRepo(id)}>
+									{#if muted}
+										<MutedIcon />
+									{:else}
+										<MuteIcon />
+									{/if}
+								</button>
+							</button>
+						{/each}
+					</ShrinkableWrapper>
+				{/if}
 			{/if}
 		{/each}
 	{:else}
