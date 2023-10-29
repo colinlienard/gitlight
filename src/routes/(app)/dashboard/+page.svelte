@@ -321,13 +321,8 @@
 	function updateTrayTitle() {
 		if (browser && window.__TAURI__) {
 			const unread = $filteredNotifications.filter(({ status }) => status === 'unread');
-			const pinned = $filteredNotifications.filter(({ status }) => status === 'pinned');
 			let title = '';
-			if (pinned.length && unread.length) {
-				title = `${unread.length} unread • ${pinned.length} pinned`;
-			} else if (pinned.length) {
-				title = `${pinned.length} pinned`;
-			} else if (unread.length) {
+			if (unread.length) {
 				title = `${unread.length} unread`;
 			}
 			invoke('update_tray', { title });

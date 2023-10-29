@@ -5,4 +5,5 @@ export * from './drag-actions';
 export * from './fetchGithub';
 export * from './fetchGitlab';
 export * from './getGithubDiscussionData';
+export * from './intersection-action';
 export * from './storage';

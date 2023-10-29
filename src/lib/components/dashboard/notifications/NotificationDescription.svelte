@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { intersect } from '$lib/features';
 	import type { User } from '$lib/types';
 
 	type Description = Array<
@@ -44,22 +45,27 @@
 	})();
 
 	// WebKit fix to avoid line-clamp bug
-	// Set hard height, and set width: 100% after 500ms
+	// Set hard height, and set width: 100% on visible
 	let element: HTMLParagraphElement;
-	let timer = false;
-
-	setTimeout(() => {
-		timer = true;
-	}, 500);
+	let width = '';
 
 	$: tall = element?.scrollHeight > element?.clientHeight + 1;
+	$: onWebkit = navigator.userAgent.includes('WebKit');
+
+	function toggleWidth() {
+		width = '100%';
+		setTimeout(() => {
+			width = '';
+		}, 100);
+	}
 </script>
 
 <p
 	class="description"
 	bind:this={element}
-	style:width={timer ? '100%' : ''}
+	style:width
 	style:height={tall ? '2.65rem' : ''}
+	use:intersect={{ callback: toggleWidth, active: onWebkit }}
 >
 	{#if prefix}
 		<span>{prefix}</span>

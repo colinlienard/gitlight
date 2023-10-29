@@ -49,11 +49,13 @@
 		}
 
 		.pinned {
-			flex: 0 0 1.25rem;
+			flex: 0 0 1rem;
 			color: variables.$yellow;
 
 			:global(svg) {
-				height: 1.25rem;
+				height: 1rem;
+				scale: 1.2;
+				translate: 0.05rem 0.05rem;
 			}
 		}
 
