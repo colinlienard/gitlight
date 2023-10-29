@@ -121,7 +121,7 @@
 			transition: color variables.$transition;
 
 			&:not(:hover) {
-				color: variables.$bg-4;
+				color: variables.$bg-5;
 			}
 
 			:global(svg) {

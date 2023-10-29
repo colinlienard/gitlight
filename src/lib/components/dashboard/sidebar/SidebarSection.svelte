@@ -72,15 +72,15 @@
 			@include typography.bold;
 			@include typography.small;
 
-			color: variables.$bg-4;
+			color: variables.$bg-5;
 		}
 
 		.icon-container :global(svg) {
 			height: 1rem;
-			color: variables.$bg-4;
+			color: variables.$bg-5;
 
 			&:hover {
-				color: variables.$bg-5;
+				color: variables.$bg-6;
 				rotate: 60deg;
 			}
 		}

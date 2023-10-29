@@ -167,19 +167,19 @@
 		}
 
 		.number {
-			color: variables.$bg-4;
+			color: variables.$bg-5;
 		}
 
 		.mute {
 			margin-left: auto;
-			color: variables.$bg-4;
+			color: variables.$bg-5;
 
 			&.muted {
 				opacity: 1;
 			}
 
 			&:hover {
-				color: variables.$bg-5;
+				color: variables.$bg-6;
 			}
 
 			:global(svg) {
@@ -189,6 +189,6 @@
 	}
 
 	.empty {
-		color: variables.$bg-4;
+		color: variables.$bg-5;
 	}
 </style>

@@ -64,14 +64,12 @@
 			position: relative;
 			overflow: hidden;
 			padding: 0.25rem 0.5rem;
-			border: 1px solid;
-			border-radius: variables.$radius;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 
 			.label-background {
 				position: absolute;
-				border-radius: variables.$radius;
+				border-radius: 0.25rem;
 				inset: 0;
 				opacity: 0.1;
 			}

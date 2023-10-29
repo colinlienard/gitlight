@@ -154,12 +154,11 @@
 	}
 
 	.tooltip {
-		@include mixins.modal-shadow;
-
 		position: absolute;
 		border: 1px solid variables.$bg-3;
 		border-radius: variables.$radius;
 		background-color: variables.$bg-1;
+		box-shadow: variables.$modal-shadow;
 
 		&.fit-content {
 			max-width: max-content;
@@ -226,7 +225,7 @@
 			}
 
 			&.disabled {
-				color: variables.$bg-4;
+				color: variables.$bg-5;
 				pointer-events: none;
 			}
 		}
@@ -260,7 +259,7 @@
 					@include mixins.shiny(variables.$bg-3, true, 0.25rem);
 
 					& > :global(svg) {
-						color: variables.$bg-4;
+						color: variables.$bg-5;
 					}
 				}
 			}

@@ -176,7 +176,7 @@
 				-webkit-background-clip: text;
 				-moz-background-clip: text;
 				background-clip: text;
-				background-image: linear-gradient(variables.$bg-5, rgba(variables.$bg-5, 0.5));
+				background-image: linear-gradient(variables.$bg-6, rgba(variables.$bg-6, 0.5));
 				font-size: 2.5rem;
 				text-align: center;
 				-webkit-text-fill-color: transparent;
@@ -189,7 +189,7 @@
 			}
 
 			.subhero {
-				color: variables.$bg-4;
+				color: variables.$bg-5;
 				font-size: 1.25rem;
 				text-align: center;
 			}
@@ -234,7 +234,7 @@
 				}
 
 				.description {
-					color: variables.$bg-4;
+					color: variables.$bg-5;
 				}
 			}
 		}

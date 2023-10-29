@@ -221,7 +221,7 @@
 				transition: color variables.$transition;
 
 				&:not(:hover, .active) {
-					color: variables.$bg-4;
+					color: variables.$bg-5;
 				}
 
 				&.strong button {

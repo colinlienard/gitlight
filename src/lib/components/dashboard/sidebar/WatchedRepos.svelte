@@ -285,25 +285,25 @@
 
 			:global(svg) {
 				height: 1rem;
-				color: variables.$bg-4;
+				color: variables.$bg-5;
 			}
 		}
 
 		.number {
-			color: variables.$bg-4;
+			color: variables.$bg-5;
 		}
 
 		.mute {
 			flex: 0 0 1.25rem;
 			margin-left: auto;
-			color: variables.$bg-4;
+			color: variables.$bg-5;
 
 			&.muted {
 				opacity: 1;
 			}
 
 			&:hover {
-				color: variables.$bg-5;
+				color: variables.$bg-6;
 			}
 
 			:global(svg) {
@@ -313,6 +313,6 @@
 	}
 
 	.empty {
-		color: variables.$bg-4;
+		color: variables.$bg-5;
 	}
 </style>

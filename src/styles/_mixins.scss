@@ -32,7 +32,7 @@
 }
 
 @mixin box($hover: false) {
-	border: 1px solid variables.$bg-3;
+	border: 1px solid variables.$bg-4;
 	border-radius: variables.$radius;
 	background-color: variables.$bg-2;
 
@@ -51,14 +51,6 @@
 	&:hover {
 		filter: brightness(130%);
 	}
-}
-
-@mixin shadow {
-	box-shadow: 0 2px 0.25rem rgba(black, 0.1);
-}
-
-@mixin modal-shadow() {
-	box-shadow: 0 2rem 4rem rgba(black, 0.5);
 }
 
 @mixin skeleton($width: 100%, $height: 100%) {

@@ -60,11 +60,11 @@
 				.button {
 					width: 100%;
 					padding: 0.75rem;
-					color: variables.$bg-4;
+					color: variables.$bg-5;
 
 					&.selected,
 					&:hover {
-						color: variables.$bg-5;
+						color: variables.$bg-6;
 					}
 
 					&.selected {

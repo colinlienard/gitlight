@@ -100,10 +100,6 @@
 		</button>
 	</Tooltip>
 </div>
-<Switch
-	label="Show notifications owner and repository"
-	bind:active={$settings.showNotificationsRepo}
-/>
 
 <style lang="scss">
 	.views {

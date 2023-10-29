@@ -63,9 +63,9 @@
 		--svg-size: 1.25rem;
 
 		display: block;
+		box-shadow: variables.$shadow;
 
 		@include mixins.shiny(variables.$blue);
-		@include mixins.shadow;
 
 		&.secondary {
 			@include mixins.shiny(variables.$bg-3);

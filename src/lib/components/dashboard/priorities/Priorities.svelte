@@ -99,7 +99,7 @@
 	.paragraph {
 		@include typography.base;
 
-		color: variables.$bg-4;
+		color: variables.$bg-5;
 	}
 
 	.buttons {
