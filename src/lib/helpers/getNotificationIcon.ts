@@ -31,14 +31,17 @@ export function getNotificationIcon(icon: NotificationIcon) {
 			return DraftPullRequestIcon;
 		case 'merged-pr':
 			return MergedPullRequestIcon;
+		case 'issue':
 		case 'open-issue':
 			return OpenIssueIcon;
+		case 'pr':
 		case 'open-pr':
 			return OpenPullRequestIcon;
 		case 'release':
 			return ReleaseIcon;
 		case 'workflow-fail':
 			return WorkflowFailIcon;
+		case 'workflow':
 		case 'workflow-success':
 			return WorkflowSuccessIcon;
 		default:

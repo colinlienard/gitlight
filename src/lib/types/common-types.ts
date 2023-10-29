@@ -17,15 +17,18 @@ export type Session = {
 
 export type NotificationIcon =
 	| 'commit'
+	| 'issue'
 	| 'open-issue'
 	| 'completed-issue'
 	| 'closed-issue'
+	| 'pr'
 	| 'draft-pr'
 	| 'open-pr'
 	| 'merged-pr'
 	| 'closed-pr'
 	| 'release'
 	| 'discussion'
+	| 'workflow'
 	| 'workflow-fail'
 	| 'workflow-success'
 	| 'unsupported';

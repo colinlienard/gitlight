@@ -224,6 +224,7 @@
 								<MuteIcon />
 							{/if}
 						</button>
+						<span class="number">{number}</span>
 					</button>
 					{#each repos as { id, name, number, active, muted }}
 						<button class="wrapper" class:active on:click={handleToggleRepo(id)}>
@@ -241,6 +242,7 @@
 									<MuteIcon />
 								{/if}
 							</button>
+							<span class="number">{number}</span>
 						</button>
 					{/each}
 				</ShrinkableWrapper>
@@ -253,41 +255,14 @@
 
 <style lang="scss">
 	.wrapper {
-		position: relative;
-		display: flex;
-		width: 100%;
-		align-items: center;
-		gap: 0.5rem;
-		transition: opacity variables.$transition;
-
-		&.smaller {
-			width: calc(100% - 1.5rem);
-		}
-
-		&:not(.active) {
-			opacity: 0.5;
-
-			.name::before {
-				width: 100%;
-			}
-		}
+		@include mixins.item-list;
 
 		&:not(:hover) .mute {
 			opacity: 0;
 		}
 
-		&::before {
-			position: absolute;
-			z-index: -1;
-			border-radius: variables.$radius;
-			background-color: variables.$grey-2;
-			content: '';
-			inset: -0.25rem -0.5rem;
-			opacity: 0;
-		}
-
-		&:hover::before {
-			opacity: 1;
+		&.smaller {
+			width: calc(100% - 1.5rem);
 		}
 
 		.name {
@@ -296,16 +271,6 @@
 			max-width: 100%;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-
-			&::before {
-				position: absolute;
-				width: 0;
-				height: 1px;
-				background-color: currentcolor;
-				content: '';
-				inset: 50% 0 auto;
-				transition: width variables.$transition;
-			}
 		}
 
 		.image,
@@ -328,7 +293,9 @@
 		}
 
 		.number {
+			width: 2ch;
 			color: variables.$grey-4;
+			text-align: end;
 		}
 
 		.mute {

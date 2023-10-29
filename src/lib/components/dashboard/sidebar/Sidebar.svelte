@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import { Tooltip, ScrollbarContainer, Separator, IconButton } from '$lib/components';
-	import { Logo, DoubleArrowIcon } from '$lib/icons';
+	import { Tooltip, ScrollbarContainer, IconButton } from '$lib/components';
+	import { Logo, DoubleArrowIcon, GithubIcon, GitlabIcon } from '$lib/icons';
 	import {
 		filteredNotifications,
 		loading,
@@ -65,7 +65,6 @@
 </script>
 
 <article class="sidebar">
-	<img src="/images/small-light.webp" alt="" class="gradient" />
 	<header class="header" data-tauri-drag-region>
 		<div class="logo-container">
 			<Logo />
@@ -77,21 +76,42 @@
 			</IconButton>
 		</Tooltip>
 	</header>
-	<ScrollbarContainer margin="0.25rem">
-		<div class="scrollable">
-			{#if !$loading}
-				<div class="wrapper">
-					<SidebarSearch bind:search />
-				</div>
-				<Separator />
+	<div class="wrapper">
+		<SidebarSearch bind:search />
+	</div>
+	<div class="providers">
+		<button
+			class="tab"
+			class:selected={$settings.providerView === 'github'}
+			on:click={() => ($settings.providerView = 'github')}
+		>
+			<GithubIcon />
+			<p class="text">GitHub</p>
+		</button>
+		<button
+			class="tab"
+			class:selected={$settings.providerView === 'gitlab'}
+			on:click={() => ($settings.providerView = 'gitlab')}
+		>
+			<GitlabIcon />
+			<p class="text">GitLab</p>
+		</button>
+		<button
+			class="tab"
+			class:selected={$settings.providerView === 'both'}
+			on:click={() => ($settings.providerView = 'both')}
+		>
+			<p class="text">Both</p>
+		</button>
+	</div>
+	<div class="scrollable">
+		{#if !$loading}
+			<ScrollbarContainer margin="0.25rem">
 				<TypeFilters />
-				<Separator />
 				<WatchedRepos />
-				<Separator />
 				<WatchedPersons />
 				{#if $settings.providerView !== 'gitlab'}
-					<Separator />
-					<div class="wrapper">
+					<div class="wrapper with-border">
 						<h2 class="title">Manage</h2>
 						<div class="double-button">
 							<a href="https://github.com/watching" target="_blank" rel="noreferrer">Watching</a>
@@ -106,27 +126,27 @@
 						</div>
 					</div>
 				{/if}
-			{:else}
-				<div class="skeletons-container">
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-				</div>
-				<div class="skeletons-container">
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-				</div>
-			{/if}
-		</div>
-	</ScrollbarContainer>
+			</ScrollbarContainer>
+		{:else}
+			<div class="skeletons-container">
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+			</div>
+			<div class="skeletons-container">
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+			</div>
+		{/if}
+	</div>
 </article>
 
 <style lang="scss">
@@ -138,14 +158,8 @@
 		flex-direction: column;
 		border-right: 1px solid variables.$grey-3;
 
-		&::before {
-			position: absolute;
-			z-index: 1;
-			height: 2rem;
-			background-image: linear-gradient(transparent, variables.$grey-1 1rem);
-			content: '';
-			inset: auto 0 0;
-			pointer-events: none;
+		&:not(:hover) .header :global(div):nth-last-child(1) {
+			opacity: 0;
 		}
 	}
 
@@ -154,7 +168,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 3rem 2rem 2rem;
+		padding: 1rem 1rem 0;
 
 		.logo-container {
 			display: flex;
@@ -166,7 +180,38 @@
 			}
 
 			.hero {
-				@include typography.heading-1;
+				@include typography.heading-2;
+			}
+		}
+	}
+
+	.providers {
+		display: flex;
+
+		.tab {
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 1rem;
+			color: variables.$grey-4;
+			gap: 0.25rem;
+
+			&.selected,
+			&:hover {
+				color: variables.$white;
+			}
+
+			&.selected::before {
+				position: absolute;
+				height: 1px;
+				background-color: variables.$white;
+				content: '';
+				inset: auto 1rem 0;
+			}
+
+			:global(svg) {
+				height: 1.25rem;
 			}
 		}
 	}
@@ -174,22 +219,28 @@
 	.scrollable {
 		position: relative;
 		display: flex;
+		overflow: hidden;
 		width: 20rem;
 		flex-direction: column;
-		padding: 0 2rem 2rem;
-		gap: 1.5rem;
-	}
+		border-top: 1px solid variables.$grey-3;
 
-	.gradient {
-		position: absolute;
-		z-index: -1;
-		inset: 0;
+		&:nth-child(1) {
+			:global(div) {
+				background-color: red;
+			}
+		}
 	}
 
 	.wrapper {
 		display: flex;
 		flex-direction: column;
+		padding: 1rem;
 		gap: 1rem;
+
+		&.with-border {
+			padding: 2rem 1rem;
+			border-top: 1px solid variables.$grey-3;
+		}
 
 		.title {
 			@include typography.bold;
@@ -199,6 +250,7 @@
 	.skeletons-container {
 		display: flex;
 		flex-direction: column;
+		padding: 1rem;
 		gap: 1rem;
 
 		.skeleton {
