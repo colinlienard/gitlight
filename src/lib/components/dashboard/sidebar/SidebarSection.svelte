@@ -53,7 +53,7 @@
 		gap: 1rem;
 
 		&:not(.first) {
-			border-top: 1px solid variables.$grey-3;
+			border-top: 1px solid variables.$bg-3;
 		}
 
 		&:not(:hover) .icon-container {
@@ -72,15 +72,15 @@
 			@include typography.bold;
 			@include typography.small;
 
-			color: variables.$grey-4;
+			color: variables.$bg-4;
 		}
 
 		.icon-container :global(svg) {
 			height: 1rem;
-			color: variables.$grey-4;
+			color: variables.$bg-4;
 
 			&:hover {
-				color: variables.$white;
+				color: variables.$bg-5;
 				rotate: 60deg;
 			}
 		}

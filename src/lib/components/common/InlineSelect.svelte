@@ -51,7 +51,7 @@
 			display: flex;
 			align-items: center;
 			border-radius: variables.$radius;
-			background-color: variables.$grey-2;
+			background-color: variables.$bg-2;
 			isolation: isolate;
 
 			.item {
@@ -60,11 +60,11 @@
 				.button {
 					width: 100%;
 					padding: 0.75rem;
-					color: variables.$grey-4;
+					color: variables.$bg-4;
 
 					&.selected,
 					&:hover {
-						color: variables.$white;
+						color: variables.$bg-5;
 					}
 
 					&.selected {
@@ -74,7 +74,7 @@
 			}
 
 			.indicator {
-				@include mixins.shiny(variables.$grey-3);
+				@include mixins.shiny(variables.$bg-3);
 
 				position: absolute;
 				z-index: -1;

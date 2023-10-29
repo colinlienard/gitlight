@@ -73,27 +73,27 @@
 		}
 
 		&.active {
-			@include mixins.shiny(variables.$blue-2, true, 9rem);
+			@include mixins.shiny(variables.$blue, true, 9rem);
 
 			.icon-container {
-				background-color: variables.$white;
+				background-color: variables.$bg-5;
 				translate: 0.65rem 0;
 
 				:global(svg) {
-					color: variables.$blue-2;
+					color: variables.$blue;
 				}
 			}
 		}
 
 		&:not(.active) {
-			@include mixins.shiny(variables.$grey-3, true, 9rem);
+			@include mixins.shiny(variables.$bg-3, true, 9rem);
 
 			.icon-container {
-				background-color: variables.$grey-4;
+				background-color: variables.$bg-4;
 				rotate: -90deg;
 
 				:global(svg) {
-					color: variables.$grey-3;
+					color: variables.$bg-3;
 				}
 			}
 		}

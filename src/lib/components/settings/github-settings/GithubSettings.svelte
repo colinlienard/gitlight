@@ -115,7 +115,7 @@
 	.list-item {
 		@include typography.base;
 
-		color: variables.$grey-4;
+		color: variables.$bg-4;
 
 		strong {
 			@include typography.bold;

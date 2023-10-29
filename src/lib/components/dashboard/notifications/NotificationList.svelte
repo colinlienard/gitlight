@@ -50,7 +50,7 @@
 				z-index: 1;
 				height: 2rem;
 				margin-bottom: -1rem;
-				background-image: linear-gradient(variables.$grey-1 1rem, transparent);
+				background-image: linear-gradient(variables.$bg-1 1rem, transparent);
 				content: '';
 				inset: 0 0 auto;
 			}

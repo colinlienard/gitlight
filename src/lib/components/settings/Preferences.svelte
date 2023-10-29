@@ -127,7 +127,7 @@
 			gap: 0.5rem;
 
 			&.active {
-				outline: 2px solid variables.$blue-2;
+				outline: 2px solid variables.$blue;
 				outline-offset: -2px;
 			}
 
@@ -150,7 +150,7 @@
 					flex-direction: column;
 					padding: 0.25rem;
 					border-radius: 0.25rem;
-					background-color: variables.$grey-3;
+					background-color: variables.$bg-3;
 					gap: 0.25rem;
 
 					.item {

@@ -156,11 +156,11 @@
 				gap: 0.5rem;
 
 				&:hover {
-					background-color: color.adjust(variables.$grey-2, $lightness: 1%);
+					background-color: color.adjust(variables.$bg-2, $lightness: 1%);
 				}
 
 				&:active {
-					background-color: color.adjust(variables.$grey-2, $lightness: 2%);
+					background-color: color.adjust(variables.$bg-2, $lightness: 2%);
 				}
 
 				:global(svg) {
@@ -168,7 +168,7 @@
 				}
 
 				&.confirm {
-					border-top: 1px solid variables.$grey-3;
+					border-top: 1px solid variables.$bg-3;
 					color: variables.$red;
 				}
 			}

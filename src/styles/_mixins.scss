@@ -32,13 +32,13 @@
 }
 
 @mixin box($hover: false) {
-	border: 1px solid variables.$grey-3;
+	border: 1px solid variables.$bg-3;
 	border-radius: variables.$radius;
-	background-color: variables.$grey-2;
+	background-color: variables.$bg-2;
 
 	@if $hover {
 		&:hover {
-			border-color: color.adjust(variables.$grey-3, $lightness: 10%);
+			border-color: color.adjust(variables.$bg-3, $lightness: 10%);
 		}
 	}
 }
@@ -46,7 +46,7 @@
 @mixin link() {
 	@include typography.bold;
 
-	color: variables.$blue-3;
+	color: variables.$light-blue;
 
 	&:hover {
 		filter: brightness(130%);
@@ -68,7 +68,7 @@
 	height: $height;
 	flex: 0 0 auto;
 	border-radius: variables.$radius;
-	background-color: variables.$grey-3;
+	background-color: variables.$bg-3;
 
 	&::before {
 		position: absolute;
@@ -93,9 +93,9 @@
 @mixin blurred-background() {
 	position: fixed;
 	z-index: 998;
-	-webkit-backdrop-filter: blur(0.25rem);
-	backdrop-filter: blur(0.25rem);
-	background-color: rgba(black, 0.5);
+	-webkit-backdrop-filter: blur(0.1rem);
+	backdrop-filter: blur(0.1rem);
+	background-color: rgba(black, 0.2);
 	inset: 0;
 }
 
@@ -115,7 +115,7 @@
 		position: absolute;
 		z-index: -1;
 		border-radius: variables.$radius;
-		background-color: variables.$grey-2;
+		background-color: variables.$bg-2;
 		content: '';
 		inset: -0.25rem -0.5rem;
 		opacity: 0;

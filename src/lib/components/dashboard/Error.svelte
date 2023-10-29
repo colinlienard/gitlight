@@ -41,7 +41,7 @@
 		padding: 1rem;
 		border-radius: variables.$radius;
 		background-color: variables.$yellow;
-		color: variables.$grey-1;
+		color: variables.$bg-1;
 		inset: auto auto 1rem 1rem;
 		transition: translate 0.3s ease-in-out;
 

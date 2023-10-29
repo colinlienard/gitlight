@@ -145,22 +145,22 @@
 
 				width: 1rem;
 				height: 1rem;
-				border: 2px solid variables.$grey-4;
+				border: 2px solid variables.$bg-4;
 				border-radius: 50%;
-				border-top-color: variables.$grey-3;
+				border-top-color: variables.$bg-3;
 				animation: spin 1s linear infinite;
 			}
 
 			&.button {
 				border-radius: 0 variables.$radius variables.$radius 0;
-				border-left: 1px solid variables.$grey-3;
+				border-left: 1px solid variables.$bg-3;
 
 				&:hover {
-					background-color: color.adjust(variables.$grey-2, $lightness: 1%);
+					background-color: color.adjust(variables.$bg-2, $lightness: 1%);
 				}
 
 				&:active {
-					background-color: color.adjust(variables.$grey-2, $lightness: 2%);
+					background-color: color.adjust(variables.$bg-2, $lightness: 2%);
 				}
 
 				:global(svg) {

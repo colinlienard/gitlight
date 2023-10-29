@@ -295,7 +295,7 @@
 <style lang="scss">
 	.container {
 		border-radius: variables.$radius;
-		background-color: variables.$grey-1;
+		background-color: variables.$bg-1;
 		isolation: isolate;
 
 		&:not(:hover) {
@@ -366,7 +366,7 @@
 	.repo {
 		@include typography.small;
 
-		color: variables.$grey-4;
+		color: variables.$bg-4;
 	}
 
 	.main {
@@ -406,7 +406,7 @@
 				}
 
 				.notification-number {
-					color: variables.$blue-3;
+					color: variables.$light-blue;
 				}
 
 				&.underlined:hover * {
@@ -475,7 +475,7 @@
 			width: 4rem;
 			height: 4rem;
 			border-radius: 0 calc(variables.$radius - 1px) calc(variables.$radius - 1px) 0;
-			background-image: radial-gradient(at top right, variables.$grey-1 25%, transparent 75%);
+			background-image: radial-gradient(at top right, variables.$bg-1 25%, transparent 75%);
 			content: '';
 			inset: 0 0 auto auto;
 		}
@@ -508,13 +508,13 @@
 		}
 
 		&::before {
-			border: 1px solid variables.$grey-3;
+			border: 1px solid variables.$bg-3;
 			border-radius: 0 0 variables.$radius variables.$radius;
-			background-color: variables.$grey-2;
+			background-color: variables.$bg-2;
 		}
 
 		&::after {
-			background-image: linear-gradient(rgba(variables.$grey-1, 0.5), transparent);
+			background-image: linear-gradient(rgba(variables.$bg-1, 0.5), transparent);
 		}
 	}
 </style>

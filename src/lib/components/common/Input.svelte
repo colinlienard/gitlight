@@ -78,11 +78,11 @@
 		outline-offset: -1px;
 
 		&.empty :global(svg) {
-			color: variables.$grey-4;
+			color: variables.$bg-4;
 		}
 
 		&.focused {
-			outline-color: variables.$blue-3;
+			outline-color: variables.$light-blue;
 		}
 
 		&.error {
@@ -102,7 +102,7 @@
 			width: 100%;
 
 			&::placeholder {
-				color: variables.$grey-4;
+				color: variables.$bg-4;
 			}
 		}
 
@@ -114,7 +114,7 @@
 			}
 
 			&:not(:hover) {
-				color: variables.$grey-4;
+				color: variables.$bg-4;
 			}
 		}
 	}

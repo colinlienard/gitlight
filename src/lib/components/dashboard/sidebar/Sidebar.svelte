@@ -18,6 +18,7 @@
 	import WatchedRepos from './WatchedRepos.svelte';
 
 	let search = '';
+	let isMacos = false;
 
 	$: showOnlyOpen = $settings.showOnlyOpen;
 
@@ -56,6 +57,12 @@
 
 	onMount(async () => {
 		window.addEventListener('keydown', toogleSidebar);
+
+		if (window.__TAURI__) {
+			const { platform } = await import('@tauri-apps/api/os');
+			const platformName = await platform();
+			isMacos = platformName === 'darwin';
+		}
 	});
 
 	onDestroy(() => {
@@ -66,7 +73,7 @@
 
 <article class="sidebar">
 	<header class="header" data-tauri-drag-region>
-		<div class="logo-container">
+		<div class="logo-container" class:macos={isMacos}>
 			<Logo />
 			<h1 class="hero">GitLight</h1>
 		</div>
@@ -156,7 +163,7 @@
 		height: 100vh;
 		flex: 0 0 20rem;
 		flex-direction: column;
-		border-right: 1px solid variables.$grey-3;
+		border-right: 1px solid variables.$bg-3;
 
 		&:not(:hover) .header :global(div):nth-last-child(1) {
 			opacity: 0;
@@ -166,14 +173,17 @@
 	.header {
 		z-index: 1;
 		display: flex;
-		align-items: center;
 		justify-content: space-between;
-		padding: 1rem 1rem 0;
+		padding: 1.1rem 1rem 0;
 
 		.logo-container {
 			display: flex;
 			align-items: center;
 			gap: 0.5rem;
+
+			&.macos {
+				padding-top: 1.5rem;
+			}
 
 			:global(svg) {
 				height: 2rem;
@@ -194,18 +204,18 @@
 			align-items: center;
 			justify-content: center;
 			padding: 1rem;
-			color: variables.$grey-4;
+			color: variables.$bg-4;
 			gap: 0.25rem;
 
 			&.selected,
 			&:hover {
-				color: variables.$white;
+				color: variables.$bg-5;
 			}
 
 			&.selected::before {
 				position: absolute;
 				height: 1px;
-				background-color: variables.$white;
+				background-color: variables.$bg-5;
 				content: '';
 				inset: auto 1rem 0;
 			}
@@ -222,7 +232,7 @@
 		overflow: hidden;
 		width: 20rem;
 		flex-direction: column;
-		border-top: 1px solid variables.$grey-3;
+		border-top: 1px solid variables.$bg-3;
 
 		&:nth-child(1) {
 			:global(div) {
@@ -239,7 +249,7 @@
 
 		&.with-border {
 			padding: 2rem 1rem;
-			border-top: 1px solid variables.$grey-3;
+			border-top: 1px solid variables.$bg-3;
 		}
 
 		.title {
@@ -264,7 +274,7 @@
 	}
 
 	.double-button {
-		@include mixins.shiny(variables.$grey-3, false);
+		@include mixins.shiny(variables.$bg-3, false);
 
 		display: flex;
 		justify-content: space-evenly;
@@ -288,7 +298,7 @@
 			}
 
 			&:hover {
-				background-color: color.adjust(variables.$grey-3, $lightness: -2%);
+				background-color: color.adjust(variables.$bg-3, $lightness: -2%);
 			}
 		}
 

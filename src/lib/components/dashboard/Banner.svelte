@@ -89,12 +89,12 @@
 		z-index: 1;
 		overflow: hidden;
 		height: 2.5rem;
-		border-bottom: 1px solid variables.$grey-3;
-		background-color: variables.$grey-1;
+		border-bottom: 1px solid variables.$bg-3;
+		background-color: variables.$bg-1;
 		transition: background-color variables.$transition;
 
 		&:hover {
-			background-color: variables.$grey-2;
+			background-color: variables.$bg-2;
 		}
 
 		.content {
@@ -121,7 +121,7 @@
 			transition: color variables.$transition;
 
 			&:not(:hover) {
-				color: variables.$grey-4;
+				color: variables.$bg-4;
 			}
 
 			:global(svg) {

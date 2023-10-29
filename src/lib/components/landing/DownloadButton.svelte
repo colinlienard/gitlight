@@ -55,9 +55,9 @@
 		width: max-content;
 		flex-direction: column;
 		padding: 0.5rem;
-		border: 1px solid variables.$grey-3;
+		border: 1px solid variables.$bg-3;
 		border-radius: variables.$radius;
-		background-color: variables.$grey-1;
+		background-color: variables.$bg-1;
 		gap: 0.5rem;
 		translate: -50% -50%;
 		white-space: nowrap;

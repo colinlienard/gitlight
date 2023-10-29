@@ -64,11 +64,11 @@
 
 		display: block;
 
-		@include mixins.shiny(variables.$blue-2);
+		@include mixins.shiny(variables.$blue);
 		@include mixins.shadow;
 
 		&.secondary {
-			@include mixins.shiny(variables.$grey-3);
+			@include mixins.shiny(variables.$bg-3);
 		}
 
 		&:not(.small) {

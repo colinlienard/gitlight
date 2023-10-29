@@ -176,7 +176,7 @@
 				-webkit-background-clip: text;
 				-moz-background-clip: text;
 				background-clip: text;
-				background-image: linear-gradient(variables.$white, rgba(variables.$white, 0.5));
+				background-image: linear-gradient(variables.$bg-5, rgba(variables.$bg-5, 0.5));
 				font-size: 2.5rem;
 				text-align: center;
 				-webkit-text-fill-color: transparent;
@@ -189,7 +189,7 @@
 			}
 
 			.subhero {
-				color: variables.$grey-4;
+				color: variables.$bg-4;
 				font-size: 1.25rem;
 				text-align: center;
 			}
@@ -205,7 +205,7 @@
 		.separator {
 			width: 20rem;
 			height: 1px;
-			background-image: linear-gradient(to right, transparent, variables.$blue-2, transparent);
+			background-image: linear-gradient(to right, transparent, variables.$blue, transparent);
 		}
 
 		.features-list {
@@ -226,7 +226,7 @@
 
 				:global(svg) {
 					height: 2rem;
-					color: variables.$blue-3;
+					color: variables.$light-blue;
 				}
 
 				.title {
@@ -234,7 +234,7 @@
 				}
 
 				.description {
-					color: variables.$grey-4;
+					color: variables.$bg-4;
 				}
 			}
 		}

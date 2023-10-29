@@ -88,8 +88,7 @@
 		}
 
 		.filter-number {
-			margin-left: auto;
-			color: variables.$grey-4;
+			color: variables.$bg-4;
 		}
 	}
 </style>
