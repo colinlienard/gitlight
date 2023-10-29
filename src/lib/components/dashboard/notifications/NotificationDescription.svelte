@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { intersect } from '$lib/features';
 	import type { User } from '$lib/types';
 
@@ -50,7 +51,7 @@
 	let width = '';
 
 	$: tall = element?.scrollHeight > element?.clientHeight + 1;
-	$: onWebkit = navigator.userAgent.includes('WebKit');
+	$: onWebkit = browser && navigator.userAgent.includes('WebKit');
 
 	function toggleWidth() {
 		width = '100%';
