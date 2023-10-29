@@ -99,7 +99,7 @@
 		display: -webkit-box;
 		overflow: hidden;
 		-webkit-box-orient: vertical;
-		color: variables.$grey-4;
+		color: variables.$bg-4;
 		hyphens: auto;
 		-webkit-line-clamp: 2;
 		word-wrap: break-word;
@@ -115,7 +115,7 @@
 		}
 
 		.bold {
-			color: variables.$white;
+			color: variables.$bg-5;
 		}
 
 		.italic {

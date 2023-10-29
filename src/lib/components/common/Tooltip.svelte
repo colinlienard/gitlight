@@ -157,9 +157,9 @@
 		@include mixins.modal-shadow;
 
 		position: absolute;
-		border: 1px solid variables.$grey-3;
+		border: 1px solid variables.$bg-3;
 		border-radius: variables.$radius;
-		background-color: variables.$grey-1;
+		background-color: variables.$bg-1;
 
 		&.fit-content {
 			max-width: max-content;
@@ -222,11 +222,11 @@
 			padding: 0.5rem;
 
 			&:not(:last-child) {
-				border-bottom: 1px solid variables.$grey-3;
+				border-bottom: 1px solid variables.$bg-3;
 			}
 
 			&.disabled {
-				color: variables.$grey-4;
+				color: variables.$bg-4;
 				pointer-events: none;
 			}
 		}
@@ -240,11 +240,11 @@
 			text-align: left;
 
 			&:hover {
-				background-color: variables.$grey-2;
+				background-color: variables.$bg-2;
 			}
 
 			.checkbox {
-				@include mixins.shiny(variables.$blue-2, true, 0.25rem);
+				@include mixins.shiny(variables.$blue, true, 0.25rem);
 
 				display: flex;
 				height: 1rem;
@@ -257,10 +257,10 @@
 				}
 
 				&:not(.active) {
-					@include mixins.shiny(variables.$grey-3, true, 0.25rem);
+					@include mixins.shiny(variables.$bg-3, true, 0.25rem);
 
 					& > :global(svg) {
-						color: variables.$grey-4;
+						color: variables.$bg-4;
 					}
 				}
 			}

@@ -409,36 +409,11 @@
 				</div>
 			</div>
 			<div class="settings-wrapper">
+				<DoneModal />
 				<Priorities />
 				<Settings />
 			</div>
 		</header>
-		<nav class="nav">
-			<button
-				class="tab"
-				class:selected={providerView === 'github'}
-				on:click={() => ($settings.providerView = 'github')}
-			>
-				<GithubIcon />
-				<p class="text">GitHub</p>
-			</button>
-			<button
-				class="tab"
-				class:selected={providerView === 'gitlab'}
-				on:click={() => ($settings.providerView = 'gitlab')}
-			>
-				<GitlabIcon />
-				<p class="text">GitLab</p>
-			</button>
-			<button
-				class="tab"
-				class:selected={providerView === 'both'}
-				on:click={() => ($settings.providerView = 'both')}
-			>
-				<p class="text">Both</p>
-			</button>
-			<DoneModal />
-		</nav>
 		{#if providerView === 'github' && !githubUser}
 			<div class="center-container">
 				<div class="text">Manage your GitHub and GitLab notifications at the same time.</div>
@@ -493,7 +468,8 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			padding: 3rem 2rem 2rem;
+			padding: 1rem;
+			border-bottom: 1px solid variables.$bg-3;
 
 			.wrapper {
 				display: flex;
@@ -505,7 +481,7 @@
 			}
 
 			.title {
-				@include typography.heading-1;
+				@include typography.heading-2;
 			}
 
 			.sync-pill {
@@ -514,8 +490,8 @@
 				padding: 0.25rem 0.5rem;
 				border-radius: variables.$radius;
 				margin: 0 1rem;
-				background-color: variables.$grey-3;
-				color: variables.$grey-4;
+				background-color: variables.$bg-3;
+				color: variables.$bg-4;
 				gap: 0.25rem;
 
 				&:not(:hover) .time {
@@ -549,48 +525,8 @@
 
 			.settings-wrapper {
 				display: flex;
-				gap: 1rem;
-			}
-		}
-
-		.nav {
-			display: flex;
-			padding: 0 2rem;
-			border-bottom: 1px solid variables.$grey-3;
-
-			.tab {
-				display: flex;
 				align-items: center;
-				padding: 0.75em 1em;
-				border: 1px solid transparent;
-				border-radius: variables.$radius variables.$radius 0 0;
-				border-bottom: none;
-				gap: 0.5rem;
-
-				:global(svg) {
-					height: 1.25rem;
-				}
-
-				&.selected {
-					position: relative;
-					border-color: variables.$grey-3;
-
-					&::before {
-						position: absolute;
-						height: 1px;
-						background-color: variables.$grey-1;
-						content: '';
-						inset: auto 0 -1px;
-					}
-				}
-
-				&:not(.selected, :hover) {
-					opacity: 0.5;
-				}
-
-				.text {
-					@include typography.bold;
-				}
+				gap: 1rem;
 			}
 		}
 

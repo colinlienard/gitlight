@@ -24,7 +24,7 @@
 		align-items: center;
 		justify-content: center;
 		padding: 1rem 0;
-		color: variables.$grey-4;
+		color: variables.$bg-4;
 		gap: 0.5rem;
 		text-align: center;
 
@@ -41,7 +41,7 @@
 
 			&::before {
 				position: absolute;
-				background-image: linear-gradient(transparent, rgba(variables.$grey-1, 0.75));
+				background-image: linear-gradient(transparent, rgba(variables.$bg-1, 0.75));
 				content: '';
 				inset: -1px;
 			}

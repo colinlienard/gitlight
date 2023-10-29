@@ -224,11 +224,11 @@
 			border-left: inherit;
 
 			&:hover {
-				background-color: color.adjust(variables.$grey-2, $lightness: 1%);
+				background-color: color.adjust(variables.$bg-2, $lightness: 1%);
 			}
 
 			&:active {
-				background-color: color.adjust(variables.$grey-2, $lightness: 2%);
+				background-color: color.adjust(variables.$bg-2, $lightness: 2%);
 			}
 
 			:global(svg) {

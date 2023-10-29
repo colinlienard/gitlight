@@ -110,9 +110,9 @@
 		width: min(50rem, calc(100vw - 4rem));
 		height: min(42rem, calc(100vh - 4rem));
 		flex-direction: column;
-		border: 1px solid variables.$grey-3;
+		border: 1px solid variables.$bg-3;
 		border-radius: variables.$radius;
-		background-color: variables.$grey-1;
+		background-color: variables.$bg-1;
 		translate: -50% -50%;
 
 		&.small {

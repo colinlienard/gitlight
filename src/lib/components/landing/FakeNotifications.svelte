@@ -157,7 +157,7 @@
 		.notification-container {
 			width: 23rem;
 			border-radius: variables.$radius;
-			background-color: variables.$grey-1;
+			background-color: variables.$bg-1;
 			transition: translate variables.$transition;
 
 			&:not(:nth-child(5)) {

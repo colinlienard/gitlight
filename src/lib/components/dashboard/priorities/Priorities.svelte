@@ -1,14 +1,6 @@
 <script lang="ts">
 	import { SvelteComponent, onMount } from 'svelte';
-	import {
-		Button,
-		IconButton,
-		Modal,
-		ScrollbarContainer,
-		Separator,
-		Switch,
-		Tooltip
-	} from '$lib/components';
+	import { Button, Modal, ScrollbarContainer, Switch } from '$lib/components';
 	import { storage } from '$lib/features';
 	import { defaultPriorities } from '$lib/helpers';
 	import { PlusIcon, PriorityIcon } from '$lib/icons';
@@ -56,11 +48,10 @@
 </script>
 
 <Modal title="Priorities" on:close={() => (editing = false)}>
-	<Tooltip slot="trigger" content="Priorities" hover position="bottom">
-		<IconButton large rounded>
-			<PriorityIcon />
-		</IconButton>
-	</Tooltip>
+	<Button slot="trigger" secondary small>
+		<PriorityIcon />
+		Priorities
+	</Button>
 
 	<ScrollbarContainer slot="content" margin="2rem 1rem" bind:this={scrollContainer}>
 		<div class="content">
@@ -74,7 +65,8 @@
 				<Button small on:click={() => (priorities = defaultPriorities)}>Reset to default</Button>
 				<Button secondary small on:click={() => (priorities = [])}>Clear</Button>
 			</div>
-			<Separator marginY={1} />
+			<span />
+			<span />
 			{#each priorities as priority}
 				<PriorityItem
 					{priorities}
@@ -107,7 +99,7 @@
 	.paragraph {
 		@include typography.base;
 
-		color: variables.$grey-4;
+		color: variables.$bg-4;
 	}
 
 	.buttons {

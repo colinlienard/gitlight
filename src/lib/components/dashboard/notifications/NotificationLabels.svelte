@@ -42,7 +42,7 @@
 				position: absolute;
 				z-index: 1;
 				height: 1.5rem;
-				background-image: linear-gradient(transparent, variables.$grey-2);
+				background-image: linear-gradient(transparent, variables.$bg-2);
 				content: '';
 				inset: auto 0 0;
 				pointer-events: none;

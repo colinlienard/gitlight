@@ -223,7 +223,6 @@
 								<MuteIcon />
 							{/if}
 						</button>
-						<span class="number">{number}</span>
 					</button>
 					{#each repos as { id, name, number, active, muted }}
 						<button class="wrapper" class:active on:click={handleToggleRepo(id)}>
@@ -241,7 +240,6 @@
 									<MuteIcon />
 								{/if}
 							</button>
-							<span class="number">{number}</span>
 						</button>
 					{/each}
 				</ShrinkableWrapper>
@@ -283,31 +281,29 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			background-color: variables.$grey-3;
+			background-color: variables.$bg-3;
 
 			:global(svg) {
 				height: 1rem;
-				color: variables.$grey-4;
+				color: variables.$bg-4;
 			}
 		}
 
 		.number {
-			width: 2ch;
-			color: variables.$grey-4;
-			text-align: end;
+			color: variables.$bg-4;
 		}
 
 		.mute {
 			flex: 0 0 1.25rem;
 			margin-left: auto;
-			color: variables.$grey-4;
+			color: variables.$bg-4;
 
 			&.muted {
 				opacity: 1;
 			}
 
 			&:hover {
-				color: variables.$white;
+				color: variables.$bg-5;
 			}
 
 			:global(svg) {
@@ -317,6 +313,6 @@
 	}
 
 	.empty {
-		color: variables.$grey-4;
+		color: variables.$bg-4;
 	}
 </style>
