@@ -9,12 +9,11 @@
 
 <style lang="scss">
 	.event {
+		@include mixins.box;
+
 		display: flex;
 		flex-direction: column;
 		padding: 1rem;
-		border: 1px solid variables.$bg-3;
-		border-radius: variables.$radius;
-		background-color: variables.$bg-2;
 		gap: 1rem;
 	}
 

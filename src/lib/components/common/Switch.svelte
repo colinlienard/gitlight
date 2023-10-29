@@ -50,21 +50,19 @@
 	}
 
 	.switch {
-		@include mixins.shadow;
-
 		width: 2.25rem;
 		flex: 0 0 2.25rem;
 		padding: 2px;
+		box-shadow: variables.$shadow;
 
 		.icon-container {
-			@include mixins.shadow;
-
 			display: flex;
 			width: 1.25rem;
 			height: 1.25rem;
 			align-items: center;
 			justify-content: center;
 			border-radius: 50%;
+			box-shadow: variables.$shadow;
 			transition: variables.$transition;
 
 			:global(svg) {
@@ -76,7 +74,7 @@
 			@include mixins.shiny(variables.$blue, true, 9rem);
 
 			.icon-container {
-				background-color: variables.$bg-5;
+				background-color: variables.$bg-6;
 				translate: 0.65rem 0;
 
 				:global(svg) {
@@ -89,7 +87,7 @@
 			@include mixins.shiny(variables.$bg-3, true, 9rem);
 
 			.icon-container {
-				background-color: variables.$bg-4;
+				background-color: variables.$bg-5;
 				rotate: -90deg;
 
 				:global(svg) {

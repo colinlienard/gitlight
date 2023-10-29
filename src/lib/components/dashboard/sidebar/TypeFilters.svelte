@@ -88,7 +88,7 @@
 		}
 
 		.filter-number {
-			color: variables.$bg-4;
+			color: variables.$bg-5;
 		}
 	}
 </style>

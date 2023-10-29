@@ -496,7 +496,7 @@
 				border-radius: variables.$radius;
 				margin: 0 1rem;
 				background-color: variables.$bg-3;
-				color: variables.$bg-4;
+				color: variables.$bg-5;
 				gap: 0.25rem;
 
 				&:not(:hover) .time {

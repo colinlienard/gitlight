@@ -46,8 +46,6 @@
 	}
 
 	.tooltip {
-		@include mixins.shadow;
-
 		position: absolute;
 		top: 50%;
 		left: 50%;
@@ -58,6 +56,7 @@
 		border: 1px solid variables.$bg-3;
 		border-radius: variables.$radius;
 		background-color: variables.$bg-1;
+		box-shadow: variables.$shadow;
 		gap: 0.5rem;
 		translate: -50% -50%;
 		white-space: nowrap;

@@ -193,6 +193,10 @@
 				@include typography.heading-2;
 			}
 		}
+
+		:global(div):nth-last-child(1) {
+			height: fit-content;
+		}
 	}
 
 	.providers {
@@ -204,18 +208,18 @@
 			align-items: center;
 			justify-content: center;
 			padding: 1rem;
-			color: variables.$bg-4;
+			color: variables.$bg-5;
 			gap: 0.25rem;
 
 			&.selected,
 			&:hover {
-				color: variables.$bg-5;
+				color: variables.$bg-6;
 			}
 
 			&.selected::before {
 				position: absolute;
 				height: 1px;
-				background-color: variables.$bg-5;
+				background-color: variables.$bg-6;
 				content: '';
 				inset: auto 1rem 0;
 			}

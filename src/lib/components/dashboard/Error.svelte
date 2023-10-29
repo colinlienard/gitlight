@@ -32,7 +32,6 @@
 
 <style lang="scss">
 	.snackbar {
-		@include mixins.modal-shadow;
 		@include typography.base;
 
 		position: absolute;
@@ -41,6 +40,7 @@
 		padding: 1rem;
 		border-radius: variables.$radius;
 		background-color: variables.$yellow;
+		box-shadow: variables.$modal-shadow;
 		color: variables.$bg-1;
 		inset: auto auto 1rem 1rem;
 		transition: translate 0.3s ease-in-out;

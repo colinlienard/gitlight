@@ -74,23 +74,17 @@
 		padding: 0.75em 1em;
 		cursor: text;
 		gap: 0.5em;
-		outline: solid 3px transparent;
-		outline-offset: -1px;
 
 		&.empty :global(svg) {
-			color: variables.$bg-4;
+			color: variables.$bg-5;
 		}
 
 		&.focused {
-			outline-color: variables.$light-blue;
+			border-color: variables.$light-blue;
 		}
 
 		&.error {
 			border-color: variables.$red;
-
-			&.focused {
-				outline-color: variables.$red;
-			}
 		}
 
 		:global(svg) {
@@ -102,7 +96,7 @@
 			width: 100%;
 
 			&::placeholder {
-				color: variables.$bg-4;
+				color: variables.$bg-5;
 			}
 		}
 
@@ -114,7 +108,7 @@
 			}
 
 			&:not(:hover) {
-				color: variables.$bg-4;
+				color: variables.$bg-5;
 			}
 		}
 	}

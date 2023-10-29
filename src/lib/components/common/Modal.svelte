@@ -44,7 +44,7 @@
 			css: (t: number) => {
 				const eased = cubicInOut(t);
 				return `
-          scale: ${eased * 0.1 + 0.9};
+          scale: ${eased * 0.05 + 0.95};
           opacity: ${eased};
         `;
 			}
@@ -100,8 +100,6 @@
 	}
 
 	.modal {
-		@include mixins.modal-shadow;
-
 		position: fixed;
 		z-index: 999;
 		top: 50%;
@@ -110,9 +108,10 @@
 		width: min(50rem, calc(100vw - 4rem));
 		height: min(42rem, calc(100vh - 4rem));
 		flex-direction: column;
-		border: 1px solid variables.$bg-3;
+		border: 1px solid variables.$bg-4;
 		border-radius: variables.$radius;
 		background-color: variables.$bg-1;
+		box-shadow: variables.$modal-shadow;
 		translate: -50% -50%;
 
 		&.small {
@@ -125,7 +124,7 @@
 			align-items: center;
 			justify-content: space-between;
 			padding: 2rem;
-			border-bottom: inherit;
+			border-bottom: 1px solid variables.$bg-3;
 
 			.title {
 				@include typography.heading-2;

@@ -71,7 +71,7 @@
 		transition: outline variables.$transition;
 
 		&.empty {
-			color: variables.$bg-4;
+			color: variables.$bg-5;
 		}
 
 		&:focus {
@@ -84,7 +84,7 @@
 
 		:global(svg) {
 			height: 1.25rem;
-			color: variables.$bg-4;
+			color: variables.$bg-5;
 			transition: rotate 0.4s ease-in-out;
 		}
 	}

@@ -145,7 +145,7 @@
 
 				width: 1rem;
 				height: 1rem;
-				border: 2px solid variables.$bg-4;
+				border: 2px solid variables.$bg-5;
 				border-radius: 50%;
 				border-top-color: variables.$bg-3;
 				animation: spin 1s linear infinite;

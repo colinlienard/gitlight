@@ -1,9 +1,10 @@
 // Colors
 $bg-1: #171717;
 $bg-2: #1b1b1b;
-$bg-3: #222121;
-$bg-4: #888;
-$bg-5: #fff;
+$bg-3: #1d1d1d;
+$bg-4: #292929;
+$bg-5: #888;
+$bg-6: #fff;
 $blue: #6040ff;
 $light-blue: #8585ff;
 $green: #22c965;
@@ -16,3 +17,7 @@ $radius: 0.5rem;
 
 // Transition
 $transition: 0.15s ease-in-out;
+
+// Shadows
+$shadow: 0 1px 2px rgba(black, 0.1);
+$modal-shadow: 0 2rem 4rem rgba(black, 0.5);

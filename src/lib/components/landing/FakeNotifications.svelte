@@ -160,7 +160,7 @@
 			}
 
 			& > :global(div) {
-				@include mixins.shadow;
+				box-shadow: variables.$shadow;
 			}
 
 			@keyframes slide {
