@@ -7,6 +7,7 @@
 	export let description: string;
 	export let actions: TooltipContent = [];
 	export let zIndex = 1;
+	export let first = false;
 
 	$: activeLenght = items.filter((filter) => filter.active).length;
 
@@ -17,7 +18,7 @@
 	}
 </script>
 
-<div class="section" style:z-index={zIndex}>
+<div class="section" style:z-index={zIndex} class:first>
 	<div class="row">
 		<h2 class="title">{title}</h2>
 		<Tooltip
@@ -48,7 +49,16 @@
 	.section {
 		display: flex;
 		flex-direction: column;
+		padding: 1.5rem 1rem;
 		gap: 1rem;
+
+		&:not(.first) {
+			border-top: 1px solid variables.$grey-3;
+		}
+
+		&:not(:hover) .icon-container {
+			opacity: 0;
+		}
 	}
 
 	.row {
@@ -60,14 +70,18 @@
 
 		.title {
 			@include typography.bold;
+			@include typography.small;
+
+			color: variables.$grey-4;
 		}
 
 		.icon-container :global(svg) {
-			height: 1.25rem;
+			height: 1rem;
+			color: variables.$grey-4;
 
 			&:hover {
+				color: variables.$white;
 				rotate: 60deg;
-				transition: rotate 0.3s ease-in-out;
 			}
 		}
 	}
@@ -75,6 +89,6 @@
 	.wrapper {
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
+		gap: 0.75rem;
 	}
 </style>

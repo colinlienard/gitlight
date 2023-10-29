@@ -98,3 +98,30 @@
 	background-color: rgba(black, 0.5);
 	inset: 0;
 }
+
+@mixin item-list() {
+	position: relative;
+	display: flex;
+	width: 100%;
+	align-items: center;
+	gap: 0.5rem;
+
+	&:not(.active) {
+		filter: saturate(0);
+		opacity: 0.5;
+	}
+
+	&::before {
+		position: absolute;
+		z-index: -1;
+		border-radius: variables.$radius;
+		background-color: variables.$grey-2;
+		content: '';
+		inset: -0.25rem -0.5rem;
+		opacity: 0;
+	}
+
+	&:hover::before {
+		opacity: 1;
+	}
+}
