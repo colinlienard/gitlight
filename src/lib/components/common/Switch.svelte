@@ -75,7 +75,7 @@
 
 			.icon-container {
 				background-color: variables.$bg-6;
-				translate: 0.65rem 0;
+				translate: 0.75rem 0;
 
 				:global(svg) {
 					color: variables.$blue;

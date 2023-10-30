@@ -113,7 +113,7 @@
 	</div>
 	<div class="scrollable">
 		{#if !$loading}
-			<ScrollbarContainer margin="0.25rem">
+			<ScrollbarContainer margin="0.1rem">
 				<TypeFilters />
 				<WatchedRepos />
 				<WatchedPersons />
@@ -302,7 +302,7 @@
 			}
 
 			&:hover {
-				background-color: color.adjust(variables.$bg-3, $lightness: -2%);
+				background-color: variables.$bg-3;
 			}
 		}
 

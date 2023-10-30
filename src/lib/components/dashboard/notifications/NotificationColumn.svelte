@@ -155,7 +155,7 @@
 	class="column"
 	class:has-dropzone={showDropzone}
 	class:dragging={!!$dragging}
-	class:vertical={!verticalKanban}
+	class:horizontal={!verticalKanban}
 >
 	<div class="column-header">
 		<svelte:component this={icon} />
@@ -229,14 +229,22 @@
 			transition: z-index 0.3s;
 		}
 
-		&.vertical {
+		&.horizontal {
 			min-height: 0;
 		}
 
-		&:not(.vertical) {
+		&:not(.horizontal) {
+			padding: 0 1rem;
+
 			.column-header {
 				position: sticky;
 				inset: 1rem 0 auto;
+
+				&::before {
+					top: -1rem;
+					height: 3rem !important;
+					background-image: linear-gradient(variables.$bg-1 2rem, transparent);
+				}
 			}
 
 			.list {
@@ -296,7 +304,7 @@
 		border-radius: variables.$radius;
 		background-color: rgba(variables.$blue, 0.1);
 		content: '';
-		inset: 2.25rem 1.5rem 0;
+		inset: 3.75rem 1rem 1rem;
 		opacity: 0.5;
 		outline: 6px dashed variables.$light-blue;
 		pointer-events: none;

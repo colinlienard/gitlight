@@ -95,6 +95,8 @@
 			transition:fade={{ duration: 150, easing: sineInOut }}
 			style:width
 			style:height
+			on:click={handleClick}
+			role="presentation"
 		>
 			<ScrollbarContainer>
 				<div class="content">
@@ -155,13 +157,18 @@
 
 	.tooltip {
 		position: absolute;
-		border: 1px solid variables.$bg-3;
+		border: 1px solid variables.$bg-4;
 		border-radius: variables.$radius;
 		background-color: variables.$bg-1;
-		box-shadow: variables.$modal-shadow;
+		box-shadow: variables.$shadow;
 
 		&.fit-content {
 			max-width: max-content;
+		}
+
+		&:not(.fit-content) {
+			padding: 0.5rem;
+			gap: 0.5rem;
 		}
 
 		&.no-wrap {
@@ -220,10 +227,6 @@
 		.tooltip-button {
 			padding: 0.5rem;
 
-			&:not(:last-child) {
-				border-bottom: 1px solid variables.$bg-3;
-			}
-
 			&.disabled {
 				color: variables.$bg-5;
 				pointer-events: none;
@@ -231,15 +234,23 @@
 		}
 
 		.tooltip-button {
-			@include typography.bold;
-
+			position: relative;
 			display: flex;
 			align-items: center;
 			gap: 0.5rem;
 			text-align: left;
 
-			&:hover {
+			&:hover::before {
+				position: absolute;
+				z-index: -1;
+				border-radius: variables.$small-radius;
 				background-color: variables.$bg-2;
+				content: '';
+				inset: 0;
+			}
+
+			&:active::before {
+				background-color: variables.$bg-3;
 			}
 
 			.checkbox {

@@ -53,8 +53,8 @@
 </script>
 
 <main class="main">
-	<ScrollbarContainer margin="2rem 1rem" bind:this={scrollContainer}>
-		<NotificationList {notifications} scrollShadow={false} />
+	<ScrollbarContainer margin="1rem 0.25rem" bind:this={scrollContainer}>
+		<NotificationList {notifications} />
 	</ScrollbarContainer>
 </main>
 
