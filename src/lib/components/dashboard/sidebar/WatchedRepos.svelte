@@ -55,8 +55,11 @@
 		$watchedRepos = repos;
 	}
 
+	$: providerView = $settings.providerView;
 	$: watchedReposByOwner = $watchedRepos
 		.reduce<WatchedReposByOwner>((previous, current) => {
+			if (providerView !== 'both' && current.from !== providerView) return previous;
+
 			const repos = previous.find((owner) => owner.name === current.ownerName)?.repos;
 
 			// If no owner

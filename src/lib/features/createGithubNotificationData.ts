@@ -75,7 +75,7 @@ export async function createGithubNotificationData(
 		type: subject.type,
 		repository: {
 			id: repository.id,
-			url: repository.full_name,
+			url: repository.html_url,
 			owner,
 			name,
 			domain: 'github.com'

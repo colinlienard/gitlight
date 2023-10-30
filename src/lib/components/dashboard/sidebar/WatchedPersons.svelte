@@ -64,8 +64,15 @@
 		];
 	}
 
-	$: botsHidden = $watchedPersons.some((person) => person.login.endsWith('[bot]') && person.active);
-	$: botsPresent = $watchedPersons.some((person) => person.login.endsWith('[bot]'));
+	$: providerView = $settings.providerView;
+	$: displayedPersons =
+		providerView === 'both'
+			? $watchedPersons
+			: $watchedPersons.filter((person) => person.from === providerView);
+	$: botsHidden = displayedPersons.some(
+		(person) => person.login.endsWith('[bot]') && person.active
+	);
+	$: botsPresent = displayedPersons.some((person) => person.login.endsWith('[bot]'));
 
 	// Save watched persons to storage
 	$: if (browser) {
@@ -115,24 +122,22 @@
 		{ text: 'Show bots', active: botsHidden, onToggle: handleHideBots, disabled: !botsPresent }
 	]}
 >
-	{#if $watchedPersons.length}
-		{#each $watchedPersons as { login, avatar, active, muted, number, from }}
-			{#if $settings.providerView == 'both' || $settings.providerView === from}
-				<button class="wrapper" class:active on:click={handleToggle(login)}>
-					<img class="image" src={avatar} alt="" />
-					<h3 class="name">{login}</h3>
-					{#if number}
-						<span class="number">{number}</span>
+	{#if displayedPersons.length}
+		{#each displayedPersons as { login, avatar, active, muted, number }}
+			<button class="wrapper" class:active on:click={handleToggle(login)}>
+				<img class="image" src={avatar} alt="" />
+				<h3 class="name">{login}</h3>
+				{#if number}
+					<span class="number">{number}</span>
+				{/if}
+				<button class="mute" class:muted on:click|stopPropagation={handleMute(login)}>
+					{#if muted}
+						<MutedIcon />
+					{:else}
+						<MuteIcon />
 					{/if}
-					<button class="mute" class:muted on:click|stopPropagation={handleMute(login)}>
-						{#if muted}
-							<MutedIcon />
-						{:else}
-							<MuteIcon />
-						{/if}
-					</button>
 				</button>
-			{/if}
+			</button>
 		{/each}
 	{:else}
 		<p class="empty">No persons to display</p>
