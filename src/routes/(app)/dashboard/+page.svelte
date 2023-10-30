@@ -488,7 +488,7 @@
 				display: flex;
 				align-items: center;
 				padding: 0.25rem 0.5rem;
-				border-radius: variables.$radius;
+				border-radius: variables.$small-radius;
 				margin: 0 1rem;
 				background-color: variables.$bg-3;
 				color: variables.$bg-5;

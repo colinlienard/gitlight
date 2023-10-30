@@ -4,11 +4,10 @@
 
 @mixin shiny($color, $hover: true, $radius: variables.$radius) {
 	position: relative;
-	border: 1px solid color.adjust($color, $lightness: -5%);
 	border-radius: $radius;
 	background-image: linear-gradient(
-		color.adjust($color, $lightness: 10%),
-		color.adjust($color, $lightness: -1%)
+		color.adjust($color, $lightness: 15%),
+		color.adjust($color, $lightness: 5%)
 	);
 	isolation: isolate;
 
@@ -16,17 +15,14 @@
 		position: absolute;
 		z-index: -1;
 		border-radius: calc($radius - 1px);
-		background-image: linear-gradient(
-			color.adjust($color, $lightness: 1%),
-			color.adjust($color, $lightness: -1%)
-		);
+		background-image: linear-gradient(color.adjust($color, $lightness: 2%), $color);
 		content: '';
 		inset: 1px;
 	}
 
 	@if $hover {
 		&:hover::before {
-			background: color.adjust($color, $lightness: -2%);
+			background: $color;
 		}
 	}
 }

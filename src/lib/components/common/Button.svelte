@@ -68,7 +68,7 @@
 		@include mixins.shiny(variables.$blue);
 
 		&.secondary {
-			@include mixins.shiny(variables.$bg-3);
+			@include mixins.shiny(variables.$bg-2);
 		}
 
 		&:not(.small) {

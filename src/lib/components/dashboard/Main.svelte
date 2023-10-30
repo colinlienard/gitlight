@@ -74,7 +74,7 @@
 	const transitions = { send, receive, settings: animationSettings };
 </script>
 
-<ScrollbarContainer margin="0.25rem">
+<ScrollbarContainer margin="1rem 0.1rem">
 	{#if $settings.viewMode === 'List'}
 		<NotificationList {notifications} />
 	{:else}
@@ -138,7 +138,8 @@
 			display: flex;
 			overflow: visible;
 			flex-direction: column;
-			gap: 2rem;
+			padding: 1rem 0;
+			gap: 1rem;
 		}
 
 		&:not(.horizontal) {
@@ -149,7 +150,9 @@
 		}
 
 		.separator {
-			border-left: 1px solid variables.$bg-3;
+			border: 1px solid variables.$bg-3;
+			border-top: 0;
+			border-left: 0;
 		}
 
 		.read-all {

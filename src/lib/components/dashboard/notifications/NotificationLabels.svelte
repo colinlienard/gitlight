@@ -1,29 +1,37 @@
 <script lang="ts">
-	import type { Action } from 'svelte/action';
-	import { delayedHover } from '$lib/features';
+	import { afterUpdate, tick } from 'svelte';
 	import { lightenColor } from '$lib/helpers';
 	import type { GithubLabel } from '$lib/types';
 
 	export let labels: GithubLabel[] = [];
 
-	let clipLabels = false;
+	let list: HTMLUListElement;
+	let removed = 0;
 
-	const delayedHoverIfLarge: Action<HTMLElement> = (node) => {
-		if (node.offsetHeight > 60) {
-			clipLabels = true;
-			delayedHover(node, 'labels-hover');
+	afterUpdate(async () => {
+		await tick();
+		const height = list?.offsetHeight;
+		if (height > 50) {
+			labels = labels.slice(0, labels.length - 1);
+			removed++;
 		}
-	};
+	});
 </script>
 
 {#if labels && labels.length}
-	<ul class="labels" class:clip={clipLabels} use:delayedHoverIfLarge>
+	<ul class="labels" bind:this={list}>
 		{#each labels as label}
 			<li class="label" style:color={lightenColor(label.color)}>
 				{label.name}
 				<div class="label-background" style:background-color={`#${label.color}`} />
 			</li>
 		{/each}
+		{#if removed}
+			<li class="label" style:color="white">
+				+{removed}
+				<div class="label-background" style:background-color="white" />
+			</li>
+		{/if}
 	</ul>
 {/if}
 
@@ -32,22 +40,6 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
-
-		&.clip {
-			position: relative;
-			overflow: hidden;
-			max-height: 3.5rem;
-
-			&::before {
-				position: absolute;
-				z-index: 1;
-				height: 1.5rem;
-				background-image: linear-gradient(transparent, variables.$bg-2);
-				content: '';
-				inset: auto 0 0;
-				pointer-events: none;
-			}
-		}
 
 		&:global(.labels-hover) {
 			max-height: unset;
@@ -69,7 +61,7 @@
 
 			.label-background {
 				position: absolute;
-				border-radius: 0.25rem;
+				border-radius: variables.$small-radius;
 				inset: 0;
 				opacity: 0.1;
 			}
