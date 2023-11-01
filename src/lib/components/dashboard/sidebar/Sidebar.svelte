@@ -2,7 +2,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { Tooltip, ScrollbarContainer, IconButton } from '$lib/components';
-	import { Logo, DoubleArrowIcon, GithubIcon, GitlabIcon } from '$lib/icons';
+	import { Logo, DoubleArrowIcon } from '$lib/icons';
 	import {
 		filteredNotifications,
 		loading,
@@ -12,6 +12,7 @@
 		typeFilters,
 		globalNotifications
 	} from '$lib/stores';
+	import SidebarProviders from './SidebarProviders.svelte';
 	import SidebarSearch from './SidebarSearch.svelte';
 	import TypeFilters from './TypeFilters.svelte';
 	import WatchedPersons from './WatchedPersons.svelte';
@@ -86,31 +87,7 @@
 	<div class="wrapper">
 		<SidebarSearch bind:search />
 	</div>
-	<div class="providers">
-		<button
-			class="tab"
-			class:selected={$settings.providerView === 'github'}
-			on:click={() => ($settings.providerView = 'github')}
-		>
-			<GithubIcon />
-			<p class="text">GitHub</p>
-		</button>
-		<button
-			class="tab"
-			class:selected={$settings.providerView === 'gitlab'}
-			on:click={() => ($settings.providerView = 'gitlab')}
-		>
-			<GitlabIcon />
-			<p class="text">GitLab</p>
-		</button>
-		<button
-			class="tab"
-			class:selected={$settings.providerView === 'both'}
-			on:click={() => ($settings.providerView = 'both')}
-		>
-			<p class="text">Both</p>
-		</button>
-	</div>
+	<SidebarProviders />
 	<div class="scrollable">
 		{#if !$loading}
 			<ScrollbarContainer margin="0.1rem">
@@ -196,37 +173,6 @@
 
 		:global(div):nth-last-child(1) {
 			height: fit-content;
-		}
-	}
-
-	.providers {
-		display: flex;
-
-		.tab {
-			position: relative;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			padding: 1rem;
-			color: variables.$bg-5;
-			gap: 0.25rem;
-
-			&.selected,
-			&:hover {
-				color: variables.$bg-6;
-			}
-
-			&.selected::before {
-				position: absolute;
-				height: 1px;
-				background-color: variables.$bg-6;
-				content: '';
-				inset: auto 1rem 0;
-			}
-
-			:global(svg) {
-				height: 1.25rem;
-			}
 		}
 	}
 
