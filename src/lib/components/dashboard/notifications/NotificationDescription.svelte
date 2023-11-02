@@ -48,15 +48,15 @@
 	// WebKit fix to avoid line-clamp bug
 	// Set hard height, and set width: 100% on visible
 	let element: HTMLParagraphElement;
-	let width = '';
+	let width = '100';
 
 	$: tall = element?.scrollHeight > element?.clientHeight + 1;
 	$: onWebkit = browser && navigator.userAgent.includes('WebKit');
 
 	function toggleWidth() {
-		width = '100%';
+		width = '';
 		setTimeout(() => {
-			width = '';
+			width = '100%';
 		}, 100);
 	}
 </script>
