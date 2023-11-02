@@ -23,7 +23,7 @@
 					(a, b) => (b.priority?.value || 0) - (a.priority?.value || 0)
 			  )
 			: $filteredNotifications
-	).filter((item) => !item.done);
+	).filter((item) => item.status !== 'done');
 
 	// Send data to tray app
 	$: if (browser && window.__TAURI__) {
@@ -37,9 +37,9 @@
 	}
 
 	// Filter events
-	$: pinned = notifications.filter((item) => item.pinned && !item.done);
-	$: unread = notifications.filter((item) => !item.pinned && item.unread && !item.done);
-	$: read = notifications.filter((item) => !item.pinned && !item.unread && !item.done);
+	$: pinned = notifications.filter((item) => item.status === 'pinned');
+	$: unread = notifications.filter((item) => item.status === 'unread');
+	$: read = notifications.filter((item) => item.status === 'read');
 
 	$: verticalKanban = $settings.viewMode === 'Kanban (vertical)';
 
@@ -50,19 +50,19 @@
 		});
 	}
 
-	function markAllAs(key: 'unread' | 'done', value: boolean) {
+	function markAllAs(status: 'read' | 'done') {
 		if ($settings.providerView !== 'gitlab') {
 			$githubNotifications = $githubNotifications.map((notifications) =>
-				(key === 'unread' ? unread : read).includes(notifications)
-					? { ...notifications, [key]: value }
+				(status === 'read' ? unread : read).includes(notifications)
+					? { ...notifications, status }
 					: notifications
 			);
 			readAllInGithub();
 		}
 		if ($settings.providerView !== 'github') {
 			$gitlabNotifications = $gitlabNotifications.map((notifications) =>
-				(key === 'unread' ? unread : read).includes(notifications)
-					? { ...notifications, [key]: value }
+				(status === 'read' ? unread : read).includes(notifications)
+					? { ...notifications, status }
 					: notifications
 			);
 		}
@@ -99,7 +99,7 @@
 			>
 				<div slot="header-addon">
 					{#if unread.length}
-						<button class="read-all" on:click={() => markAllAs('unread', false)}>
+						<button class="read-all" on:click={() => markAllAs('read')}>
 							<CheckIcon />
 							All
 						</button>
@@ -119,7 +119,7 @@
 			>
 				<div slot="header-addon">
 					{#if read.length}
-						<button class="read-all" on:click={() => markAllAs('done', true)}>
+						<button class="read-all" on:click={() => markAllAs('done')}>
 							<DoubleCheckIcon />
 							All
 						</button>

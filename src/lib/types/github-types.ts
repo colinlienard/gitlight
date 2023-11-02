@@ -17,6 +17,7 @@ export type GithubRepository = {
 	full_name: string;
 	owner: GithubUser;
 	private: boolean;
+	html_url: string;
 };
 
 export type GithubIssue = {

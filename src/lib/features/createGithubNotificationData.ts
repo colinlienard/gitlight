@@ -41,9 +41,8 @@ export async function createGithubNotificationData(
 ): Promise<NotificationData | null> {
 	const { id, repository, subject, unread, updated_at, reason } = githubNotification;
 	const previous = savedNotifications.find((n) => n.id === id);
-	const pinned = previous?.pinned || false;
+	const status = unread ? 'unread' : previous?.status || 'unread';
 	const muted = previous?.muted || false;
-	const done = previous?.done || false;
 	const [owner, name] = repository.full_name.split('/');
 
 	// Get Personal Access Tokens
@@ -69,16 +68,14 @@ export async function createGithubNotificationData(
 	const common = {
 		id,
 		from: 'github',
-		pinned,
-		unread,
-		done,
+		status,
 		muted,
 		time: updated_at,
 		title: subject.title,
 		type: subject.type,
 		repository: {
 			id: repository.id,
-			url: repository.full_name,
+			url: repository.html_url,
 			owner,
 			name,
 			domain: 'github.com'

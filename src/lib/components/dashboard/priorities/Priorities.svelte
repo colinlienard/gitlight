@@ -34,9 +34,13 @@
 	}
 
 	onMount(() => {
-		priorities = storage.get('priorities') || defaultPriorities;
+		if (storage.has('priorities')) {
+			priorities = storage.get('priorities') || [];
+		} else {
+			priorities = [...defaultPriorities];
+			storage.set('priorities', priorities);
+		}
 	});
-
 	$: if (mounted) {
 		storage.set('priorities', priorities);
 		dispatchEvent(new CustomEvent('refetch'));

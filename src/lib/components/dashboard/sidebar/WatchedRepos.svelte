@@ -22,7 +22,7 @@
 		const savedWatchedRepos = storage.get('watched-repos');
 
 		const repos = $globalNotifications.reduce<WatchedRepo[]>((previous, current) => {
-			if (current.done) return previous;
+			if (current.status === 'done') return previous;
 			const saved = savedWatchedRepos?.find((repo) => repo.id === current.repository.id);
 			const index = previous.findIndex((repo) => repo.id === current.repository.id);
 			if (index > -1) {
@@ -55,8 +55,11 @@
 		$watchedRepos = repos;
 	}
 
+	$: providerView = $settings.providerView;
 	$: watchedReposByOwner = $watchedRepos
 		.reduce<WatchedReposByOwner>((previous, current) => {
+			if (providerView !== 'both' && current.from !== providerView) return previous;
+
 			const repos = previous.find((owner) => owner.name === current.ownerName)?.repos;
 
 			// If no owner

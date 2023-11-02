@@ -36,9 +36,7 @@ export type NotificationData = {
 	id: string;
 	from: 'github' | 'gitlab';
 	type: NotificationType;
-	unread: boolean;
-	pinned: boolean;
-	done: boolean;
+	status: 'unread' | 'read' | 'pinned' | 'done';
 	muted: boolean;
 	author?: User;
 	creator?: User;
@@ -85,9 +83,7 @@ export type SavedNotifications = Array<{
 	id: string;
 	author?: User;
 	description: string;
-	pinned: boolean;
-	unread: boolean;
-	done: boolean;
+	status: 'unread' | 'read' | 'pinned' | 'done';
 	muted: boolean;
 	time: string;
 	previously?: NotificationData['previously'];
@@ -128,7 +124,6 @@ export type GitlabEventWithRepoData = GitlabEvent & {
 export type Settings = {
 	activateNotifications: boolean;
 	readWhenOpenInBrowser: boolean;
-	readWhenPin: boolean;
 	showNotificationsRepo: boolean;
 	notificationNumber: number;
 	sidebarHidden: boolean;

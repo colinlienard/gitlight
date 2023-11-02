@@ -77,19 +77,29 @@ fn main() {
         })
         .on_window_event(move |event| match event.event() {
             tauri::WindowEvent::CloseRequested { api, .. } => {
-                #[cfg(not(target_os = "macos"))]
                 event.window().hide().unwrap();
-
-                #[cfg(target_os = "macos")]
-                tauri::AppHandle::hide(&event.window().app_handle()).unwrap();
-
                 api.prevent_close();
             }
             tauri::WindowEvent::Focused(is_focused) => {
                 let window = event.window();
-                if !is_focused && window.label() == "tray" {
-                    window.hide().unwrap();
+                let app_handle = window.app_handle();
+                let main_window = app_handle.get_window("main").unwrap();
+                let tray_window = app_handle.get_window("tray").unwrap();
+
+                if window.label() == "tray" && !is_focused {
+                    #[cfg(target_os = "macos")]
+                    {
+                        main_window.show().unwrap();
+                        tauri::AppHandle::hide(&event.window().app_handle()).unwrap();
+                    }
+                    tray_window.hide().unwrap();
                 }
+
+                #[cfg(target_os = "macos")]
+                if main_window.is_visible().unwrap() && tray_window.is_visible().unwrap() {
+                    main_window.hide().unwrap();
+                }
+
                 commands::update_tray(window.app_handle(), None, Some(false))
             }
             _ => {}

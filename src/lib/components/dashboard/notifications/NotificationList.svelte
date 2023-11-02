@@ -8,10 +8,9 @@
 	export let scrollShadow = true;
 
 	$: displayNotifications = [
-		...notifications.filter((n) => n.pinned && n.unread),
-		...notifications.filter((n) => n.pinned && !n.unread),
-		...notifications.filter((n) => !n.pinned && n.unread),
-		...notifications.filter((n) => !n.pinned && !n.unread)
+		...notifications.filter((n) => n.status === 'pinned'),
+		...notifications.filter((n) => n.status === 'unread'),
+		...notifications.filter((n) => n.status === 'read')
 	];
 </script>
 

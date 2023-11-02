@@ -113,19 +113,15 @@
 			previous.map((notification) => {
 				if (notification.id !== id) return notification;
 				if (title === 'Pinned') {
-					return {
-						...notification,
-						pinned: true,
-						unread: $settingsStore.readWhenPin ? false : notification.unread
-					};
+					return { ...notification, status: 'pinned' };
 				}
 				if (title === 'Read') {
 					if (from === 'github') {
 						fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
 					}
-					return { ...notification, unread: false, pinned: false };
+					return { ...notification, status: 'read' };
 				}
-				return { ...notification, unread: true, pinned: false };
+				return { ...notification, status: 'unread' };
 			})
 		);
 	}

@@ -26,8 +26,6 @@
 	import NotificationLabels from './NotificationLabels.svelte';
 	import NotificationStatus from './NotificationStatus.svelte';
 
-	type ToggleKey = 'unread' | 'pinned' | 'done' | 'muted';
-
 	export let data: NotificationData;
 	export let dragged = false;
 	export let interactive = true;
@@ -35,9 +33,7 @@
 	let {
 		id,
 		from,
-		unread,
-		pinned,
-		done,
+		status,
 		muted,
 		author,
 		title,
@@ -60,10 +56,13 @@
 
 	onMount(async () => {
 		if (!isTrayApp && window.__TAURI__) {
-			unlisten = await listen<{ key: ToggleKey }>(`notification-toggle:${id}`, (event) => {
-				handleToggle(event.payload.key)();
-				unlisten();
-			});
+			unlisten = await listen<{ status: NotificationData['status'] }>(
+				`notification-toggle:${id}`,
+				(event) => {
+					handleChangeStatus(event.payload.status)();
+					unlisten();
+				}
+			);
 		}
 	});
 
@@ -86,44 +85,52 @@
 		fetchGithub(`notifications/threads/${id}`, { method: 'PATCH' });
 	}
 
-	function handleToggle(key: ToggleKey) {
+	function handleChangeStatus(status: NotificationData['status'] | 'muted') {
 		return () => {
 			if (isTrayApp) {
-				emit(`notification-toggle:${id}`, { key });
+				emit(`notification-toggle:${id}`, { status });
 				return;
 			}
 
 			(from === 'github' ? githubNotifications : gitlabNotifications).update((previous) =>
+				// @ts-expect-error TODO: bump TypeScript to 5.3
 				previous.map((notification) => {
 					if (notification.id !== id) return notification;
-					if (key === 'pinned' && !notification.pinned && $settings.readWhenPin) {
-						return { ...notification, pinned: !notification.pinned, unread: false };
+
+					if (
+						from === 'github' &&
+						notification.status === 'unread' &&
+						(status === 'read' || status === 'done' || status === 'pinned')
+					) {
+						markAsReadInGitHub();
 					}
-					if (key === 'done') {
-						return { ...notification, done: !notification.done, unread: false, pinned: false };
+
+					switch (true) {
+						case status === 'muted':
+							muted = !muted;
+							return { ...notification, muted: !notification.muted };
+						case status === 'unread':
+						case status === 'read':
+							return { ...notification, status };
+						case status === 'pinned':
+							return {
+								...notification,
+								status: notification.status === 'pinned' ? 'unread' : 'pinned'
+							};
+						case status === 'done':
+							return { ...notification, status: notification.status === 'done' ? 'read' : 'done' };
+						default:
+							return notification;
 					}
-					return { ...notification, [key]: !notification[key] };
 				})
 			);
-
-			if (key === 'unread' && pinned) {
-				unread = !unread;
-			}
-
-			if (from === 'github' && (key === 'unread' || key === 'done') && unread) {
-				markAsReadInGitHub();
-			}
-
-			if (key === 'muted') {
-				muted = !muted;
-			}
 		};
 	}
 
 	function handleOpenInBrowser() {
 		if (!url) return;
-		if ($settings.readWhenOpenInBrowser && unread) {
-			handleToggle('unread')();
+		if ($settings.readWhenOpenInBrowser && status === 'unread') {
+			handleChangeStatus('read')();
 		}
 		openUrl(url);
 	}
@@ -138,7 +145,7 @@
 	}
 </script>
 
-<div class="container" class:transparent={!unread && !pinned && !done} class:dragged>
+<div class="container" class:transparent={status === 'read'} class:dragged>
 	<div class="notification">
 		{#if $settings.showNotificationsRepo}
 			<div class="top">
@@ -204,45 +211,45 @@
 						</Button>
 					</div>
 				{:else}
-					{#if !done}
-						{#if !unread}
-							<Tooltip content="Mark as done" position="bottom right" hover>
-								<Button icon on:click={handleToggle('done')}>
-									<DoubleCheckIcon />
-								</Button>
-							</Tooltip>
-						{/if}
-						{#if unread}
-							<Tooltip content="Mark as read" position="bottom right" hover>
-								<Button icon on:click={handleToggle('unread')}>
-									<CheckIcon />
-								</Button>
-							</Tooltip>
-							<Tooltip content="Mark as done" position="bottom" hover>
-								<Button secondary icon on:click={handleToggle('done')}>
-									<DoubleCheckIcon />
-								</Button>
-							</Tooltip>
-						{:else}
+					{#if status === 'unread'}
+						<Tooltip content="Mark as read" position="bottom right" hover>
+							<Button icon on:click={handleChangeStatus('read')}>
+								<CheckIcon />
+							</Button>
+						</Tooltip>
+						<Tooltip content="Mark as done" position="bottom" hover>
+							<Button secondary icon on:click={handleChangeStatus('done')}>
+								<DoubleCheckIcon />
+							</Button>
+						</Tooltip>
+					{:else if status === 'read' || status === 'pinned'}
+						<Tooltip content="Mark as done" position="bottom right" hover>
+							<Button icon on:click={handleChangeStatus('done')}>
+								<DoubleCheckIcon />
+							</Button>
+						</Tooltip>
+						{#if status === 'read'}
 							<Tooltip content="Mark as unread" position="bottom" hover>
-								<Button secondary icon on:click={handleToggle('unread')}>
+								<Button secondary icon on:click={handleChangeStatus('unread')}>
 									<UnreadIcon />
 								</Button>
 							</Tooltip>
 						{/if}
-						<Tooltip content={pinned ? 'Unpin' : 'Pin'} position="bottom" hover>
-							<Button secondary icon on:click={handleToggle('pinned')}>
-								{#if pinned}
+					{/if}
+					{#if status === 'done'}
+						<Tooltip content="Restore" position="bottom" hover>
+							<Button icon on:click={handleChangeStatus('done')}>
+								<RestoreIcon />
+							</Button>
+						</Tooltip>
+					{:else}
+						<Tooltip content={status === 'pinned' ? 'Unpin' : 'Pin'} position="bottom" hover>
+							<Button secondary icon on:click={handleChangeStatus('pinned')}>
+								{#if status === 'pinned'}
 									<UnpinIcon />
 								{:else}
 									<PinIcon />
 								{/if}
-							</Button>
-						</Tooltip>
-					{:else}
-						<Tooltip content="Restore" position="bottom" hover>
-							<Button icon on:click={handleToggle('done')}>
-								<RestoreIcon />
 							</Button>
 						</Tooltip>
 					{/if}
@@ -256,13 +263,13 @@
 					{#if type === 'discussion' || type === 'issue' || type === 'pr'}
 						{#if muted}
 							<Tooltip content="Muted" position="bottom" hover>
-								<Button secondary icon on:click={handleToggle('muted')}>
+								<Button secondary icon on:click={handleChangeStatus('muted')}>
 									<MutedIcon />
 								</Button>
 							</Tooltip>
 						{:else}
 							<Tooltip content="Mute" position="bottom" hover>
-								<Button secondary icon on:click={handleToggle('muted')}>
+								<Button secondary icon on:click={handleChangeStatus('muted')}>
 									<MuteIcon />
 								</Button>
 							</Tooltip>

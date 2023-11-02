@@ -6,7 +6,7 @@
 
 	$: applyFiltersForDone = $settings.applyFiltersForDone;
 	$: dones = (applyFiltersForDone ? $filteredNotifications : $globalNotifications).filter(
-		({ done }) => done
+		({ status }) => status === 'done'
 	);
 </script>
 
