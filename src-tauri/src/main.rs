@@ -53,9 +53,19 @@ fn main() {
             match event {
                 SystemTrayEvent::LeftClick { .. } => {
                     let tray_window = app.get_window("tray").unwrap();
+                    let main_window = app.get_window("main").unwrap();
                     if tray_window.is_visible().unwrap() {
                         tray_window.hide().unwrap();
+
+                        #[cfg(target_os = "macos")]
+                        {
+                            main_window.show().unwrap();
+                            tauri::AppHandle::hide(app).unwrap();
+                        }
                     } else {
+                        if !main_window.is_visible().unwrap() {
+                            main_window.hide().unwrap();
+                        }
                         tray_window.move_window(Position::TrayCenter).unwrap();
                         tray_window.show().unwrap();
                         tray_window.set_focus().unwrap();
@@ -77,7 +87,12 @@ fn main() {
         })
         .on_window_event(move |event| match event.event() {
             tauri::WindowEvent::CloseRequested { api, .. } => {
+                #[cfg(not(target_os = "macos"))]
                 event.window().hide().unwrap();
+
+                #[cfg(target_os = "macos")]
+                tauri::AppHandle::hide(&event.window().app_handle()).unwrap();
+
                 api.prevent_close();
             }
             tauri::WindowEvent::Focused(is_focused) => {
@@ -87,17 +102,13 @@ fn main() {
                 let tray_window = app_handle.get_window("tray").unwrap();
 
                 if window.label() == "tray" && !is_focused {
+                    tray_window.hide().unwrap();
+
                     #[cfg(target_os = "macos")]
                     {
                         main_window.show().unwrap();
                         tauri::AppHandle::hide(&event.window().app_handle()).unwrap();
                     }
-                    tray_window.hide().unwrap();
-                }
-
-                #[cfg(target_os = "macos")]
-                if main_window.is_visible().unwrap() && tray_window.is_visible().unwrap() {
-                    main_window.hide().unwrap();
                 }
 
                 commands::update_tray(window.app_handle(), None, Some(false))

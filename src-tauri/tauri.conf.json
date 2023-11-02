@@ -71,8 +71,8 @@
 			{
         "label": "main",
 				"url": "/dashboard",
-				"width": 1400,
-				"height": 900,
+				"width": 1200,
+				"height": 800,
 				"title": "GitLight",
 				"titleBarStyle": "Overlay",
 				"hiddenTitle": true
