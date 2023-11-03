@@ -172,7 +172,7 @@
 					class="title-container"
 					class:underlined={!!url}
 					use:delayedHover={'notification-hover'}
-					on:mouseup={handleOpenInBrowser}
+					on:mouseup={dragged ? null : handleOpenInBrowser}
 					role="presentation"
 				>
 					<h3 class="notification-title">{title}</h3>
