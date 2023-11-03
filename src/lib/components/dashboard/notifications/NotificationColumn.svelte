@@ -125,6 +125,19 @@
 			})
 		);
 	}
+
+	// Fix crossfade visual glitch by hiding the underlying element
+	let hideId = '';
+
+	function receiveAndHide(...args: Parameters<typeof receive>) {
+		hideId = args[1].key as string;
+
+		setTimeout(() => {
+			hideId = '';
+		}, settings.duration as number);
+
+		return receive(...args);
+	}
 </script>
 
 <div
@@ -168,7 +181,8 @@
 			{#each notifications as notification (notification)}
 				<li
 					class="item"
-					in:receive={{ key: notification.id }}
+					class:hide={hideId === notification.id}
+					in:receiveAndHide={{ key: notification.id }}
 					out:send={{ key: notification.id }}
 					animate:flipIfVisible={settings}
 					use:drag={{
@@ -322,6 +336,10 @@
 		.item {
 			cursor: grab;
 			opacity: 1 !important;
+
+			&.hide {
+				opacity: 0 !important;
+			}
 
 			&:hover {
 				z-index: 1;

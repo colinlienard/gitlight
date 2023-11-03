@@ -60,7 +60,7 @@ export async function createGithubNotificationData(
 		data = subject.url ? await fetchGithub<GithubItem>(subject.url, fetchOptions) : null;
 	} catch (e) {
 		error.set(
-			`At least one notification comes from a private repository (${repository.full_name}) for which you have not configured a Personal Access Token. Please go to Settings > Permissions.`
+			`At least one notification comes from a private repository (${repository.full_name}) for which you have not configured a Personal Access Token. Please go to GitHub settings and scroll down.`
 		);
 		return null;
 	}

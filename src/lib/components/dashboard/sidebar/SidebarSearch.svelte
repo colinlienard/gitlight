@@ -32,22 +32,4 @@
 	});
 </script>
 
-<Input icon={SearchIcon} bind:value={search} placeholder="Search" clearable bind:this={input}>
-	{#if !search}
-		<span class="key">/</span>
-	{/if}
-</Input>
-
-<style lang="scss">
-	.key {
-		@include typography.small;
-
-		position: absolute;
-		right: 0.75rem;
-		padding: 0.25rem 0.5rem;
-		border: 1px solid variables.$grey-3;
-		border-radius: 0.25rem;
-		color: variables.$grey-4;
-		white-space: nowrap;
-	}
-</style>
+<Input icon={SearchIcon} bind:value={search} placeholder="Search" clearable bind:this={input} />

@@ -36,19 +36,17 @@
 					{
 						name: 'GitHub settings',
 						component: GithubSettings,
-						props: { onSetTab: (number: number) => (tabIndex = number) }
+						props: {
+							onExpand() {
+								setTimeout(() => {
+									scrollContainer?.scrollTo({ top: 999, behavior: 'smooth' });
+								}, 10);
+							}
+						}
 					}
 			  ]
 			: []),
-		...(gitlabUser
-			? [
-					{
-						name: 'GitLab settings',
-						component: GitlabSettings,
-						props: { onSetTab: (number: number) => (tabIndex = number) }
-					}
-			  ]
-			: []),
+		...(gitlabUser ? [{ name: 'GitLab settings', component: GitlabSettings }] : []),
 		{ name: 'Accounts', component: Accounts },
 		{
 			name: 'App',
