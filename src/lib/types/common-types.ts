@@ -127,7 +127,6 @@ export type GitlabEventWithRepoData = GitlabEvent & {
 export type Settings = {
 	activateNotifications: boolean;
 	readWhenOpenInBrowser: boolean;
-	showNotificationsRepo: boolean;
 	notificationNumber: number;
 	sidebarHidden: boolean;
 	showOnlyOpen: boolean;
