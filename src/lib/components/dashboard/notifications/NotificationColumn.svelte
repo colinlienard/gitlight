@@ -128,13 +128,24 @@
 
 	// Fix crossfade visual glitch by hiding the underlying element
 	let hideId = '';
+	let justChanged = false;
+
+	$: {
+		$settingsStore.providerView;
+		justChanged = true;
+		setTimeout(() => {
+			justChanged = false;
+		}, 100);
+	}
 
 	function receiveAndHide(...args: Parameters<typeof receive>) {
-		hideId = args[1].key as string;
+		if (!justChanged) {
+			hideId = args[1].key as string;
 
-		setTimeout(() => {
-			hideId = '';
-		}, settings.duration as number);
+			setTimeout(() => {
+				hideId = '';
+			}, settings.duration as number);
+		}
 
 		return receive(...args);
 	}
