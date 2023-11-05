@@ -224,12 +224,17 @@
 	}
 
 	.double-button {
-		@include mixins.shiny(variables.$bg-3, false);
+		@include mixins.shiny(variables.$bg-3);
 
 		display: flex;
 		justify-content: space-evenly;
 
+		&:hover::before {
+			background-image: linear-gradient(rgba(white, 0.1), transparent);
+		}
+
 		a {
+			z-index: 1;
 			width: 100%;
 			padding: 0.5rem;
 			border-radius: calc(variables.$radius - 1px);
