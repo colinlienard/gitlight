@@ -71,7 +71,7 @@
 		}
 
 		&.active {
-			@include mixins.shiny(variables.$blue, true, 9rem);
+			@include mixins.shiny(variables.$blue, 0.3, 99rem);
 
 			.icon-container {
 				background-color: variables.$bg-6;
@@ -84,7 +84,7 @@
 		}
 
 		&:not(.active) {
-			@include mixins.shiny(variables.$bg-3, true, 9rem);
+			@include mixins.shiny(variables.$bg-3, 0.1, 9rem);
 
 			.icon-container {
 				background-color: variables.$bg-5;

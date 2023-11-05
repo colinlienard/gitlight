@@ -1,10 +1,10 @@
 // Colors
-$bg-1: #171717;
-$bg-2: #1b1b1b;
-$bg-3: #1d1d1d;
-$bg-4: #292929;
-$bg-5: #888;
-$bg-6: #fff;
+$bg-1: var(--bg-1);
+$bg-2: var(--bg-2);
+$bg-3: var(--bg-3);
+$bg-4: var(--bg-4);
+$bg-5: var(--bg-5);
+$bg-6: var(--bg-6);
 $blue: #6040ff;
 $light-blue: #8585ff;
 $green: #22c965;

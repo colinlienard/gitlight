@@ -2,28 +2,34 @@
 @use './typography';
 @use './variables';
 
-@mixin shiny($color, $hover: true, $radius: variables.$radius) {
+@mixin shiny($color, $light-amount: 0.1, $radius: variables.$radius) {
 	position: relative;
 	border-radius: $radius;
-	background-image: linear-gradient(
-		color.adjust($color, $lightness: 15%),
-		color.adjust($color, $lightness: 5%)
-	);
+	background-color: $color;
+	box-shadow: variables.$shadow;
 	isolation: isolate;
 
 	&::before {
 		position: absolute;
-		z-index: -1;
-		border-radius: calc($radius - 1px);
-		background-image: linear-gradient(color.adjust($color, $lightness: 2%), $color);
+		border-radius: $radius;
+		background-image: linear-gradient(rgba(white, $light-amount), transparent);
 		content: '';
-		inset: 1px;
+		inset: 0;
+		opacity: 0.5;
+		pointer-events: none;
 	}
 
-	@if $hover {
-		&:hover::before {
-			background: $color;
-		}
+	&::after {
+		position: absolute;
+		z-index: -1;
+		border: 1px solid rgba(white, calc($light-amount / 2));
+		border-radius: calc($radius - 1px);
+		content: '';
+		inset: 0;
+	}
+
+	&:hover::before {
+		background-image: linear-gradient(rgba(white, calc($light-amount / 2)), transparent);
 	}
 }
 
@@ -34,7 +40,7 @@
 
 	@if $hover {
 		&:hover {
-			border-color: color.adjust(variables.$bg-3, $lightness: 10%);
+			border-color: rgba(white, 15%);
 		}
 	}
 }

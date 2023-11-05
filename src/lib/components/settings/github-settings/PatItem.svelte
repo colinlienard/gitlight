@@ -153,14 +153,17 @@
 				align-items: center;
 				justify-content: center;
 				padding: 0 0.5rem;
+				border-radius: calc(variables.$radius - 1px);
+				border-bottom-left-radius: 0;
+				border-top-left-radius: 0;
 				gap: 0.5rem;
 
 				&:hover {
-					background-color: color.adjust(variables.$bg-2, $lightness: 1%);
+					background-color: rgba(white, 0.02);
 				}
 
 				&:active {
-					background-color: color.adjust(variables.$bg-2, $lightness: 2%);
+					background-color: rgba(white, 0.04);
 				}
 
 				:global(svg) {

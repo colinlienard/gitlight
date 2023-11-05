@@ -152,15 +152,17 @@
 			}
 
 			&.button {
-				border-radius: 0 variables.$radius variables.$radius 0;
-				border-left: 1px solid variables.$bg-3;
+				border-radius: calc(variables.$radius - 1px);
+				border-left: 1px solid variables.$bg-4;
+				border-bottom-left-radius: 0;
+				border-top-left-radius: 0;
 
 				&:hover {
-					background-color: color.adjust(variables.$bg-2, $lightness: 1%);
+					background-color: rgba(white, 0.02);
 				}
 
 				&:active {
-					background-color: color.adjust(variables.$bg-2, $lightness: 2%);
+					background-color: rgba(white, 0.04);
 				}
 
 				:global(svg) {
