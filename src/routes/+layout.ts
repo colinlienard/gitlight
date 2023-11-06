@@ -60,6 +60,8 @@ export async function load({ url }) {
 			// If this fail, logout
 			storage.remove(`gitlab-user`);
 			storage.remove(`gitlab-access-token`);
+			storage.remove(`gitlab-refresh-token`);
+			storage.remove(`gitlab-expires-in`);
 
 			if (storage.has('github-user')) {
 				window.location.reload();

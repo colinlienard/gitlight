@@ -1,11 +1,15 @@
 import { AUTH_GITLAB_ID, AUTH_GITLAB_SECRET } from '$env/static/private';
 import { PUBLIC_SITE_URL } from '$env/static/public';
 
+const headers = {
+	'Access-Control-Allow-Headers': '*'
+};
+
 export async function GET({ url }) {
 	const { searchParams } = url;
 
 	if (!searchParams.has('refresh_token')) {
-		return new Response('refresh_token not found', { status: 400 });
+		return new Response('refresh_token not found', { status: 400, headers });
 	}
 
 	try {
@@ -26,11 +30,11 @@ export async function GET({ url }) {
 
 		if (response.ok) {
 			const data = await response.json();
-			return new Response(JSON.stringify(data), { status: 200 });
+			return new Response(JSON.stringify(data), { status: 200, headers });
 		}
 
-		return new Response(response.statusText, { status: response.status });
+		return new Response(response.statusText, { status: response.status, headers });
 	} catch (error) {
-		return new Response(JSON.stringify({ error }), { status: 500 });
+		return new Response(JSON.stringify({ error }), { status: 500, headers });
 	}
 }

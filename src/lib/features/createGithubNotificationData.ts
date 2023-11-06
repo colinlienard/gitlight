@@ -41,7 +41,8 @@ export async function createGithubNotificationData(
 ): Promise<NotificationData | null> {
 	const { id, repository, subject, unread, updated_at, reason } = githubNotification;
 	const previous = savedNotifications.find((n) => n.id === id);
-	const status = unread ? 'unread' : previous?.status || 'unread';
+	const status =
+		previous?.status === 'pinned' ? 'pinned' : unread ? 'unread' : previous?.status || 'unread';
 	const muted = previous?.muted || false;
 	const [owner, name] = repository.full_name.split('/');
 
@@ -444,7 +445,7 @@ async function getLatestReview(
 			description = `*requested changes*${body ? '' : ' on'}`;
 			break;
 		case 'COMMENTED':
-			description = '*reviewed*';
+			description = `*commented*${body ? '' : ' on'}`;
 			break;
 		case 'DISMISSED':
 			description = `*dismissed review*${body ? '' : ' on'}`;

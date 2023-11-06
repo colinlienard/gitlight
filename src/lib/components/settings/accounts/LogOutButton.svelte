@@ -13,6 +13,10 @@
 		timeout = setTimeout(() => {
 			storage.remove(`${provider}-user`);
 			storage.remove(`${provider}-access-token`);
+			if (provider === 'gitlab') {
+				storage.remove('gitlab-refresh-token');
+				storage.remove('gitlab-expires-in');
+			}
 
 			if (
 				(provider === 'github' && storage.has('gitlab-user')) ||
