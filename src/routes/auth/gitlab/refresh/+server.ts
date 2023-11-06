@@ -2,7 +2,7 @@ import { AUTH_GITLAB_ID, AUTH_GITLAB_SECRET } from '$env/static/private';
 import { PUBLIC_SITE_URL } from '$env/static/public';
 
 const headers = {
-	'Access-Control-Allow-Headers': '*'
+	'Access-Control-Allow-Origin': '*'
 };
 
 export async function GET({ url }) {
