@@ -47,10 +47,10 @@ export async function fetchGitlab<T = void>(url: string, options?: Options): Pro
 }
 
 // Refresh the GitLab access token if it has expired
-export async function checkGitlabToken(ok = false): Promise<string | undefined> {
+export async function checkGitlabToken(): Promise<string | undefined> {
 	const refreshToken = storage.get('gitlab-refresh-token');
 	const expiration = storage.get('gitlab-expires-in');
-	if (ok || (refreshToken && expiration && new Date().getTime() > parseInt(expiration))) {
+	if (refreshToken && expiration && new Date().getTime() > parseInt(expiration)) {
 		try {
 			const response = await fetch(
 				`${PUBLIC_SITE_URL}/auth/gitlab/refresh?refresh_token=${refreshToken}`
