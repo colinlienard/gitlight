@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
+	import { checkGitlabToken } from '~/lib/features';
 	import { Tooltip, ScrollbarContainer, Separator, IconButton } from '$lib/components';
 	import { Logo, DoubleArrowIcon } from '$lib/icons';
 	import {
@@ -77,6 +78,7 @@
 			</IconButton>
 		</Tooltip>
 	</header>
+	<button on:click={() => checkGitlabToken(true)}>refresh gitlab token</button>
 	<ScrollbarContainer margin="0.25rem">
 		<div class="scrollable">
 			{#if !$loading}
