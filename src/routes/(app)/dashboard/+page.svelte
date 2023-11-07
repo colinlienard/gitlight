@@ -125,21 +125,12 @@
 			return;
 
 		// Send push notification and update tray icon
-		let pushNotification: NotificationData | null = null;
-		let index = 0;
-		do {
-			pushNotification = newNotifications[index];
-			index++;
-		} while (pushNotification?.status === 'unread' && !pushNotification?.muted);
-
-		if (pushNotification) {
-			const { author, title, description } = pushNotification;
-			sendNotification({
-				title,
-				body: `${author ? `${author.login} ` : ''}${description.replace(/(\*|_)/g, '')}`
-			});
-			invoke('update_tray', { newIcon: true });
-		}
+		const { author, title, description } = newNotifications[0];
+		sendNotification({
+			title,
+			body: `${author ? `${author.login} ` : ''}${description.replace(/(\*|_)/g, '')}`
+		});
+		invoke('update_tray', { newIcon: true });
 	}
 
 	async function fetchGithubNotifications(): Promise<NotificationData[]> {

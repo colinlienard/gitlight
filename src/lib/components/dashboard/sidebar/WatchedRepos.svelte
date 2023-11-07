@@ -166,14 +166,40 @@
 	bind:items={$watchedRepos}
 	zIndex={2}
 >
-	{#if $watchedRepos.length}
-		{#each watchedReposByOwner as { name, avatar, number, active, muted, repos, from }}
-			{#if $settings.providerView == 'both' || $settings.providerView === from}
-				{#if repos.length === 1}
+	{#if watchedReposByOwner.length}
+		{#each watchedReposByOwner as { name, avatar, number, active, muted, repos }}
+			{#if repos.length === 1}
+				<button
+					class="wrapper"
+					class:active={repos[0].active}
+					on:click={handleToggleRepo(repos[0].id)}
+				>
+					{#if avatar}
+						<img class="image" src={avatar} alt="" />
+					{:else}
+						<div class="repo-icon">
+							<RepositoryIcon />
+						</div>
+					{/if}
+					<h3 class="name">{name}/{repos[0].name}</h3>
+					{#if number}
+						<span class="number">{number}</span>
+					{/if}
+					<button class="mute" class:muted on:click|stopPropagation={handleMuteOwner(name, muted)}>
+						{#if muted}
+							<MutedIcon />
+						{:else}
+							<MuteIcon />
+						{/if}
+					</button>
+				</button>
+			{:else}
+				<ShrinkableWrapper>
 					<button
-						class="wrapper"
-						class:active={repos[0].active}
-						on:click={handleToggleRepo(repos[0].id)}
+						slot="header"
+						class="wrapper smaller"
+						class:active
+						on:click={handleToggleOwner(name, !active)}
 					>
 						{#if avatar}
 							<img class="image" src={avatar} alt="" />
@@ -182,8 +208,10 @@
 								<RepositoryIcon />
 							</div>
 						{/if}
-						<h3 class="name">{name}/{repos[0].name}</h3>
-						<span class="number">{number}</span>
+						<h3 class="name">{name}</h3>
+						{#if number}
+							<span class="number">{number}</span>
+						{/if}
 						<button
 							class="mute"
 							class:muted
@@ -196,28 +224,16 @@
 							{/if}
 						</button>
 					</button>
-				{:else}
-					<ShrinkableWrapper>
-						<button
-							slot="header"
-							class="wrapper smaller"
-							class:active
-							on:click={handleToggleOwner(name, !active)}
-						>
-							{#if avatar}
-								<img class="image" src={avatar} alt="" />
-							{:else}
-								<div class="repo-icon">
-									<RepositoryIcon />
-								</div>
+					{#each repos as { id, name, number, active, muted }}
+						<button class="wrapper" class:active on:click={handleToggleRepo(id)}>
+							<div class="repo-icon">
+								<RepositoryIcon />
+							</div>
+							<h4 class="name">{name}</h4>
+							{#if number}
+								<span class="number">{number}</span>
 							{/if}
-							<h3 class="name">{name}</h3>
-							<span class="number">{number}</span>
-							<button
-								class="mute"
-								class:muted
-								on:click|stopPropagation={handleMuteOwner(name, muted)}
-							>
+							<button class="mute" class:muted on:click|stopPropagation={handleMuteRepo(id)}>
 								{#if muted}
 									<MutedIcon />
 								{:else}
@@ -225,24 +241,8 @@
 								{/if}
 							</button>
 						</button>
-						{#each repos as { id, name, number, active, muted }}
-							<button class="wrapper" class:active on:click={handleToggleRepo(id)}>
-								<div class="repo-icon">
-									<RepositoryIcon />
-								</div>
-								<h4 class="name">{name}</h4>
-								<span class="number">{number}</span>
-								<button class="mute" class:muted on:click|stopPropagation={handleMuteRepo(id)}>
-									{#if muted}
-										<MutedIcon />
-									{:else}
-										<MuteIcon />
-									{/if}
-								</button>
-							</button>
-						{/each}
-					</ShrinkableWrapper>
-				{/if}
+					{/each}
+				</ShrinkableWrapper>
 			{/if}
 		{/each}
 	{:else}
