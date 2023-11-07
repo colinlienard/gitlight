@@ -47,6 +47,7 @@
 
 <style lang="scss">
 	.section {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		padding: 1.5rem 1rem;
@@ -62,7 +63,7 @@
 	}
 
 	.row {
-		z-index: 1;
+		/* z-index: 1; */
 		display: flex;
 		flex-direction: row;
 		align-items: center;

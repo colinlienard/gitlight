@@ -274,7 +274,7 @@
 		.repo-icon {
 			height: 1.5rem;
 			flex: 0 0 1.5rem;
-			border-radius: 0.5rem;
+			border-radius: variables.$small-radius;
 		}
 
 		.repo-icon {
