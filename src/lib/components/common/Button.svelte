@@ -71,6 +71,10 @@
 			@include mixins.shiny(variables.$bg-3);
 		}
 
+		&:not(.secondary) {
+			color: white;
+		}
+
 		&:not(.small) {
 			@include typography.bold;
 

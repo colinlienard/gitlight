@@ -1,10 +1,23 @@
 html {
-	--bg-1: #171717;
-	--bg-2: #1b1b1b;
-	--bg-3: #212020;
-	--bg-4: #292929;
-	--bg-5: #888;
-	--bg-6: #fff;
+	--bg-1: #fafafa;
+	--bg-2: #fff;
+	--bg-3: #eaeaea;
+	--bg-4: #e2e2e2;
+	--bg-5: #7e7e7e;
+	--bg-6: #3a3a3a;
+	--shadow: 0 1px 2px rgba(black, 0.05);
+	--modal-shadow: 0 2rem 4rem rgba(black, 0.2) font-size: 15px;
+
+	&[data-theme='dark'] {
+		--bg-1: #171717;
+		--bg-2: #1b1b1b;
+		--bg-3: #212020;
+		--bg-4: #292929;
+		--bg-5: #888;
+		--bg-6: #fff;
+		--shadow: 0 1px 2px rgba(black, 0.15);
+		--modal-shadow: 0 2rem 4rem rgba(black, 0.5);
+	}
 
 	font-size: 15px;
 

@@ -31,6 +31,7 @@ export const watchedPersons = writable<WatchedPerson[]>([]);
 export const loading = writable<boolean>(true);
 
 export const settings = writable<Settings>({
+	theme: 'system',
 	activateNotifications: true,
 	readWhenOpenInBrowser: true,
 	notificationNumber: 50,
