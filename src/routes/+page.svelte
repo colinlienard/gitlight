@@ -176,7 +176,7 @@
 				-webkit-background-clip: text;
 				-moz-background-clip: text;
 				background-clip: text;
-				background-image: linear-gradient(variables.$bg-6, rgba(variables.$bg-6, 0.5));
+				background-image: linear-gradient(variables.$bg-6, transparent 150%);
 				font-size: 2.5rem;
 				text-align: center;
 				-webkit-text-fill-color: transparent;

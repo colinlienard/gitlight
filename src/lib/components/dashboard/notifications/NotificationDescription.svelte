@@ -67,7 +67,7 @@
 	class:small
 	bind:this={element}
 	style:width
-	style:height={tall ? '2.65rem' : ''}
+	style:height={tall ? (small ? '2.3rem' : '2.65rem') : ''}
 	use:intersect={{ callback: toggleWidth, active: onWebkit }}
 >
 	{#if prefix}

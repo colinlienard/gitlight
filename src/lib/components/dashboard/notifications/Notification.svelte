@@ -478,17 +478,18 @@
 			position: absolute;
 			z-index: -1;
 			content: '';
-			inset: -0.5rem 0 0;
 		}
 
 		&::before {
 			border: 1px solid variables.$bg-4;
 			border-radius: 0 0 variables.$radius variables.$radius;
 			background-color: variables.$bg-2;
+			inset: -0.5rem 0 0;
 		}
 
 		&::after {
-			background-image: linear-gradient(rgba(variables.$bg-1, 0.5), transparent);
+			background-image: linear-gradient(rgba(black, 0.2), transparent 50%);
+			inset: -0.5rem 1px 1px;
 		}
 	}
 </style>
