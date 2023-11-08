@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { afterUpdate, tick } from 'svelte';
-	import { lightenColor } from '$lib/helpers';
+	import { theme } from '~/lib/stores';
+	import { shadeColor } from '$lib/helpers';
 	import type { GithubLabel } from '$lib/types';
 
 	export let labels: GithubLabel[] = [];
@@ -16,14 +17,27 @@
 			removed++;
 		}
 	});
+
+	function getColor(color: string, theme: 'dark' | 'light', shade = true) {
+		if (color === 'auto') {
+			return theme === 'dark' ? '#cecece' : '#666';
+		}
+		if (!shade) {
+			return `#${color}`;
+		}
+		return shadeColor(color, theme === 'dark' ? 30 : -30);
+	}
 </script>
 
 {#if labels && labels.length}
 	<ul class="labels" bind:this={list}>
 		{#each labels as label}
-			<li class="label" style:color={lightenColor(label.color)}>
+			<li class="label" style:color={getColor(label.color, $theme)}>
 				{label.name}
-				<div class="label-background" style:background-color={`#${label.color}`} />
+				<div
+					class="label-background"
+					style:background-color={getColor(label.color, $theme, false)}
+				/>
 			</li>
 		{/each}
 		{#if removed}

@@ -1,23 +1,7 @@
 <script lang="ts">
 	import { invoke } from '@tauri-apps/api/tauri';
-	import { browser } from '$app/environment';
 	import { InlineSelect, Switch, Tooltip } from '$lib/components';
 	import { settings } from '$lib/stores';
-
-	$: if (browser) {
-		const theme = (() => {
-			switch ($settings.theme) {
-				case 'system':
-					return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-				case 'light':
-				default:
-					return 'light';
-				case 'dark':
-					return 'dark';
-			}
-		})();
-		document.documentElement.setAttribute('data-theme', theme);
-	}
 </script>
 
 <h3>General</h3>
@@ -34,7 +18,7 @@
 <Switch label="Hide closed PRs and issues" bind:active={$settings.showOnlyOpen} />
 <span />
 <h3>Interface</h3>
-<InlineSelect label="Theme" bind:value={$settings.theme} options={['system', 'light', 'dark']} />
+<InlineSelect label="Theme" bind:value={$settings.theme} options={['System', 'Light', 'Dark']} />
 <p>Layout</p>
 <div class="views">
 	<Tooltip

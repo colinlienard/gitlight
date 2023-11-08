@@ -492,4 +492,8 @@
 			inset: -0.5rem 1px 1px;
 		}
 	}
+
+	:global(html[data-theme='light']) .previously::after {
+		background-image: linear-gradient(rgba(black, 0.03), transparent 50%);
+	}
 </style>

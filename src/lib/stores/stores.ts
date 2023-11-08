@@ -31,7 +31,7 @@ export const watchedPersons = writable<WatchedPerson[]>([]);
 export const loading = writable<boolean>(true);
 
 export const settings = writable<Settings>({
-	theme: 'system',
+	theme: 'System',
 	activateNotifications: true,
 	readWhenOpenInBrowser: true,
 	notificationNumber: 50,
@@ -46,5 +46,7 @@ export const settings = writable<Settings>({
 	activeTray: true,
 	gitlabRepos: []
 });
+
+export const theme = writable<'light' | 'dark'>('light');
 
 export const error = writable<string | null>(null);
