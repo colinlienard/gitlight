@@ -151,7 +151,7 @@
 			<div class="top">
 				<div class="repo">
 					<button class="repo-button" on:mouseup={() => openUrl(repository.url)}>
-						{repository.owner}/<span class="bold">{repository.name}</span>
+						{repository.namespace}
 					</button>
 				</div>
 				<NotificationStatus {data} />
@@ -350,10 +350,6 @@
 
 				&:hover {
 					text-decoration: underline;
-				}
-
-				.bold {
-					@include typography.bold;
 				}
 			}
 		}

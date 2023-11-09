@@ -29,12 +29,13 @@
 				const repo = previous.splice(index, 1)[0];
 				return [...previous, { ...repo, number: repo.number + 1 }];
 			}
+			const splited = current.repository.namespace.split('/');
 			return [
 				...previous,
 				{
 					id: current.repository.id,
-					name: current.repository.name,
-					ownerName: current.repository.owner,
+					name: splited[splited.length - 1],
+					ownerName: splited[0],
 					ownerAvatar: current.ownerAvatar,
 					number: 1,
 					active: saved?.active ?? true,
