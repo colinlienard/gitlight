@@ -6,6 +6,9 @@ const markdownSymbols: Array<[RegExp, string]> = [
 	[/\n- (.*)/g, '$1'], // Remove unordered list (e.g., - Item)
 	[/\n\d+\. (.*)/g, '$1'], // Remove ordered list (e.g., 1. Item)
 	[/^>\s(.*)$/gm, ''], // Remove blockquotes (e.g., > Quote)
+	[/<[^>]*>/g, ''], // Remove tags (e.g., <span>content</span>)
+	[/\|.*\|.*\|/g, ''], // Remove tables (e.g., | header | header |)
+	[/^-{3,}\s*$/gm, ''], // Remove horizontal rule (e.g., ---)
 	[/^\[vc\]: #[^\r\n]*/g, ''] // Remove vercel comment beginning
 ];
 
