@@ -115,12 +115,17 @@
 	.input-container {
 		position: relative;
 
+		:global(input) {
+			padding-right: 1.7rem;
+		}
+
 		.addon {
 			position: absolute;
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			aspect-ratio: 1 / 1;
+			background-color: variables.$grey-2;
 			inset: 1px 1px 1px auto;
 
 			:global(svg) {
