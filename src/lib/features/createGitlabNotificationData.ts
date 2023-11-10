@@ -142,14 +142,13 @@ function getTextData(
 					return `*opened* this ${gitlabEvent.target_type === 'Issue' ? 'issue' : 'merge request'}`;
 
 				case 'commented on': {
-					const body = removeMarkdownSymbols(gitlabEvent.note.body).slice(0, 100);
+					const body =
+						gitlabEvent.note.body && removeMarkdownSymbols(gitlabEvent.note.body).slice(0, 100);
 					if (
 						gitlabEvent.target_type === 'DiffNote' &&
 						gitlabEvent.author.username !== getLoggedUser()?.login
 					) {
-						return `*requested changes*${
-							gitlabEvent.note.body ? `: _${body}_` : ' on this pull request'
-						}`;
+						return `*requested changes*${body ? `: _${body}_` : ' on this pull request'}`;
 					}
 					return `*commented*: _${body}_`;
 				}
