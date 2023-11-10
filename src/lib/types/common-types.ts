@@ -60,6 +60,7 @@ export type NotificationData = {
 	labels?: GithubLabel[];
 	url?: string;
 	ref?: string;
+	notInvolved?: true;
 	previously?: {
 		author?: User;
 		description: NotificationData['description'];
@@ -140,6 +141,7 @@ export type Settings = {
 		id: number;
 		url: string;
 	}>;
+	gitlabOnlyInvolved: boolean;
 };
 
 export type Priority = {

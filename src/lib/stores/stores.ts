@@ -44,7 +44,8 @@ export const settings = writable<Settings>({
 	applyFiltersForDone: false,
 	viewMode: 'Kanban',
 	activeTray: true,
-	gitlabRepos: []
+	gitlabRepos: [],
+	gitlabOnlyInvolved: true
 });
 
 export const error = writable<string | null>(null);
