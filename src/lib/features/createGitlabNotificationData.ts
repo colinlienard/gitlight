@@ -200,7 +200,7 @@ export async function createGitlabNotificationData(
 		case 'pushed new':
 		case 'pushed to':
 			if (!event.data) {
-				value = {
+				return {
 					...common,
 					...textData,
 					type: 'commit',
@@ -265,9 +265,6 @@ export async function createGitlabNotificationData(
 			return null;
 	}
 
-	const priorities = storage.get('priorities');
-	if (!priorities || priorities.length === 0) return value;
-
 	// Get all comments
 	const { target_type } = firstEvent;
 	const isNote =
@@ -283,11 +280,39 @@ export async function createGitlabNotificationData(
 		  )
 		: undefined;
 
+	// Get if user is assigned, mentioned or review requested
+	const loggedUser = getLoggedUser();
+	const { data } = event;
+	const assigned =
+		data &&
+		'assignees' in data &&
+		data.assignees.some((assignee) => assignee.username === getLoggedUser()?.login);
+	const mentioned = comments?.some(
+		({ body }) =>
+			body.includes(`@${loggedUser?.login}`) &&
+			!body.startsWith('assigned to ') &&
+			!body.startsWith('requested review from ')
+	);
+	const reviewRequested =
+		data &&
+		'reviewers' in data &&
+		data.reviewers.some((assignee) => assignee.username === getLoggedUser()?.login);
+
+	// Set if user is involved
+	if (!(assigned || mentioned || reviewRequested || data?.author.username === loggedUser?.login)) {
+		value.notInvolved = true;
+	}
+
+	const priorities = storage.get('priorities');
+	if (!priorities || priorities.length === 0) return value;
+
 	// Get value for each priority
 	const valuedPriorities = priorities.map<[Priority['criteria'], number, string | undefined]>(
 		(priority) => [
 			priority.criteria,
-			getPriorityValue(priority, value, event.data, comments) ? priority.value : 0,
+			getPriorityValue(priority, value, data, assigned, mentioned, reviewRequested)
+				? priority.value
+				: 0,
 			'specifier' in priority ? priority.specifier : undefined
 		]
 	);
@@ -347,15 +372,13 @@ function getPriorityValue(
 	priority: Priority,
 	notification: NotificationData,
 	data?: GitlabIssue | GitlabMergeRequest,
-	comments?: Array<{ body: string }>
+	assigned?: boolean,
+	mentioned?: boolean,
+	reviewRequested?: boolean
 ): boolean | null | undefined {
 	switch (priority.criteria) {
 		case 'assigned':
-			return (
-				data &&
-				'assignees' in data &&
-				data.assignees.some((assignee) => assignee.username === getLoggedUser()?.login)
-			);
+			return assigned;
 
 		case 'many-comments':
 			return data && 'user_notes_count' in data && data.user_notes_count > 5;
@@ -364,19 +387,10 @@ function getPriorityValue(
 			return data && 'upvotes' in data && data.upvotes + data.downvotes > 5;
 
 		case 'mentioned':
-			return comments?.some(
-				({ body }) =>
-					body.includes(`@${getLoggedUser()?.login}`) &&
-					!body.startsWith('assigned to ') &&
-					!body.startsWith('requested review from ')
-			);
+			return mentioned;
 
 		case 'review-request':
-			return (
-				data &&
-				'reviewers' in data &&
-				data.reviewers.some((assignee) => assignee.username === getLoggedUser()?.login)
-			);
+			return reviewRequested;
 
 		case 'label':
 			return notification.labels?.some((label) => label.name === priority.specifier);

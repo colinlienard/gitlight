@@ -85,6 +85,9 @@
 			...(providerView !== 'github' ? $gitlabNotifications : [])
 		];
 		if (providerView !== 'github') {
+			if ($settings.gitlabOnlyInvolved) {
+				notifications = notifications.filter((item) => !item.notInvolved);
+			}
 			notifications = notifications.sort(
 				(a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
 			);
@@ -181,9 +184,7 @@
 				.map((item) => {
 					if (notificationIsMuted(item, persons, repos)) {
 						const previous = savedNotifications.find((n) => n.id === item.id);
-						if (previous && previous.status) {
-							return { ...item, status: previous.status };
-						}
+						return { ...item, status: previous ? previous.status : 'read' };
 					}
 					return item;
 				});
@@ -286,9 +287,7 @@
 				.map((item) => {
 					if (notificationIsMuted(item, persons, repos)) {
 						const previous = savedNotifications.find((n) => n.id === item.id);
-						if (previous) {
-							return { ...item, status: previous.status };
-						}
+						return { ...item, status: previous ? previous.status : 'read' };
 					}
 					return item;
 				});
@@ -306,7 +305,11 @@
 			];
 		}
 
-		return newNotifications.filter((item) => !notificationIsMuted(item, persons, repos));
+		return newNotifications.filter((item) =>
+			!notificationIsMuted(item, persons, repos) && $settings.gitlabOnlyInvolved
+				? !item.notInvolved
+				: true
+		);
 	}
 
 	function updateTrayTitle() {

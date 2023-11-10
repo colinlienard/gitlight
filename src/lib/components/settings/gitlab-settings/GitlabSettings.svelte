@@ -1,9 +1,16 @@
 <script lang="ts">
-	import { Button } from '$lib/components';
+	import { Button, Switch } from '$lib/components';
 	import { ExternalLinkIcon } from '$lib/icons';
+	import { settings } from '$lib/stores';
 	import GitlabRepos from './GitlabRepos.svelte';
 </script>
 
+<h3>GitLight settings</h3>
+<Switch
+	label="Show only notifications in which you are involved"
+	bind:active={$settings.gitlabOnlyInvolved}
+/>
+<span />
 <h3>Review applications</h3>
 <p class="text">
 	You can review GitLight access <a href="https://gitlab.com/oauth/applications" target="_blank">
