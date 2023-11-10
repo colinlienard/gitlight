@@ -34,8 +34,7 @@
 			repository: {
 				id: 1,
 				url: 'https://github.com/colinlienard/gitlight',
-				owner: 'colinlienard',
-				name: 'gitlight',
+				namespace: 'colinlienard/gitlight',
 				domain: 'github.com'
 			}
 		},
@@ -54,8 +53,7 @@
 			repository: {
 				id: 1,
 				url: 'https://github.com/lagonapp/lagon',
-				owner: 'lagonapp',
-				name: 'lagon',
+				namespace: 'lagonapp/lagon',
 				domain: 'github.com'
 			},
 			number: 845,
@@ -79,8 +77,7 @@
 			repository: {
 				id: 1,
 				url: 'https://github.com/tauri-apps/tauri',
-				owner: 'tauri-apps',
-				name: 'tauri',
+				namespace: 'tauri-apps/tauri',
 				domain: 'github.com'
 			},
 			number: 6900
@@ -101,8 +98,7 @@
 			repository: {
 				id: 1,
 				url: 'https://github.com/sveltejs/svelte',
-				owner: 'sveltejs',
-				name: 'svelte',
+				namespace: 'sveltejs/svelte',
 				domain: 'github.com'
 			},
 			number: 8569,
@@ -123,8 +119,7 @@
 			repository: {
 				id: 1,
 				url: 'https://github.com/colinlienard/gitlight',
-				owner: 'colinlienard',
-				name: 'gitlight',
+				namespace: 'colinlienard/gitlight',
 				domain: 'github.com'
 			},
 			number: 44,

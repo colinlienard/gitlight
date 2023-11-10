@@ -44,7 +44,6 @@ export async function createGithubNotificationData(
 	const status =
 		previous?.status === 'pinned' ? 'pinned' : unread ? 'unread' : previous?.status || 'unread';
 	const muted = previous?.muted || false;
-	const [owner, name] = repository.full_name.split('/');
 
 	// Get Personal Access Tokens
 	let fetchOptions: FetchOptions = {};
@@ -77,8 +76,7 @@ export async function createGithubNotificationData(
 		repository: {
 			id: repository.id,
 			url: repository.html_url,
-			owner,
-			name,
+			namespace: repository.full_name,
 			domain: 'github.com'
 		},
 		ownerAvatar: repository.owner.avatar_url

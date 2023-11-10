@@ -53,8 +53,7 @@ export type NotificationData = {
 		id: number;
 		url: string;
 		domain: string;
-		owner: string;
-		name: string;
+		namespace: string;
 	};
 	ownerAvatar?: string;
 	number?: number;
@@ -115,8 +114,7 @@ export type GitlabEventWithRepoData = GitlabEvent & {
 		id: number;
 		url: string;
 		domain: string;
-		owner: string;
-		name: string;
+		namespace: string;
 		encoded: string;
 	};
 };

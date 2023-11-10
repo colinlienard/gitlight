@@ -37,12 +37,12 @@
 				errorMessage = 'Repository already submitted';
 				return;
 			}
-			const regex = /^https:\/\/(gitlab(\.[a-zA-Z0-9-]+)?)\.com\/([^/?\s]+\/[^/?\s]+)$/i;
+			const regex = /^https:\/\/(gitlab(\.[a-zA-Z0-9-]+)?)\.com\/.*$/i;
 			if (regex.test(value)) {
 				try {
 					const url = new URL(value);
 					const response = await fetchGitlab<GitlabRepository>(
-						`projects/${url.pathname.substring(1).replace('/', '%2F')}`,
+						`projects/${url.pathname.substring(1).replaceAll('/', '%2F')}`,
 						{ domain: url.host }
 					);
 					repo.id = response.id;
@@ -115,12 +115,17 @@
 	.input-container {
 		position: relative;
 
+		:global(input) {
+			padding-right: 1.7rem;
+		}
+
 		.addon {
 			position: absolute;
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			aspect-ratio: 1 / 1;
+			background-color: variables.$grey-2;
 			inset: 1px 1px 1px auto;
 
 			:global(svg) {

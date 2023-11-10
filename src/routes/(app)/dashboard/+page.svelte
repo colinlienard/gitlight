@@ -217,9 +217,11 @@
 		const repositories: GitlabEventWithRepoData['repository'][] = $settings.gitlabRepos.map(
 			({ url, id }) => {
 				const u = new URL(url);
-				const [, owner, name] = u.pathname.split('/');
-				const encoded = `${owner}%2F${name}`;
-				return { id, url, domain: u.host, owner, name, encoded };
+				const pathname = u.pathname.substring(1);
+				const splited = pathname.split('/');
+				const namespace = `${splited[0]}/${splited[splited.length - 1]}`;
+				const encoded = pathname.replaceAll('/', '%2F');
+				return { id, url, domain: u.host, namespace, encoded };
 			}
 		);
 
