@@ -44,9 +44,17 @@
 	}
 
 	:global(.os-scrollbar) {
-		--os-handle-bg: #262626;
-		--os-handle-bg-hover: #343434;
-		--os-handle-bg-active: #424242;
+		@include themes.light {
+			--os-handle-bg: #bdbdbd;
+			--os-handle-bg-hover: #a5a5a5;
+			--os-handle-bg-active: #8a8a8a;
+		}
+
+		@include themes.dark {
+			--os-handle-bg: #262626;
+			--os-handle-bg-hover: #2d2d2d;
+			--os-handle-bg-active: #343434;
+		}
 
 		z-index: 10;
 		margin: var(--margin);

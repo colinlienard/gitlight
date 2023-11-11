@@ -254,8 +254,6 @@
 			}
 
 			.checkbox {
-				@include mixins.shiny(variables.$blue, 0.3, 0.25rem);
-
 				display: flex;
 				height: 1rem;
 				flex: 0 0 1rem;
@@ -266,8 +264,12 @@
 					height: 0.75rem;
 				}
 
+				&.active {
+					@include mixins.shiny('primary', 0.25rem);
+				}
+
 				&:not(.active) {
-					@include mixins.shiny(variables.$bg-3, 0.1, 0.25rem);
+					@include mixins.shiny('secondary', 0.25rem);
 
 					& > :global(svg) {
 						color: variables.$bg-5;

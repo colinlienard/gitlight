@@ -149,14 +149,14 @@
 					flex-direction: column;
 					padding: 0.25rem;
 					border-radius: 0.25rem;
-					background-color: rgba(white, 0.05);
+					background-color: variables.$bg-3;
 					gap: 0.25rem;
 
 					.item {
 						width: 100%;
 						height: 1rem;
-						border-radius: 0.25rem;
-						background-color: rgba(white, 0.1);
+						border-radius: inherit;
+						background-color: variables.$bg-4;
 					}
 				}
 			}

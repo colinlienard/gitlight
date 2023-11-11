@@ -488,12 +488,19 @@
 		}
 
 		&::after {
-			background-image: linear-gradient(rgba(black, 0.2), transparent 50%);
 			inset: -0.5rem 1px 1px;
 		}
-	}
 
-	:global(html[data-theme='light']) .previously::after {
-		background-image: linear-gradient(rgba(black, 0.03), transparent 50%);
+		@include themes.light {
+			&::after {
+				background-image: linear-gradient(rgba(black, 0.03), transparent 50%);
+			}
+		}
+
+		@include themes.dark {
+			&::after {
+				background-image: linear-gradient(rgba(black, 0.2), transparent 50%);
+			}
+		}
 	}
 </style>

@@ -71,10 +71,10 @@
 		}
 
 		&.active {
-			@include mixins.shiny(variables.$blue, 0.3, 99rem);
+			@include mixins.shiny('primary', 9rem);
 
 			.icon-container {
-				background-color: variables.$bg-6;
+				background-color: white;
 				translate: 0.75rem 0;
 
 				:global(svg) {
@@ -84,15 +84,26 @@
 		}
 
 		&:not(.active) {
-			@include mixins.shiny(variables.$bg-3, 0.1, 9rem);
+			@include mixins.shiny('secondary', 9rem);
 
 			.icon-container {
-				background-color: variables.$bg-5;
-				rotate: -90deg;
+				@include themes.light {
+					background-color: variables.$bg-4;
 
-				:global(svg) {
-					color: variables.$bg-3;
+					:global(svg) {
+						color: variables.$bg-6;
+					}
 				}
+
+				@include themes.dark {
+					background-color: variables.$bg-5;
+
+					:global(svg) {
+						color: variables.$bg-3;
+					}
+				}
+
+				rotate: -90deg;
 			}
 		}
 	}
