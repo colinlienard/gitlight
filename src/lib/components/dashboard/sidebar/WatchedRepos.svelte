@@ -29,7 +29,7 @@
 				const repo = previous.splice(index, 1)[0];
 				return [...previous, { ...repo, number: repo.number + 1 }];
 			}
-			const [name, ownerName] = current.repository.namespace.split('/');
+			const [ownerName, name] = current.repository.namespace.split('/');
 			return [
 				...previous,
 				{
