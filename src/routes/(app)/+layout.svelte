@@ -12,10 +12,10 @@
 	$: if (browser) {
 		$theme = (() => {
 			switch ($settings.theme) {
+				default:
 				case 'System':
 					return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 				case 'Light':
-				default:
 					return 'light';
 				case 'Dark':
 					return 'dark';
