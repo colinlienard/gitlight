@@ -37,6 +37,7 @@
 				}),
 				listen<{ theme: 'light' | 'dark' }>('theme', (event) => {
 					$theme = event.payload.theme;
+					document.documentElement.setAttribute('data-theme', $theme);
 				})
 			]);
 			unlistenNotification = a;

@@ -26,11 +26,11 @@
 		aspect-ratio: 1 / 1;
 
 		&:hover {
-			background-color: rgba(white, 0.04);
+			background-color: variables.$bg-3;
 		}
 
 		&:active {
-			background-color: rgba(white, 0.08);
+			background-color: variables.$bg-4;
 		}
 
 		:global(svg) {

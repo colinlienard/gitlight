@@ -45,13 +45,13 @@
 
 	:global(.os-scrollbar) {
 		@include themes.light {
-			--os-handle-bg: #bdbdbd;
-			--os-handle-bg-hover: #a5a5a5;
-			--os-handle-bg-active: #8a8a8a;
+			--os-handle-bg: #{variables.$bg-4};
+			--os-handle-bg-hover: #d5d5d5;
+			--os-handle-bg-active: #c8c8c8;
 		}
 
 		@include themes.dark {
-			--os-handle-bg: #262626;
+			--os-handle-bg: #{variables.$bg-4};
 			--os-handle-bg-hover: #2d2d2d;
 			--os-handle-bg-active: #343434;
 		}

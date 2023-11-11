@@ -18,4 +18,29 @@
 	<body data-sveltekit-preload-data="hover">
 		<div id="root" style="display: contents">%sveltekit.body%</div>
 	</body>
+	<script>
+		const savedTheme = (() => {
+			try {
+				const settings = JSON.parse(localStorage.getItem('settings'));
+				if (!settings?.theme) return 'System';
+				return settings.theme;
+			} catch {
+				return 'System';
+			}
+		})();
+
+		const theme = (() => {
+			switch (savedTheme) {
+				case 'System':
+					return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+				case 'Light':
+				default:
+					return 'light';
+				case 'Dark':
+					return 'dark';
+			}
+		})();
+
+		document.documentElement.setAttribute('data-theme', theme);
+	</script>
 </html>

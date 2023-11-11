@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { listen } from '@tauri-apps/api/event';
+	import { emit, listen } from '@tauri-apps/api/event';
 	import { onDestroy, onMount } from 'svelte';
 	import { enable, isEnabled } from 'tauri-plugin-autostart-api';
 	import { browser } from '$app/environment';
@@ -25,6 +25,9 @@
 
 	$: if (browser) {
 		document.documentElement.setAttribute('data-theme', $theme);
+		if (window.__TAURI__) {
+			emit('theme', { theme: $theme });
+		}
 	}
 
 	function onThemeChange({ matches }: MediaQueryListEvent) {

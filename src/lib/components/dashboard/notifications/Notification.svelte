@@ -439,7 +439,7 @@
 		justify-content: end;
 		padding: 0.5rem;
 		gap: 0.25rem;
-		inset: 0 0 auto auto;
+		inset: 1px 0 auto auto;
 		pointer-events: none;
 		transition: opacity variables.$transition;
 
