@@ -20,7 +20,7 @@
 		: [{ ...defaultRepo }];
 	let saveDisabled: boolean | null | undefined = null;
 
-	$: addDisabled = repos.length >= 10;
+	$: addDisabled = repos.length >= 15;
 
 	$: if (saveDisabled === null) {
 		saveDisabled = undefined;
