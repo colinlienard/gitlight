@@ -125,7 +125,7 @@
 			align-items: center;
 			justify-content: center;
 			aspect-ratio: 1 / 1;
-			background-color: variables.$grey-2;
+			background-color: variables.$bg-2;
 			inset: 1px 1px 1px auto;
 
 			:global(svg) {

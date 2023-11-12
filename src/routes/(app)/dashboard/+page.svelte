@@ -53,6 +53,7 @@
 	let syncTime = 0;
 	let syncInterval: ReturnType<typeof setInterval>;
 	let mounted = false;
+	let isMacos = false;
 
 	let interval = setInterval(() => {
 		fetchAll();
@@ -367,9 +368,15 @@
 	}
 
 	onMount(async () => {
+		mounted = true;
+
 		window.addEventListener('refetch', refetch);
 
-		mounted = true;
+		if (window.__TAURI__) {
+			const { platform } = await import('@tauri-apps/api/os');
+			const platformName = await platform();
+			isMacos = platformName === 'darwin';
+		}
 
 		await fetchAll();
 		$loading = false;
@@ -389,11 +396,11 @@
 </svelte:head>
 
 <div class="container" class:sidebar-hidden={$settings.sidebarHidden}>
-	<Sidebar />
+	<Sidebar {isMacos} />
 	<main class="main">
 		<Banner />
 		<header class="header" data-tauri-drag-region>
-			<div class="wrapper">
+			<div class="wrapper" class:macos={isMacos && $settings.sidebarHidden}>
 				{#if $settings.sidebarHidden}
 					<div transition:slide={{ axis: 'x', duration: 300, easing: cubicInOut }}>
 						<Tooltip content="Show sidebar" position="bottom left" hover>
@@ -479,6 +486,11 @@
 			.wrapper {
 				display: flex;
 				align-items: center;
+				transition: padding variables.$transition;
+
+				&.macos {
+					padding-left: 4rem;
+				}
 			}
 
 			.logo-button {

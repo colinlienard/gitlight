@@ -7,8 +7,6 @@
 	import { storage } from '$lib/features';
 	import { settings, theme } from '$lib/stores';
 
-	let onTauriApp = false;
-
 	$: if (browser) {
 		$theme = (() => {
 			switch ($settings.theme) {
@@ -32,21 +30,14 @@
 
 	function onThemeChange({ matches }: MediaQueryListEvent) {
 		if ($settings.theme !== 'System') return;
-
-		if (matches) {
-			$theme = 'dark';
-		} else {
-			$theme = 'light';
-		}
+		$theme = matches ? 'dark' : 'light';
 	}
 
 	onMount(async () => {
 		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', onThemeChange);
 
+		// Listen for scheme request on desktop app
 		if (window.__TAURI__) {
-			onTauriApp = true;
-
-			// Listen for scheme request on desktop app
 			listen('scheme-request', ({ payload }) => {
 				const searchParams = new URLSearchParams((payload as string).replace('gitlight://', ''));
 				const githubAccessToken = searchParams.get('github_access_token');
@@ -91,17 +82,4 @@
 	<meta name="description" content="GitHub and GitLab notifications on your desktop" />
 </svelte:head>
 
-{#if onTauriApp}
-	<!-- Tauri draggable titlebar -->
-	<div data-tauri-drag-region />
-{/if}
 <slot />
-
-<style lang="scss">
-	div[data-tauri-drag-region] {
-		position: fixed;
-		z-index: 9999;
-		height: 28px;
-		inset: 0 0 auto;
-	}
-</style>

@@ -7,12 +7,12 @@
 	$: if (browser) {
 		const theme = (() => {
 			switch ($settings.theme) {
-				case 'system':
+				case 'System':
 					return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-				case 'light':
+				case 'Light':
 				default:
 					return 'light';
-				case 'dark':
+				case 'Dark':
 					return 'dark';
 			}
 		})();

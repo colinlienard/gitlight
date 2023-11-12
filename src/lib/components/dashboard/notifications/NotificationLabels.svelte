@@ -23,7 +23,7 @@
 			return theme === 'dark' ? '#cecece' : '#666';
 		}
 		if (!shade) {
-			return `#${color}`;
+			return color.startsWith('#') ? color : `#${color}`;
 		}
 		return shadeColor(color, theme === 'dark' ? 30 : -30);
 	}
@@ -41,9 +41,9 @@
 			</li>
 		{/each}
 		{#if removed}
-			<li class="label" style:color="white">
+			<li class="label" style:color={getColor('auto', $theme)}>
 				+{removed}
-				<div class="label-background" style:background-color="white" />
+				<div class="label-background" style:background-color={getColor('auto', $theme, false)} />
 			</li>
 		{/if}
 	</ul>

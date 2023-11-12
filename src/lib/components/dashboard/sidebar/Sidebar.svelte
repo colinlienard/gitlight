@@ -18,8 +18,9 @@
 	import WatchedPersons from './WatchedPersons.svelte';
 	import WatchedRepos from './WatchedRepos.svelte';
 
+	export let isMacos = false;
+
 	let search = '';
-	let isMacos = false;
 
 	$: showOnlyOpen = $settings.showOnlyOpen;
 
@@ -58,12 +59,6 @@
 
 	onMount(async () => {
 		window.addEventListener('keydown', toogleSidebar);
-
-		if (window.__TAURI__) {
-			const { platform } = await import('@tauri-apps/api/os');
-			const platformName = await platform();
-			isMacos = platformName === 'darwin';
-		}
 	});
 
 	onDestroy(() => {
