@@ -224,13 +224,21 @@
 	}
 
 	.double-button {
-		@include mixins.shiny(variables.$bg-3);
+		@include mixins.shiny('secondary');
 
 		display: flex;
 		justify-content: space-evenly;
 
-		&:hover::before {
-			background-image: linear-gradient(rgba(white, 0.1), transparent);
+		@include themes.light {
+			&:hover::before {
+				background-color: variables.$bg-2;
+			}
+		}
+
+		@include themes.dark {
+			&:hover::before {
+				background-image: linear-gradient(variables.$bg-3, variables.$bg-2);
+			}
 		}
 
 		a {
@@ -253,7 +261,13 @@
 			}
 
 			&:hover {
-				background-color: variables.$bg-3;
+				@include themes.light {
+					background-color: variables.$bg-1;
+				}
+
+				@include themes.dark {
+					background: variables.$bg-2;
+				}
 			}
 		}
 

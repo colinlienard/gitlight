@@ -65,10 +65,14 @@
 		display: block;
 		box-shadow: variables.$shadow;
 
-		@include mixins.shiny(variables.$blue, 0.3);
+		&:not(.secondary) {
+			@include mixins.shiny;
+
+			color: white;
+		}
 
 		&.secondary {
-			@include mixins.shiny(variables.$bg-3);
+			@include mixins.shiny('secondary');
 		}
 
 		&:not(.small) {

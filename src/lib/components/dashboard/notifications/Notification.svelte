@@ -439,7 +439,7 @@
 		justify-content: end;
 		padding: 0.5rem;
 		gap: 0.25rem;
-		inset: 0 0 auto auto;
+		inset: 1px 0 auto auto;
 		pointer-events: none;
 		transition: opacity variables.$transition;
 
@@ -488,8 +488,19 @@
 		}
 
 		&::after {
-			background-image: linear-gradient(rgba(black, 0.2), transparent 50%);
 			inset: -0.5rem 1px 1px;
+		}
+
+		@include themes.light {
+			&::after {
+				background-image: linear-gradient(rgba(black, 0.03), transparent 50%);
+			}
+		}
+
+		@include themes.dark {
+			&::after {
+				background-image: linear-gradient(rgba(black, 0.2), transparent 50%);
+			}
 		}
 	}
 </style>

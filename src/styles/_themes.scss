@@ -1,0 +1,11 @@
+@mixin light {
+	@at-root #{selector-append(&, ':where(html[data-theme=light] *)')} {
+		@content;
+	}
+}
+
+@mixin dark {
+	@at-root #{selector-append(&, ':where(html[data-theme=dark] *)')} {
+		@content;
+	}
+}

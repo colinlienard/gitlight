@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { invoke } from '@tauri-apps/api/tauri';
-	import { Switch, Tooltip } from '$lib/components';
+	import { InlineSelect, Switch, Tooltip } from '$lib/components';
 	import { settings } from '$lib/stores';
 </script>
 
@@ -18,6 +18,8 @@
 <Switch label="Hide closed PRs and issues" bind:active={$settings.showOnlyOpen} />
 <span />
 <h3>Interface</h3>
+<InlineSelect label="Theme" bind:value={$settings.theme} options={['System', 'Light', 'Dark']} />
+<p>Layout</p>
 <div class="views">
 	<Tooltip
 		content="A simple vertical list, with pinned notifications at the top."
@@ -104,6 +106,7 @@
 <style lang="scss">
 	.views {
 		display: flex;
+		margin-top: -0.5rem;
 		gap: 1rem;
 
 		& > :global(div) {
@@ -146,14 +149,14 @@
 					flex-direction: column;
 					padding: 0.25rem;
 					border-radius: 0.25rem;
-					background-color: rgba(white, 0.05);
+					background-color: variables.$bg-3;
 					gap: 0.25rem;
 
 					.item {
 						width: 100%;
 						height: 1rem;
-						border-radius: 0.25rem;
-						background-color: rgba(white, 0.1);
+						border-radius: inherit;
+						background-color: variables.$bg-4;
 					}
 				}
 			}

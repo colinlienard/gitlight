@@ -1,10 +1,25 @@
 html {
-	--bg-1: #171717;
-	--bg-2: #1b1b1b;
-	--bg-3: #212020;
-	--bg-4: #292929;
-	--bg-5: #888;
-	--bg-6: #fff;
+	--bg-1: #fafafa;
+	--bg-2: #fff;
+	--bg-3: #ededed;
+	--bg-4: #e2e2e2;
+	--bg-5: #7e7e7e;
+	--bg-6: #3a3a3a;
+	--shadow-color: rgb(0, 0, 0, 5%);
+	--modal-shadow-color: rgb(0, 0, 0, 20%);
+
+	&[data-theme='dark'] {
+		--bg-1: #171717;
+		--bg-2: #1b1b1b;
+		--bg-3: #212020;
+		--bg-4: #292929;
+		--bg-5: #888;
+		--bg-6: #fff;
+		--shadow-color: rgb(0, 0, 0, 15%);
+		--modal-shadow-color: rgb(0, 0, 0, 50%);
+
+		color-scheme: dark;
+	}
 
 	font-size: 15px;
 
@@ -16,6 +31,5 @@ html {
 body {
 	background-color: variables.$bg-1;
 	color: variables.$bg-6;
-	color-scheme: dark;
 	font-family: Inter, sans-serif;
 }

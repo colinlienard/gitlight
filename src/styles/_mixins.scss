@@ -1,35 +1,68 @@
 @use 'sass:color';
+@use './themes';
 @use './typography';
 @use './variables';
 
-@mixin shiny($color, $light-amount: 0.1, $radius: variables.$radius) {
+@mixin shiny($color: 'primary', $radius: variables.$radius) {
 	position: relative;
 	border-radius: $radius;
-	background-color: $color;
 	box-shadow: variables.$shadow;
 	isolation: isolate;
 
 	&::before {
 		position: absolute;
-		border-radius: $radius;
-		background-image: linear-gradient(rgba(white, $light-amount), transparent);
+		z-index: -1;
+		border-radius: calc($radius - 1px);
 		content: '';
-		inset: 0;
-		opacity: 0.5;
+		inset: 1px;
 		pointer-events: none;
 	}
 
-	&::after {
-		position: absolute;
-		z-index: -1;
-		border: 1px solid rgba(white, calc($light-amount / 2));
-		border-radius: calc($radius - 1px);
-		content: '';
-		inset: 0;
+	@if $color == 'primary' {
+		background-image: linear-gradient(
+			color.adjust(variables.$blue, $lightness: 10%),
+			color.adjust(variables.$blue, $lightness: 5%)
+		);
+
+		&::before {
+			background-image: linear-gradient(
+				color.adjust(variables.$blue, $lightness: 3%),
+				color.adjust(variables.$blue, $lightness: -1%)
+			);
+		}
+
+		&:hover::before {
+			background-image: linear-gradient(
+				color.adjust(variables.$blue, $lightness: 1%),
+				color.adjust(variables.$blue, $lightness: -1%)
+			);
+		}
 	}
 
-	&:hover::before {
-		background-image: linear-gradient(rgba(white, calc($light-amount / 2)), transparent);
+	@if $color == 'secondary' {
+		@include themes.light {
+			background-image: linear-gradient(variables.$bg-3, variables.$bg-4);
+
+			&::before {
+				background-color: variables.$bg-2;
+			}
+
+			&:hover::before {
+				background-color: variables.$bg-1;
+			}
+		}
+
+		@include themes.dark {
+			background-image: linear-gradient(#2f2f2f, variables.$bg-4);
+
+			&::before {
+				background-image: linear-gradient(variables.$bg-3, variables.$bg-2);
+			}
+
+			&:hover::before {
+				background: variables.$bg-2;
+			}
+		}
 	}
 }
 
@@ -39,8 +72,16 @@
 	background-color: variables.$bg-2;
 
 	@if $hover {
-		&:hover {
-			border-color: rgba(white, 15%);
+		@include themes.light {
+			&:hover {
+				border-color: rgba(black, 20%);
+			}
+		}
+
+		@include themes.dark {
+			&:hover {
+				border-color: rgba(white, 15%);
+			}
 		}
 	}
 }

@@ -124,6 +124,7 @@ export type GitlabEventWithRepoData = GitlabEvent & {
 };
 
 export type Settings = {
+	theme: 'System' | 'Light' | 'Dark';
 	activateNotifications: boolean;
 	readWhenOpenInBrowser: boolean;
 	notificationNumber: number;
