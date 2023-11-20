@@ -29,7 +29,7 @@
 		storage,
 		type StorageMap
 	} from '$lib/features';
-	import { GithubIcon, GitlabIcon, Logo, RefreshIcon } from '$lib/icons';
+	import { GithubIcon, GitlabIcon, RefreshIcon } from '$lib/icons';
 	import {
 		error,
 		filteredNotifications,
@@ -405,7 +405,7 @@
 					<div transition:slide={{ axis: 'x', duration: 300, easing: cubicInOut }}>
 						<Tooltip content="Show sidebar" position="bottom left" hover>
 							<button class="logo-button" on:click={() => ($settings.sidebarHidden = false)}>
-								<Logo />
+								<img src="/images/logo.webp" alt="" />
 							</button>
 						</Tooltip>
 					</div>
@@ -494,6 +494,7 @@
 			}
 
 			.logo-button {
+				width: 2rem;
 				margin-right: 1rem;
 			}
 
