@@ -41,9 +41,10 @@
 
 			&::before {
 				position: absolute;
-				background-image: linear-gradient(transparent, rgba(variables.$bg-1, 0.75));
+				background-image: linear-gradient(transparent, variables.$bg-1);
 				content: '';
 				inset: -1px;
+				opacity: 0.75;
 			}
 		}
 
