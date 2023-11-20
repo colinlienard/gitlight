@@ -3,7 +3,7 @@
 	import { onDestroy, onMount, type ComponentType, SvelteComponent } from 'svelte';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { IconButton, Modal, ScrollbarContainer, Separator, Tooltip } from '$lib/components';
+	import { IconButton, Modal, ScrollbarContainer, Tooltip } from '$lib/components';
 	import { fetchGithub, storage } from '$lib/features';
 	import { getAppVersion } from '$lib/helpers';
 	import { GearIcon } from '$lib/icons';
@@ -169,9 +169,7 @@
 				</li>
 			{/each}
 		</ul>
-		<div class="separator">
-			<Separator vertical />
-		</div>
+		<div class="separator" />
 		<ScrollbarContainer margin="2rem 1rem" bind:this={scrollContainer}>
 			<div class="tab-content">
 				<!-- @ts-expect-error -->
@@ -199,7 +197,7 @@
 			&.first {
 				z-index: 1;
 				margin-right: -0.25rem;
-				outline: 0.25rem solid variables.$grey-1;
+				outline: 0.25rem solid variables.$bg-1;
 			}
 
 			&:not(.loaded) {
@@ -223,7 +221,7 @@
 				transition: color variables.$transition;
 
 				&:not(:hover, .active) {
-					color: variables.$grey-4;
+					color: variables.$bg-5;
 				}
 
 				&.strong button {

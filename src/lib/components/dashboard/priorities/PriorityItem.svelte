@@ -221,14 +221,17 @@
 			flex: 0 0 3rem;
 			align-items: center;
 			justify-content: center;
+			border-radius: calc(variables.$radius - 1px);
 			border-left: inherit;
+			border-bottom-left-radius: 0;
+			border-top-left-radius: 0;
 
 			&:hover {
-				background-color: color.adjust(variables.$grey-2, $lightness: 1%);
+				background-color: rgba(white, 0.02);
 			}
 
 			&:active {
-				background-color: color.adjust(variables.$grey-2, $lightness: 2%);
+				background-color: rgba(white, 0.04);
 			}
 
 			:global(svg) {

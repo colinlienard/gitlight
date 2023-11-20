@@ -53,6 +53,7 @@
 	let syncTime = 0;
 	let syncInterval: ReturnType<typeof setInterval>;
 	let mounted = false;
+	let isMacos = false;
 
 	let interval = setInterval(() => {
 		fetchAll();
@@ -367,9 +368,15 @@
 	}
 
 	onMount(async () => {
+		mounted = true;
+
 		window.addEventListener('refetch', refetch);
 
-		mounted = true;
+		if (window.__TAURI__) {
+			const { platform } = await import('@tauri-apps/api/os');
+			const platformName = await platform();
+			isMacos = platformName === 'darwin';
+		}
 
 		await fetchAll();
 		$loading = false;
@@ -389,11 +396,11 @@
 </svelte:head>
 
 <div class="container" class:sidebar-hidden={$settings.sidebarHidden}>
-	<Sidebar />
+	<Sidebar {isMacos} />
 	<main class="main">
 		<Banner />
 		<header class="header" data-tauri-drag-region>
-			<div class="wrapper">
+			<div class="wrapper" class:macos={isMacos && $settings.sidebarHidden}>
 				{#if $settings.sidebarHidden}
 					<div transition:slide={{ axis: 'x', duration: 300, easing: cubicInOut }}>
 						<Tooltip content="Show sidebar" position="bottom left" hover>
@@ -414,36 +421,11 @@
 				</div>
 			</div>
 			<div class="settings-wrapper">
+				<DoneModal />
 				<Priorities />
 				<Settings />
 			</div>
 		</header>
-		<nav class="nav">
-			<button
-				class="tab"
-				class:selected={providerView === 'github'}
-				on:click={() => ($settings.providerView = 'github')}
-			>
-				<GithubIcon />
-				<p class="text">GitHub</p>
-			</button>
-			<button
-				class="tab"
-				class:selected={providerView === 'gitlab'}
-				on:click={() => ($settings.providerView = 'gitlab')}
-			>
-				<GitlabIcon />
-				<p class="text">GitLab</p>
-			</button>
-			<button
-				class="tab"
-				class:selected={providerView === 'both'}
-				on:click={() => ($settings.providerView = 'both')}
-			>
-				<p class="text">Both</p>
-			</button>
-			<DoneModal />
-		</nav>
 		{#if providerView === 'github' && !githubUser}
 			<div class="center-container">
 				<div class="text">Manage your GitHub and GitLab notifications at the same time.</div>
@@ -498,11 +480,17 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			padding: 3rem 2rem 2rem;
+			padding: 1rem;
+			border-bottom: 1px solid variables.$bg-3;
 
 			.wrapper {
 				display: flex;
 				align-items: center;
+				transition: padding variables.$transition;
+
+				&.macos {
+					padding-left: 4rem;
+				}
 			}
 
 			.logo-button {
@@ -510,17 +498,17 @@
 			}
 
 			.title {
-				@include typography.heading-1;
+				@include typography.heading-2;
 			}
 
 			.sync-pill {
 				display: flex;
 				align-items: center;
 				padding: 0.25rem 0.5rem;
-				border-radius: variables.$radius;
+				border-radius: variables.$small-radius;
 				margin: 0 1rem;
-				background-color: variables.$grey-3;
-				color: variables.$grey-4;
+				background-color: variables.$bg-3;
+				color: variables.$bg-5;
 				gap: 0.25rem;
 
 				&:not(:hover) .time {
@@ -554,48 +542,8 @@
 
 			.settings-wrapper {
 				display: flex;
-				gap: 1rem;
-			}
-		}
-
-		.nav {
-			display: flex;
-			padding: 0 2rem;
-			border-bottom: 1px solid variables.$grey-3;
-
-			.tab {
-				display: flex;
 				align-items: center;
-				padding: 0.75em 1em;
-				border: 1px solid transparent;
-				border-radius: variables.$radius variables.$radius 0 0;
-				border-bottom: none;
-				gap: 0.5rem;
-
-				:global(svg) {
-					height: 1.25rem;
-				}
-
-				&.selected {
-					position: relative;
-					border-color: variables.$grey-3;
-
-					&::before {
-						position: absolute;
-						height: 1px;
-						background-color: variables.$grey-1;
-						content: '';
-						inset: auto 0 -1px;
-					}
-				}
-
-				&:not(.selected, :hover) {
-					opacity: 0.5;
-				}
-
-				.text {
-					@include typography.bold;
-				}
+				gap: 1rem;
 			}
 		}
 

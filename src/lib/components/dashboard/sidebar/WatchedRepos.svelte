@@ -253,41 +253,14 @@
 
 <style lang="scss">
 	.wrapper {
-		position: relative;
-		display: flex;
-		width: 100%;
-		align-items: center;
-		gap: 0.5rem;
-		transition: opacity variables.$transition;
-
-		&.smaller {
-			width: calc(100% - 1.5rem);
-		}
-
-		&:not(.active) {
-			opacity: 0.5;
-
-			.name::before {
-				width: 100%;
-			}
-		}
+		@include mixins.item-list;
 
 		&:not(:hover) .mute {
 			opacity: 0;
 		}
 
-		&::before {
-			position: absolute;
-			z-index: -1;
-			border-radius: variables.$radius;
-			background-color: variables.$grey-2;
-			content: '';
-			inset: -0.25rem -0.5rem;
-			opacity: 0;
-		}
-
-		&:hover::before {
-			opacity: 1;
+		&.smaller {
+			width: calc(100% - 1.5rem);
 		}
 
 		.name {
@@ -296,52 +269,42 @@
 			max-width: 100%;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-
-			&::before {
-				position: absolute;
-				width: 0;
-				height: 1px;
-				background-color: currentcolor;
-				content: '';
-				inset: 50% 0 auto;
-				transition: width variables.$transition;
-			}
 		}
 
 		.image,
 		.repo-icon {
 			height: 1.5rem;
 			flex: 0 0 1.5rem;
-			border-radius: 0.5rem;
+			border-radius: variables.$small-radius;
 		}
 
 		.repo-icon {
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			background-color: variables.$grey-3;
+			background-color: variables.$bg-3;
 
 			:global(svg) {
 				height: 1rem;
-				color: variables.$grey-4;
+				color: variables.$bg-5;
 			}
 		}
 
 		.number {
-			color: variables.$grey-4;
+			color: variables.$bg-5;
 		}
 
 		.mute {
 			flex: 0 0 1.25rem;
 			margin-left: auto;
-			color: variables.$grey-4;
+			color: variables.$bg-5;
 
 			&.muted {
 				opacity: 1;
 			}
 
 			&:hover {
-				color: variables.$white;
+				color: variables.$bg-6;
 			}
 
 			:global(svg) {
@@ -351,6 +314,6 @@
 	}
 
 	.empty {
-		color: variables.$grey-4;
+		color: variables.$bg-5;
 	}
 </style>

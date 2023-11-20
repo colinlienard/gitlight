@@ -1,7 +1,23 @@
 <script lang="ts">
 	import { invoke } from '@tauri-apps/api/tauri';
-	import { Switch, Tooltip } from '$lib/components';
+	import { browser } from '$app/environment';
+	import { InlineSelect, Switch, Tooltip } from '$lib/components';
 	import { settings } from '$lib/stores';
+
+	$: if (browser) {
+		const theme = (() => {
+			switch ($settings.theme) {
+				case 'System':
+					return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+				case 'Light':
+				default:
+					return 'light';
+				case 'Dark':
+					return 'dark';
+			}
+		})();
+		document.documentElement.setAttribute('data-theme', theme);
+	}
 </script>
 
 <h3>General</h3>
@@ -18,6 +34,8 @@
 <Switch label="Hide closed PRs and issues" bind:active={$settings.showOnlyOpen} />
 <span />
 <h3>Interface</h3>
+<InlineSelect label="Theme" bind:value={$settings.theme} options={['System', 'Light', 'Dark']} />
+<p>Layout</p>
 <div class="views">
 	<Tooltip
 		content="A simple vertical list, with pinned notifications at the top."
@@ -100,14 +118,11 @@
 		</button>
 	</Tooltip>
 </div>
-<Switch
-	label="Show notifications owner and repository"
-	bind:active={$settings.showNotificationsRepo}
-/>
 
 <style lang="scss">
 	.views {
 		display: flex;
+		margin-top: -0.5rem;
 		gap: 1rem;
 
 		& > :global(div) {
@@ -127,7 +142,7 @@
 			gap: 0.5rem;
 
 			&.active {
-				outline: 2px solid variables.$blue-2;
+				outline: 2px solid variables.$blue;
 				outline-offset: -2px;
 			}
 
@@ -150,14 +165,14 @@
 					flex-direction: column;
 					padding: 0.25rem;
 					border-radius: 0.25rem;
-					background-color: variables.$grey-3;
+					background-color: variables.$bg-3;
 					gap: 0.25rem;
 
 					.item {
 						width: 100%;
 						height: 1rem;
-						border-radius: 0.25rem;
-						background-color: #323232;
+						border-radius: inherit;
+						background-color: variables.$bg-4;
 					}
 				}
 			}

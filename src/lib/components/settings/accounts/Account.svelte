@@ -45,7 +45,7 @@
 			display: flex;
 			align-items: center;
 			padding: 1rem;
-			border-bottom: 1px solid variables.$grey-3;
+			border-bottom: inherit;
 			gap: 0.5rem;
 
 			:global(svg) {
@@ -81,7 +81,7 @@
 		}
 
 		.sub {
-			color: variables.$grey-4;
+			color: variables.$bg-5;
 		}
 	}
 </style>

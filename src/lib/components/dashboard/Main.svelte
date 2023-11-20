@@ -3,7 +3,7 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { crossfade } from 'svelte/transition';
 	import { browser } from '$app/environment';
-	import { Separator, ScrollbarContainer, NotificationColumn } from '$lib/components';
+	import { ScrollbarContainer, NotificationColumn } from '$lib/components';
 	import { fetchGithub } from '$lib/features';
 	import { CheckIcon, UnreadIcon, PinIcon, DoubleCheckIcon } from '$lib/icons';
 	import {
@@ -74,7 +74,7 @@
 	const transitions = { send, receive, settings: animationSettings };
 </script>
 
-<ScrollbarContainer margin="0.25rem">
+<ScrollbarContainer margin="1rem 0.1rem">
 	{#if $settings.viewMode === 'List'}
 		<NotificationList {notifications} />
 	{:else}
@@ -89,7 +89,7 @@
 				}}
 				{transitions}
 			/>
-			<Separator vertical={!verticalKanban} marginX={!verticalKanban ? 0 : 1.5} />
+			<div class="separator" />
 			<NotificationColumn
 				icon={UnreadIcon}
 				title="Unread"
@@ -106,7 +106,7 @@
 					{/if}
 				</div>
 			</NotificationColumn>
-			<Separator vertical={!verticalKanban} marginX={!verticalKanban ? 0 : 1.5} />
+			<div class="separator" />
 			<NotificationColumn
 				icon={CheckIcon}
 				title="Read"
@@ -133,13 +133,13 @@
 <style lang="scss">
 	.columns-container {
 		position: relative;
-		padding: 2rem 0.5rem;
 
 		&.horizontal {
 			display: flex;
 			overflow: visible;
 			flex-direction: column;
-			gap: 2rem;
+			padding: 1rem 0;
+			gap: 1rem;
 		}
 
 		&:not(.horizontal) {
@@ -147,6 +147,12 @@
 			overflow: hidden;
 			height: 100%;
 			grid-template-columns: 1fr 1px 1fr 1px 1fr;
+		}
+
+		.separator {
+			border: 1px solid variables.$bg-3;
+			border-top: 0;
+			border-left: 0;
 		}
 
 		.read-all {

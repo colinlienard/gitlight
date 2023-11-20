@@ -146,37 +146,10 @@
 
 <style lang="scss">
 	.wrapper {
-		position: relative;
-		display: flex;
-		width: 100%;
-		align-items: center;
-		gap: 0.5rem;
-		transition: opacity variables.$transition;
-
-		&:not(.active) {
-			opacity: 0.5;
-
-			.name::before {
-				width: 100%;
-			}
-		}
+		@include mixins.item-list;
 
 		&:not(:hover) .mute {
 			opacity: 0;
-		}
-
-		&::before {
-			position: absolute;
-			z-index: -1;
-			border-radius: variables.$radius;
-			background-color: variables.$grey-2;
-			content: '';
-			inset: -0.25rem -0.5rem;
-			opacity: 0;
-		}
-
-		&:hover::before {
-			opacity: 1;
 		}
 
 		.name {
@@ -185,16 +158,6 @@
 			max-width: 100%;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-
-			&::before {
-				position: absolute;
-				width: 0;
-				height: 1px;
-				background-color: currentcolor;
-				content: '';
-				inset: 50% 0 auto;
-				transition: width variables.$transition;
-			}
 		}
 
 		.image {
@@ -204,19 +167,19 @@
 		}
 
 		.number {
-			color: variables.$grey-4;
+			color: variables.$bg-5;
 		}
 
 		.mute {
 			margin-left: auto;
-			color: variables.$grey-4;
+			color: variables.$bg-5;
 
 			&.muted {
 				opacity: 1;
 			}
 
 			&:hover {
-				color: variables.$white;
+				color: variables.$bg-6;
 			}
 
 			:global(svg) {
@@ -226,6 +189,6 @@
 	}
 
 	.empty {
-		color: variables.$grey-4;
+		color: variables.$bg-5;
 	}
 </style>

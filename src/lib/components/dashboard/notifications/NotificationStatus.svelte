@@ -45,7 +45,7 @@
 		.time {
 			@include typography.small;
 
-			color: variables.$grey-4;
+			color: variables.$bg-5;
 		}
 
 		.pinned {
@@ -64,7 +64,7 @@
 			height: 0.75rem;
 			flex: 0 0 0.75rem;
 			border-radius: 50%;
-			background-color: variables.$blue-2;
+			background-color: variables.$blue;
 		}
 	}
 </style>

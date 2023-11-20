@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Switch } from '$lib/components';
+	import { getNotificationIcon } from '~/lib/helpers';
 	import { storage } from '$lib/features';
 	import { globalNotifications, loading, settings, typeFilters } from '$lib/stores';
 	import SidebarSection from './SidebarSection.svelte';
@@ -28,11 +28,17 @@
 	$: providerView = $settings.providerView;
 	$: typeFiltersGitlab = providerView === 'gitlab' ? $typeFilters.slice(0, 3) : $typeFilters;
 
-	function handleSelectOne(name: string) {
-		return () => {
-			$typeFilters = $typeFilters.map((filter) =>
-				filter.name === name ? { ...filter, active: true } : { ...filter, active: false }
-			);
+	function handleToggle(name: string) {
+		return (event: MouseEvent) => {
+			if (event.altKey || event.ctrlKey || event.shiftKey || event.metaKey) {
+				$typeFilters = $typeFilters.map((item) =>
+					item.name === name ? { ...item, active: true } : { ...item, active: false }
+				);
+			} else {
+				$typeFilters = $typeFilters.map((item) =>
+					item.name === name ? { ...item, active: !item.active } : item
+				);
+			}
 		};
 	}
 
@@ -58,27 +64,31 @@
 			onToggle: (value) => settings.update((previous) => ({ ...previous, showOnlyOpen: value }))
 		}
 	]}
+	first
 >
-	{#each typeFiltersGitlab as filter (filter.name)}
-		<div class="switch-wrapper">
-			<Switch
-				bind:active={filter.active}
-				label={filter.name}
-				on:meta-click={handleSelectOne(filter.name)}
-			/>
-			<p class="filter-number">{filter.number}</p>
-		</div>
+	{#each typeFiltersGitlab as { name, type, number, active } (name)}
+		<button class="switch-wrapper" class:active on:click={handleToggle(name)}>
+			<svelte:component this={getNotificationIcon(type)} />
+			<p>{name}</p>
+			<p class="filter-number">{number}</p>
+		</button>
 	{/each}
 </SidebarSection>
 
 <style lang="scss">
 	.switch-wrapper {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
+		@include mixins.item-list;
+
+		:global(svg) {
+			height: 1.25rem;
+
+			// https://codepen.io/sosuke/pen/Pjoqqp
+			filter: invert(48%) sepia(65%) saturate(636%) hue-rotate(202deg) brightness(103%)
+				contrast(101%);
+		}
 
 		.filter-number {
-			color: variables.$grey-4;
+			color: variables.$bg-5;
 		}
 	}
 </style>

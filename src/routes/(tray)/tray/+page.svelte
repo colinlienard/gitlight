@@ -3,7 +3,7 @@
 	import { onDestroy, onMount, SvelteComponent } from 'svelte';
 	import { browser } from '$app/environment';
 	import { NotificationList, ScrollbarContainer } from '$lib/components';
-	import { loading, settings } from '$lib/stores';
+	import { loading, settings, theme } from '$lib/stores';
 	import type { NotificationData, Settings } from '$lib/types';
 
 	let notifications: NotificationData[] = [];
@@ -11,6 +11,7 @@
 	let unlistenNotification: UnlistenFn = () => null;
 	let unlistenLoading: UnlistenFn = () => null;
 	let unlistenSettings: UnlistenFn = () => null;
+	let unlistenTheme: UnlistenFn = () => null;
 
 	$: isTrayApp = browser && window.__TAURI__ && window.location.pathname === '/tray';
 
@@ -24,7 +25,7 @@
 		if (isTrayApp) {
 			window.addEventListener('blur', scrollToTop);
 
-			const [a, b, c] = await Promise.all([
+			const [a, b, c, d] = await Promise.all([
 				listen<{ notifications: NotificationData[] }>('notifications', (event) => {
 					notifications = event.payload.notifications;
 				}),
@@ -33,11 +34,16 @@
 				}),
 				listen<{ settings: Settings }>('settings', (event) => {
 					$settings = event.payload.settings;
+				}),
+				listen<{ theme: 'light' | 'dark' }>('theme', (event) => {
+					$theme = event.payload.theme;
+					document.documentElement.setAttribute('data-theme', $theme);
 				})
 			]);
 			unlistenNotification = a;
 			unlistenLoading = b;
 			unlistenSettings = c;
+			unlistenTheme = d;
 		}
 	});
 
@@ -48,13 +54,14 @@
 			unlistenNotification();
 			unlistenLoading();
 			unlistenSettings();
+			unlistenTheme();
 		}
 	});
 </script>
 
 <main class="main">
-	<ScrollbarContainer margin="2rem 1rem" bind:this={scrollContainer}>
-		<NotificationList {notifications} scrollShadow={false} />
+	<ScrollbarContainer margin="1rem 0.25rem" bind:this={scrollContainer}>
+		<NotificationList {notifications} />
 	</ScrollbarContainer>
 </main>
 

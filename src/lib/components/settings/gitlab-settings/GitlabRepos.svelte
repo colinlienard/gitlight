@@ -76,7 +76,7 @@
 	}
 
 	.text {
-		color: variables.$grey-4;
+		color: variables.$bg-5;
 	}
 
 	.add-container {

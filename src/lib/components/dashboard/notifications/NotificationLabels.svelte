@@ -1,29 +1,51 @@
 <script lang="ts">
-	import type { Action } from 'svelte/action';
-	import { delayedHover } from '$lib/features';
-	import { lightenColor } from '$lib/helpers';
+	import { afterUpdate, tick } from 'svelte';
+	import { theme } from '~/lib/stores';
+	import { shadeColor } from '$lib/helpers';
 	import type { GithubLabel } from '$lib/types';
 
 	export let labels: GithubLabel[] = [];
 
-	let clipLabels = false;
+	let list: HTMLUListElement;
+	let removed = 0;
 
-	const delayedHoverIfLarge: Action<HTMLElement> = (node) => {
-		if (node.offsetHeight > 60) {
-			clipLabels = true;
-			delayedHover(node, 'labels-hover');
+	afterUpdate(async () => {
+		await tick();
+		const height = list?.offsetHeight;
+		if (height > 50) {
+			labels = labels.slice(0, labels.length - 1);
+			removed++;
 		}
-	};
+	});
+
+	function getColor(color: string, theme: 'dark' | 'light', shade = true) {
+		if (color === 'auto') {
+			return theme === 'dark' ? '#cecece' : '#666';
+		}
+		if (!shade) {
+			return color.startsWith('#') ? color : `#${color}`;
+		}
+		return shadeColor(color, theme === 'dark' ? 30 : -30);
+	}
 </script>
 
 {#if labels && labels.length}
-	<ul class="labels" class:clip={clipLabels} use:delayedHoverIfLarge>
+	<ul class="labels" bind:this={list}>
 		{#each labels as label}
-			<li class="label" style:color={lightenColor(label.color)}>
+			<li class="label" style:color={getColor(label.color, $theme)}>
 				{label.name}
-				<div class="label-background" style:background-color={`#${label.color}`} />
+				<div
+					class="label-background"
+					style:background-color={getColor(label.color, $theme, false)}
+				/>
 			</li>
 		{/each}
+		{#if removed}
+			<li class="label" style:color={getColor('auto', $theme)}>
+				+{removed}
+				<div class="label-background" style:background-color={getColor('auto', $theme, false)} />
+			</li>
+		{/if}
 	</ul>
 {/if}
 
@@ -32,22 +54,6 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
-
-		&.clip {
-			position: relative;
-			overflow: hidden;
-			max-height: 3.5rem;
-
-			&::before {
-				position: absolute;
-				z-index: 1;
-				height: 1.5rem;
-				background-image: linear-gradient(transparent, variables.$grey-2);
-				content: '';
-				inset: auto 0 0;
-				pointer-events: none;
-			}
-		}
 
 		&:global(.labels-hover) {
 			max-height: unset;
@@ -64,14 +70,12 @@
 			position: relative;
 			overflow: hidden;
 			padding: 0.25rem 0.5rem;
-			border: 1px solid;
-			border-radius: variables.$radius;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 
 			.label-background {
 				position: absolute;
-				border-radius: variables.$radius;
+				border-radius: variables.$small-radius;
 				inset: 0;
 				opacity: 0.1;
 			}

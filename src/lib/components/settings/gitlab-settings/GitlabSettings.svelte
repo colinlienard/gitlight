@@ -31,7 +31,7 @@
 	.text {
 		@include typography.base;
 
-		color: variables.$grey-4;
+		color: variables.$bg-5;
 
 		a {
 			@include mixins.link;

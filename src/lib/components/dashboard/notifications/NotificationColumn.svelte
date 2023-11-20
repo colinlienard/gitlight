@@ -155,7 +155,7 @@
 	class="column"
 	class:has-dropzone={showDropzone}
 	class:dragging={!!$dragging}
-	class:vertical={!verticalKanban}
+	class:horizontal={!verticalKanban}
 >
 	<div class="column-header">
 		<svelte:component this={icon} />
@@ -218,7 +218,7 @@
 		display: flex;
 		min-width: 0;
 		flex-direction: column;
-		padding: 0 0.5rem 0 1.5rem;
+		padding: 1.5rem 0 0 1rem;
 
 		&.has-dropzone {
 			z-index: -1;
@@ -229,36 +229,31 @@
 			transition: z-index 0.3s;
 		}
 
-		&.vertical {
+		&.horizontal {
 			min-height: 0;
 		}
 
-		&:not(.vertical) {
+		&:not(.horizontal) {
+			padding: 0 1rem;
+
 			.column-header {
 				position: sticky;
 				inset: 1rem 0 auto;
+
+				&::before {
+					top: -1rem;
+					height: 3rem !important;
+					background-image: linear-gradient(variables.$bg-1 2rem, transparent);
+				}
 			}
 
 			.list {
 				padding-bottom: 0;
 			}
-
-			&::after {
-				display: none;
-			}
-		}
-
-		&::after {
-			position: absolute;
-			z-index: 1;
-			background-image: linear-gradient(transparent, variables.$grey-1 1rem);
-			content: '';
-			inset: calc(100% - 1rem) 0 -2rem 0;
 		}
 
 		&.dragging {
 			&::before,
-			&::after,
 			.column-header {
 				z-index: -1;
 			}
@@ -286,7 +281,7 @@
 		}
 
 		.number {
-			color: variables.$grey-4;
+			color: variables.$bg-5;
 		}
 
 		.addon-container {
@@ -296,10 +291,10 @@
 		&::before {
 			position: absolute;
 			z-index: 1;
-			height: 4.5rem;
-			background-image: linear-gradient(variables.$grey-1 3.5rem, transparent);
+			height: 4rem;
+			background-image: linear-gradient(variables.$bg-1 3rem, transparent);
 			content: '';
-			inset: -2rem 0 auto;
+			inset: 0 0 auto;
 		}
 	}
 
@@ -307,11 +302,11 @@
 		position: absolute;
 		z-index: 2;
 		border-radius: variables.$radius;
-		background-color: rgba(variables.$blue-2, 0.1);
+		background-color: rgba(variables.$blue, 0.1);
 		content: '';
-		inset: 2.25rem 1.5rem 0;
+		inset: 3.75rem 1rem 1rem;
 		opacity: 0.5;
-		outline: 6px dashed variables.$blue-3;
+		outline: 6px dashed variables.$light-blue;
 		pointer-events: none;
 		transition: opacity variables.$transition;
 
@@ -323,7 +318,7 @@
 	.scroll-button {
 		position: absolute;
 		z-index: 10;
-		inset: 2rem auto auto 50%;
+		inset: 4rem auto auto 50%;
 		translate: -50% 0;
 	}
 

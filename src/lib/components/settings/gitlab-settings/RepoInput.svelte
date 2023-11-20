@@ -125,7 +125,7 @@
 			align-items: center;
 			justify-content: center;
 			aspect-ratio: 1 / 1;
-			background-color: variables.$grey-2;
+			background-color: variables.$bg-2;
 			inset: 1px 1px 1px auto;
 
 			:global(svg) {
@@ -145,22 +145,24 @@
 
 				width: 1rem;
 				height: 1rem;
-				border: 2px solid variables.$grey-4;
+				border: 2px solid variables.$bg-5;
 				border-radius: 50%;
-				border-top-color: variables.$grey-3;
+				border-top-color: variables.$bg-3;
 				animation: spin 1s linear infinite;
 			}
 
 			&.button {
-				border-radius: 0 variables.$radius variables.$radius 0;
-				border-left: 1px solid variables.$grey-3;
+				border-radius: calc(variables.$radius - 1px);
+				border-left: 1px solid variables.$bg-4;
+				border-bottom-left-radius: 0;
+				border-top-left-radius: 0;
 
 				&:hover {
-					background-color: color.adjust(variables.$grey-2, $lightness: 1%);
+					background-color: rgba(white, 0.02);
 				}
 
 				&:active {
-					background-color: color.adjust(variables.$grey-2, $lightness: 2%);
+					background-color: rgba(white, 0.04);
 				}
 
 				:global(svg) {

@@ -3,7 +3,7 @@ export * from './formatRelativeDate';
 export * from './getAppVersion';
 export * from './getIcon';
 export * from './getNotificationIcon';
-export * from './lightenColor';
+export * from './shadeColor';
 export * from './openDesktopApp';
 export * from './priorities';
 export * from './removeMarkdownSymbols';

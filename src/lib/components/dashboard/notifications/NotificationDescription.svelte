@@ -18,6 +18,7 @@
 	export let prefix: string | undefined = undefined;
 	export let openUrl: (url: string) => void;
 	export let from: 'github' | 'gitlab';
+	export let small = false;
 
 	$: authorUrl = author && !author.bot ? `https://${from}.com/${author.login}` : '';
 
@@ -63,9 +64,10 @@
 
 <p
 	class="description"
+	class:small
 	bind:this={element}
 	style:width
-	style:height={tall ? '2.65rem' : ''}
+	style:height={tall ? (small ? '2.3rem' : '2.65rem') : ''}
 	use:intersect={{ callback: toggleWidth, active: onWebkit }}
 >
 	{#if prefix}
@@ -73,7 +75,14 @@
 	{/if}
 	{#if author}
 		{#if author.avatar}
-			<img class="image" src={author.avatar} alt="" width="20px" height="20px" loading="lazy" />
+			<img
+				class="image"
+				src={author.avatar}
+				alt=""
+				width={small ? '15px' : '20px'}
+				height={small ? '15px' : '20px'}
+				loading="lazy"
+			/>
 		{/if}
 		{#if authorUrl}
 			<button class="clickable" on:mouseup={() => openUrl(authorUrl)}>
@@ -99,10 +108,14 @@
 		display: -webkit-box;
 		overflow: hidden;
 		-webkit-box-orient: vertical;
-		color: variables.$grey-4;
+		color: variables.$bg-5;
 		hyphens: auto;
 		-webkit-line-clamp: 2;
 		word-wrap: break-word;
+
+		&.small {
+			@include typography.small;
+		}
 
 		.clickable:hover {
 			text-decoration: underline;
@@ -115,7 +128,7 @@
 		}
 
 		.bold {
-			color: variables.$white;
+			color: variables.$bg-6;
 		}
 
 		.italic {

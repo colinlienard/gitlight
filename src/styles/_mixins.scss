@@ -1,44 +1,87 @@
 @use 'sass:color';
+@use './themes';
 @use './typography';
 @use './variables';
 
-@mixin shiny($color, $hover: true, $radius: variables.$radius) {
+@mixin shiny($color: 'primary', $radius: variables.$radius) {
 	position: relative;
-	border: 1px solid color.adjust($color, $lightness: -5%);
 	border-radius: $radius;
-	background-image: linear-gradient(
-		color.adjust($color, $lightness: 10%),
-		color.adjust($color, $lightness: -1%)
-	);
+	box-shadow: variables.$shadow;
 	isolation: isolate;
 
 	&::before {
 		position: absolute;
 		z-index: -1;
 		border-radius: calc($radius - 1px);
-		background-image: linear-gradient(
-			color.adjust($color, $lightness: 1%),
-			color.adjust($color, $lightness: -1%)
-		);
 		content: '';
 		inset: 1px;
+		pointer-events: none;
 	}
 
-	@if $hover {
+	@if $color == 'primary' {
+		background-image: linear-gradient(
+			color.adjust(variables.$blue, $lightness: 10%),
+			color.adjust(variables.$blue, $lightness: 5%)
+		);
+
+		&::before {
+			background-image: linear-gradient(
+				color.adjust(variables.$blue, $lightness: 3%),
+				color.adjust(variables.$blue, $lightness: -1%)
+			);
+		}
+
 		&:hover::before {
-			background: color.adjust($color, $lightness: -2%);
+			background-image: linear-gradient(
+				color.adjust(variables.$blue, $lightness: 1%),
+				color.adjust(variables.$blue, $lightness: -1%)
+			);
+		}
+	}
+
+	@if $color == 'secondary' {
+		@include themes.light {
+			background-image: linear-gradient(variables.$bg-3, variables.$bg-4);
+
+			&::before {
+				background-color: variables.$bg-2;
+			}
+
+			&:hover::before {
+				background-color: variables.$bg-1;
+			}
+		}
+
+		@include themes.dark {
+			background-image: linear-gradient(#2f2f2f, variables.$bg-4);
+
+			&::before {
+				background-image: linear-gradient(variables.$bg-3, variables.$bg-2);
+			}
+
+			&:hover::before {
+				background: variables.$bg-2;
+			}
 		}
 	}
 }
 
 @mixin box($hover: false) {
-	border: 1px solid variables.$grey-3;
+	border: 1px solid variables.$bg-4;
 	border-radius: variables.$radius;
-	background-color: variables.$grey-2;
+	background-color: variables.$bg-2;
 
 	@if $hover {
-		&:hover {
-			border-color: color.adjust(variables.$grey-3, $lightness: 10%);
+		@include themes.light {
+			&:hover {
+				border-color: rgba(black, 20%);
+			}
+		}
+
+		@include themes.dark {
+			&:hover {
+				border-color: rgba(white, 15%);
+			}
 		}
 	}
 }
@@ -46,19 +89,11 @@
 @mixin link() {
 	@include typography.bold;
 
-	color: variables.$blue-3;
+	color: variables.$light-blue;
 
 	&:hover {
 		filter: brightness(130%);
 	}
-}
-
-@mixin shadow {
-	box-shadow: 0 2px 0.25rem rgba(black, 0.1);
-}
-
-@mixin modal-shadow() {
-	box-shadow: 0 2rem 4rem rgba(black, 0.5);
 }
 
 @mixin skeleton($width: 100%, $height: 100%) {
@@ -68,7 +103,7 @@
 	height: $height;
 	flex: 0 0 auto;
 	border-radius: variables.$radius;
-	background-color: variables.$grey-3;
+	background-color: variables.$bg-3;
 
 	&::before {
 		position: absolute;
@@ -93,8 +128,35 @@
 @mixin blurred-background() {
 	position: fixed;
 	z-index: 998;
-	-webkit-backdrop-filter: blur(0.25rem);
-	backdrop-filter: blur(0.25rem);
-	background-color: rgba(black, 0.5);
+	-webkit-backdrop-filter: blur(0.1rem);
+	backdrop-filter: blur(0.1rem);
+	background-color: rgba(black, 0.2);
 	inset: 0;
+}
+
+@mixin item-list() {
+	position: relative;
+	display: flex;
+	width: 100%;
+	align-items: center;
+	gap: 0.5rem;
+
+	&:not(.active) {
+		filter: saturate(0);
+		opacity: 0.5;
+	}
+
+	&::before {
+		position: absolute;
+		z-index: -1;
+		border-radius: variables.$radius;
+		background-color: variables.$bg-2;
+		content: '';
+		inset: -0.25rem -0.5rem;
+		opacity: 0;
+	}
+
+	&:hover::before {
+		opacity: 1;
+	}
 }

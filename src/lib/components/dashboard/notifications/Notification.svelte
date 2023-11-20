@@ -147,21 +147,9 @@
 
 <div class="container" class:transparent={status === 'read'} class:dragged>
 	<div class="notification">
-		{#if $settings.showNotificationsRepo}
-			<div class="top">
-				<div class="repo">
-					<button class="repo-button" on:mouseup={() => openUrl(repository.url)}>
-						{repository.namespace}
-					</button>
-				</div>
-				<NotificationStatus {data} />
-			</div>
-		{/if}
 		<div class="description">
 			<NotificationDescription {author} {description} {openUrl} {from} />
-			{#if !$settings.showNotificationsRepo}
-				<NotificationStatus {data} />
-			{/if}
+			<NotificationStatus {data} />
 		</div>
 		<div class="main" class:has-priority={priority && $settings.showPriority}>
 			<span class="icon-container">
@@ -180,22 +168,27 @@
 						<span class="notification-number">#{number}</span>
 					{/if}
 				</div>
-				{#if priority && $settings.showPriority}
-					<div
-						class="priority {priority.value > 0 ? 'up' : 'down'}"
-						style:filter={getGrayscale(priority.value)}
-					>
-						{#if priority.value > 0}
-							<PriorityUpIcon />
-						{:else}
-							<PriorityDownIcon />
-						{/if}
-						<span>{priority.label}</span>
-					</div>
-				{/if}
+				<div class="repo">
+					<button class="repo-button" on:mouseup={() => openUrl(repository.url)}>
+						{repository.namespace}
+					</button>
+				</div>
 			</div>
 		</div>
 		<NotificationLabels {labels} />
+		{#if priority && $settings.showPriority}
+			<div
+				class="priority {priority.value > 0 ? 'up' : 'down'}"
+				style:filter={getGrayscale(priority.value)}
+			>
+				{#if priority.value > 0}
+					<PriorityUpIcon />
+				{:else}
+					<PriorityDownIcon />
+				{/if}
+				<span>{priority.label}</span>
+			</div>
+		{/if}
 		{#if !dragged && interactive}
 			<div
 				class="over"
@@ -287,6 +280,7 @@
 				prefix="Previously, "
 				{openUrl}
 				{from}
+				small
 			/>
 		</div>
 	{/if}
@@ -295,7 +289,7 @@
 <style lang="scss">
 	.container {
 		border-radius: variables.$radius;
-		background-color: variables.$grey-1;
+		background-color: variables.$bg-1;
 		isolation: isolate;
 
 		&:not(:hover) {
@@ -314,8 +308,7 @@
 		}
 
 		&.dragged {
-			@include mixins.modal-shadow;
-
+			box-shadow: variables.$modal-shadow;
 			rotate: -4deg;
 			transition: variables.$transition;
 		}
@@ -331,42 +324,12 @@
 		gap: 0.75rem;
 	}
 
-	.top {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 0.5rem;
-
-		.repo {
-			overflow: hidden;
-			width: 100%;
-			text-align: left;
-			white-space: nowrap;
-
-			.repo-button {
-				overflow: hidden;
-				max-width: 100%;
-				text-overflow: ellipsis;
-
-				&:hover {
-					text-decoration: underline;
-				}
-			}
-		}
-	}
-
 	.description {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
 		margin-top: -0.1rem;
 		gap: 0.75rem;
-	}
-
-	.repo {
-		@include typography.small;
-
-		color: variables.$grey-4;
 	}
 
 	.main {
@@ -376,6 +339,7 @@
 
 		.icon-container {
 			flex: 0 0 2rem;
+			margin-top: 0.1rem;
 
 			:global(svg) {
 				width: 2rem;
@@ -387,7 +351,6 @@
 			display: flex;
 			overflow: hidden;
 			flex-direction: column;
-			margin-top: 0.35rem;
 
 			.title-container {
 				@include typography.base;
@@ -406,7 +369,7 @@
 				}
 
 				.notification-number {
-					color: variables.$blue-3;
+					color: variables.$light-blue;
 				}
 
 				&.underlined:hover * {
@@ -426,36 +389,46 @@
 					}
 				}
 			}
+		}
 
-			.priority {
-				@include typography.small;
+		.repo {
+			@include typography.small;
 
-				display: flex;
-				align-items: center;
-				gap: 0.25rem;
+			overflow: hidden;
+			width: 100%;
+			color: variables.$bg-5;
+			text-align: left;
+			white-space: nowrap;
 
-				&.up {
-					color: variables.$yellow;
-				}
+			.repo-button {
+				overflow: hidden;
+				max-width: 100%;
+				text-overflow: ellipsis;
 
-				&.down {
-					color: variables.$red;
-				}
-
-				:global(svg) {
-					height: 1rem;
+				&:hover {
+					text-decoration: underline;
 				}
 			}
 		}
+	}
 
-		&.has-priority {
-			.icon-container {
-				margin-top: 0.2rem;
-			}
+	.priority {
+		@include typography.small;
 
-			.texts {
-				margin-top: 0;
-			}
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
+
+		&.up {
+			color: variables.$yellow;
+		}
+
+		&.down {
+			color: variables.$red;
+		}
+
+		:global(svg) {
+			height: 1rem;
 		}
 	}
 
@@ -466,7 +439,7 @@
 		justify-content: end;
 		padding: 0.5rem;
 		gap: 0.25rem;
-		inset: 0 0 auto auto;
+		inset: 1px 0 auto auto;
 		pointer-events: none;
 		transition: opacity variables.$transition;
 
@@ -475,7 +448,7 @@
 			width: 4rem;
 			height: 4rem;
 			border-radius: 0 calc(variables.$radius - 1px) calc(variables.$radius - 1px) 0;
-			background-image: radial-gradient(at top right, variables.$grey-1 25%, transparent 75%);
+			background-image: radial-gradient(at top right, variables.$bg-1 25%, transparent 75%);
 			content: '';
 			inset: 0 0 auto auto;
 		}
@@ -497,24 +470,37 @@
 
 	.previously {
 		position: relative;
-		padding: 0.75rem 1rem;
+		padding: 0.5rem 0.75rem;
+		margin: 0 0.25rem;
 
 		&::before,
 		&::after {
 			position: absolute;
 			z-index: -1;
 			content: '';
-			inset: -0.5rem 0 0;
 		}
 
 		&::before {
-			border: 1px solid variables.$grey-3;
+			border: 1px solid variables.$bg-4;
 			border-radius: 0 0 variables.$radius variables.$radius;
-			background-color: variables.$grey-2;
+			background-color: variables.$bg-2;
+			inset: -0.5rem 0 0;
 		}
 
 		&::after {
-			background-image: linear-gradient(rgba(variables.$grey-1, 0.5), transparent);
+			inset: -0.5rem 1px 1px;
+		}
+
+		@include themes.light {
+			&::after {
+				background-image: linear-gradient(rgba(black, 0.03), transparent 50%);
+			}
+		}
+
+		@include themes.dark {
+			&::after {
+				background-image: linear-gradient(rgba(black, 0.2), transparent 50%);
+			}
 		}
 	}
 </style>

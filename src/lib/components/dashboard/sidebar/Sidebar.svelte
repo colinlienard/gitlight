@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import { Tooltip, ScrollbarContainer, Separator, IconButton } from '$lib/components';
+	import { Tooltip, ScrollbarContainer, IconButton } from '$lib/components';
 	import { Logo, DoubleArrowIcon } from '$lib/icons';
 	import {
 		filteredNotifications,
@@ -12,10 +12,13 @@
 		typeFilters,
 		globalNotifications
 	} from '$lib/stores';
+	import SidebarProviders from './SidebarProviders.svelte';
 	import SidebarSearch from './SidebarSearch.svelte';
 	import TypeFilters from './TypeFilters.svelte';
 	import WatchedPersons from './WatchedPersons.svelte';
 	import WatchedRepos from './WatchedRepos.svelte';
+
+	export let isMacos = false;
 
 	let search = '';
 
@@ -65,9 +68,8 @@
 </script>
 
 <article class="sidebar">
-	<img src="/images/small-light.webp" alt="" class="gradient" />
 	<header class="header" data-tauri-drag-region>
-		<div class="logo-container">
+		<div class="logo-container" class:macos={isMacos}>
 			<Logo />
 			<h1 class="hero">GitLight</h1>
 		</div>
@@ -77,21 +79,18 @@
 			</IconButton>
 		</Tooltip>
 	</header>
-	<ScrollbarContainer margin="0.25rem">
-		<div class="scrollable">
-			{#if !$loading}
-				<div class="wrapper">
-					<SidebarSearch bind:search />
-				</div>
-				<Separator />
+	<div class="wrapper">
+		<SidebarSearch bind:search />
+	</div>
+	<SidebarProviders />
+	<div class="scrollable">
+		{#if !$loading}
+			<ScrollbarContainer margin="0.1rem">
 				<TypeFilters />
-				<Separator />
 				<WatchedRepos />
-				<Separator />
 				<WatchedPersons />
 				{#if $settings.providerView !== 'gitlab'}
-					<Separator />
-					<div class="wrapper">
+					<div class="wrapper with-border">
 						<h2 class="title">Manage</h2>
 						<div class="double-button">
 							<a href="https://github.com/watching" target="_blank" rel="noreferrer">Watching</a>
@@ -106,27 +105,27 @@
 						</div>
 					</div>
 				{/if}
-			{:else}
-				<div class="skeletons-container">
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-				</div>
-				<div class="skeletons-container">
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-					<span class="skeleton" />
-				</div>
-			{/if}
-		</div>
-	</ScrollbarContainer>
+			</ScrollbarContainer>
+		{:else}
+			<div class="skeletons-container">
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+			</div>
+			<div class="skeletons-container">
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+				<span class="skeleton" />
+			</div>
+		{/if}
+	</div>
 </article>
 
 <style lang="scss">
@@ -136,60 +135,67 @@
 		height: 100vh;
 		flex: 0 0 20rem;
 		flex-direction: column;
-		border-right: 1px solid variables.$grey-3;
+		border-right: 1px solid variables.$bg-3;
 
-		&::before {
-			position: absolute;
-			z-index: 1;
-			height: 2rem;
-			background-image: linear-gradient(transparent, variables.$grey-1 1rem);
-			content: '';
-			inset: auto 0 0;
-			pointer-events: none;
+		&:not(:hover) .header :global(div):nth-last-child(1) {
+			opacity: 0;
 		}
 	}
 
 	.header {
 		z-index: 1;
 		display: flex;
-		align-items: center;
 		justify-content: space-between;
-		padding: 3rem 2rem 2rem;
+		padding: 1.1rem 1rem 0;
 
 		.logo-container {
 			display: flex;
 			align-items: center;
 			gap: 0.5rem;
 
+			&.macos {
+				padding-top: 1.5rem;
+			}
+
 			:global(svg) {
 				height: 2rem;
 			}
 
 			.hero {
-				@include typography.heading-1;
+				@include typography.heading-2;
 			}
+		}
+
+		:global(div):nth-last-child(1) {
+			height: fit-content;
 		}
 	}
 
 	.scrollable {
 		position: relative;
 		display: flex;
+		overflow: hidden;
 		width: 20rem;
 		flex-direction: column;
-		padding: 0 2rem 2rem;
-		gap: 1.5rem;
-	}
+		border-top: 1px solid variables.$bg-3;
 
-	.gradient {
-		position: absolute;
-		z-index: -1;
-		inset: 0;
+		&:nth-child(1) {
+			:global(div) {
+				background-color: red;
+			}
+		}
 	}
 
 	.wrapper {
 		display: flex;
 		flex-direction: column;
+		padding: 1rem;
 		gap: 1rem;
+
+		&.with-border {
+			padding: 2rem 1rem;
+			border-top: 1px solid variables.$bg-3;
+		}
 
 		.title {
 			@include typography.bold;
@@ -199,6 +205,7 @@
 	.skeletons-container {
 		display: flex;
 		flex-direction: column;
+		padding: 1rem;
 		gap: 1rem;
 
 		.skeleton {
@@ -212,12 +219,25 @@
 	}
 
 	.double-button {
-		@include mixins.shiny(variables.$grey-3, false);
+		@include mixins.shiny('secondary');
 
 		display: flex;
 		justify-content: space-evenly;
 
+		@include themes.light {
+			&:hover::before {
+				background-color: variables.$bg-2;
+			}
+		}
+
+		@include themes.dark {
+			&:hover::before {
+				background-image: linear-gradient(variables.$bg-3, variables.$bg-2);
+			}
+		}
+
 		a {
+			z-index: 1;
 			width: 100%;
 			padding: 0.5rem;
 			border-radius: calc(variables.$radius - 1px);
@@ -236,7 +256,13 @@
 			}
 
 			&:hover {
-				background-color: color.adjust(variables.$grey-3, $lightness: -2%);
+				@include themes.light {
+					background-color: variables.$bg-1;
+				}
+
+				@include themes.dark {
+					background: variables.$bg-2;
+				}
 			}
 		}
 

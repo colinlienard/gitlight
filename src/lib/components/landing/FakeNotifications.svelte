@@ -47,7 +47,7 @@
 				avatar: 'https://avatars.githubusercontent.com/u/43268759?v=4'
 			},
 			title: 'feat(astro): write config if not present when building',
-			description: 'merged this pull request',
+			description: '*merged* this pull request',
 			time: new Date().toString(),
 			icon: 'merged-pr',
 			repository: {
@@ -71,7 +71,7 @@
 				avatar: 'https://avatars.githubusercontent.com/u/20051258?v=4'
 			},
 			title: 'feat(cli): add rustls as default Cargo feature',
-			description: 'merged this pull request',
+			description: '*merged* this pull request',
 			time: new Date(new Date().getTime() - 1000000).toString(),
 			icon: 'merged-pr',
 			repository: {
@@ -92,7 +92,7 @@
 			},
 			title: 'TS to JSDoc Conversion',
 			description:
-				'commented: The Svelte repo is currently in the process of heavy restructuring for Svelte 4. After that, work on Svelte 5 will likely change',
+				'*commented*: _The Svelte repo is currently in the process of heavy restructuring for Svelte 4. After that, work on Svelte 5 will likely change_',
 			time: new Date(new Date().getTime() - 10000000).toString(),
 			icon: 'open-issue',
 			repository: {
@@ -113,7 +113,7 @@
 				avatar: 'https://avatars.githubusercontent.com/u/64312634?v=4'
 			},
 			title: 'feat(front): add the landing page',
-			description: 'opened this pull request',
+			description: '*opened* this pull request',
 			time: new Date(new Date().getTime() - 23000).toString(),
 			icon: 'open-pr',
 			repository: {
@@ -152,7 +152,7 @@
 		.notification-container {
 			width: 23rem;
 			border-radius: variables.$radius;
-			background-color: variables.$grey-1;
+			background-color: variables.$bg-1;
 			transition: translate variables.$transition;
 
 			&:not(:nth-child(5)) {
@@ -160,7 +160,7 @@
 			}
 
 			& > :global(div) {
-				@include mixins.shadow;
+				box-shadow: variables.$shadow;
 			}
 
 			@keyframes slide {

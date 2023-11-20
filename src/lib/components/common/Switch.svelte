@@ -50,21 +50,19 @@
 	}
 
 	.switch {
-		@include mixins.shadow;
-
 		width: 2.25rem;
 		flex: 0 0 2.25rem;
 		padding: 2px;
+		box-shadow: variables.$shadow;
 
 		.icon-container {
-			@include mixins.shadow;
-
 			display: flex;
 			width: 1.25rem;
 			height: 1.25rem;
 			align-items: center;
 			justify-content: center;
 			border-radius: 50%;
+			box-shadow: variables.$shadow;
 			transition: variables.$transition;
 
 			:global(svg) {
@@ -73,28 +71,39 @@
 		}
 
 		&.active {
-			@include mixins.shiny(variables.$blue-2, true, 9rem);
+			@include mixins.shiny('primary', 9rem);
 
 			.icon-container {
-				background-color: variables.$white;
-				translate: 0.65rem 0;
+				background-color: white;
+				translate: 0.75rem 0;
 
 				:global(svg) {
-					color: variables.$blue-2;
+					color: variables.$blue;
 				}
 			}
 		}
 
 		&:not(.active) {
-			@include mixins.shiny(variables.$grey-3, true, 9rem);
+			@include mixins.shiny('secondary', 9rem);
 
 			.icon-container {
-				background-color: variables.$grey-4;
-				rotate: -90deg;
+				@include themes.light {
+					background-color: variables.$bg-4;
 
-				:global(svg) {
-					color: variables.$grey-3;
+					:global(svg) {
+						color: variables.$bg-6;
+					}
 				}
+
+				@include themes.dark {
+					background-color: variables.$bg-5;
+
+					:global(svg) {
+						color: variables.$bg-3;
+					}
+				}
+
+				rotate: -90deg;
 			}
 		}
 	}

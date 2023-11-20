@@ -1,12 +1,12 @@
 // Colors
-$grey-1: #151515;
-$grey-2: #1a1a1a;
-$grey-3: #262626;
-$grey-4: #888;
-$white: #fff;
-$blue-1: #272050;
-$blue-2: #6040ff;
-$blue-3: #8585ff;
+$bg-1: var(--bg-1);
+$bg-2: var(--bg-2);
+$bg-3: var(--bg-3);
+$bg-4: var(--bg-4);
+$bg-5: var(--bg-5);
+$bg-6: var(--bg-6);
+$blue: #6040ff;
+$light-blue: #8585ff;
 $green: #22c965;
 $red: #e34763;
 $purple: #a557ff;
@@ -14,6 +14,11 @@ $yellow: #ffa723;
 
 // Radius
 $radius: 0.5rem;
+$small-radius: 0.25rem;
 
 // Transition
 $transition: 0.15s ease-in-out;
+
+// Shadows
+$shadow: 0 1px 2px var(--shadow-color);
+$modal-shadow: 0 2rem 4rem var(--modal-shadow-color);

@@ -10,6 +10,7 @@ export default defineConfig({
           @use 'sass:color';
           @use "~/styles/mixins";
           @use "~/styles/screens";
+          @use "~/styles/themes";
           @use "~/styles/typography";
           @use "~/styles/variables";
         `

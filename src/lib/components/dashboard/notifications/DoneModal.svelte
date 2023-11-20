@@ -60,7 +60,7 @@
 		padding: 2rem;
 
 		.text {
-			color: variables.$grey-4;
+			color: variables.$bg-5;
 		}
 	}
 </style>

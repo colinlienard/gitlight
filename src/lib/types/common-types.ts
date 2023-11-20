@@ -17,15 +17,18 @@ export type Session = {
 
 export type NotificationIcon =
 	| 'commit'
+	| 'issue'
 	| 'open-issue'
 	| 'completed-issue'
 	| 'closed-issue'
+	| 'pr'
 	| 'draft-pr'
 	| 'open-pr'
 	| 'merged-pr'
 	| 'closed-pr'
 	| 'release'
 	| 'discussion'
+	| 'workflow'
 	| 'workflow-fail'
 	| 'workflow-success'
 	| 'unsupported';
@@ -121,9 +124,9 @@ export type GitlabEventWithRepoData = GitlabEvent & {
 };
 
 export type Settings = {
+	theme: 'System' | 'Light' | 'Dark';
 	activateNotifications: boolean;
 	readWhenOpenInBrowser: boolean;
-	showNotificationsRepo: boolean;
 	notificationNumber: number;
 	sidebarHidden: boolean;
 	showOnlyOpen: boolean;

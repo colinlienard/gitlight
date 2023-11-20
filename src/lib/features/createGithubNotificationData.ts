@@ -267,7 +267,7 @@ export async function createGithubNotificationData(
 				description: 'made a release',
 				icon: 'release',
 				labels: [
-					{ name: tag_name, color: 'FFFFFF' },
+					{ name: tag_name, color: 'auto' },
 					...(prerelease ? [{ name: 'pre-release', color: 'FFA723' }] : [])
 				],
 				url: html_url,
