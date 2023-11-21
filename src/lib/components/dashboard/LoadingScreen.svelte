@@ -13,12 +13,15 @@
 
 <style lang="scss">
 	.container {
+		position: fixed;
+		z-index: 999;
 		display: flex;
-		height: 100vh;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		background-color: variables.$bg-1;
 		gap: 2rem;
+		inset: 0;
 
 		.text-container {
 			display: flex;
