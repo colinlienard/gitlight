@@ -2,7 +2,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { Tooltip, ScrollbarContainer, IconButton } from '$lib/components';
-	import { Logo, DoubleArrowIcon } from '$lib/icons';
+	import { DoubleArrowIcon } from '$lib/icons';
 	import {
 		filteredNotifications,
 		loading,
@@ -70,7 +70,7 @@
 <article class="sidebar">
 	<header class="header" data-tauri-drag-region>
 		<div class="logo-container" class:macos={isMacos}>
-			<Logo />
+			<img class="logo" src="/images/logo.webp" alt="" />
 			<h1 class="hero">GitLight</h1>
 		</div>
 		<Tooltip content="Hide sidebar" position="bottom right" hover>
@@ -157,7 +157,7 @@
 				padding-top: 1.5rem;
 			}
 
-			:global(svg) {
+			.logo {
 				height: 2rem;
 			}
 
