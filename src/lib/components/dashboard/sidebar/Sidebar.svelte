@@ -5,7 +5,6 @@
 	import { DoubleArrowIcon } from '$lib/icons';
 	import {
 		filteredNotifications,
-		loading,
 		watchedRepos,
 		settings,
 		watchedPersons,
@@ -84,47 +83,27 @@
 	</div>
 	<SidebarProviders />
 	<div class="scrollable">
-		{#if !$loading}
-			<ScrollbarContainer margin="0.1rem">
-				<TypeFilters />
-				<WatchedRepos />
-				<WatchedPersons />
-				{#if $settings.providerView !== 'gitlab'}
-					<div class="wrapper with-border">
-						<h2 class="title">Manage</h2>
-						<div class="double-button">
-							<a href="https://github.com/watching" target="_blank" rel="noreferrer">Watching</a>
-							<div />
-							<a
-								href="https://github.com/notifications/subscriptions"
-								target="_blank"
-								rel="noreferrer"
-							>
-								Subscriptions
-							</a>
-						</div>
+		<ScrollbarContainer margin="0.1rem">
+			<TypeFilters />
+			<WatchedRepos />
+			<WatchedPersons />
+			{#if $settings.providerView !== 'gitlab'}
+				<div class="wrapper with-border">
+					<h2 class="title">Manage</h2>
+					<div class="double-button">
+						<a href="https://github.com/watching" target="_blank" rel="noreferrer">Watching</a>
+						<div />
+						<a
+							href="https://github.com/notifications/subscriptions"
+							target="_blank"
+							rel="noreferrer"
+						>
+							Subscriptions
+						</a>
 					</div>
-				{/if}
-			</ScrollbarContainer>
-		{:else}
-			<div class="skeletons-container">
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-			</div>
-			<div class="skeletons-container">
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-				<span class="skeleton" />
-			</div>
-		{/if}
+				</div>
+			{/if}
+		</ScrollbarContainer>
 	</div>
 </article>
 
@@ -199,22 +178,6 @@
 
 		.title {
 			@include typography.bold;
-		}
-	}
-
-	.skeletons-container {
-		display: flex;
-		flex-direction: column;
-		padding: 1rem;
-		gap: 1rem;
-
-		.skeleton {
-			@include mixins.skeleton(100%, 2rem);
-
-			&:nth-child(1) {
-				width: 70%;
-				height: 1.5rem;
-			}
 		}
 	}
 

@@ -13,6 +13,7 @@
 		GithubLoginButton,
 		GitlabLoginButton,
 		GitlabRepos,
+		LoadingScreen,
 		Main,
 		Priorities,
 		Settings,
@@ -395,63 +396,67 @@
 	<title>GitLight • Dashboard</title>
 </svelte:head>
 
-<div class="container" class:sidebar-hidden={$settings.sidebarHidden}>
-	<Sidebar {isMacos} />
-	<main class="main">
-		<Banner />
-		<header class="header" data-tauri-drag-region>
-			<div class="wrapper" class:macos={isMacos && $settings.sidebarHidden}>
-				{#if $settings.sidebarHidden}
-					<div transition:slide={{ axis: 'x', duration: 300, easing: cubicInOut }}>
-						<Tooltip content="Show sidebar" position="bottom left" hover>
-							<button class="logo-button" on:click={() => ($settings.sidebarHidden = false)}>
-								<img src="/images/logo.webp" alt="" />
-							</button>
-						</Tooltip>
-					</div>
-				{/if}
-				<h1 class="title">Notifications</h1>
-				<div class="sync-pill" class:loading={!synced}>
-					<RefreshIcon />
-					{#if synced}
-						Synced <span class="time">{syncTime}s ago</span>
-					{:else}
-						Syncing...
+{#if $loading}
+	<LoadingScreen />
+{:else}
+	<div class="container" class:sidebar-hidden={$settings.sidebarHidden}>
+		<Sidebar {isMacos} />
+		<main class="main">
+			<Banner />
+			<header class="header" data-tauri-drag-region>
+				<div class="wrapper" class:macos={isMacos && $settings.sidebarHidden}>
+					{#if $settings.sidebarHidden}
+						<div transition:slide={{ axis: 'x', duration: 300, easing: cubicInOut }}>
+							<Tooltip content="Show sidebar" position="bottom left" hover>
+								<button class="logo-button" on:click={() => ($settings.sidebarHidden = false)}>
+									<img src="/images/logo.webp" alt="" />
+								</button>
+							</Tooltip>
+						</div>
 					{/if}
+					<h1 class="title">Notifications</h1>
+					<div class="sync-pill" class:loading={!synced}>
+						<RefreshIcon />
+						{#if synced}
+							Synced <span class="time">{syncTime}s ago</span>
+						{:else}
+							Syncing...
+						{/if}
+					</div>
 				</div>
-			</div>
-			<div class="settings-wrapper">
-				<DoneModal />
-				<Priorities />
-				<Settings />
-			</div>
-		</header>
-		{#if providerView === 'github' && !githubUser}
-			<div class="center-container">
-				<div class="text">Manage your GitHub and GitLab notifications at the same time.</div>
-				<GithubLoginButton>
-					<GithubIcon />
-					Log in to GitHub
-				</GithubLoginButton>
-			</div>
-		{:else if providerView === 'gitlab' && !gitlabUser}
-			<div class="center-container">
-				<div class="text">Manage your GitHub and GitLab notifications at the same time.</div>
-				<GitlabLoginButton>
-					<GitlabIcon />
-					Log in to Gitlab
-				</GitlabLoginButton>
-			</div>
-		{:else if providerView === 'gitlab' && !$settings.gitlabRepos.length}
-			<div class="center-container to-top">
-				<GitlabRepos />
-			</div>
-		{:else}
-			<Main />
-		{/if}
-	</main>
-	<Error />
-</div>
+				<div class="settings-wrapper">
+					<DoneModal />
+					<Priorities />
+					<Settings />
+				</div>
+			</header>
+			{#if providerView === 'github' && !githubUser}
+				<div class="center-container">
+					<div class="text">Manage your GitHub and GitLab notifications at the same time.</div>
+					<GithubLoginButton>
+						<GithubIcon />
+						Log in to GitHub
+					</GithubLoginButton>
+				</div>
+			{:else if providerView === 'gitlab' && !gitlabUser}
+				<div class="center-container">
+					<div class="text">Manage your GitHub and GitLab notifications at the same time.</div>
+					<GitlabLoginButton>
+						<GitlabIcon />
+						Log in to Gitlab
+					</GitlabLoginButton>
+				</div>
+			{:else if providerView === 'gitlab' && !$settings.gitlabRepos.length}
+				<div class="center-container to-top">
+					<GitlabRepos />
+				</div>
+			{:else}
+				<Main />
+			{/if}
+		</main>
+		<Error />
+	</div>
+{/if}
 
 <style lang="scss">
 	:global(body) {

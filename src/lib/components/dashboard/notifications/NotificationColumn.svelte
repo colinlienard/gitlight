@@ -11,16 +11,10 @@
 	import { drag, drop, fetchGithub } from '$lib/features';
 	import { debounce } from '$lib/helpers';
 	import { ArrowUpIcon } from '$lib/icons';
-	import {
-		loading,
-		settings as settingsStore,
-		githubNotifications,
-		gitlabNotifications
-	} from '$lib/stores';
+	import { settings as settingsStore, githubNotifications, gitlabNotifications } from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
 	import Notification from './Notification.svelte';
 	import NotificationPlaceholder from './NotificationPlaceholder.svelte';
-	import SkeletonNotification from './SkeletonNotification.svelte';
 
 	type SvelteAnimation = (
 		node: Element,
@@ -185,28 +179,23 @@
 		}}
 		bind:this={list}
 	>
-		{#if $loading}
-			<li><SkeletonNotification /></li>
-			<li><SkeletonNotification /></li>
-		{:else}
-			{#each notifications as notification (notification)}
-				<li
-					class="item"
-					class:hide={hideId === notification.id}
-					in:receiveAndHide={{ key: notification.id }}
-					out:send={{ key: notification.id }}
-					animate:flipIfVisible={settings}
-					use:drag={{
-						id: notification.id,
-						onDragStart: handleDragStart
-					}}
-				>
-					<Notification data={notification} dragged={!!$dragging && notification.id === dragId} />
-				</li>
-			{/each}
-			{#if empty}
-				<NotificationPlaceholder icon={placeholder.icon} text={placeholder.text} />
-			{/if}
+		{#each notifications as notification (notification)}
+			<li
+				class="item"
+				class:hide={hideId === notification.id}
+				in:receiveAndHide={{ key: notification.id }}
+				out:send={{ key: notification.id }}
+				animate:flipIfVisible={settings}
+				use:drag={{
+					id: notification.id,
+					onDragStart: handleDragStart
+				}}
+			>
+				<Notification data={notification} dragged={!!$dragging && notification.id === dragId} />
+			</li>
+		{/each}
+		{#if empty}
+			<NotificationPlaceholder icon={placeholder.icon} text={placeholder.text} />
 		{/if}
 	</ul>
 </div>

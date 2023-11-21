@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { afterUpdate, tick } from 'svelte';
-	import { theme } from '~/lib/stores';
 	import { shadeColor } from '$lib/helpers';
+	import { theme } from '$lib/stores';
 	import type { GithubLabel } from '$lib/types';
 
 	export let labels: GithubLabel[] = [];
