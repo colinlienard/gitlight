@@ -29,13 +29,14 @@ export async function GET({ url }) {
 
 		if (response.ok) {
 			const { access_token, refresh_token, expires_in, created_at } = await response.json();
-			const url = `/dashboard?gitlab_access_token=${access_token}&gitlab_refresh_token=${refresh_token}&gitlab_expires_in=${
-				(created_at + expires_in) * 1000
-			}`;
+			const params = new URLSearchParams();
+			params.append('gitlab_access_token', access_token);
+			params.append('gitlab_refresh_token', refresh_token);
+			params.append('gitlab_expires_in', `${(created_at + expires_in) * 1000}`);
 			if (searchParams.has('from_app')) {
-				throw redirect(302, `${url}&from_app=true`);
+				throw redirect(302, `/deeplink?${params.toString()}`);
 			}
-			throw redirect(302, url);
+			throw redirect(302, `/dashboard?${params.toString()}`);
 		}
 
 		throw redirect(302, '/');

@@ -1,16 +1,15 @@
 <script lang="ts">
 	import { Rive } from '@rive-app/canvas';
-	import { onMount } from 'svelte';
 
 	let canvas: HTMLCanvasElement;
 
-	onMount(() => {
+	$: if (canvas) {
 		new Rive({
 			src: '/rive/logo.riv',
 			canvas,
 			autoplay: true
 		});
-	});
+	}
 </script>
 
 <div class="container">
