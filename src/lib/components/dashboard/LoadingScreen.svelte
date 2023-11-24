@@ -2,7 +2,7 @@
 	import { AnimatedLogo } from '$lib/components';
 </script>
 
-<section class="container">
+<section class="container" data-tauri-drag-region>
 	<AnimatedLogo />
 	<div class="text-container">
 		<h2 class="title">Loading your data...</h2>
