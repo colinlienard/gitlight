@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/macos-icon.png" alt="" height="128px" />
+<img src="./assets/logo.png" alt="" height="128px" />
 
 # GitLight
 
@@ -42,7 +42,10 @@ GitHub & GitLab notifications on your desktop • [gitlight.app](https://gitligh
 
 </div>
 
-![Dashboard](./assets/dashboard.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/dashboard-dark.png">
+  <img src="./assets/dashboard-light.png">
+</picture>
 
 ---
 
