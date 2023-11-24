@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getNotificationIcon } from '~/lib/helpers';
 	import { storage } from '$lib/features';
+	import { getNotificationIcon } from '$lib/helpers';
 	import { globalNotifications, loading, settings, typeFilters } from '$lib/stores';
 	import SidebarSection from './SidebarSection.svelte';
 

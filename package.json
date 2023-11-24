@@ -17,6 +17,7 @@
 		"typecheck": "svelte-check --tsconfig ./tsconfig.json"
 	},
 	"dependencies": {
+		"@rive-app/canvas": "^2.7.4",
 		"@tauri-apps/api": "^1.5.1",
 		"overlayscrollbars": "^2.4.4",
 		"tauri-plugin-autostart-api": "github:tauri-apps/tauri-plugin-autostart"

@@ -2,7 +2,6 @@ import { redirect } from '@sveltejs/kit';
 import { browser } from '$app/environment';
 import { goto } from '$app/navigation';
 import { checkGitlabToken, fetchGithub, fetchGitlab, storage } from '$lib/features';
-import { openDesktopApp } from '$lib/helpers';
 import type { GithubUser, GitlabUser } from '$lib/types';
 
 import '~/styles/_reset.scss';
@@ -71,14 +70,6 @@ export async function load({ url }) {
 		}
 	}
 
-	// Open the app with the access token
-	if (
-		url.searchParams.has('from_app') &&
-		(githubAccessToken || (gitlabAccessToken && gitlabRefreshToken && gitlabExpiresIn))
-	) {
-		openDesktopApp({ githubAccessToken, gitlabAccessToken, gitlabRefreshToken, gitlabExpiresIn });
-	}
-
 	// Remove access tokens from the URL
 	if (githubTokenParam || gitlabTokenParam) {
 		history.replaceState({}, '', '/dashboard');
@@ -116,9 +107,10 @@ export async function load({ url }) {
 			: null;
 
 	// Handle redirects
-	if (url.pathname === '/dashboard' && !session) {
+	const protectedRoute = ['/dashboard', '/deeplink'].includes(url.pathname);
+	if (protectedRoute && !session) {
 		throw redirect(302, '/login');
-	} else if (url.pathname !== '/dashboard' && session) {
+	} else if (!protectedRoute && session) {
 		throw redirect(302, '/dashboard');
 	}
 

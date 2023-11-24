@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@rive-app/canvas':
+    specifier: ^2.7.4
+    version: 2.7.4
   '@tauri-apps/api':
     specifier: ^1.5.1
     version: 1.5.1
@@ -13,7 +16,7 @@ dependencies:
     version: 2.4.4
   tauri-plugin-autostart-api:
     specifier: github:tauri-apps/tauri-plugin-autostart
-    version: github.com/tauri-apps/tauri-plugin-autostart/0e474395d4990587ad5c1db25ed23220fe11764f
+    version: github.com/tauri-apps/tauri-plugin-autostart/072ebc2914c19eb7022c90add7ea328d437d5eb2
 
 devDependencies:
   '@sveltejs/adapter-static':
@@ -493,6 +496,10 @@ packages:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
     dev: true
 
+  /@rive-app/canvas@2.7.4:
+    resolution: {integrity: sha512-WgEBcdQkEitaRikLfzkwY0Ye456kITamNNz40hBf4oxFjhCSBySxTw21ZKgw+ZqymTGNJLuN+a9zF2SW8ARusg==}
+    dev: false
+
   /@rollup/pluginutils@4.2.1:
     resolution: {integrity: sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==}
     engines: {node: '>= 8.0.0'}
@@ -585,11 +592,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
-
-  /@tauri-apps/api@1.4.0:
-    resolution: {integrity: sha512-Jd6HPoTM1PZSFIzq7FB8VmMu3qSSyo/3lSwLpoapW+lQ41CL5Dow2KryLg+gyazA/58DRWI9vu/XpEeHK4uMdw==}
-    engines: {node: '>= 14.6.0', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
-    dev: false
 
   /@tauri-apps/api@1.5.1:
     resolution: {integrity: sha512-6unsZDOdlXTmauU3NhWhn+Cx0rODV+rvNvTdvolE5Kls5ybA6cqndQENDt1+FS0tF7ozCP66jwWoH6a5h90BrA==}
@@ -3867,10 +3869,10 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  github.com/tauri-apps/tauri-plugin-autostart/0e474395d4990587ad5c1db25ed23220fe11764f:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/0e474395d4990587ad5c1db25ed23220fe11764f}
+  github.com/tauri-apps/tauri-plugin-autostart/072ebc2914c19eb7022c90add7ea328d437d5eb2:
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/072ebc2914c19eb7022c90add7ea328d437d5eb2}
     name: tauri-plugin-autostart-api
     version: 0.0.0
     dependencies:
-      '@tauri-apps/api': 1.4.0
+      '@tauri-apps/api': 1.5.1
     dev: false

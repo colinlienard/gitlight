@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { CheckIcon } from '$lib/icons';
-	import { loading } from '$lib/stores';
 	import type { NotificationData } from '$lib/types';
-	import { Notification, NotificationPlaceholder, SkeletonNotification } from '.';
+	import { Notification, NotificationPlaceholder } from '.';
 
 	export let notifications: NotificationData[];
 
@@ -14,10 +13,7 @@
 </script>
 
 <ul class="list" style:height={notifications.length ? 'auto' : '100%'}>
-	{#if $loading}
-		<li><SkeletonNotification /></li>
-		<li><SkeletonNotification /></li>
-	{:else if notifications.length}
+	{#if notifications.length}
 		{#each displayNotifications as notification (notification)}
 			<li>
 				<Notification data={notification} />

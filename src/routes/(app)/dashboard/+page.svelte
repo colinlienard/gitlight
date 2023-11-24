@@ -13,6 +13,7 @@
 		GithubLoginButton,
 		GitlabLoginButton,
 		GitlabRepos,
+		LoadingScreen,
 		Main,
 		Priorities,
 		Settings,
@@ -395,6 +396,9 @@
 	<title>GitLight • Dashboard</title>
 </svelte:head>
 
+{#if $loading}
+	<LoadingScreen />
+{/if}
 <div class="container" class:sidebar-hidden={$settings.sidebarHidden}>
 	<Sidebar {isMacos} />
 	<main class="main">

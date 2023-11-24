@@ -10,7 +10,6 @@
 		filteredNotifications,
 		githubNotifications,
 		gitlabNotifications,
-		loading,
 		settings
 	} from '$lib/stores';
 	import { NotificationList } from './notifications';
@@ -28,9 +27,6 @@
 	// Send data to tray app
 	$: if (browser && window.__TAURI__) {
 		emit('notifications', { notifications });
-	}
-	$: if (browser && window.__TAURI__) {
-		emit('loading', { loading: $loading });
 	}
 	$: if (browser && window.__TAURI__) {
 		emit('settings', { settings: $settings });

@@ -26,11 +26,12 @@ export async function GET({ url }) {
 
 		if (response.ok) {
 			const { access_token } = await response.json();
-			const url = `/dashboard?github_access_token=${access_token}`;
+			const params = new URLSearchParams();
+			params.append('github_access_token', access_token);
 			if (searchParams.has('from_app')) {
-				throw redirect(302, `${url}&from_app=true`);
+				throw redirect(302, `/deeplink?${params.toString()}`);
 			}
-			throw redirect(302, url);
+			throw redirect(302, `/dashboard?${params.toString()}`);
 		}
 
 		throw redirect(302, '/');
