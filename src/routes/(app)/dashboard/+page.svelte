@@ -9,7 +9,6 @@
 	import {
 		Banner,
 		DoneModal,
-		Error,
 		GithubLoginButton,
 		GitlabLoginButton,
 		GitlabRepos,
@@ -18,6 +17,7 @@
 		Priorities,
 		Settings,
 		Sidebar,
+		SyncPill,
 		Tooltip
 	} from '$lib/components';
 	import {
@@ -30,7 +30,7 @@
 		storage,
 		type StorageMap
 	} from '$lib/features';
-	import { GithubIcon, GitlabIcon, RefreshIcon } from '$lib/icons';
+	import { GithubIcon, GitlabIcon } from '$lib/icons';
 	import {
 		error,
 		filteredNotifications,
@@ -51,23 +51,12 @@
 	const gitlabUser = $page.data.session?.gitlabUser;
 
 	let synced = false;
-	let syncTime = 0;
-	let syncInterval: ReturnType<typeof setInterval>;
 	let mounted = false;
 	let isMacos = false;
 
 	let interval = setInterval(() => {
 		fetchAll();
 	}, 60000);
-
-	$: if (synced && !syncTime) {
-		syncInterval = setInterval(() => {
-			syncTime += 1;
-		}, 1000);
-	} else if (!synced) {
-		syncTime = 0;
-		clearInterval(syncInterval);
-	}
 
 	function notificationIsMuted(
 		{ author, creator, repository, muted }: NotificationData,
@@ -415,14 +404,7 @@
 					</div>
 				{/if}
 				<h1 class="title">Notifications</h1>
-				<div class="sync-pill" class:loading={!synced}>
-					<RefreshIcon />
-					{#if synced}
-						Synced <span class="time">{syncTime}s ago</span>
-					{:else}
-						Syncing...
-					{/if}
-				</div>
+				<SyncPill {synced} />
 			</div>
 			<div class="settings-wrapper">
 				<DoneModal />
@@ -454,7 +436,6 @@
 			<Main />
 		{/if}
 	</main>
-	<Error />
 </div>
 
 <style lang="scss">
@@ -504,45 +485,6 @@
 
 			.title {
 				@include typography.heading-2;
-			}
-
-			.sync-pill {
-				display: flex;
-				align-items: center;
-				padding: 0.25rem 0.5rem;
-				border-radius: variables.$small-radius;
-				margin: 0 1rem;
-				background-color: variables.$bg-3;
-				color: variables.$bg-5;
-				gap: 0.25rem;
-
-				&:not(:hover) .time {
-					display: none;
-				}
-
-				:global(svg) {
-					height: 1.25rem;
-					color: variables.$green;
-				}
-
-				&.loading {
-					color: variables.$yellow;
-
-					:global(svg) {
-						animation: loading 1s linear infinite;
-						color: variables.$yellow;
-
-						@keyframes loading {
-							0% {
-								rotate: 0deg;
-							}
-
-							100% {
-								rotate: 360deg;
-							}
-						}
-					}
-				}
 			}
 
 			.settings-wrapper {

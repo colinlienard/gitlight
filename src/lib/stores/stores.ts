@@ -50,4 +50,4 @@ export const settings = writable<Settings>({
 
 export const theme = writable<'light' | 'dark'>('light');
 
-export const error = writable<string | null>(null);
+export const error = writable<string | 'No internet' | null>(null);
