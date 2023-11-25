@@ -101,6 +101,7 @@
 
 	async function fetchAll() {
 		synced = false;
+		$error = null;
 
 		const firstFetch = !$githubNotifications.length && !$gitlabNotifications.length;
 

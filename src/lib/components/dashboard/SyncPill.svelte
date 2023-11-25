@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
+	import { browser } from '$app/environment';
 	import { Tooltip } from '$lib/components';
 	import { ExclamationMarkIcon, RefreshIcon } from '$lib/icons';
 	import { error } from '$lib/stores';
 
 	export let synced: boolean;
 
-	let syncTime: number;
+	let syncTime = 0;
 	let interval: ReturnType<typeof setInterval>;
+	let noInternet = false;
 
 	$: if (synced && !syncTime) {
 		interval = setInterval(() => {
@@ -18,23 +20,42 @@
 		clearInterval(interval);
 	}
 
+	function handleOnline() {
+		noInternet = false;
+	}
+
+	function handleOffline() {
+		noInternet = true;
+	}
+
+	onMount(() => {
+		window.addEventListener('online', handleOnline);
+		window.addEventListener('offline', handleOffline);
+	});
+
 	onDestroy(() => {
 		clearInterval(interval);
+		if (browser) {
+			window.removeEventListener('online', handleOnline);
+			window.removeEventListener('offline', handleOffline);
+		}
 	});
 </script>
 
-{#if $error === 'No internet'}
-	<div class="sync-pill">
-		<ExclamationMarkIcon />
-		No internet
-	</div>
-{:else if $error}
-	<Tooltip content={$error} hover position="bottom" width="20rem">
-		<div class="sync-pill error">
+{#if $error}
+	{#if noInternet}
+		<div class="sync-pill">
 			<ExclamationMarkIcon />
-			An error occurred
+			No internet
 		</div>
-	</Tooltip>
+	{:else}
+		<Tooltip content={$error} hover position="bottom" width="20rem">
+			<div class="sync-pill error">
+				<ExclamationMarkIcon />
+				An error occurred
+			</div>
+		</Tooltip>
+	{/if}
 {:else}
 	<div class="sync-pill green" class:loading={!synced}>
 		{#if synced}
