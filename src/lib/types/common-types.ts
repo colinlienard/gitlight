@@ -28,6 +28,8 @@ export type NotificationIcon =
 	| 'closed-pr'
 	| 'release'
 	| 'discussion'
+	| 'open-discussion'
+	| 'answered-discussion'
 	| 'workflow'
 	| 'workflow-fail'
 	| 'workflow-success'

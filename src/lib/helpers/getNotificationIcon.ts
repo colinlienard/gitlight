@@ -1,4 +1,5 @@
 import {
+	AnsweredDiscussionIcon,
 	ClosedIssueIcon,
 	ClosedPullRequestIcon,
 	CommitIcon,
@@ -26,7 +27,10 @@ export function getNotificationIcon(icon: NotificationIcon) {
 		case 'completed-issue':
 			return CompletedIssueIcon;
 		case 'discussion':
+		case 'open-discussion':
 			return DiscussionIcon;
+		case 'answered-discussion':
+			return AnsweredDiscussionIcon;
 		case 'draft-pr':
 			return DraftPullRequestIcon;
 		case 'merged-pr':

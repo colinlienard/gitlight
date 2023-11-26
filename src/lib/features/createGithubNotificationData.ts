@@ -279,7 +279,7 @@ export async function createGithubNotificationData(
 		case 'Discussion': {
 			const data = await getDiscussionUrl(githubNotification);
 			let { url } = data;
-			const { latestCommentEdge } = data;
+			const { latestCommentEdge, isAnswered } = data;
 			let description: string;
 			let author;
 			if (!latestCommentEdge) {
@@ -300,7 +300,7 @@ export async function createGithubNotificationData(
 				author,
 				description,
 				url,
-				icon: 'discussion',
+				icon: isAnswered ? 'answered-discussion' : 'open-discussion',
 				previously:
 					previous?.description !== description ? previous : previous?.previously || undefined,
 				type: 'discussion'
