@@ -1,3 +1,4 @@
+export { default as AnsweredDiscussionIcon } from './AnsweredDiscussionIcon.svelte';
 export { default as ArrowRightIcon } from './ArrowRightIcon.svelte';
 export { default as ArrowUpIcon } from './ArrowUpIcon.svelte';
 export { default as CheckIcon } from './CheckIcon.svelte';
