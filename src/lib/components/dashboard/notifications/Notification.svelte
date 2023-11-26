@@ -93,7 +93,6 @@
 			}
 
 			(from === 'github' ? githubNotifications : gitlabNotifications).update((previous) =>
-				// @ts-expect-error TODO: bump TypeScript to 5.3
 				previous.map((notification) => {
 					if (notification.id !== id) return notification;
 
