@@ -17,6 +17,8 @@
 		from: 'github' | 'gitlab';
 	}[];
 
+	let canSave = false;
+
 	// Update watched repos
 	$: if (browser && !$loading) {
 		const savedWatchedRepos = storage.get('watched-repos');
@@ -54,6 +56,7 @@
 		);
 
 		$watchedRepos = repos;
+		canSave = true;
 	}
 
 	$: providerView = $settings.providerView;
@@ -116,7 +119,7 @@
 		}));
 
 	// Save watched repos to storage
-	$: if (browser) {
+	$: if (canSave) {
 		storage.set('watched-repos', $watchedRepos);
 	}
 
@@ -165,7 +168,6 @@
 	title="Repositories"
 	description="Repos from where notifications come."
 	bind:items={$watchedRepos}
-	zIndex={2}
 >
 	{#if watchedReposByOwner.length}
 		{#each watchedReposByOwner as { name, avatar, number, active, muted, repos }}

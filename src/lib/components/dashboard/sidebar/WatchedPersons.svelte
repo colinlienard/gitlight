@@ -6,6 +6,8 @@
 	import type { User, WatchedPerson } from '$lib/types';
 	import SidebarSection from './SidebarSection.svelte';
 
+	let canSave = false;
+
 	// Update watched persons
 	$: if (browser && !$loading) {
 		const savedWatchedPersons = storage.get('watched-persons');
@@ -35,6 +37,7 @@
 		);
 
 		$watchedPersons = persons.sort((a, b) => b.number - a.number);
+		canSave = true;
 	}
 
 	function addPerson(
@@ -75,7 +78,7 @@
 	$: botsPresent = displayedPersons.some((person) => person.login.endsWith('[bot]'));
 
 	// Save watched persons to storage
-	$: if (browser) {
+	$: if (canSave) {
 		storage.set('watched-persons', $watchedPersons);
 	}
 

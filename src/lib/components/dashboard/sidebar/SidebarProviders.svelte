@@ -5,8 +5,9 @@
 
 	let line: HTMLDivElement;
 
+	$: providerView = $settings.providerView;
 	$: if (browser && line) {
-		const target = document.querySelector(`#${$settings.providerView}-tab`);
+		const target = document.querySelector(`#${providerView}-tab`);
 		if (target) {
 			const rect = target.getBoundingClientRect();
 			line.setAttribute('style', `width: ${rect.width}px; left: ${rect.left}px`);

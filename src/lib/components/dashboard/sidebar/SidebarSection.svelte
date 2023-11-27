@@ -6,7 +6,6 @@
 	export let title: string;
 	export let description: string;
 	export let actions: TooltipContent = [];
-	export let zIndex = 1;
 	export let first = false;
 
 	$: activeLenght = items.filter((filter) => filter.active).length;
@@ -18,7 +17,7 @@
 	}
 </script>
 
-<div class="section" style:z-index={zIndex} class:first>
+<div class="section" class:first>
 	<div class="row">
 		<h2 class="title">{title}</h2>
 		<Tooltip
@@ -47,7 +46,6 @@
 
 <style lang="scss">
 	.section {
-		position: relative;
 		display: flex;
 		flex-direction: column;
 		padding: 1.5rem 1rem;
@@ -63,7 +61,6 @@
 	}
 
 	.row {
-		/* z-index: 1; */
 		display: flex;
 		flex-direction: row;
 		align-items: center;
