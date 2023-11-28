@@ -1,13 +1,14 @@
 <script lang="ts">
 	import type { ComponentType } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import { theme } from '$lib/stores';
 
 	export let icon: ComponentType;
 	export let text: string | undefined = undefined;
 </script>
 
 <div class="placeholder" in:fade={{ duration: 300 }}>
-	<div class="icon-container">
+	<div class="icon-container {$theme}">
 		<svelte:component this={icon} />
 	</div>
 	<h4 class="title">No notifications to display</h4>
@@ -41,10 +42,17 @@
 
 			&::before {
 				position: absolute;
-				background-image: linear-gradient(transparent, variables.$bg-1);
 				content: '';
 				inset: -1px;
-				opacity: 0.75;
+				opacity: 0.5;
+			}
+
+			&.light::before {
+				background-image: linear-gradient(variables.$bg-1, transparent);
+			}
+
+			&.dark::before {
+				background-image: linear-gradient(transparent, variables.$bg-1);
 			}
 		}
 

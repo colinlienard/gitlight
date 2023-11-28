@@ -12,8 +12,6 @@
 	let unlistenSettings: UnlistenFn = () => null;
 	let unlistenTheme: UnlistenFn = () => null;
 
-	$: isTrayApp = browser && window.__TAURI__ && window.location.pathname === '/tray';
-
 	function scrollToTop() {
 		setTimeout(() => {
 			scrollContainer?.scrollTo({ top: 0 });
@@ -21,7 +19,7 @@
 	}
 
 	onMount(async () => {
-		if (isTrayApp) {
+		if (window.__TAURI__) {
 			window.addEventListener('blur', scrollToTop);
 
 			const [a, b, c] = await Promise.all([
@@ -39,11 +37,16 @@
 			unlistenNotification = a;
 			unlistenSettings = b;
 			unlistenTheme = c;
+
+			const baseTheme = document.documentElement.getAttribute('data-theme');
+			if (baseTheme == 'light' || baseTheme == 'dark') {
+				$theme = baseTheme;
+			}
 		}
 	});
 
 	onDestroy(() => {
-		if (isTrayApp) {
+		if (browser && window.__TAURI__) {
 			window.removeEventListener('blur', scrollToTop);
 
 			unlistenNotification();
