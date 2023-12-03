@@ -12,6 +12,7 @@
 		GithubLoginButton,
 		GitlabLoginButton,
 		GitlabRepos,
+		IconButton,
 		LoadingScreen,
 		Main,
 		Priorities,
@@ -30,7 +31,7 @@
 		storage,
 		type StorageMap
 	} from '$lib/features';
-	import { GithubIcon, GitlabIcon } from '$lib/icons';
+	import { DoubleArrowIcon, GithubIcon, GitlabIcon } from '$lib/icons';
 	import {
 		error,
 		filteredNotifications,
@@ -395,17 +396,20 @@
 		<Banner />
 		<header class="header" data-tauri-drag-region>
 			<div class="wrapper" class:macos={isMacos && $settings.sidebarHidden}>
+				<h1 class="title">Notifications</h1>
+				<SyncPill {synced} />
 				{#if $settings.sidebarHidden}
-					<div transition:slide={{ axis: 'x', duration: 300, easing: cubicInOut }}>
-						<Tooltip content="Show sidebar" position="bottom left" hover>
-							<button class="logo-button" on:click={() => ($settings.sidebarHidden = false)}>
-								<img src="/images/logo.webp" alt="" />
-							</button>
+					<div
+						class="show-sidebar"
+						transition:slide={{ axis: 'x', duration: 300, easing: cubicInOut }}
+					>
+						<Tooltip content="Show sidebar" position="bottom" hover>
+							<IconButton on:click={() => ($settings.sidebarHidden = false)}>
+								<DoubleArrowIcon />
+							</IconButton>
 						</Tooltip>
 					</div>
 				{/if}
-				<h1 class="title">Notifications</h1>
-				<SyncPill {synced} />
 			</div>
 			<div class="settings-wrapper">
 				<DoneModal />
@@ -474,14 +478,15 @@
 				align-items: center;
 				transition: padding variables.$transition;
 
+				.show-sidebar {
+					:global(svg) {
+						rotate: 180deg;
+					}
+				}
+
 				&.macos {
 					padding-left: 4rem;
 				}
-			}
-
-			.logo-button {
-				width: 2rem;
-				margin-right: 1rem;
 			}
 
 			.title {
