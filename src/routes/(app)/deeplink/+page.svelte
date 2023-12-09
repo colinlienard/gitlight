@@ -16,6 +16,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>GitLight</title>
+</svelte:head>
+
 <section class="container">
 	<AnimatedLogo />
 	<div class="text-container">

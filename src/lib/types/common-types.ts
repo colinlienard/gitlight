@@ -107,7 +107,7 @@ export type WatchedRepo = {
 
 export type WatchedPerson = {
 	login: string;
-	avatar: string;
+	avatar?: string;
 	number: number;
 	active: boolean;
 	muted: boolean;

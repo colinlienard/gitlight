@@ -9,13 +9,10 @@
 	export let position: 'top' | 'bottom' = 'bottom';
 	export let disabled = false;
 
-	export let open = false;
-
 	$: tooltipOptions = options.map((option) => ({
 		text: option.text,
 		onClick() {
 			value = option.value;
-			open = false;
 		}
 	}));
 
@@ -26,7 +23,7 @@
 	{#if label}
 		<p class="label">{label}</p>
 	{/if}
-	<Tooltip content={tooltipOptions} width="100%" {position} bind:open>
+	<Tooltip content={tooltipOptions} width="100%" {position}>
 		<button class="input" class:empty={!value} class:focused={false} type="button">
 			{#if value}
 				{displayValue}

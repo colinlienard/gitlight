@@ -23,6 +23,7 @@ export { default as MacosIcon } from './MacosIcon.svelte';
 export { default as MergedPullRequestIcon } from './MergedPullRequestIcon.svelte';
 export { default as OpenIssueIcon } from './OpenIssueIcon.svelte';
 export { default as OpenPullRequestIcon } from './OpenPullRequestIcon.svelte';
+export { default as PersonIcon } from './PersonIcon.svelte';
 export { default as PinIcon } from './PinIcon.svelte';
 export { default as PlusIcon } from './PlusIcon.svelte';
 export { default as PriorityDownIcon } from './PriorityDownIcon.svelte';
