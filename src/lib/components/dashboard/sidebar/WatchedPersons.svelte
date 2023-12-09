@@ -72,10 +72,9 @@
 		providerView === 'both'
 			? $watchedPersons
 			: $watchedPersons.filter((person) => person.from === providerView);
-	$: botsHidden = displayedPersons.some(
-		(person) => person.login.endsWith('[bot]') && person.active
-	);
-	$: botsPresent = displayedPersons.some((person) => person.login.endsWith('[bot]'));
+	$: botsHidden = displayedPersons.some((person) => person.bot && person.active);
+	$: botsMuted = displayedPersons.every((person) => (person.bot ? person.muted : true));
+	$: botsPresent = displayedPersons.some((person) => person.bot);
 
 	// Save watched persons to storage
 	$: if (canSave) {
@@ -115,6 +114,10 @@
 			person.bot ? { ...person, active } : person
 		);
 	}
+
+	function handleMuteBots(muted: boolean) {
+		$watchedPersons = $watchedPersons.map((person) => (person.bot ? { ...person, muted } : person));
+	}
 </script>
 
 <SidebarSection
@@ -122,7 +125,8 @@
 	description="Perons who created PRs and issues, and authors of notifications."
 	bind:items={$watchedPersons}
 	actions={[
-		{ text: 'Show bots', active: botsHidden, onToggle: handleHideBots, disabled: !botsPresent }
+		{ text: 'Show bots', active: botsHidden, onToggle: handleHideBots, disabled: !botsPresent },
+		{ text: 'Mute bots', active: botsMuted, onToggle: handleMuteBots, disabled: !botsPresent }
 	]}
 >
 	{#if displayedPersons.length}
