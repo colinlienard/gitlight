@@ -29,13 +29,13 @@ export async function GET({ url }) {
 			const params = new URLSearchParams();
 			params.append('github_access_token', access_token);
 			if (searchParams.has('from_app')) {
-				throw redirect(302, `/deeplink?${params.toString()}`);
+				redirect(302, `/deeplink?${params.toString()}`);
 			}
-			throw redirect(302, `/dashboard?${params.toString()}`);
+			redirect(302, `/dashboard?${params.toString()}`);
 		}
 
-		throw redirect(302, '/');
+		redirect(302, '/');
 	}
 
-	throw redirect(302, '/');
+	redirect(302, '/');
 }

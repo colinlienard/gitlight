@@ -10,5 +10,5 @@ export async function GET({ url }) {
 		`${url.origin}/auth/github/callback${url.search}`
 	);
 	githubLoginUrl.searchParams.set('state', AUTH_SECRET);
-	throw redirect(302, githubLoginUrl.toString());
+	redirect(302, githubLoginUrl.toString());
 }

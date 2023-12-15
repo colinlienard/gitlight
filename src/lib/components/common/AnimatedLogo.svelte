@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { Rive } from '@rive-app/canvas';
+	import * as rive from '@rive-app/canvas';
 
 	let canvas: HTMLCanvasElement;
 
 	$: if (canvas) {
-		new Rive({
+		new rive.Rive({
 			src: '/rive/logo.riv',
 			canvas,
 			autoplay: true

@@ -109,9 +109,9 @@ export async function load({ url }) {
 	// Handle redirects
 	const protectedRoute = ['/dashboard', '/deeplink'].includes(url.pathname);
 	if (protectedRoute && !session) {
-		throw redirect(302, '/login');
+		redirect(302, '/login');
 	} else if (!protectedRoute && session) {
-		throw redirect(302, '/dashboard');
+		redirect(302, '/dashboard');
 	}
 
 	return { session };
