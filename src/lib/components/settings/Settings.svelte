@@ -44,7 +44,7 @@
 							}
 						}
 					}
-			  ]
+				]
 			: []),
 		...(gitlabUser ? [{ name: 'GitLab settings', component: GitlabSettings }] : []),
 		{ name: 'Accounts', component: Accounts },
