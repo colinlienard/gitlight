@@ -131,7 +131,7 @@ export async function createGithubNotificationData(
 							login: closed_by.login,
 							avatar: closed_by.avatar_url,
 							bot: closed_by.type === 'Bot'
-					  }
+						}
 					: undefined;
 				description = '*closed* this issue';
 			} else if (comments) {
@@ -208,7 +208,7 @@ export async function createGithubNotificationData(
 							login: merged_by.login,
 							avatar: merged_by.avatar_url,
 							bot: merged_by.type === 'Bot'
-					  }
+						}
 					: { login: user.login, avatar: user.avatar_url, bot: user.type === 'Bot' };
 				description = `*${merged_by ? 'merged' : 'closed'}* this pull request`;
 			} else if (review_comments || comments || commits) {
@@ -416,7 +416,7 @@ async function getLatestCommit(
 				login: commit.author.login,
 				avatar: commit.author.avatar_url,
 				bot: commit.author.type === 'Bot'
-		  }
+			}
 		: { login: commit.commit.author.name };
 	const description = `*committed*: _${commit.commit.message}_`;
 	return { author, description, time: commit.commit.author.date };

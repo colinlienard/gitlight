@@ -11,5 +11,5 @@ export async function GET({ url }) {
 	);
 	gitlabLoginUrl.searchParams.set('state', AUTH_SECRET);
 	gitlabLoginUrl.searchParams.set('response_type', 'code');
-	throw redirect(302, gitlabLoginUrl.toString());
+	redirect(302, gitlabLoginUrl.toString());
 }

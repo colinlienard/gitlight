@@ -20,7 +20,7 @@
 		prioritySorting
 			? [...$filteredNotifications].sort(
 					(a, b) => (b.priority?.value || 0) - (a.priority?.value || 0)
-			  )
+				)
 			: $filteredNotifications
 	).filter((item) => item.status !== 'done');
 

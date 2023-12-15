@@ -11,16 +11,20 @@ export async function GET({ params }) {
 
 	switch (params.os) {
 		case 'apple-silicon':
-			throw redirect(302, await getDownloadUrl('aarch64.dmg'));
+			redirect(302, await getDownloadUrl('aarch64.dmg'));
+			break;
 
 		case 'mac-intel':
-			throw redirect(302, await getDownloadUrl('x64.dmg'));
+			redirect(302, await getDownloadUrl('x64.dmg'));
+			break;
 
 		case 'windows':
-			throw redirect(302, await getDownloadUrl('.msi'));
+			redirect(302, await getDownloadUrl('.msi'));
+			break;
 
 		case 'linux':
-			throw redirect(302, await getDownloadUrl('.AppImage'));
+			redirect(302, await getDownloadUrl('.AppImage'));
+			break;
 
 		default:
 			return new Response('Not found', { status: 404 });

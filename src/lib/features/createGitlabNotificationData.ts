@@ -278,7 +278,7 @@ export async function createGitlabNotificationData(
 						? 'issues'
 						: 'merge_requests'
 				}/${iid}/notes`
-		  )
+			)
 		: undefined;
 
 	// Get if user is assigned, mentioned or review requested

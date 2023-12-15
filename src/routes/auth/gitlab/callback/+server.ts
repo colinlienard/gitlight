@@ -34,13 +34,13 @@ export async function GET({ url }) {
 			params.append('gitlab_refresh_token', refresh_token);
 			params.append('gitlab_expires_in', `${(created_at + expires_in) * 1000}`);
 			if (searchParams.has('from_app')) {
-				throw redirect(302, `/deeplink?${params.toString()}`);
+				redirect(302, `/deeplink?${params.toString()}`);
 			}
-			throw redirect(302, `/dashboard?${params.toString()}`);
+			redirect(302, `/dashboard?${params.toString()}`);
 		}
 
-		throw redirect(302, '/');
+		redirect(302, '/');
 	}
 
-	throw redirect(302, '/');
+	redirect(302, '/');
 }
