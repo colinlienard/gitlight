@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { AnimatedLogo } from '$lib/components';
+	import { AnimatedLogo, DragRegion } from '$lib/components';
 </script>
 
-<section class="container" data-tauri-drag-region>
+<DragRegion />
+<section class="container">
 	<AnimatedLogo />
 	<div class="text-container">
 		<h2 class="title">Loading your data...</h2>

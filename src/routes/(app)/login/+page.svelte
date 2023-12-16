@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { Footer, GithubLoginButton, GitlabLoginButton, IconButton } from '$lib/components';
+	import { DragRegion, GithubLoginButton, GitlabLoginButton, IconButton } from '$lib/components';
 	import { ArrowRightIcon, GithubIcon, GitlabIcon } from '$lib/icons';
 
 	$: onTauriApp = browser && !!window.__TAURI__;
@@ -10,8 +10,8 @@
 	<title>GitLight • Log in</title>
 </svelte:head>
 
+<DragRegion />
 <div class="wrapper">
-	<img src="/images/large-light.webp" alt="" class="background-image" width="1600" height="384" />
 	<main class="main">
 		{#if !onTauriApp}
 			<a href="/" class="back-button">
@@ -32,7 +32,6 @@
 			Log in to GitLab
 		</GitlabLoginButton>
 	</main>
-	<Footer />
 </div>
 
 <style lang="scss">
@@ -45,18 +44,6 @@
 		align-items: center;
 		justify-content: center;
 		padding: 0 2rem;
-	}
-
-	.background-image {
-		position: absolute;
-		z-index: -1;
-		top: 0;
-
-		@include screens.mobile {
-			width: 40rem;
-			max-width: unset;
-			height: auto;
-		}
 	}
 
 	.main {

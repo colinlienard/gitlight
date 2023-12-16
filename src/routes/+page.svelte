@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { Button, DownloadButton, FakeNotifications, Footer } from '$lib/components';
+	import { Button, DownloadButton, FakeNotifications } from '$lib/components';
 	import {
 		ArrowRightIcon,
 		GithubIcon,
 		HeartIcon,
 		LightningIcon,
-		Logo,
-		SparklesIcon
+		SparklesIcon,
+		XIcon
 	} from '$lib/icons';
 </script>
 
@@ -15,20 +15,24 @@
 </svelte:head>
 
 <div class="wrapper">
-	<img src="/images/large-light.webp" alt="" class="background-image" width="1600" height="384" />
 	<header class="header">
 		<div class="title-container">
-			<Logo />
+			<img class="logo" src="/images/logo.webp" alt="" />
 			<h1 class="title"><strong>GitLight</strong></h1>
 		</div>
-		<a
-			href="https://github.com/ColinLienard/gitlight"
-			target="_blank"
-			rel="noreferrer"
-			class="icon-link"
-		>
-			<GithubIcon />
-		</a>
+		<div class="links">
+			<a href="https://x.com/colinlienard" target="_blank" rel="noreferrer" class="icon-link">
+				<XIcon />
+			</a>
+			<a
+				href="https://github.com/colinlienard/gitlight"
+				target="_blank"
+				rel="noreferrer"
+				class="icon-link"
+			>
+				<GithubIcon />
+			</a>
+		</div>
 	</header>
 	<main class="main">
 		<div class="hero-container">
@@ -68,7 +72,6 @@
 		</ul>
 	</main>
 	<FakeNotifications />
-	<Footer />
 </div>
 
 <style lang="scss">
@@ -103,17 +106,6 @@
 		}
 	}
 
-	.background-image {
-		position: absolute;
-		z-index: -1;
-		max-width: unset;
-
-		@include screens.mobile {
-			width: 40rem;
-			height: auto;
-		}
-	}
-
 	.header {
 		display: flex;
 		width: min(64rem, 100%);
@@ -126,7 +118,7 @@
 			align-items: center;
 			gap: 0.5rem;
 
-			:global(svg) {
+			.logo {
 				height: 2rem;
 			}
 
@@ -135,15 +127,21 @@
 			}
 		}
 
-		.icon-link {
-			transition: opacity variables.$transition;
+		.links {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
 
-			&:hover {
-				opacity: 0.75;
-			}
+			.icon-link {
+				transition: opacity variables.$transition;
 
-			:global(svg) {
-				height: 1.5rem;
+				&:hover {
+					opacity: 0.75;
+				}
+
+				:global(svg) {
+					height: 1.5rem;
+				}
 			}
 		}
 	}
