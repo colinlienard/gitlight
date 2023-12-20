@@ -1,13 +1,28 @@
 <script lang="ts">
-	import { Button, DownloadButton, FakeNotifications, Footer } from '$lib/components';
+	import { onDestroy, onMount } from 'svelte';
+	import { browser } from '$app/environment';
+	import { Button, DownloadButton } from '$lib/components';
 	import {
 		ArrowRightIcon,
 		GithubIcon,
 		HeartIcon,
 		LightningIcon,
-		Logo,
-		SparklesIcon
+		SparklesIcon,
+		XIcon
 	} from '$lib/icons';
+
+	function onThemeChange({ matches }: MediaQueryListEvent) {
+		document.documentElement.setAttribute('data-theme', matches ? 'dark' : 'light');
+	}
+
+	onMount(() => {
+		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', onThemeChange);
+	});
+
+	onDestroy(() => {
+		if (!browser) return;
+		window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', onThemeChange);
+	});
 </script>
 
 <svelte:head>
@@ -15,20 +30,24 @@
 </svelte:head>
 
 <div class="wrapper">
-	<img src="/images/large-light.webp" alt="" class="background-image" width="1600" height="384" />
 	<header class="header">
 		<div class="title-container">
-			<Logo />
+			<img class="logo" src="/images/logo.webp" alt="" />
 			<h1 class="title"><strong>GitLight</strong></h1>
 		</div>
-		<a
-			href="https://github.com/ColinLienard/gitlight"
-			target="_blank"
-			rel="noreferrer"
-			class="icon-link"
-		>
-			<GithubIcon />
-		</a>
+		<div class="links">
+			<a href="https://x.com/colinlienard" target="_blank" rel="noreferrer" class="icon-link">
+				<XIcon />
+			</a>
+			<a
+				href="https://github.com/colinlienard/gitlight"
+				target="_blank"
+				rel="noreferrer"
+				class="icon-link"
+			>
+				<GithubIcon />
+			</a>
+		</div>
 	</header>
 	<main class="main">
 		<div class="hero-container">
@@ -66,9 +85,13 @@
 				<p class="description">Built with <strong>Tauri</strong> and <strong>SvelteKit</strong>.</p>
 			</li>
 		</ul>
+		<article class="image-container">
+			<picture class="image">
+				<source srcset="/images/gitlight-dark.webp" media="(prefers-color-scheme: dark)" />
+				<img src="/images/gitlight-light.webp" alt="" />
+			</picture>
+		</article>
 	</main>
-	<FakeNotifications />
-	<Footer />
 </div>
 
 <style lang="scss">
@@ -92,25 +115,15 @@
 	.wrapper {
 		position: relative;
 		display: flex;
-		min-height: 100vh;
+		overflow: hidden;
+		height: 100vh;
 		flex-direction: column;
 		align-items: center;
 		padding: 0 2rem;
-		overflow-x: hidden;
 
 		@include screens.mobile {
-			padding-bottom: 6rem;
-		}
-	}
-
-	.background-image {
-		position: absolute;
-		z-index: -1;
-		max-width: unset;
-
-		@include screens.mobile {
-			width: 40rem;
-			height: auto;
+			height: 100svh;
+			padding: 0 1.5rem 2rem;
 		}
 	}
 
@@ -126,7 +139,7 @@
 			align-items: center;
 			gap: 0.5rem;
 
-			:global(svg) {
+			.logo {
 				height: 2rem;
 			}
 
@@ -135,15 +148,21 @@
 			}
 		}
 
-		.icon-link {
-			transition: opacity variables.$transition;
+		.links {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
 
-			&:hover {
-				opacity: 0.75;
-			}
+			.icon-link {
+				transition: opacity variables.$transition;
 
-			:global(svg) {
-				height: 1.5rem;
+				&:hover {
+					opacity: 0.75;
+				}
+
+				:global(svg) {
+					height: 1.5rem;
+				}
 			}
 		}
 	}
@@ -156,12 +175,16 @@
 
 		@include screens.mobile {
 			width: 100vw;
-			padding: 0 2rem;
+			padding: 0 1.5rem;
 			margin-top: 4rem;
 		}
 
 		@include screens.desktop {
-			margin-top: auto;
+			padding-top: 10vh;
+
+			@media (height >= 1000px) {
+				padding-top: 16vh;
+			}
 		}
 
 		.hero-container {
@@ -176,7 +199,7 @@
 				-webkit-background-clip: text;
 				-moz-background-clip: text;
 				background-clip: text;
-				background-image: linear-gradient(variables.$bg-6, transparent 150%);
+				background-image: linear-gradient(variables.$bg-6, transparent 175%);
 				font-size: 2.5rem;
 				text-align: center;
 				-webkit-text-fill-color: transparent;
@@ -236,6 +259,62 @@
 				.description {
 					color: variables.$bg-5;
 				}
+			}
+		}
+
+		.image-container {
+			@include screens.mobile {
+				display: none;
+			}
+
+			@keyframes slide-3d {
+				from {
+					opacity: 0;
+					transform: perspective(500px) rotate3d(1, 0, 0, 10deg);
+					translate: 0 4rem;
+				}
+
+				to {
+					opacity: 1;
+					transform: perspective(500px) rotate3d(1, 0, 0, 2deg);
+					translate: 0;
+				}
+			}
+
+			position: relative;
+			overflow: hidden;
+			border-radius: 0.8rem;
+			margin-top: 2rem;
+			animation: slide-3d 1.5s cubic-bezier(0.8, 0, 0.2, 1) both;
+			box-shadow:
+				0 0 8rem rgba(variables.$blue, 0.25),
+				0 0 2rem rgba(variables.$light-blue, 0.25);
+
+			@media (height >= 1000px) {
+				margin-top: 4rem;
+			}
+
+			&::before {
+				@keyframes reflect-appear {
+					0% {
+						opacity: 0;
+						translate: -40% 90%;
+					}
+
+					100% {
+						opacity: 1;
+						translate: -30% 100%;
+					}
+				}
+
+				position: absolute;
+				width: 150%;
+				height: 20rem;
+				animation: reflect-appear 1.5s cubic-bezier(0.8, 0, 0.2, 1) both;
+				background-image: linear-gradient(transparent, rgba(white, 0.03));
+				content: '';
+				inset: 0;
+				rotate: 135deg;
 			}
 		}
 	}

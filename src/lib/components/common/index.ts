@@ -1,5 +1,6 @@
 export { default as AnimatedLogo } from './AnimatedLogo.svelte';
 export { default as Button } from './Button.svelte';
+export { default as DragRegion } from './DragRegion.svelte';
 export { default as IconButton } from './IconButton.svelte';
 export { default as InlineSelect } from './InlineSelect.svelte';
 export { default as Input } from './Input.svelte';
