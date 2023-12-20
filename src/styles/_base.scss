@@ -32,4 +32,8 @@ body {
 	background-color: variables.$bg-1;
 	color: variables.$bg-6;
 	font-family: Inter, sans-serif;
+
+	@include screens.mobile {
+		min-height: 100svh;
+	}
 }

@@ -28,7 +28,6 @@
 
 	export let data: NotificationData;
 	export let dragged = false;
-	export let interactive = true;
 
 	let {
 		id,
@@ -188,7 +187,7 @@
 				<span>{priority.label}</span>
 			</div>
 		{/if}
-		{#if !dragged && interactive}
+		{#if !dragged}
 			<div
 				class="over"
 				class:large-shadow={hoverAction}
