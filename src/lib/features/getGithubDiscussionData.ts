@@ -19,7 +19,7 @@ export interface DiscussionEdge {
 		title: string;
 		url: string;
 		isAnswered: boolean;
-		comments: {
+		comments?: {
 			edges: DiscussionCommentEdge[];
 		};
 	};
@@ -65,11 +65,11 @@ export const getLatestDiscussionCommentEdge = (comments: DiscussionCommentEdge[]
 		.concat([comments.at(-1) || ({} as DiscussionCommentEdge)])
 		.reduce((a, b) => (a.node.createdAt > b.node.createdAt ? a : b));
 
-export async function getDiscussionUrl(notification: GithubNotification): Promise<{
+export async function getDiscussion(notification: GithubNotification): Promise<{
 	url: string;
 	latestCommentEdge: DiscussionSubCommentEdge | undefined;
 	isAnswered: boolean;
-}> {
+} | null> {
 	// Get Personal Access Tokens
 	let pat: string | undefined;
 	settings.subscribe(({ pats }) => {
@@ -140,7 +140,8 @@ export async function getDiscussionUrl(notification: GithubNotification): Promis
 		edges = edges.filter((edge) => edge.node.viewerSubscription === 'SUBSCRIBED');
 
 	const node = edges[0]?.node;
-	const comments = node.comments.edges;
+	if (!node) return null;
+	const comments = node?.comments?.edges;
 
 	let latestCommentEdge: DiscussionSubCommentEdge | undefined;
 	if (comments?.length) {

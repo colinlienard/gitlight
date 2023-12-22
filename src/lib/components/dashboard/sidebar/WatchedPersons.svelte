@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { storage } from '$lib/features';
-	import { MuteIcon, MutedIcon } from '$lib/icons';
+	import { MuteIcon, MutedIcon, PersonIcon } from '$lib/icons';
 	import { globalNotifications, loading, settings, watchedPersons } from '$lib/stores';
 	import type { User, WatchedPerson } from '$lib/types';
 	import SidebarSection from './SidebarSection.svelte';
@@ -132,7 +132,13 @@
 	{#if displayedPersons.length}
 		{#each displayedPersons as { login, avatar, active, muted, number }}
 			<button class="wrapper" class:active on:click={handleToggle(login)}>
-				<img class="image" src={avatar} alt="" />
+				{#if avatar}
+					<img class="image" src={avatar} alt="" />
+				{:else}
+					<div class="image placeholder">
+						<PersonIcon />
+					</div>
+				{/if}
 				<h3 class="name">{login}</h3>
 				{#if number}
 					<span class="number">{number}</span>
@@ -171,6 +177,18 @@
 			height: 1.5rem;
 			flex: 0 0 1.5rem;
 			border-radius: 50%;
+
+			&.placeholder {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background-color: variables.$bg-3;
+
+				:global(svg) {
+					height: 1.2rem;
+					color: variables.$bg-5;
+				}
+			}
 		}
 
 		.number {

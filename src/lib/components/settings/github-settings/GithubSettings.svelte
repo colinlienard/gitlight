@@ -39,12 +39,6 @@
 	If you want to receive workflow related notifications, set <strong>Actions</strong> to
 	<strong>Notify me: on GitHub</strong>.
 </p>
-<p class="list-item">
-	If you want to receive Dependabot related notifications, set <strong>
-		Dependabot alerts: New vulnerabilities
-	</strong>
-	to <strong>Notify me: on GitHub</strong>.
-</p>
 <span />
 <h3>Organization access</h3>
 <p class="text">

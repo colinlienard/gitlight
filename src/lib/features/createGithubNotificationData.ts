@@ -15,7 +15,7 @@ import type {
 	User
 } from '$lib/types';
 import { fetchGithub } from './fetchGithub';
-import { getDiscussionUrl } from './getGithubDiscussionData';
+import { getDiscussion } from './getGithubDiscussionData';
 import { storage } from './storage';
 import { getIssueIcon, getPullRequestIcon } from '../helpers/getIcon';
 import { cleanSpecifier, prioritiesLabel } from '../helpers/priorities';
@@ -277,7 +277,8 @@ export async function createGithubNotificationData(
 		}
 
 		case 'Discussion': {
-			const data = await getDiscussionUrl(githubNotification);
+			const data = await getDiscussion(githubNotification);
+			if (!data) return null;
 			let { url } = data;
 			const { latestCommentEdge, isAnswered } = data;
 			let description: string;
@@ -323,10 +324,12 @@ export async function createGithubNotificationData(
 
 			if (subject.title.includes('succeeded')) {
 				value = { ...data, icon: 'workflow-success' };
+				break;
 			}
 
 			if (subject.title.includes('failed')) {
 				value = { ...data, icon: 'workflow-fail' };
+				break;
 			}
 
 			value = { ...data, icon: 'closed-issue' };
