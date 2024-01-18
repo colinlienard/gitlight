@@ -178,7 +178,7 @@
 				.map((item) => {
 					if (notificationIsMuted(item, persons, repos)) {
 						const previous = savedNotifications.find((n) => n.id === item.id);
-						return { ...item, status: getNotificationStatus(item, previous) };
+						return { ...item, status: getNotificationStatus(firstFetch, item, previous) };
 					}
 					return item;
 				});
@@ -283,7 +283,7 @@
 				.map((item) => {
 					if (notificationIsMuted(item, persons, repos)) {
 						const previous = savedNotifications.find((n) => n.id === item.id);
-						return { ...item, status: getNotificationStatus(item, previous) };
+						return { ...item, status: getNotificationStatus(firstFetch, item, previous) };
 					}
 					return item;
 				});
@@ -309,12 +309,14 @@
 	}
 
 	function getNotificationStatus(
+		firstFetch: boolean,
 		notification: NotificationData,
 		previous?: SavedNotifications[number]
 	) {
 		// If the notification is a pull/merge request or an issue and is closed, and the notification is not pinned, mark it as done
 		if (
 			$settings.markClosedAsDone &&
+			!firstFetch &&
 			notification.status.includes('read') &&
 			(notification.type === 'pr' || notification.type === 'issue') &&
 			!notification.opened
