@@ -31,6 +31,10 @@
 	label="Mark a notification as read when opening in the browser"
 	bind:active={$settings.readWhenOpenInBrowser}
 />
+<Switch
+	label="Mark closed PRs and issues as done when receiving them"
+	bind:active={$settings.markClosedAsDone}
+/>
 <Switch label="Hide closed PRs and issues" bind:active={$settings.showOnlyOpen} />
 <span />
 <h3>Interface</h3>

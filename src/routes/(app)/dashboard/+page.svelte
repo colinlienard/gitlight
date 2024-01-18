@@ -45,7 +45,8 @@
 		GithubNotification,
 		GitlabEvent,
 		GitlabEventWithRepoData,
-		NotificationData
+		NotificationData,
+		SavedNotifications
 	} from '$lib/types';
 
 	const githubUser = $page.data.session?.githubUser;
@@ -177,7 +178,7 @@
 				.map((item) => {
 					if (notificationIsMuted(item, persons, repos)) {
 						const previous = savedNotifications.find((n) => n.id === item.id);
-						return { ...item, status: previous ? previous.status : 'read' };
+						return { ...item, status: getNotificationStatus(item, previous) };
 					}
 					return item;
 				});
@@ -282,7 +283,7 @@
 				.map((item) => {
 					if (notificationIsMuted(item, persons, repos)) {
 						const previous = savedNotifications.find((n) => n.id === item.id);
-						return { ...item, status: previous ? previous.status : 'read' };
+						return { ...item, status: getNotificationStatus(item, previous) };
 					}
 					return item;
 				});
@@ -305,6 +306,23 @@
 				? !item.notInvolved
 				: true
 		);
+	}
+
+	function getNotificationStatus(
+		notification: NotificationData,
+		previous?: SavedNotifications[number]
+	) {
+		// If the notification is a pull/merge request or an issue and is closed, and the notification is not pinned, mark it as done
+		if (
+			$settings.markClosedAsDone &&
+			notification.status.includes('read') &&
+			(notification.type === 'pr' || notification.type === 'issue') &&
+			!notification.opened
+		) {
+			return 'done';
+		}
+		if (previous) return previous.status;
+		return 'read';
 	}
 
 	function updateTrayTitle() {

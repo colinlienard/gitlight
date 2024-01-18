@@ -45,7 +45,8 @@ export const settings = writable<Settings>({
 	viewMode: 'Kanban',
 	activeTray: true,
 	gitlabRepos: [],
-	gitlabOnlyInvolved: true
+	gitlabOnlyInvolved: true,
+	markClosedAsDone: false
 });
 
 export const theme = writable<'light' | 'dark'>('light');
