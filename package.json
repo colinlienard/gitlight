@@ -24,7 +24,7 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-static": "^3.0.1",
-		"@sveltejs/adapter-vercel": "^4.0.5",
+		"@sveltejs/adapter-vercel": "^5.1.0",
 		"@sveltejs/kit": "^2.3.5",
 		"@sveltejs/vite-plugin-svelte": "^3.0.1",
 		"@tauri-apps/cli": "^1.5.9",
