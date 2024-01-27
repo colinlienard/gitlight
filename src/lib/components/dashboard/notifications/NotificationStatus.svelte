@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { clearInterval, setInterval } from 'worker-timers';
 	import { browser } from '$app/environment';
 	import { formatRelativeDate } from '$lib/helpers';
@@ -11,15 +11,18 @@
 
 	let { time, status } = data;
 	let displayTime = formatRelativeDate(time);
+	let interval: ReturnType<typeof setInterval>;
 
 	$: isTrayApp = browser && window.__TAURI__ && window.location.pathname === '/tray';
 
-	const interval = setInterval(() => {
-		displayTime = formatRelativeDate(time);
-	}, 60000);
+	onMount(() => {
+		interval = setInterval(() => {
+			displayTime = formatRelativeDate(time);
+		}, 60000);
+	});
 
 	onDestroy(() => {
-		clearInterval(interval);
+		if (browser) clearInterval(interval);
 	});
 </script>
 

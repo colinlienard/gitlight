@@ -54,12 +54,9 @@
 	const gitlabUser = $page.data.session?.gitlabUser;
 
 	let synced = false;
-	let mounted = false;
 	let isMacos = false;
 
-	let interval = setInterval(() => {
-		fetchAll();
-	}, 60000);
+	let interval: ReturnType<typeof setInterval>;
 
 	function notificationIsMuted(
 		{ author, creator, repository, muted }: NotificationData,
@@ -340,7 +337,7 @@
 		}
 	}
 
-	$: if (mounted && $githubNotifications.length) {
+	$: if (browser && $githubNotifications.length) {
 		// Save notifications to storage
 		const toSave = $githubNotifications.map(
 			({ id, description, author, status, muted, time, previously }) => ({
@@ -365,7 +362,7 @@
 		setTimeout(updateTrayTitle, 10);
 	}
 
-	$: if (mounted && $gitlabNotifications.length) {
+	$: if (browser && $gitlabNotifications.length) {
 		// Save notifications to storage
 		const toSave = $gitlabNotifications.map(
 			({ id, description, author, status, muted, time, previously }) => ({
@@ -382,8 +379,6 @@
 	}
 
 	onMount(async () => {
-		mounted = true;
-
 		window.addEventListener('refetch', refetch);
 
 		if (window.__TAURI__) {
@@ -394,14 +389,18 @@
 
 		await fetchAll();
 		$loading = false;
+
+		interval = setInterval(() => {
+			fetchAll();
+		}, 60000);
 	});
 
 	onDestroy(() => {
-		if (mounted) {
+		if (browser) {
+			clearInterval(interval);
+
 			window.removeEventListener('refetch', refetch);
 		}
-
-		clearInterval(interval);
 	});
 </script>
 

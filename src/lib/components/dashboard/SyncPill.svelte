@@ -12,13 +12,15 @@
 	let interval: ReturnType<typeof setInterval>;
 	let noInternet = false;
 
-	$: if (synced && !syncTime) {
+	$: if (!browser) {
+		// Do not run web worker intervals in SSR
+	} else if (synced && !syncTime) {
 		interval = setInterval(() => {
 			syncTime += 1;
 		}, 1000);
 	} else if (!synced) {
 		syncTime = 0;
-		clearInterval(interval);
+		interval && clearInterval(interval);
 	}
 
 	function handleOnline() {
@@ -35,8 +37,9 @@
 	});
 
 	onDestroy(() => {
-		clearInterval(interval);
 		if (browser) {
+			clearInterval(interval);
+
 			window.removeEventListener('online', handleOnline);
 			window.removeEventListener('offline', handleOffline);
 		}
