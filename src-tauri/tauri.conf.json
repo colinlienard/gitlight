@@ -92,6 +92,7 @@
 		],
 		"systemTray": {
 			"iconPath": "icons/tray-base.png",
+      "iconAsTemplate": true,
       "menuOnLeftClick": false
 		}
 	}
