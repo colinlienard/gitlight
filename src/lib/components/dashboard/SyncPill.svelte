@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
+	import { clearInterval, setInterval } from 'worker-timers';
 	import { browser } from '$app/environment';
 	import { Tooltip } from '$lib/components';
 	import { ExclamationMarkIcon, RefreshIcon } from '$lib/icons';

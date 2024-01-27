@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
+	import { clearInterval, setInterval } from 'worker-timers';
 	import { browser } from '$app/environment';
 	import { formatRelativeDate } from '$lib/helpers';
 	import { PinIcon } from '$lib/icons';

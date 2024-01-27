@@ -4,6 +4,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { cubicInOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
+	import { clearInterval, setInterval } from 'worker-timers';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import {

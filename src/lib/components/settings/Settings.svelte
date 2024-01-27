@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { invoke } from '@tauri-apps/api/tauri';
 	import { onDestroy, onMount, type ComponentType, SvelteComponent } from 'svelte';
+	import { clearInterval, setInterval } from 'worker-timers';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { IconButton, Modal, ScrollbarContainer, Tooltip } from '$lib/components';
