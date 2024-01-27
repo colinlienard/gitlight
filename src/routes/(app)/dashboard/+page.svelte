@@ -312,12 +312,14 @@
 		notification: NotificationData,
 		previous?: SavedNotifications[number]
 	) {
-		// If the notification is a pull/merge request or an issue and is closed, and the notification is not pinned, mark it as done
+		// If the notification is a pull/merge request or an issue and is closed, and the notification is not pinned,
+		// and the notification is not already marked as done, mark it as done
 		if (
 			$settings.markClosedAsDone &&
 			notification.status.includes('read') &&
 			(notification.type === 'pr' || notification.type === 'issue') &&
-			!notification.opened
+			!notification.opened &&
+			previous?.status !== 'done'
 		) {
 			console.log('marking as done');
 
