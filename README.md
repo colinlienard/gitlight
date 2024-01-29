@@ -53,9 +53,6 @@ GitHub & GitLab notifications on your desktop • [gitlight.app](https://gitligh
 
 Better GitHub and/or GitLab notifications. Available on **MacOS**, **Windows**, **Linux** and in the **browser**. Free and open-source.
 
-> [!IMPORTANT]  
-> GitLight is currently in development so bugs may be present
-
 ## Features
 
 - Get push notifications
