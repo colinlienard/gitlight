@@ -45,7 +45,8 @@
 		GithubNotification,
 		GitlabEvent,
 		GitlabEventWithRepoData,
-		NotificationData
+		NotificationData,
+		SavedNotifications
 	} from '$lib/types';
 
 	const githubUser = $page.data.session?.githubUser;
@@ -175,8 +176,11 @@
 				.filter((item): item is NotificationData => !!item)
 				// If the notification is muted, do not update its status
 				.map((item) => {
+					const previous = savedNotifications.find((n) => n.id === item.id);
+					if (shouldNotificationBeDone(item, previous)) {
+						return { ...item, status: 'done' };
+					}
 					if (notificationIsMuted(item, persons, repos)) {
-						const previous = savedNotifications.find((n) => n.id === item.id);
 						return { ...item, status: previous ? previous.status : 'read' };
 					}
 					return item;
@@ -278,10 +282,12 @@
 				)
 			)
 				.filter((item): item is NotificationData => !!item)
-				// If the notification is muted, do not update its status
 				.map((item) => {
+					const previous = savedNotifications.find((n) => n.id === item.id);
+					if (shouldNotificationBeDone(item, previous)) {
+						return { ...item, status: 'done' };
+					}
 					if (notificationIsMuted(item, persons, repos)) {
-						const previous = savedNotifications.find((n) => n.id === item.id);
 						return { ...item, status: previous ? previous.status : 'read' };
 					}
 					return item;
@@ -304,6 +310,21 @@
 			!notificationIsMuted(item, persons, repos) && $settings.gitlabOnlyInvolved
 				? !item.notInvolved
 				: true
+		);
+	}
+
+	function shouldNotificationBeDone(
+		notification: NotificationData,
+		previous?: SavedNotifications[number]
+	) {
+		// If the notification is a pull/merge request or an issue and is closed, and the notification is not pinned,
+		// and the notification is not already marked as done, mark it as done
+		return (
+			$settings.markClosedAsDone &&
+			notification.status.includes('read') &&
+			(notification.type === 'pr' || notification.type === 'issue') &&
+			!notification.opened &&
+			previous?.status !== 'done'
 		);
 	}
 

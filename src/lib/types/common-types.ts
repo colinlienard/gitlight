@@ -147,6 +147,7 @@ export type Settings = {
 		url: string;
 	}>;
 	gitlabOnlyInvolved: boolean;
+	markClosedAsDone: boolean;
 };
 
 export type Priority = {
