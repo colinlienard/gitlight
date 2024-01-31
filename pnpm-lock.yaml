@@ -17,9 +17,6 @@ dependencies:
   tauri-plugin-autostart-api:
     specifier: github:tauri-apps/tauri-plugin-autostart
     version: github.com/tauri-apps/tauri-plugin-autostart/a534e61e246e6d96ab938fcd3e644dcb74d5c0bf
-  worker-timers:
-    specifier: ^7.1.1
-    version: 7.1.1
 
 devDependencies:
   '@sveltejs/adapter-static':
@@ -131,13 +128,6 @@ packages:
       chalk: 2.4.2
       js-tokens: 4.0.0
     dev: true
-
-  /@babel/runtime@7.23.9:
-    resolution: {integrity: sha512-0CX6F+BI2s9dkUqr08KFrAIZgNFj75rdBU/DjCyYLIaV/quFjkk6T+EJ2LkZHyZTbEV4L5p97mNkUsHl2wLFAw==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      regenerator-runtime: 0.14.1
-    dev: false
 
   /@csstools/css-parser-algorithms@2.5.0(@csstools/css-tokenizer@2.2.3):
     resolution: {integrity: sha512-abypo6m9re3clXA00eu5syw+oaPHbJTPapu9C4pzNsJ4hdZDzushT50Zhu+iIYXgEe1CxnRMn7ngsbV+MLrlpQ==}
@@ -1936,14 +1926,6 @@ packages:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
     dev: true
 
-  /fast-unique-numbers@8.0.13:
-    resolution: {integrity: sha512-7OnTFAVPefgw2eBJ1xj2PGGR9FwYzSUso9decayHgCDX4sJkHLdcsYTytTg+tYv+wKF3U8gJuSBz2jJpQV4u/g==}
-    engines: {node: '>=16.1.0'}
-    dependencies:
-      '@babel/runtime': 7.23.9
-      tslib: 2.6.2
-    dev: false
-
   /fastest-levenshtein@1.0.16:
     resolution: {integrity: sha512-eRnCtTTtGZFpQCwhJiUOuxPQWRXVKYDn0b2PeHfXL6/Zi53SLAzAHfVhVWK2AryC/WH05kGfxhFIPvTF0SXQzg==}
     engines: {node: '>= 4.9.1'}
@@ -3103,10 +3085,6 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /regenerator-runtime@0.14.1:
-    resolution: {integrity: sha512-dYnhHh0nJoMfnkZs6GmmhFknAGRrLznOu5nc9ML+EJxGvrx6H7teuevqVqCuPcPK//3eDrrjQhehXVx9cnkGdw==}
-    dev: false
-
   /regexp.prototype.flags@1.5.1:
     resolution: {integrity: sha512-sy6TXMN+hnP/wMy+ISxg3krXx7BAtWVO4UouuCN/ziM9UEne0euamVNafDfvC83bRNr95y0V5iijeDQFUNpvrg==}
     engines: {node: '>= 0.4'}
@@ -3811,6 +3789,7 @@ packages:
 
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
+    dev: true
 
   /type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
@@ -3986,31 +3965,6 @@ packages:
     dependencies:
       string-width: 4.2.3
     dev: true
-
-  /worker-timers-broker@6.1.1:
-    resolution: {integrity: sha512-CTlDnkXAewtYvw5gOwVIc6UuIPcNHJrqWxBMhZbCWOmadvl20nPs9beAsXlaTEwW3G2KBpuKiSgkhBkhl3mxDA==}
-    dependencies:
-      '@babel/runtime': 7.23.9
-      fast-unique-numbers: 8.0.13
-      tslib: 2.6.2
-      worker-timers-worker: 7.0.65
-    dev: false
-
-  /worker-timers-worker@7.0.65:
-    resolution: {integrity: sha512-Dl4nGONr8A8Fr+vQnH7Ee+o2iB480S1fBcyJYqnMyMwGRVyQZLZU+o91vbMvU1vHqiryRQmjXzzMYlh86wx+YQ==}
-    dependencies:
-      '@babel/runtime': 7.23.9
-      tslib: 2.6.2
-    dev: false
-
-  /worker-timers@7.1.1:
-    resolution: {integrity: sha512-axtq83GwPqYwkQmQmei2abQ9cT7oSwmLw4lQCZ9VmMH9g4t4kuEF1Gw+tdnIJGHCiZ2QPDnr/+307bYx6tynLA==}
-    dependencies:
-      '@babel/runtime': 7.23.9
-      tslib: 2.6.2
-      worker-timers-broker: 6.1.1
-      worker-timers-worker: 7.0.65
-    dev: false
 
   /wrap-ansi@7.0.0:
     resolution: {integrity: sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==}

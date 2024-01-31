@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { invoke } from '@tauri-apps/api/tauri';
 	import { onDestroy, onMount, type ComponentType, SvelteComponent } from 'svelte';
-	import { clearInterval, setInterval } from 'worker-timers';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { IconButton, Modal, ScrollbarContainer, Tooltip } from '$lib/components';
@@ -26,7 +25,6 @@
 	let scrollContainer: SvelteComponent;
 	let imageLoaded = false;
 	let updateAvailable: string | false = false;
-	let interval: ReturnType<typeof setInterval>;
 
 	const githubUser = $page.data.session?.githubUser;
 	const gitlabUser = $page.data.session?.gitlabUser;
@@ -57,6 +55,9 @@
 			props: { updateAvailable, checkUpdate }
 		}
 	] as Tabs;
+
+	// Check if an update is available every 30 min
+	const interval = setInterval(checkUpdate, 1800000);
 
 	async function checkUpdate() {
 		if (!window.__TAURI__) return false;
@@ -100,9 +101,6 @@
 		mounted = true;
 
 		if (window.__TAURI__) {
-			// Check if an update is available every 30 min
-			interval = setInterval(checkUpdate, 1800000);
-
 			invoke('toggle_tray', { show: $settings.activeTray });
 		}
 
@@ -110,9 +108,8 @@
 	});
 
 	onDestroy(() => {
+		clearInterval(interval);
 		if (browser) {
-			clearInterval(interval);
-
 			window.removeEventListener('keydown', handleKeyDown);
 		}
 	});

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import { clearInterval, setInterval } from 'worker-timers';
 	import { browser } from '$app/environment';
 	import { Tooltip } from '$lib/components';
 	import { ExclamationMarkIcon, RefreshIcon } from '$lib/icons';
@@ -12,15 +11,13 @@
 	let interval: ReturnType<typeof setInterval>;
 	let noInternet = false;
 
-	$: if (!browser) {
-		// Do not run web worker intervals in SSR
-	} else if (synced && !syncTime) {
+	$: if (synced && !syncTime) {
 		interval = setInterval(() => {
 			syncTime += 1;
 		}, 1000);
 	} else if (!synced) {
 		syncTime = 0;
-		interval && clearInterval(interval);
+		clearInterval(interval);
 	}
 
 	function handleOnline() {
@@ -37,9 +34,8 @@
 	});
 
 	onDestroy(() => {
+		clearInterval(interval);
 		if (browser) {
-			clearInterval(interval);
-
 			window.removeEventListener('online', handleOnline);
 			window.removeEventListener('offline', handleOffline);
 		}

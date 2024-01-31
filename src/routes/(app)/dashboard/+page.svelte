@@ -4,7 +4,6 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { cubicInOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
-	import { clearInterval, setInterval } from 'worker-timers';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import {
@@ -54,9 +53,12 @@
 	const gitlabUser = $page.data.session?.gitlabUser;
 
 	let synced = false;
+	let mounted = false;
 	let isMacos = false;
 
-	let interval: ReturnType<typeof setInterval>;
+	let interval = setInterval(() => {
+		fetchAll();
+	}, 60000);
 
 	function notificationIsMuted(
 		{ author, creator, repository, muted }: NotificationData,
@@ -337,7 +339,7 @@
 		}
 	}
 
-	$: if (browser && $githubNotifications.length) {
+	$: if (mounted && $githubNotifications.length) {
 		// Save notifications to storage
 		const toSave = $githubNotifications.map(
 			({ id, description, author, status, muted, time, previously }) => ({
@@ -362,7 +364,7 @@
 		setTimeout(updateTrayTitle, 10);
 	}
 
-	$: if (browser && $gitlabNotifications.length) {
+	$: if (mounted && $gitlabNotifications.length) {
 		// Save notifications to storage
 		const toSave = $gitlabNotifications.map(
 			({ id, description, author, status, muted, time, previously }) => ({
@@ -379,6 +381,8 @@
 	}
 
 	onMount(async () => {
+		mounted = true;
+
 		window.addEventListener('refetch', refetch);
 
 		if (window.__TAURI__) {
@@ -389,18 +393,14 @@
 
 		await fetchAll();
 		$loading = false;
-
-		interval = setInterval(() => {
-			fetchAll();
-		}, 60000);
 	});
 
 	onDestroy(() => {
-		if (browser) {
-			clearInterval(interval);
-
+		if (mounted) {
 			window.removeEventListener('refetch', refetch);
 		}
+
+		clearInterval(interval);
 	});
 </script>
 

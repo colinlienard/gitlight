@@ -20,8 +20,7 @@
 		"@rive-app/canvas": "^2.9.3",
 		"@tauri-apps/api": "^1.5.3",
 		"overlayscrollbars": "^2.4.6",
-		"tauri-plugin-autostart-api": "github:tauri-apps/tauri-plugin-autostart",
-		"worker-timers": "^7.1.1"
+		"tauri-plugin-autostart-api": "github:tauri-apps/tauri-plugin-autostart"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-static": "^3.0.1",
