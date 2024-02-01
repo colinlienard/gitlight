@@ -6,6 +6,7 @@
 	import { slide } from 'svelte/transition';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import { clearInterval, setInterval } from '$lib/helpers/workerInterval';
 	import {
 		Banner,
 		DoneModal,
