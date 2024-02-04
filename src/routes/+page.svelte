@@ -27,16 +27,26 @@
 
 <svelte:head>
 	<title>GitLight • GitHub and GitLab notifications on your desktop</title>
+	<meta
+		name="description"
+		content="Better GitHub and GitLab notifications as a free, open-source desktop app."
+	/>
 </svelte:head>
 
 <div class="wrapper">
 	<header class="header">
 		<div class="title-container">
-			<img class="logo" src="/images/logo.webp" alt="" />
+			<img class="logo" src="/images/logo.webp" alt="" height="32" width="32" />
 			<h1 class="title"><strong>GitLight</strong></h1>
 		</div>
 		<div class="links">
-			<a href="https://x.com/colinlienard" target="_blank" rel="noreferrer" class="icon-link">
+			<a
+				href="https://x.com/colinlienard"
+				target="_blank"
+				rel="noreferrer"
+				class="icon-link"
+				aria-label="Colin Lienard X account"
+			>
 				<XIcon />
 			</a>
 			<a
@@ -44,6 +54,7 @@
 				target="_blank"
 				rel="noreferrer"
 				class="icon-link"
+				aria-label="GitLight GitHub repository"
 			>
 				<GithubIcon />
 			</a>
@@ -86,9 +97,15 @@
 			</li>
 		</ul>
 		<article class="image-container">
-			<picture class="image">
-				<source srcset="/images/gitlight-dark.webp" media="(prefers-color-scheme: dark)" />
-				<img src="/images/gitlight-light.webp" alt="" />
+			<picture>
+				<source
+					class="image"
+					srcset="/images/gitlight-dark.webp"
+					media="(prefers-color-scheme: dark)"
+					width="1024"
+					height="640"
+				/>
+				<img class="image" src="/images/gitlight-light.webp" alt="" width="1024" height="640" />
 			</picture>
 		</article>
 	</main>
@@ -140,6 +157,7 @@
 			gap: 0.5rem;
 
 			.logo {
+				width: 2rem;
 				height: 2rem;
 			}
 
@@ -292,6 +310,10 @@
 
 			@media (height >= 1000px) {
 				margin-top: 4rem;
+			}
+
+			.image {
+				max-width: unset;
 			}
 
 			&::before {
