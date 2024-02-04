@@ -150,9 +150,9 @@
 			<NotificationStatus {data} />
 		</div>
 		<div class="main" class:has-priority={priority && $settings.showPriority}>
-			<span class="icon-container">
+			<button class="icon-container" on:mouseup={dragged ? null : handleOpenInBrowser}>
 				<svelte:component this={getNotificationIcon(icon)} />
-			</span>
+			</button>
 			<div class="texts">
 				<div
 					class="title-container"
@@ -339,6 +339,10 @@
 			flex: 0 0 2rem;
 			margin-top: 0.1rem;
 
+			&:hover {
+				filter: brightness(1.5);
+			}
+
 			:global(svg) {
 				width: 2rem;
 				height: 2rem;
@@ -348,6 +352,7 @@
 		.texts {
 			display: flex;
 			overflow: hidden;
+			width: 100%;
 			flex-direction: column;
 
 			.title-container {
@@ -360,6 +365,7 @@
 				.notification-title {
 					display: inline;
 					overflow: hidden;
+					width: fit-content;
 					flex: 0 1 auto;
 					hyphens: auto;
 					text-overflow: ellipsis;

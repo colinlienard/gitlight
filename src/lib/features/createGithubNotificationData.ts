@@ -281,6 +281,7 @@ export async function createGithubNotificationData(
 			if (!data) return null;
 			let { url } = data;
 			const { latestCommentEdge, isAnswered } = data;
+			const number = parseInt(data.url.split('/').pop() ?? '0');
 			let description: string;
 			let author;
 			if (!latestCommentEdge) {
@@ -298,6 +299,7 @@ export async function createGithubNotificationData(
 
 			value = {
 				...common,
+				number,
 				author,
 				description,
 				url,
