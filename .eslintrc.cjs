@@ -8,7 +8,7 @@ module.exports = {
 		'prettier'
 	],
 	plugins: ['@typescript-eslint', 'import'],
-	ignorePatterns: ['*.cjs', 'svelte.config.js', '/static/workers/*.js'],
+	ignorePatterns: ['*.cjs', 'svelte.config.js'],
 	parserOptions: {
 		sourceType: 'module',
 		ecmaVersion: 2020,

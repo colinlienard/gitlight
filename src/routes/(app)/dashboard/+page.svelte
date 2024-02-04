@@ -4,9 +4,9 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { cubicInOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
+	import { setInterval, clearInterval } from 'worker-timers';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { clearInterval, setInterval } from '$lib/helpers/workerInterval';
 	import {
 		Banner,
 		DoneModal,
@@ -28,6 +28,7 @@
 		fetchGithub,
 		fetchGitlab,
 		fetchGitlabLabels,
+		isIrrelevant,
 		prepareGitlabNotificationData,
 		storage,
 		type StorageMap
@@ -54,12 +55,17 @@
 	const gitlabUser = $page.data.session?.gitlabUser;
 
 	let synced = false;
-	let mounted = false;
 	let isMacos = false;
+	let syncTime = 0;
+	let interval = 0;
 
-	let interval = setInterval(() => {
-		fetchAll();
-	}, 60000);
+	function loop() {
+		syncTime += 1;
+		if (syncTime > 60) {
+			syncTime = 0;
+			fetchAll();
+		}
+	}
 
 	function notificationIsMuted(
 		{ author, creator, repository, muted }: NotificationData,
@@ -97,9 +103,7 @@
 
 		// Reset interval
 		clearInterval(interval);
-		interval = setInterval(() => {
-			fetchAll();
-		}, 60000);
+		interval = setInterval(loop, 1000);
 	}
 
 	async function fetchAll() {
@@ -160,6 +164,7 @@
 			// Keep only new or modified notifications
 			if (!firstFetch) {
 				notifications = notifications.filter(({ id, updated_at }) => {
+					if (isIrrelevant(id)) return false;
 					const current = $githubNotifications.find((item) => item.id === id);
 					return current ? updated_at !== current.time : true;
 				});
@@ -340,7 +345,7 @@
 		}
 	}
 
-	$: if (mounted && $githubNotifications.length) {
+	$: if (browser && $githubNotifications.length) {
 		// Save notifications to storage
 		const toSave = $githubNotifications.map(
 			({ id, description, author, status, muted, time, previously }) => ({
@@ -365,7 +370,7 @@
 		setTimeout(updateTrayTitle, 10);
 	}
 
-	$: if (mounted && $gitlabNotifications.length) {
+	$: if (browser && $gitlabNotifications.length) {
 		// Save notifications to storage
 		const toSave = $gitlabNotifications.map(
 			({ id, description, author, status, muted, time, previously }) => ({
@@ -382,8 +387,6 @@
 	}
 
 	onMount(async () => {
-		mounted = true;
-
 		window.addEventListener('refetch', refetch);
 
 		if (window.__TAURI__) {
@@ -393,15 +396,15 @@
 		}
 
 		await fetchAll();
+		interval = setInterval(loop, 1000);
 		$loading = false;
 	});
 
 	onDestroy(() => {
-		if (mounted) {
+		if (browser) {
+			clearInterval(interval);
 			window.removeEventListener('refetch', refetch);
 		}
-
-		clearInterval(interval);
 	});
 </script>
 
@@ -419,7 +422,7 @@
 		<header class="header" data-tauri-drag-region>
 			<div class="wrapper" class:macos={isMacos && $settings.sidebarHidden}>
 				<h1 class="title">Notifications</h1>
-				<SyncPill {synced} />
+				<SyncPill {syncTime} {synced} />
 				{#if $settings.sidebarHidden}
 					<div
 						class="show-sidebar"

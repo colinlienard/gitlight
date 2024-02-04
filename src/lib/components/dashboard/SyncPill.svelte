@@ -1,25 +1,14 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import { setInterval, clearInterval } from '$lib/helpers/workerInterval';
 	import { Tooltip } from '$lib/components';
 	import { ExclamationMarkIcon, RefreshIcon } from '$lib/icons';
 	import { error } from '$lib/stores';
 
 	export let synced: boolean;
+	export let syncTime: number;
 
-	let syncTime = 0;
-	let interval: ReturnType<typeof setInterval>;
 	let noInternet = false;
-
-	$: if (synced && !syncTime) {
-		interval = setInterval(() => {
-			syncTime += 1;
-		}, 1000);
-	} else if (!synced) {
-		syncTime = 0;
-		clearInterval(interval);
-	}
 
 	function handleOnline() {
 		noInternet = false;
@@ -35,7 +24,6 @@
 	});
 
 	onDestroy(() => {
-		clearInterval(interval);
 		if (browser) {
 			window.removeEventListener('online', handleOnline);
 			window.removeEventListener('offline', handleOffline);
