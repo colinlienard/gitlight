@@ -6,6 +6,8 @@
 	import { settings, theme } from '$lib/stores';
 	import type { NotificationData, Settings } from '$lib/types';
 
+	import 'overlayscrollbars/overlayscrollbars.css';
+
 	let notifications: NotificationData[] = [];
 	let scrollContainer: SvelteComponent;
 	let unlistenNotification: UnlistenFn = () => null;

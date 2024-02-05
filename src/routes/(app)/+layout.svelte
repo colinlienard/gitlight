@@ -7,6 +7,8 @@
 	import { storage } from '$lib/features';
 	import { settings, theme } from '$lib/stores';
 
+	import 'overlayscrollbars/overlayscrollbars.css';
+
 	$: if (browser) {
 		$theme = (() => {
 			switch ($settings.theme) {

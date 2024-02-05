@@ -1,14 +1,15 @@
 <script lang="ts">
-	import * as rive from '@rive-app/canvas';
-
 	let canvas: HTMLCanvasElement;
 
 	$: if (canvas) {
-		new rive.Rive({
-			src: '/rive/logo.riv',
-			canvas,
-			autoplay: true
-		});
+		(async () => {
+			const rive = await import('@rive-app/canvas');
+			new rive.Rive({
+				src: '/rive/logo.riv',
+				canvas,
+				autoplay: true
+			});
+		})();
 	}
 </script>
 
