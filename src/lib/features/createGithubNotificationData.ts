@@ -34,6 +34,8 @@ type PullRequestEvent = {
 
 type FetchOptions = Parameters<typeof fetchGithub>[1];
 
+const IRRELEVANT_NOTIFICATION_IDS = new Set<string>();
+
 export async function createGithubNotificationData(
 	githubNotification: GithubNotification,
 	savedNotifications: SavedNotifications,
@@ -143,7 +145,10 @@ export async function createGithubNotificationData(
 				}
 			}
 
-			if ((!firstTime && previous?.description === description) || !description) return null;
+			if ((!firstTime && previous?.description === description) || !description) {
+				IRRELEVANT_NOTIFICATION_IDS.add(id);
+				return null;
+			}
 
 			value = {
 				...common,
@@ -240,7 +245,10 @@ export async function createGithubNotificationData(
 				handleReviewRequested();
 			}
 
-			if ((!firstTime && previous?.description === description) || !description) return null;
+			if ((!firstTime && previous?.description === description) || !description) {
+				IRRELEVANT_NOTIFICATION_IDS.add(id);
+				return null;
+			}
 
 			value = {
 				...common,
@@ -386,6 +394,10 @@ export async function createGithubNotificationData(
 			value: accumulatedValue
 		}
 	};
+}
+
+export function isIrrelevant(id: string) {
+	return IRRELEVANT_NOTIFICATION_IDS.has(id);
 }
 
 const commentBodyToDescription = (body: string) => {
