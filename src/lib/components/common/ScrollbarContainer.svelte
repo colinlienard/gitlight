@@ -6,10 +6,10 @@
 	export let margin = '0';
 
 	let component: HTMLDivElement;
-	let osInstance: OverlayScrollbars;
+	let osInstance: OverlayScrollbars | undefined;
 
 	export function scrollTo(options: { left?: number; top?: number; behavior?: 'auto' | 'smooth' }) {
-		osInstance.elements().viewport.scroll(options);
+		osInstance?.elements().viewport.scroll(options);
 	}
 
 	onMount(async () => {
