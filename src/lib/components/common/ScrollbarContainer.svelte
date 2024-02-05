@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { OverlayScrollbars } from 'overlayscrollbars';
+	import type { OverlayScrollbars } from 'overlayscrollbars';
 	import { onDestroy, onMount } from 'svelte';
 
 	export let scroll = true;
@@ -12,7 +12,8 @@
 		osInstance.elements().viewport.scroll(options);
 	}
 
-	onMount(() => {
+	onMount(async () => {
+		const { OverlayScrollbars } = await import('overlayscrollbars');
 		osInstance = OverlayScrollbars(component, {
 			overflow: {
 				x: 'hidden'
