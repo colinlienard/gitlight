@@ -15,9 +15,18 @@ mod commands;
 mod title_bar;
 
 fn main() {
+    #[cfg(debug_assertions)]
+    let devtools = devtools::init();
+
     tauri_plugin_deep_link::prepare("app.gitlight");
 
-    tauri::Builder::default()
+    let mut builder = tauri::Builder::default();
+
+    if cfg!(debug_assertions) {
+        builder = builder.plugin(devtools);
+    }
+
+    builder
         .setup(|app| {
             let handle = app.handle();
             tauri_plugin_deep_link::register("gitlight", move |request| {
