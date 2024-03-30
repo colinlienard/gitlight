@@ -15,14 +15,12 @@ mod commands;
 mod title_bar;
 
 fn main() {
-    #[cfg(debug_assertions)]
-    let devtools = devtools::init();
-
     tauri_plugin_deep_link::prepare("app.gitlight");
 
     let mut builder = tauri::Builder::default();
 
     if cfg!(debug_assertions) {
+        let devtools = devtools::init();
         builder = builder.plugin(devtools);
     }
 
