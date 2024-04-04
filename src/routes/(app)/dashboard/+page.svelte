@@ -243,8 +243,7 @@
 							// eslint-disable-next-line no-async-promise-executor
 							new Promise<GitlabEvent[]>(async (resolve) => {
 								const response = await fetchGitlab<GitlabEvent[]>(
-									`projects/${repository.encoded}/events?per_page=50`,
-									{ domain: repository.domain }
+									`projects/${repository.encoded}/events?per_page=50`
 								);
 								resolve(response.map((item) => ({ ...item, repository })));
 							})

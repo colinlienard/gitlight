@@ -349,9 +349,7 @@ export async function createGitlabNotificationData(
 export async function fetchGitlabLabels(repos: GitlabEventWithRepoData['repository'][]) {
 	const responses = await Promise.all(
 		repos.map((repo) =>
-			fetchGitlab<Array<GitlabLabel>>(`projects/${repo.encoded}/labels?per_page=100`, {
-				domain: repo.domain
-			})
+			fetchGitlab<Array<GitlabLabel>>(`projects/${repo.encoded}/labels?per_page=100`)
 		)
 	);
 	GITLAB_LABELS = new Map(responses.map((response, index) => [repos[index].encoded, response]));

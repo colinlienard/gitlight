@@ -3,7 +3,6 @@ import { PUBLIC_SITE_URL } from '$env/static/public';
 import { storage } from './storage';
 
 type Options = {
-	domain?: string;
 	noCache?: boolean;
 	accessToken?: string;
 	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -22,20 +21,19 @@ export async function fetchGitlab<T = void>(url: string, options?: Options): Pro
 		}
 	}
 
+	const gitlabOrigin = storage.get('gitlab-url') ?? 'https://gitlab.com';
+
 	const newToken = await checkGitlabToken();
 	if (newToken) accessToken = newToken;
 
-	const response = await fetch(
-		`${url.startsWith('http') ? '' : `https://${options?.domain ?? 'gitlab.com'}/api/v4/`}${url}`,
-		{
-			headers: {
-				Authorization: `Bearer ${accessToken}`
-			},
-			method: options?.method || 'GET',
-			body: options?.body ? JSON.stringify(options.body) : undefined,
-			cache: options?.noCache ? 'no-store' : undefined
-		}
-	);
+	const response = await fetch(`${url.startsWith('http') ? '' : `${gitlabOrigin}/api/v4/`}${url}`, {
+		headers: {
+			Authorization: `Bearer ${accessToken}`
+		},
+		method: options?.method || 'GET',
+		body: options?.body ? JSON.stringify(options.body) : undefined,
+		cache: options?.noCache ? 'no-store' : undefined
+	});
 
 	if (options?.method === 'PATCH') return undefined as T;
 

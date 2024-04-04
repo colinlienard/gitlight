@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SvelteComponent, createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 	import { Button, Input } from '$lib/components';
 	import { CheckIcon, CrossIcon, TrashIcon } from '$lib/icons';
 	import { settings } from '$lib/stores';
@@ -12,7 +12,6 @@
 	let showToken = false;
 	let showDeleteConfirm = false;
 	let error = '';
-	let firstInput: SvelteComponent;
 
 	function deleteConfirm() {
 		showDeleteConfirm = true;
@@ -49,12 +48,6 @@
 		event.preventDefault();
 		dispatch('exit');
 	}
-
-	onMount(() => {
-		if (firstInput) {
-			firstInput.focus();
-		}
-	});
 </script>
 
 <div class="pat-wrapper">
@@ -64,7 +57,7 @@
 				label="Resource owner"
 				placeholder="The user or organization login"
 				bind:value={pat.owner}
-				bind:this={firstInput}
+				autofocus
 			/>
 			<Input
 				label="Personal Access Token"

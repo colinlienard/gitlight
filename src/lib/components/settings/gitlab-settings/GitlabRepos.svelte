@@ -8,7 +8,9 @@
 </script>
 
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { Button } from '$lib/components';
+	import { storage } from '$lib/features';
 	import { CheckIcon, PlusIcon } from '$lib/icons';
 	import { settings } from '$lib/stores';
 	import RepoInput from './RepoInput.svelte';
@@ -47,6 +49,10 @@
 			repos = repos;
 		};
 	}
+
+	onMount(() => {
+		defaultRepo.url = storage.get('gitlab-url') || '';
+	});
 </script>
 
 <div class="container">
