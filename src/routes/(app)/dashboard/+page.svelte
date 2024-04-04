@@ -330,7 +330,7 @@
 			notification.status.includes('read') &&
 			(notification.type === 'pr' || notification.type === 'issue') &&
 			!notification.opened &&
-			previous?.status !== 'done'
+			(previous ? previous?.status !== 'done' : true)
 		);
 	}
 
