@@ -10,8 +10,7 @@ export async function GET({ url }) {
 		searchParams.get('state') === AUTH_SECRET
 	) {
 		const code = searchParams.get('code');
-		const gitlabOrigin = searchParams.get('url') ?? 'https://gitlab.com';
-		const response = await fetch(`${gitlabOrigin}/oauth/token`, {
+		const response = await fetch('https://gitlab.com/oauth/token', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -34,9 +33,6 @@ export async function GET({ url }) {
 			params.append('gitlab_access_token', access_token);
 			params.append('gitlab_refresh_token', refresh_token);
 			params.append('gitlab_expires_in', `${(created_at + expires_in) * 1000}`);
-			if (searchParams.has('url')) {
-				params.append('gitlab_url', searchParams.get('url') as string);
-			}
 			if (searchParams.has('from_app')) {
 				redirect(302, `/deeplink?${params.toString()}`);
 			}

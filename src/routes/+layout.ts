@@ -17,14 +17,12 @@ export async function load({ url }) {
 	let githubUser = storage.get('github-user');
 	let githubAccessToken = storage.get('github-access-token');
 	let gitlabUser = storage.get('gitlab-user');
-	let gitlabUrl = storage.get('gitlab-url');
 	let gitlabAccessToken = storage.get('gitlab-access-token');
 	let gitlabRefreshToken = storage.get('gitlab-refresh-token');
 	let gitlabExpiresIn = storage.get('gitlab-expires-in');
 
 	const githubTokenParam = url.searchParams.get('github_access_token');
 	const gitlabTokenParam = url.searchParams.get('gitlab_access_token');
-	const gitlabSelfHostedUrlParam = url.searchParams.get('gitlab_url');
 	const gitlabRefreshTokenParam = url.searchParams.get('gitlab_refresh_token');
 	const gitlabExpiresInParam = url.searchParams.get('gitlab_expires_in');
 
@@ -38,12 +36,6 @@ export async function load({ url }) {
 	if (gitlabTokenParam) {
 		gitlabAccessToken = gitlabTokenParam;
 		storage.set('gitlab-access-token', gitlabAccessToken);
-	}
-
-	// Get GitLab self-hosted URL
-	if (gitlabSelfHostedUrlParam) {
-		gitlabUrl = gitlabSelfHostedUrlParam;
-		storage.set('gitlab-url', gitlabUrl);
 	}
 
 	// Get GitLab refresh token
@@ -77,6 +69,9 @@ export async function load({ url }) {
 		}
 	}
 
+	const gitlabPat = storage.get('gitlab-pat');
+	const gitlabUrl = storage.get('gitlab-url');
+
 	// Remove access tokens from the URL
 	if (githubTokenParam || gitlabTokenParam) {
 		history.replaceState({}, '', '/dashboard');
@@ -109,7 +104,8 @@ export async function load({ url }) {
 	}
 
 	const session =
-		(githubUser && githubAccessToken) || (gitlabUser && gitlabAccessToken)
+		(githubUser && githubAccessToken) ||
+		(gitlabUser && (gitlabAccessToken || (gitlabPat && gitlabUrl)))
 			? { githubUser, githubAccessToken, gitlabUser, gitlabAccessToken }
 			: null;
 

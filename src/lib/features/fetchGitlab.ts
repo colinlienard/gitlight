@@ -3,6 +3,7 @@ import { PUBLIC_SITE_URL } from '$env/static/public';
 import { storage } from './storage';
 
 type Options = {
+	domain?: string;
 	noCache?: boolean;
 	accessToken?: string;
 	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -12,7 +13,9 @@ type Options = {
 export async function fetchGitlab<T = void>(url: string, options?: Options): Promise<T> {
 	let { accessToken } = options || {};
 	if (!accessToken) {
-		if (storage.has('gitlab-access-token')) {
+		if (storage.has('gitlab-pat')) {
+			accessToken = storage.get('gitlab-pat') as string;
+		} else if (storage.has('gitlab-access-token')) {
 			accessToken = storage.get('gitlab-access-token') as string;
 		} else {
 			page.subscribe(({ data }) => {
@@ -21,7 +24,7 @@ export async function fetchGitlab<T = void>(url: string, options?: Options): Pro
 		}
 	}
 
-	const gitlabOrigin = storage.get('gitlab-url') ?? 'https://gitlab.com';
+	const gitlabOrigin = options?.domain ?? storage.get('gitlab-url') ?? 'https://gitlab.com';
 
 	const newToken = await checkGitlabToken();
 	if (newToken) accessToken = newToken;
@@ -46,6 +49,9 @@ export async function fetchGitlab<T = void>(url: string, options?: Options): Pro
 
 // Refresh the GitLab access token if it has expired
 export async function checkGitlabToken(): Promise<string | undefined> {
+	if (storage.has('gitlab-pat')) {
+		return;
+	}
 	const refreshToken = storage.get('gitlab-refresh-token');
 	const expiration = storage.get('gitlab-expires-in');
 	if (refreshToken && expiration && new Date().getTime() > parseInt(expiration)) {

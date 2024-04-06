@@ -28,7 +28,7 @@
 			{#if provider === 'github'}
 				<GithubLoginButton small>Log in</GithubLoginButton>
 			{:else if provider === 'gitlab'}
-				<GitlabLoginButton small>Log in</GitlabLoginButton>
+				<GitlabLoginButton small tooltipOnLeft>Log in</GitlabLoginButton>
 			{/if}
 		{/if}
 	</div>

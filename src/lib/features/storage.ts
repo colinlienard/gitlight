@@ -11,10 +11,11 @@ export type StorageMap = {
 	'github-user': User;
 	'github-access-token': string;
 	'gitlab-user': User;
-	'gitlab-url': string;
 	'gitlab-access-token': string;
 	'gitlab-refresh-token': string;
 	'gitlab-expires-in': string;
+	'gitlab-url': string;
+	'gitlab-pat': string;
 	settings: Settings;
 	'github-notifications': SavedNotifications;
 	'gitlab-notifications': SavedNotifications;
