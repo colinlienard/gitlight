@@ -25,6 +25,9 @@
 		const gitlabAccessToken = $page.data.session?.gitlabAccessToken;
 		const gitlabRefreshToken = storage.get('gitlab-refresh-token');
 		const gitlabExpiresIn = storage.get('gitlab-expires-in');
+		const gitlabUrl = storage.get('gitlab-url');
+		const gitlabPat = storage.get('gitlab-pat');
+
 		if (githubAccessToken || gitlabAccessToken) {
 			setTimeout(() => {
 				if (hasFocus) {
@@ -37,7 +40,9 @@
 				githubAccessToken,
 				gitlabAccessToken,
 				gitlabExpiresIn,
-				gitlabRefreshToken
+				gitlabRefreshToken,
+				gitlabUrl,
+				gitlabPat
 			});
 		}
 	}

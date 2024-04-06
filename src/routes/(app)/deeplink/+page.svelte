@@ -9,9 +9,22 @@
 		const gitlabAccessToken = storage.get('gitlab-access-token');
 		const gitlabRefreshToken = storage.get('gitlab-refresh-token');
 		const gitlabExpiresIn = storage.get('gitlab-expires-in');
+		const gitlabUrl = storage.get('gitlab-url');
+		const gitlabPat = storage.get('gitlab-pat');
 
-		if (githubAccessToken || (gitlabAccessToken && gitlabRefreshToken && gitlabExpiresIn)) {
-			openDesktopApp({ githubAccessToken, gitlabAccessToken, gitlabRefreshToken, gitlabExpiresIn });
+		if (
+			githubAccessToken ||
+			(gitlabAccessToken && gitlabRefreshToken && gitlabExpiresIn) ||
+			(gitlabUrl && gitlabPat)
+		) {
+			openDesktopApp({
+				githubAccessToken,
+				gitlabAccessToken,
+				gitlabRefreshToken,
+				gitlabExpiresIn,
+				gitlabUrl,
+				gitlabPat
+			});
 		}
 	});
 </script>

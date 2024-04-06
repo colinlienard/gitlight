@@ -20,6 +20,8 @@ export async function load({ url }) {
 	let gitlabAccessToken = storage.get('gitlab-access-token');
 	let gitlabRefreshToken = storage.get('gitlab-refresh-token');
 	let gitlabExpiresIn = storage.get('gitlab-expires-in');
+	const gitlabPat = storage.get('gitlab-pat');
+	const gitlabUrl = storage.get('gitlab-url');
 
 	const githubTokenParam = url.searchParams.get('github_access_token');
 	const gitlabTokenParam = url.searchParams.get('gitlab_access_token');
@@ -69,9 +71,6 @@ export async function load({ url }) {
 		}
 	}
 
-	const gitlabPat = storage.get('gitlab-pat');
-	const gitlabUrl = storage.get('gitlab-url');
-
 	// Remove access tokens from the URL
 	if (githubTokenParam || gitlabTokenParam) {
 		history.replaceState({}, '', '/dashboard');
@@ -91,10 +90,11 @@ export async function load({ url }) {
 	}
 
 	// Set GitLab user data
-	if (!gitlabUser && gitlabAccessToken) {
+	if (!gitlabUser && (gitlabAccessToken || gitlabPat)) {
 		try {
 			const { name, username, avatar_url } = await fetchGitlab<GitlabUser>('user', {
-				accessToken: gitlabAccessToken
+				accessToken: gitlabAccessToken ?? (gitlabPat as string),
+				domain: gitlabUrl ?? undefined
 			});
 			gitlabUser = { name, login: username, avatar: avatar_url };
 			storage.set('gitlab-user', gitlabUser);
