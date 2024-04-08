@@ -13,7 +13,9 @@ type Options = {
 export async function fetchGitlab<T = void>(url: string, options?: Options): Promise<T> {
 	let { accessToken } = options || {};
 	if (!accessToken) {
-		if (storage.has('gitlab-access-token')) {
+		if (storage.has('gitlab-pat')) {
+			accessToken = storage.get('gitlab-pat') as string;
+		} else if (storage.has('gitlab-access-token')) {
 			accessToken = storage.get('gitlab-access-token') as string;
 		} else {
 			page.subscribe(({ data }) => {
@@ -22,20 +24,19 @@ export async function fetchGitlab<T = void>(url: string, options?: Options): Pro
 		}
 	}
 
+	const gitlabOrigin = options?.domain ?? storage.get('gitlab-url') ?? 'https://gitlab.com';
+
 	const newToken = await checkGitlabToken();
 	if (newToken) accessToken = newToken;
 
-	const response = await fetch(
-		`${url.startsWith('http') ? '' : `https://${options?.domain ?? 'gitlab.com'}/api/v4/`}${url}`,
-		{
-			headers: {
-				Authorization: `Bearer ${accessToken}`
-			},
-			method: options?.method || 'GET',
-			body: options?.body ? JSON.stringify(options.body) : undefined,
-			cache: options?.noCache ? 'no-store' : undefined
-		}
-	);
+	const response = await fetch(`${url.startsWith('http') ? '' : `${gitlabOrigin}/api/v4/`}${url}`, {
+		headers: {
+			Authorization: `Bearer ${accessToken}`
+		},
+		method: options?.method || 'GET',
+		body: options?.body ? JSON.stringify(options.body) : undefined,
+		cache: options?.noCache ? 'no-store' : undefined
+	});
 
 	if (options?.method === 'PATCH') return undefined as T;
 
@@ -48,6 +49,9 @@ export async function fetchGitlab<T = void>(url: string, options?: Options): Pro
 
 // Refresh the GitLab access token if it has expired
 export async function checkGitlabToken(): Promise<string | undefined> {
+	if (storage.has('gitlab-pat')) {
+		return;
+	}
 	const refreshToken = storage.get('gitlab-refresh-token');
 	const expiration = storage.get('gitlab-expires-in');
 	if (refreshToken && expiration && new Date().getTime() > parseInt(expiration)) {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ComponentType } from 'svelte';
+	import { onMount, type ComponentType, createEventDispatcher } from 'svelte';
 	import { CrossIcon } from '$lib/icons';
 
 	export let label: string | undefined = undefined;
@@ -10,13 +10,22 @@
 	export let clearable = false;
 	export let disabled = false;
 	export let error = false;
+	export let autofocus = false;
 
 	let input: HTMLInputElement;
 	let focused = false;
 
+	const dispatch = createEventDispatcher();
+
 	export function focus() {
 		input.focus();
 	}
+
+	onMount(() => {
+		if (autofocus) {
+			focus();
+		}
+	});
 </script>
 
 <label class="container" class:disabled>
@@ -36,6 +45,7 @@
 			bind:this={input}
 			on:focus={() => (focused = true)}
 			on:blur={() => (focused = false)}
+			on:input={(e) => dispatch('input', e)}
 			autocorrect="off"
 			spellcheck={false}
 		/>

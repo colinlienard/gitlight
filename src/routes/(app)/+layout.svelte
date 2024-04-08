@@ -46,6 +46,8 @@
 				const gitlabAccessToken = searchParams.get('gitlab_access_token');
 				const gitlabRefreshToken = searchParams.get('gitlab_refresh_token');
 				const gitlabExpiresIn = searchParams.get('gitlab_expires_in');
+				const gitlabUrl = searchParams.get('gitlab_url');
+				const gitlabPat = searchParams.get('gitlab_pat');
 
 				if (githubAccessToken) {
 					storage.set('github-access-token', githubAccessToken.replace('/', ''));
@@ -56,9 +58,14 @@
 					storage.set('gitlab-expires-in', gitlabExpiresIn.replace('/', ''));
 				}
 
+				if (gitlabUrl && gitlabPat) {
+					storage.set('gitlab-url', gitlabUrl.replace('/', ''));
+					storage.set('gitlab-pat', gitlabPat.replace('/', ''));
+				}
+
 				if (
 					(githubAccessToken && storage.has('gitlab-user')) ||
-					(gitlabAccessToken && storage.has('github-user'))
+					((gitlabAccessToken || gitlabPat) && storage.has('github-user'))
 				) {
 					window.location.reload();
 				} else {

@@ -16,6 +16,8 @@
 			if (provider === 'gitlab') {
 				storage.remove('gitlab-refresh-token');
 				storage.remove('gitlab-expires-in');
+				storage.remove('gitlab-url');
+				storage.remove('gitlab-pat');
 			}
 
 			if (

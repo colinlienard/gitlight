@@ -159,7 +159,7 @@
 		position: absolute;
 		border: 1px solid variables.$bg-4;
 		border-radius: variables.$radius;
-		background-color: variables.$bg-1;
+		background-color: variables.$bg-2;
 		box-shadow: variables.$shadow;
 
 		&.fit-content {

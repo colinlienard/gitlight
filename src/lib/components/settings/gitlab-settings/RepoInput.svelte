@@ -37,13 +37,12 @@
 				errorMessage = 'Repository already submitted';
 				return;
 			}
-			const regex = /^https:\/\/(gitlab(\.[a-zA-Z0-9-]+)?)\.com\/.*$/i;
+			const regex = /^(http|https):\/\/[a-zA-Z0-9-]+\.[a-zA-Z]{2,}\/.*$/i;
 			if (regex.test(value)) {
 				try {
 					const url = new URL(value);
 					const response = await fetchGitlab<GitlabRepository>(
-						`projects/${url.pathname.substring(1).replaceAll('/', '%2F')}`,
-						{ domain: url.host }
+						`projects/${url.pathname.substring(1).replaceAll('/', '%2F')}`
 					);
 					repo.id = response.id;
 					repo.error = false;

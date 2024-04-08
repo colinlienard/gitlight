@@ -14,6 +14,8 @@ export type StorageMap = {
 	'gitlab-access-token': string;
 	'gitlab-refresh-token': string;
 	'gitlab-expires-in': string;
+	'gitlab-url': string;
+	'gitlab-pat': string;
 	settings: Settings;
 	'github-notifications': SavedNotifications;
 	'gitlab-notifications': SavedNotifications;
