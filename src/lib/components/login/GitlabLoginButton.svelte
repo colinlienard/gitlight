@@ -33,7 +33,7 @@
 	}
 
 	function handleUrlChange() {
-		urlIsValid = !!url.match(/^(http|https):\/\/[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/);
+		urlIsValid = !!url.match(/^(http|https):\/\/[a-zA-Z0-9-.]+\.[a-zA-Z]{2,}$/);
 	}
 
 	function handleClickOutside({ x, y }: MouseEvent) {
