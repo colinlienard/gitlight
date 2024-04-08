@@ -122,6 +122,8 @@
 		}
 
 		.image {
+			@include mixins.broken-img;
+
 			display: inline;
 			border-radius: 50%;
 			vertical-align: sub;

@@ -160,3 +160,14 @@
 		opacity: 1;
 	}
 }
+
+@mixin broken-img() {
+	position: relative;
+
+	&::before {
+		position: absolute;
+		background: variables.$bg-4;
+		content: '';
+		inset: 0;
+	}
+}
