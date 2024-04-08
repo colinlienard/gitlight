@@ -37,7 +37,7 @@
 				errorMessage = 'Repository already submitted';
 				return;
 			}
-			const regex = /^(http|https):\/\/[a-zA-Z0-9-]+\.[a-zA-Z]{2,}\/.*$/i;
+			const regex = /^(http|https):\/\/[a-zA-Z0-9-.]+\.[a-zA-Z]{2,}\/.*$/i;
 			if (regex.test(value)) {
 				try {
 					const url = new URL(value);

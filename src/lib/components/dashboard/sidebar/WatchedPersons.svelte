@@ -189,6 +189,10 @@
 					color: variables.$bg-5;
 				}
 			}
+
+			&:not(.placeholder) {
+				@include mixins.broken-img;
+			}
 		}
 
 		.number {

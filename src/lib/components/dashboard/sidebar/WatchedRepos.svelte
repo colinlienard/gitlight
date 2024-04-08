@@ -280,6 +280,10 @@
 			border-radius: variables.$small-radius;
 		}
 
+		.image {
+			@include mixins.broken-img;
+		}
+
 		.repo-icon {
 			display: flex;
 			align-items: center;
