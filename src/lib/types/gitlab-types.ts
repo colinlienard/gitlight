@@ -50,7 +50,7 @@ export type GitlabEvent = {
 			push_data: {
 				action: 'created' | 'pushed';
 				commit_count: number;
-				commit_title: string;
+				commit_title: string | null;
 				ref: string;
 				ref_type: 'branch' | 'tag';
 			};

@@ -30,7 +30,7 @@
 			(item) => item.login === (notification.creator?.login || notification.author?.login)
 		);
 
-		const searched = notification.title.toLowerCase().includes(search.toLowerCase());
+		const searched = notification.title?.toLowerCase().includes(search.toLowerCase());
 		const isOfType = $typeFilters.some(
 			(filter) => filter.active && filter.type === notification.type
 		);

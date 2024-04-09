@@ -206,7 +206,7 @@ export async function createGitlabNotificationData(
 					...textData,
 					type: 'commit',
 					icon: 'commit',
-					title: firstEvent.push_data.commit_title
+					title: firstEvent.push_data.commit_title ?? ''
 				};
 			} else {
 				value = {
