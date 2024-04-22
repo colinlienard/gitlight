@@ -60,8 +60,7 @@ export async function prepareGitlabNotificationData(events: GitlabEventWithRepoD
 				const firstEvent = item.events[0];
 				const { target_type } = firstEvent;
 				if (target_type === 'Milestone') return item;
-				const isNote =
-					target_type === 'Note' || target_type === 'DiffNote' || target_type === 'DiscussionNote';
+				const isNote = isNoteType(firstEvent);
 				let type: 'Issue' | 'MergeRequest' = 'MergeRequest';
 				if (
 					(isNote && firstEvent.note.noteable_type === 'Issue') ||
@@ -116,6 +115,12 @@ export async function prepareGitlabNotificationData(events: GitlabEventWithRepoD
 		});
 
 	return mergedGroups;
+}
+
+function isNoteType(
+	event: GitlabEventWithRepoData
+): event is GitlabEventWithRepoData & { target_type: 'Note' | 'DiffNote' | 'DiscussionNote' } {
+	return event.target_type?.includes('Note') ?? false;
 }
 
 function getTextData(
