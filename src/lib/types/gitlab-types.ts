@@ -94,6 +94,12 @@ export type GitlabEvent = {
 			target_type: null;
 	  }
 	| {
+			action_name: 'updated';
+			target_id: number;
+			target_iid: number;
+			target_type: null;
+	  }
+	| {
 			action_name: 'approved';
 			target_id: number;
 			target_iid: number;

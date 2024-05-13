@@ -12,11 +12,7 @@
 		"custom-property-empty-line-before": "never",
 		"no-descending-specificity": null,
 		"property-no-vendor-prefix": null,
-		"selector-pseudo-class-no-unknown": [
-			true,
-			{
-				"ignorePseudoClasses": ["global"]
-			}
-		]
+		"selector-pseudo-class-no-unknown": [true, { "ignorePseudoClasses": ["global"] }],
+		"scss/no-global-function-names": null
 	}
 }
