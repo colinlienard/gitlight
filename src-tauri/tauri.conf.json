@@ -20,7 +20,10 @@
 			},
 			"shell": {
 				"open": true
-			}
+			},
+      "os": {
+        "all": true
+      }
 		},
 		"bundle": {
 			"active": true,
