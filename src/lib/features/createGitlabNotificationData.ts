@@ -68,17 +68,21 @@ export async function prepareGitlabNotificationData(events: GitlabEventWithRepoD
 				) {
 					type = 'Issue';
 				}
-				const data = await fetchGitlab<GitlabMergeRequest | GitlabIssue>(
-					`projects/${firstEvent.repository.encoded}/${
-						type === 'Issue' ? 'issues' : 'merge_requests'
-					}/${isNote ? firstEvent.note.noteable_iid : firstEvent.target_iid}`
-				);
-				return {
-					target_id: item.target_id,
-					ref: item.ref,
-					events: item.events,
-					data
-				};
+				try {
+					const data = await fetchGitlab<GitlabMergeRequest | GitlabIssue>(
+						`projects/${firstEvent.repository.encoded}/${
+							type === 'Issue' ? 'issues' : 'merge_requests'
+						}/${isNote ? firstEvent.note.noteable_iid : firstEvent.target_iid}`
+					);
+					return {
+						target_id: item.target_id,
+						ref: item.ref,
+						events: item.events,
+						data
+					};
+				} catch {
+					return item;
+				}
 			} else {
 				return item;
 			}
@@ -262,6 +266,7 @@ export async function createGitlabNotificationData(
 		case 'created':
 		case 'deleted':
 		case 'joined':
+		case 'updated':
 			return null;
 
 		default:

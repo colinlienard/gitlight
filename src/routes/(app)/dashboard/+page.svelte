@@ -213,7 +213,12 @@
 
 		let newNotifications: NotificationData[] = [];
 		const savedNotifications = storage.get('gitlab-notifications') || [];
-		const ignoredNotificationTypes: GitlabEvent['action_name'][] = ['created', 'deleted', 'joined'];
+		const ignoredNotificationTypes: GitlabEvent['action_name'][] = [
+			'created',
+			'deleted',
+			'joined',
+			'updated'
+		];
 		const persons = storage.get('watched-persons') || [];
 		const repos = storage.get('watched-repos') || [];
 		const firstFetch = !$gitlabNotifications.length;
