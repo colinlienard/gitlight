@@ -18,11 +18,16 @@ pub fn update_tray(app_handle: tauri::AppHandle, title: Option<String>, new_icon
 
 #[tauri::command]
 pub fn toggle_tray(app_handle: tauri::AppHandle, show: bool) {
-    let tray_handle = app_handle.tray_handle_by_id("tray").unwrap();
-    tray_handle.destroy().unwrap();
+    let tray_handle = app_handle.tray_handle_by_id("tray");
+    if let Some(tray_handle) = tray_handle {
+        tray_handle.destroy().unwrap();
+    }
     if show {
         SystemTray::new()
             .with_id("tray")
+            .with_icon(get_raw_tray_icon("base"))
+            .with_icon_as_template(true)
+            .with_menu_on_left_click(false)
             .with_menu(
                 SystemTrayMenu::new()
                     .add_item(CustomMenuItem::new("dashboard".to_string(), "Dashboard..."))
@@ -34,7 +39,7 @@ pub fn toggle_tray(app_handle: tauri::AppHandle, show: bool) {
     }
 }
 
-pub fn get_raw_tray_icon(image: &str) -> tauri::Icon {
+fn get_raw_tray_icon(image: &str) -> tauri::Icon {
     let is_macos = cfg!(target_os = "macos");
     let bytes = match image {
         "base" => {

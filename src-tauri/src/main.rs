@@ -7,8 +7,7 @@
 #[macro_use]
 extern crate objc;
 
-use commands::get_raw_tray_icon;
-use tauri::{Manager, SystemTray, SystemTrayEvent};
+use tauri::{Manager, SystemTrayEvent};
 use tauri_plugin_autostart::MacosLauncher;
 use tauri_plugin_positioner::{Position, WindowExt};
 
@@ -23,11 +22,6 @@ fn main() {
     if cfg!(debug_assertions) {
         let devtools = devtools::init();
         builder = builder.plugin(devtools);
-    }
-
-    let mut system_tray = SystemTray::new().with_id("tray");
-    if cfg!(target_os = "macos") {
-        system_tray = system_tray.with_icon(get_raw_tray_icon("base"));
     }
 
     builder
@@ -52,6 +46,8 @@ fn main() {
             #[cfg(not(target_os = "macos"))]
             tray_window.set_decorations(false).unwrap();
 
+            commands::toggle_tray(app.handle(), true);
+
             Ok(())
         })
         .plugin(tauri_plugin_autostart::init(
@@ -60,7 +56,6 @@ fn main() {
         ))
         .plugin(tauri_plugin_positioner::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
-        .system_tray(system_tray)
         .on_system_tray_event(|app, event| {
             tauri_plugin_positioner::on_tray_event(app, &event);
             match event {
