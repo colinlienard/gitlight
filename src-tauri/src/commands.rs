@@ -32,7 +32,8 @@ pub fn toggle_tray(app_handle: tauri::AppHandle, show: bool) {
                     .add_native_item(SystemTrayMenuItem::Separator)
                     .add_item(CustomMenuItem::new("quit".to_string(), "Quit")),
             );
-        if cfg!(target_os = "macos") {
+        #[cfg(target_os = "macos")]
+        {
             system_tray = system_tray
                 .with_icon_as_template(true)
                 .with_menu_on_left_click(false)
