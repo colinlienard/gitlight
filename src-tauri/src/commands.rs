@@ -23,19 +23,21 @@ pub fn toggle_tray(app_handle: tauri::AppHandle, show: bool) {
         tray_handle.destroy().unwrap();
     }
     if show {
-        SystemTray::new()
+        let mut system_tray = SystemTray::new()
             .with_id("tray")
             .with_icon(get_raw_tray_icon("base"))
-            .with_icon_as_template(true)
-            .with_menu_on_left_click(false)
             .with_menu(
                 SystemTrayMenu::new()
                     .add_item(CustomMenuItem::new("dashboard".to_string(), "Dashboard..."))
                     .add_native_item(SystemTrayMenuItem::Separator)
                     .add_item(CustomMenuItem::new("quit".to_string(), "Quit")),
-            )
-            .build(&app_handle)
-            .unwrap();
+            );
+        if cfg!(target_os = "macos") {
+            system_tray = system_tray
+                .with_icon_as_template(true)
+                .with_menu_on_left_click(false)
+        }
+        system_tray.build(&app_handle).unwrap();
     }
 }
 
