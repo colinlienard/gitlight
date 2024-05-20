@@ -83,6 +83,7 @@ fn main() {
                         let window = app.get_window("main").unwrap();
                         window.show().unwrap();
                         window.set_focus().unwrap();
+                        window.unminimize().unwrap();
                     }
                     "quit" => {
                         std::process::exit(0);
