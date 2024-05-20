@@ -9,17 +9,9 @@ pub fn update_tray(app_handle: tauri::AppHandle, title: Option<String>, new_icon
     }
     if let Some(new_icon) = new_icon {
         if new_icon {
-            tray_handle
-                .set_icon(tauri::Icon::Raw(
-                    include_bytes!("../icons/tray-new.png").to_vec(),
-                ))
-                .unwrap();
+            tray_handle.set_icon(get_raw_tray_icon("new")).unwrap();
         } else {
-            tray_handle
-                .set_icon(tauri::Icon::Raw(
-                    include_bytes!("../icons/tray-base.png").to_vec(),
-                ))
-                .unwrap();
+            tray_handle.set_icon(get_raw_tray_icon("base")).unwrap();
         }
     }
 }
@@ -40,4 +32,26 @@ pub fn toggle_tray(app_handle: tauri::AppHandle, show: bool) {
             .build(&app_handle)
             .unwrap();
     }
+}
+
+pub fn get_raw_tray_icon(image: &str) -> tauri::Icon {
+    let is_macos = cfg!(target_os = "macos");
+    let bytes = match image {
+        "base" => {
+            if is_macos {
+                include_bytes!("../icons/tray-base-macos.png").to_vec()
+            } else {
+                include_bytes!("../icons/tray-base.png").to_vec()
+            }
+        }
+        "new" => {
+            if is_macos {
+                include_bytes!("../icons/tray-new-macos.png").to_vec()
+            } else {
+                include_bytes!("../icons/tray-new.png").to_vec()
+            }
+        }
+        _ => panic!("Unknown tray icon"),
+    };
+    tauri::Icon::Raw(bytes)
 }
