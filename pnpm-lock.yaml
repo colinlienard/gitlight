@@ -21,8 +21,8 @@ importers:
         specifier: github:tauri-apps/tauri-plugin-autostart
         version: https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/a8455f120ad801d828f91528f1b4ca47d00c8ba3
       worker-timers:
-        specifier: ^7.1.8
-        version: 7.1.8
+        specifier: ^8.0.0
+        version: 8.0.0
     devDependencies:
       '@sveltejs/adapter-static':
         specifier: ^3.0.1
@@ -676,6 +676,7 @@ packages:
   are-we-there-yet@2.0.0:
     resolution: {integrity: sha512-Ci/qENmwHnsYo9xKIcUJN5LeDKdJ6R1Z1j9V/J5wyq8nh/mYPEpIKJbBZXtZjG04HiK7zV/p6Vs9952MrMeUIw==}
     engines: {node: '>=10'}
+    deprecated: This package is no longer supported.
 
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
@@ -1074,9 +1075,9 @@ packages:
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
-  fast-unique-numbers@8.0.13:
-    resolution: {integrity: sha512-7OnTFAVPefgw2eBJ1xj2PGGR9FwYzSUso9decayHgCDX4sJkHLdcsYTytTg+tYv+wKF3U8gJuSBz2jJpQV4u/g==}
-    engines: {node: '>=16.1.0'}
+  fast-unique-numbers@9.0.5:
+    resolution: {integrity: sha512-wVA1YcLQn0eAo4P1DXu4UI3wx68Llwm2/iCtpoOGuTi3jm/13KFYjCt3Nlq2fseSuyaBz43RKimj5G68GDzjjg==}
+    engines: {node: '>=18.2.0'}
 
   fastest-levenshtein@1.0.16:
     resolution: {integrity: sha512-eRnCtTTtGZFpQCwhJiUOuxPQWRXVKYDn0b2PeHfXL6/Zi53SLAzAHfVhVWK2AryC/WH05kGfxhFIPvTF0SXQzg==}
@@ -1135,6 +1136,7 @@ packages:
   gauge@3.0.2:
     resolution: {integrity: sha512-+5J6MS/5XksCuXq++uFRsnUd7Ovu1XenbeuIuNRJxYWjgQbPuFhT14lAvsWfqfAmnwluf1OwMjz39HjfLPci0Q==}
     engines: {node: '>=10'}
+    deprecated: This package is no longer supported.
 
   get-intrinsic@1.2.2:
     resolution: {integrity: sha512-0gSo4ml/0j98Y3lngkFEot/zhiCeWsbYIlZ+uZOVgzLyLaUw7wxUL+nCTP0XJvJg1AXulJRI3UJi8GsbDuxdGA==}
@@ -1545,6 +1547,7 @@ packages:
 
   npmlog@5.0.1:
     resolution: {integrity: sha512-AqZtDUWOMKs1G/8lwylVjrdYgqA4d9nu8hc+0gzRxlDb1I10+FHBGMXs6aiQHFdCUUlqH99MUMuLfzWDNDtfxw==}
+    deprecated: This package is no longer supported.
 
   object-assign@4.1.1:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
@@ -2180,14 +2183,14 @@ packages:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
     engines: {node: '>=0.10.0'}
 
-  worker-timers-broker@6.1.8:
-    resolution: {integrity: sha512-FUCJu9jlK3A8WqLTKXM9E6kAmI/dR1vAJ8dHYLMisLNB/n3GuaFIjJ7pn16ZcD1zCOf7P6H62lWIEBi+yz/zQQ==}
+  worker-timers-broker@7.0.1:
+    resolution: {integrity: sha512-M2ZYaxYUl/D/JCoioltkZMcnSWREoo/mhdyyTPLyeAxjgwrARgsXn+yFssr1LbDmq4GlaASxReeEx/jdsfA8Xg==}
 
-  worker-timers-worker@7.0.71:
-    resolution: {integrity: sha512-ks/5YKwZsto1c2vmljroppOKCivB/ma97g9y77MAAz2TBBjPPgpoOiS1qYQKIgvGTr2QYPT3XhJWIB6Rj2MVPQ==}
+  worker-timers-worker@8.0.0:
+    resolution: {integrity: sha512-smUw4cwY+OczC2rUmg5Zw58boDqq9WnR6m5CoOBmm0zGQgHo4HjxZ3LE2gPLpx1NWf5NSlAd2Ec5TEwgokxQFA==}
 
-  worker-timers@7.1.8:
-    resolution: {integrity: sha512-R54psRKYVLuzff7c1OTFcq/4Hue5Vlz4bFtNEIarpSiCYhpifHU3aIQI29S84o1j87ePCYqbmEJPqwBTf+3sfw==}
+  worker-timers@8.0.0:
+    resolution: {integrity: sha512-ZPC5n62AFD9RmwP5c9dFVFRsEWohJ04bSImT2pTD3GZg45+qyaiznrYf34UwNAJ6oB0HxSjpqkJdh4CoPi+Mog==}
 
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
@@ -3236,7 +3239,7 @@ snapshots:
 
   fast-levenshtein@2.0.6: {}
 
-  fast-unique-numbers@8.0.13:
+  fast-unique-numbers@9.0.5:
     dependencies:
       '@babel/runtime': 7.24.5
       tslib: 2.6.2
@@ -4361,24 +4364,24 @@ snapshots:
 
   word-wrap@1.2.5: {}
 
-  worker-timers-broker@6.1.8:
+  worker-timers-broker@7.0.1:
     dependencies:
       '@babel/runtime': 7.24.5
-      fast-unique-numbers: 8.0.13
+      fast-unique-numbers: 9.0.5
       tslib: 2.6.2
-      worker-timers-worker: 7.0.71
+      worker-timers-worker: 8.0.0
 
-  worker-timers-worker@7.0.71:
+  worker-timers-worker@8.0.0:
     dependencies:
       '@babel/runtime': 7.24.5
       tslib: 2.6.2
 
-  worker-timers@7.1.8:
+  worker-timers@8.0.0:
     dependencies:
       '@babel/runtime': 7.24.5
       tslib: 2.6.2
-      worker-timers-broker: 6.1.8
-      worker-timers-worker: 7.0.71
+      worker-timers-broker: 7.0.1
+      worker-timers-worker: 8.0.0
 
   wrappy@1.0.2: {}
 
