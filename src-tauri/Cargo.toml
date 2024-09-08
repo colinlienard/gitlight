@@ -23,6 +23,7 @@ tauri-plugin-autostart = { git = "https://github.com/tauri-apps/plugins-workspac
 tauri-plugin-deep-link = "0.1.2"
 tauri-plugin-positioner = { version = "1.0.5", features = ["system-tray"] }
 tauri-plugin-window-state = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
+time = ">=0.3.35"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 cocoa = "0.25"
