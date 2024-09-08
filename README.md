@@ -40,6 +40,14 @@ GitHub & GitLab notifications on your desktop • [gitlight.app](https://gitligh
   </tbody>
 </table>
 
+<!-- Or install with brew: `brew install gitlight` -->
+
+Or install with Homebrew:
+
+```
+brew install gitlight
+```
+
 </div>
 
 <picture>
