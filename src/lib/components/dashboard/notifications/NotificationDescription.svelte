@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { intersect } from '$lib/features';
+	import { intersect, storage } from '$lib/features';
 	import type { User } from '$lib/types';
 
 	type Description = Array<
@@ -20,7 +20,14 @@
 	export let from: 'github' | 'gitlab';
 	export let small = false;
 
-	$: authorUrl = author && !author.bot ? `https://${from}.com/${author.login}` : '';
+	$: authorUrl = (() => {
+		if (!author || author.bot) {
+			return '';
+		}
+		const origin =
+			from === 'github' ? 'https://github.com' : storage.get('gitlab-url') ?? 'https://gitlab.com';
+		return origin + '/' + author.login;
+	})();
 
 	let displayDescription: Description = (() => {
 		const parts = description.split(/(\*|_)/);
