@@ -22,6 +22,7 @@
 	let error = '';
 
 	$: onTauriApp = browser && !!window.__TAURI__;
+	$: urlWithoutSlash = url.endsWith('/') ? url.slice(0, -1) : url;
 
 	$: if (open && browser) {
 		setTimeout(() => {
@@ -55,9 +56,9 @@
 		try {
 			const response = await fetchGitlab<GitlabUser>('user', {
 				accessToken: pat,
-				domain: url
+				domain: urlWithoutSlash
 			});
-			storage.set('gitlab-url', url);
+			storage.set('gitlab-url', urlWithoutSlash);
 			storage.set('gitlab-pat', pat);
 			storage.set('gitlab-user', {
 				name: response.name,
@@ -106,7 +107,11 @@
 				<div class="pat" class:disabled={!(url && urlIsValid)}>
 					<p class="text">
 						Create a new PAT
-						<a class="link" href={`${url}/-/user_settings/personal_access_tokens`} target="_blank">
+						<a
+							class="link"
+							href={`${urlWithoutSlash}/-/user_settings/personal_access_tokens`}
+							target="_blank"
+						>
 							here
 						</a>
 						with the <b>read_api</b> and <b>read_user</b> scopes and paste it below:
