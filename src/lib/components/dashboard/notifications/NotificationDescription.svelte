@@ -25,7 +25,9 @@
 			return '';
 		}
 		const origin =
-			from === 'github' ? 'https://github.com' : storage.get('gitlab-url') ?? 'https://gitlab.com';
+			from === 'github'
+				? 'https://github.com'
+				: (storage.get('gitlab-url') ?? 'https://gitlab.com');
 		return origin + '/' + author.login;
 	})();
 
