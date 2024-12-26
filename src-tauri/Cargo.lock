@@ -70,7 +70,7 @@ checksum = "10f00e1f6e58a40e807377c75c6a7f97bf9044fab57816f2414e6f5f4499d7b8"
 
 [[package]]
 name = "app"
-version = "0.17.5"
+version = "0.17.6"
 dependencies = [
  "cocoa 0.25.0",
  "devtools",
